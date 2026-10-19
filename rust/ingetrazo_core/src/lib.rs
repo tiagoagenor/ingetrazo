@@ -201,6 +201,8 @@ impl ParityTris {
 fn hypot_of(name: &str) -> PyResult<facegeom::Hypot> {
     match name {
         "libstdc++" => Ok(facegeom::Hypot::LibStdCxx),
+        "msvc" => Ok(facegeom::Hypot::Msvc),
+        "libc++" => Ok(facegeom::Hypot::LibCxx),
         _ => Err(pyo3::exceptions::PyValueError::new_err("unknown hypot")),
     }
 }
