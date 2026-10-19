@@ -120,6 +120,78 @@ def _cycle_adjacency(edges, ka, kb, key=_key) -> dict:
     return adj
 
 
+class CycleGraph:
+    """:func:`_cycle_adjacency` of an edge list that changes edge by edge —
+    kept up to date instead of rebuilt per segment. A planner adding 8 000
+    crossings rebuilt the whole graph for each one (O(segments × edges):
+    112 s, #541). Each node's list keeps the edge order (an edge added
+    goes last, one removed leaves the others in place), so the search is
+    the one the rebuilt graph gives; the segment's own copy is left out at
+    search time (:class:`_AdjWithout`)."""
+
+    def __init__(self, edges=(), key=_key) -> None:
+        self.key = key
+        self.adj: dict = {}
+        self._entries: dict = {}
+        for edge in edges:
+            self.add(edge)
+
+    def add(self, edge) -> None:
+        ea, eb = self.key(edge.a), self.key(edge.b)
+        if ea == eb:
+            return
+        x, y = (eb, edge.b), (ea, edge.a)
+        self.adj.setdefault(ea, []).append(x)
+        self.adj.setdefault(eb, []).append(y)
+        self._entries[id(edge)] = (edge, ea, x, eb, y)
+
+    def remove(self, edge) -> None:
+        hit = self._entries.get(id(edge))
+        if hit is None or hit[0] is not edge:
+            return
+        del self._entries[id(edge)]
+        _e, ea, x, eb, y = hit
+        for k, entry in ((ea, x), (eb, y)):
+            lst = self.adj[k]
+            for i, it in enumerate(lst):
+                if it is entry:
+                    del lst[i]
+                    break
+            if not lst:
+                del self.adj[k]
+
+
+class _AdjWithout:
+    """A :class:`CycleGraph`'s adjacency read as :func:`_cycle_adjacency`
+    would have built it without the segment ``ka``–``kb`` (every copy of
+    that edge left out, a node it leaves bare absent) — for
+    :func:`_smallest_cycle`, which only uses ``in``, ``[]`` and ``get``."""
+
+    __slots__ = ("_adj", "_ka", "_kb")
+
+    def __init__(self, adj, ka, kb) -> None:
+        self._adj, self._ka, self._kb = adj, ka, kb
+
+    def get(self, u, default=()):
+        lst = self._adj.get(u)
+        if lst is None:
+            return default
+        if u == self._ka:
+            lst = [e for e in lst if e[0] != self._kb]
+        elif u == self._kb:
+            lst = [e for e in lst if e[0] != self._ka]
+        return lst if lst else default
+
+    def __contains__(self, u) -> bool:
+        return bool(self.get(u))
+
+    def __getitem__(self, u):
+        lst = self.get(u, None)
+        if lst is None:
+            raise KeyError(u)
+        return lst
+
+
 def _smallest_cycle(adj, a, b, ka, kb, max_len: int = 32,
                     skip=frozenset()):
     """Breadth-first search from ``b`` to ``a`` over ``adj``, never entering a
@@ -997,7 +1069,7 @@ def _same_cycle(c1: list[QVector3D], c2: list[QVector3D]) -> bool:
 
 def find_cycles_through(
     edges: Iterable[Edge], a: QVector3D, b: QVector3D, max_results: int = 2,
-    key=None,
+    key=None, graph: "CycleGraph | None" = None,
 ) -> list[list[QVector3D]]:
     """Up to ``max_results`` distinct minimal cycles through segment ``a``–``b``.
 
@@ -1016,7 +1088,9 @@ def find_cycles_through(
     ka, kb = _key(a), _key(b)
     if ka == kb:
         return []
-    adj = _cycle_adjacency(edges, ka, kb, key)
+    # ``graph``: the planner's live adjacency of ``edges`` (same order).
+    adj = (_AdjWithout(graph.adj, ka, kb) if graph is not None
+           else _cycle_adjacency(edges, ka, kb, key))
     first = _smallest_cycle(adj, a, b, ka, kb)
     if first is None:
         return []

@@ -67,6 +67,10 @@ def plan_edge_commands(
     near = _Nearby(simulated, faces_snapshot)
     from core.topology import KeyMemo
     near.key = KeyMemo()            # nothing moves while a plan is made
+    # The cycle search's graph of `simulated`, kept in step with it (one
+    # rebuild per segment made 8 000 crossings take 112 s, #541).
+    from core.topology import CycleGraph
+    graph = CycleGraph(simulated, key=near.key) if detect_faces else None
 
     for a, b in segments:
         # The searches only look at what can touch the segment (a box test
@@ -83,6 +87,8 @@ def plan_edge_commands(
             commands.append(DeleteEdgesCommand([edge], cascade_faces=False))
             if edge in simulated:
                 simulated.remove(edge)
+                if graph is not None:
+                    graph.remove(edge)
             # Sub-edges inherit the split edge's curve/soft flags, so cutting a
             # circle leaves its pieces selectable as the same curve entity.
             e_soft = getattr(edge, "soft", False) or None
@@ -93,6 +99,8 @@ def plan_edge_commands(
                     commands.append(
                         AddEdgeCommand(sa, sb, soft=e_soft, curve=e_curve))
                     simulated.append(Edge(sa, sb))
+                    if graph is not None:
+                        graph.add(simulated[-1])
 
             # Carry the split into faces sharing this edge — but not the face
             # the drawn segment chord-splits, which inserts the point itself.
@@ -139,9 +147,11 @@ def plan_edge_commands(
             commands.append(AddEdgeCommand(sa, sb))
             if already is None:
                 simulated.append(Edge(sa, sb))
+                if graph is not None:
+                    graph.add(simulated[-1])
             if detect_faces:
                 _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye,
-                            near)
+                            near, graph)
 
     return commands
 
@@ -250,7 +260,7 @@ def _around(near, faces, loop):
 
 
 def _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye=None,
-                near=None) -> None:
+                near=None, graph=None) -> None:
     """Emit the face commands for a freshly added edge ``sa``–``sb``.
 
     Two paths, mutually exclusive:
@@ -285,7 +295,8 @@ def _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye=None,
 
     for cycle in find_cycles_through(
             simulated, sa, sb,
-            key=getattr(near, "key", None) if near is not None else None):
+            key=getattr(near, "key", None) if near is not None else None,
+            graph=graph):
         if is_planar(cycle) and not face_exists(
                 _around(near, faces_snapshot, cycle), cycle):
             cycle = face_up_or_toward(cycle, eye)
