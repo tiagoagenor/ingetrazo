@@ -15,7 +15,7 @@ shell over :func:`sweep_profile`.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.orient import is_closed, orient_outward
 from core.history import run_stitch

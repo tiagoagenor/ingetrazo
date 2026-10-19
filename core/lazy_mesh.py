@@ -308,7 +308,7 @@ class PlannedVertices:
         __slots__ = ("position",)
 
         def __init__(self, p):
-            from PySide6.QtGui import QVector3D
+            from core.vecmath import QVector3D
             self.position = QVector3D(float(p[0]), float(p[1]), float(p[2]))
 
     def __init__(self, pos):

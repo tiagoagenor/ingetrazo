@@ -41,7 +41,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtGui import QMatrix4x4, QVector3D
+from core.vecmath import QMatrix4x4, QVector3D
 
 # Metres per drawing unit, by $INSUNITS code (DXF reference, group 70).
 _INSUNITS_TO_M = {

@@ -92,7 +92,7 @@ def qt_hypot():
 
 def _probe_hypot(mod):
     import numpy as np
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     rng = np.random.default_rng(20261017)
     rows = np.concatenate([
         rng.normal(size=(3000, 3)),

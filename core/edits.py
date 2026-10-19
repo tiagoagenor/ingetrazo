@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 from typing import Iterable, Optional, Sequence
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.geometry import Edge, Face
 from core.history import (

@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 # Weld tolerance — two positions within this many decimals (~0.1 mm at metric

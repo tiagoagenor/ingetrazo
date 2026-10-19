@@ -29,7 +29,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.materials import back_is_default
 from core.texture import face_uv_axes, projection_basis, uv_reference_points
@@ -452,7 +452,7 @@ def _billboard_definition(g) -> dict:
     import math
     from core.mesh import Mesh
     from core.group import _remap_uvws
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
 
     verts = g.mesh.vertices
     xs = [v.position.x() for v in verts]
@@ -850,7 +850,7 @@ def _share_repeats(sources):
     turned onto the prototype and compared point for point, then paint face
     for face (materials, both sides, texture placement). Only exact copies
     share; a mirrored or rescaled copy is written as it is."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     pool = []
     for owner, mesh, only in sources:
         pool.extend(_pieces(owner, mesh, only))
@@ -1478,7 +1478,7 @@ def _emit_annotations(scene, builder) -> None:
     in-plane perpendicular the importer uses (cross(Z, segment) with the
     import's fallbacks) — export∘import is the identity on our own files.
     """
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     add_dim = getattr(builder, "add_dimension", None)
     add_text = getattr(builder, "add_text", None)
     if add_dim is not None:

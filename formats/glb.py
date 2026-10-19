@@ -25,7 +25,7 @@ import json
 import struct
 from pathlib import Path
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 _COMP = {5120: ("b", 1), 5121: ("B", 1), 5122: ("h", 2),
          5123: ("H", 2), 5125: ("I", 4), 5126: ("f", 4)}

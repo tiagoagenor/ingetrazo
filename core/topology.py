@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections import deque
 from typing import Iterable, Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.geometry import Edge, Face
 

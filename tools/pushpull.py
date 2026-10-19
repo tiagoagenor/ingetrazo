@@ -41,7 +41,7 @@ import math
 import time
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 from PySide6.QtWidgets import QApplication
 
 from core.geometry import Face

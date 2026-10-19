@@ -28,7 +28,7 @@ def make_template(instance):
     and shared subgroups, name, axes and what was generated or tagged with
     it — none of what belongs to that one copy (place, layer, paint,
     visibility)."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     from core.group import copy_group
     t = copy_group(instance)
     t.xform = QMatrix4x4()
@@ -43,7 +43,7 @@ def make_template(instance):
 def place_copy(template, matrix=None):
     """A new instance of a kept definition, at ``matrix`` (identity = where
     the definition's own origin sits)."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     from core.group import copy_group
     g = copy_group(template)
     g.xform = QMatrix4x4(matrix) if matrix is not None else QMatrix4x4()

@@ -20,7 +20,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from PySide6.QtCore import QPointF, Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.snap import POINT_SNAP_KINDS, SnapResult
 

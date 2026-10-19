@@ -30,7 +30,7 @@ the seams of curved surfaces stay soft.
 from __future__ import annotations
 
 import numpy as np
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.group import Group, world_mesh
 from core.mesh import Mesh

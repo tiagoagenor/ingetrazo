@@ -11,7 +11,7 @@ face through the shared curve pipeline.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from tools.arc import commit_arc
 from tools.base import Tool, ToolContext

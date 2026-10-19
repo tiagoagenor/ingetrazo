@@ -41,7 +41,7 @@ USER_AGENT = _UA
 
 def build_scope(viewport, scope: dict | None = None) -> dict:
     """(Re)bind the live objects an agent scripts against."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core import bim
     from core.group import Group
     from core.mesh import Edge, Face, Mesh, Vertex
@@ -61,7 +61,7 @@ def _recipe_helpers(scene) -> dict:
     every model hand-rolled its own ring-of-quads lathe per piece — 40
     error-prone lines and a token bill each time, with faceted results
     (no soft edges, wrong winding). These build correct solids instead."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.group import Group
     from core.mesh import Mesh
     from core.orient import orient_outward

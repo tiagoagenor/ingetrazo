@@ -11,7 +11,7 @@ component without inserting anything.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.history import InsertGroupCommand
 from tools.base import Tool, ToolContext
@@ -146,7 +146,7 @@ class PlaceGroupTool(Tool):
     def _pose_matrix(self, shift: QVector3D):
         """The move just applied, as one matrix: the alignment turn followed
         by ``shift`` — what :func:`core.group._remap_uvws` needs."""
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         m = QMatrix4x4()
         m.translate(shift)
         if self._face_normal is not None:

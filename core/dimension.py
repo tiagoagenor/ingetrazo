@@ -32,7 +32,7 @@ tool should be able to measure aligned (as it does now), but also linear»).
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QMatrix4x4, QVector3D
+from core.vecmath import QMatrix4x4, QVector3D
 
 
 class VertexAnchor:

@@ -15,7 +15,7 @@ import math
 import struct
 from pathlib import Path
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 STL_UNITS = {"m": 1.0, "cm": 0.01, "mm": 0.001, "in": 0.0254, "ft": 0.3048}
 _BINARY_HEADER_SIZE = 84

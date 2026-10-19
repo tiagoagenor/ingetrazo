@@ -25,7 +25,7 @@ import zipfile
 from pathlib import Path
 
 from PySide6.QtCore import QByteArray, QMimeData
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 MIME = "application/x-ingetrazo-clipboard"
 _FORMAT = 1
@@ -94,7 +94,7 @@ def decode(data: bytes) -> dict | None:
              for a, b, soft, curve in head.get("edges", ())]
     # Pasted copies of a classic group share one definition until edited,
     # as with a local copy (``Viewport.copy_selection``).
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     for g in scene.groups:
         if getattr(g, "xform", None) is None:
             g.xform = QMatrix4x4()

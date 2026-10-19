@@ -33,7 +33,7 @@ import math
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 # Colors used by the rubber band and the 2D snap indicator. RGB floats [0, 1].

@@ -30,7 +30,7 @@ from __future__ import annotations
 import math
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.group import Group, copy_group, transformed_attrs
 from core.history import (
@@ -416,7 +416,7 @@ class RotateTool(ProtractorBase):
         snap = getattr(self, "_orig", None)
         if snap is not None:
             return snap
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         snap = {"xf": [], "gv": [], "v": [], "sp": [], "im": []}
         vp_only = getattr(self, "_vp_preview", False)
         if not vp_only:
@@ -469,7 +469,7 @@ class RotateTool(ProtractorBase):
             self._orig = None
         self._preview_deg = 0.0
         if getattr(self, "_vp_preview", False):
-            from PySide6.QtGui import QMatrix4x4
+            from core.vecmath import QMatrix4x4
             viewport.set_groups_preview_matrix(QMatrix4x4())  # park, keep freeze
 
     def _end_vp_preview(self, viewport) -> None:

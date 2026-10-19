@@ -37,7 +37,7 @@ from __future__ import annotations
 import itertools
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QMatrix4x4, QVector3D
+from core.vecmath import QMatrix4x4, QVector3D
 
 from core.history import (CompoundCommand, ScaleGroupCommand,
                           ScaleVerticesCommand, scale_matrix)
@@ -644,7 +644,7 @@ class ScaleTool(Tool):
         starting positions, missed them, scaled the rest and tore the
         faces (a user's video, 25-09: a rounded box shredded on release).
         Measured: 300 moves of that kind, 194 of 1600 vertices lost."""
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         orig_v: list = []
         orig_x: list = []
         for group in self._groups:

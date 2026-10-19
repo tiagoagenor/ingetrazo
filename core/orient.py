@@ -27,7 +27,7 @@ import math
 import random
 from typing import Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.mesh import turn_face_over
 

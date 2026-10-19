@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 @dataclass(eq=False)

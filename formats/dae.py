@@ -24,7 +24,7 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from PySide6.QtGui import QMatrix4x4, QVector3D
+from core.vecmath import QMatrix4x4, QVector3D
 
 _NS = "{http://www.collada.org/2005/11/COLLADASchema}"
 

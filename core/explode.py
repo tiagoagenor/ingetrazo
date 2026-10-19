@@ -23,7 +23,7 @@ MODES = ("outward", "x", "y", "z")
 
 
 def _offset_of(part):
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     o = getattr(part, "explode_offset", None)
     return QVector3D(*o) if o else QVector3D()
 
@@ -32,7 +32,7 @@ def assembled_centres(container) -> list:
     """Each part's centre (the middle of its box, in the container's frame)
     where it sits assembled — its current centre minus the explosion's
     offset."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.parts import part_points
     out = []
     for kid in container.children:
@@ -51,7 +51,7 @@ def explode_offsets(centres, factor: float, mode: str = "outward") -> list:
     every part twice as far from the centre as it was). The centre is the
     middle of the parts' centres' box, so a symmetric model explodes
     symmetrically."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     if not centres:
         return []
     xs = [c.x() for c in centres]
@@ -75,7 +75,7 @@ def apply_explode(container, factor: float, mode: str = "outward",
     in place. ``centres`` (from :func:`assembled_centres`) lets a slider drag
     measure once and apply many times. The command is
     :class:`ExplodeViewCommand`; this is its body."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     kids = list(getattr(container, "children", None) or ())
     if not kids:
         return
@@ -102,7 +102,7 @@ def rotate_offsets(container, xform) -> None:
     them (entering a container for editing bakes its matrix into its
     children, see ``Scene._bake_container_xform``): an offset is a vector
     in the container's frame, so it turns — and scales — with that frame."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     for kid in getattr(container, "children", None) or ():
         o = getattr(kid, "explode_offset", None)
         if not o:
@@ -114,7 +114,7 @@ def rotate_offsets(container, xform) -> None:
 def snapshot(container) -> tuple:
     """Everything an explosion changes, to put back exactly (undo, and the
     slider's live preview)."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     kids = list(container.children)
     return (dict(container.exploded) if container.exploded else None,
             [(k, QMatrix4x4(k.xform) if k.xform is not None else None,

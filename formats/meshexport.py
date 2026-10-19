@@ -47,7 +47,7 @@ def _turned_toward(mesh, toward):
     its largest face looks along ``toward(anchor)`` — what the viewport does
     to a face-me figure every frame (views.viewport._draw_faceme_mesh)."""
     import math
-    from PySide6.QtGui import QMatrix4x4, QVector3D
+    from core.vecmath import QMatrix4x4, QVector3D
     from core.group import transformed_mesh
     faces = list(mesh.faces)
     verts = [v.position for v in mesh.vertices]
@@ -86,7 +86,7 @@ def _facing_quad(mesh, toward):
     planar texture anchored to the world, so the picture slid and repeated
     across it — Sumari came out as two thin halves (#181)."""
     import math
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.mesh import Mesh
     from core.texture import fit_uv_affine
     verts = [v.position for v in mesh.vertices]
@@ -141,7 +141,7 @@ def _placements_facing(group, toward, figures: bool = True):
 def _feet(mesh):
     """Where a figure stands: the middle of its footprint, at its lowest
     point — the vertical it turns about."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     verts = [v.position for v in mesh.vertices]
     if not verts:
         return None

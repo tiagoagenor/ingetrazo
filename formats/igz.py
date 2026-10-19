@@ -54,7 +54,7 @@ from pathlib import Path
 
 from core.version import __version__
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.dimension import Dimension
 from core.group import Group
@@ -1221,7 +1221,7 @@ def _load_into_inner(scene, path: Path, progress=None) -> None:
         if name:
             names.append(name)
         if raw.get("xform") is not None and "proto" in raw:
-            from PySide6.QtGui import QMatrix4x4
+            from core.vecmath import QMatrix4x4
             group = Group(proto_meshes[int(raw["proto"])], name=name)
             vals = [float(x) for x in raw["xform"]]
             # data() is column-major; the constructor takes row-major.
@@ -1231,7 +1231,7 @@ def _load_into_inner(scene, path: Path, progress=None) -> None:
             group = Group(name=name)
             _load_mesh(group.mesh, raw, geom)
         if isinstance(raw.get("axes"), list) and len(raw["axes"]) == 16:
-            from PySide6.QtGui import QMatrix4x4
+            from core.vecmath import QMatrix4x4
             vals = [float(x) for x in raw["axes"]]
             group.axes = QMatrix4x4(*[vals[col * 4 + row] for row in range(4)
                                       for col in range(4)])

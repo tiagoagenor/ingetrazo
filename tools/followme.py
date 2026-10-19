@@ -22,7 +22,7 @@ this tool is the click shell.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.i18n import tr
 from core.history import SnapshotMutation

@@ -117,7 +117,7 @@ class SavedView:
     def apply(self, scene, camera) -> None:
         """Recall the view: camera first, then the layer-visibility state.
         The caller bumps ``scene.version`` / repaints (tray convention)."""
-        from PySide6.QtGui import QVector3D
+        from core.vecmath import QVector3D
         camera.target = QVector3D(*self.target)
         camera.distance = self.distance
         camera.yaw = self.yaw

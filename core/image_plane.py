@@ -24,7 +24,7 @@ keep the picture undistorted while the user drags.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 # Imported images land here rather than on the default layer, for the same
 # reason surveys do (``layers.SURVEY_LAYER``): you import a plan *to draw on

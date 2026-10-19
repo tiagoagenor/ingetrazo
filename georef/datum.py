@@ -29,7 +29,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 # WGS84 ellipsoid + UTM constants.

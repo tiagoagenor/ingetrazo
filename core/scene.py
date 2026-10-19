@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Iterable
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.mesh import Edge, Face, Mesh
 
@@ -386,7 +386,7 @@ class Scene:
         tree is exactly that), and walking those vertices would drag every
         placement with it.
         """
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         xform = getattr(group, "xform", None)
         if xform is None or xform == QMatrix4x4():
             return
