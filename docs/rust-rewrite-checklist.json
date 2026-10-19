@@ -1,0 +1,805 @@
+{
+ "rows": [
+  {
+   "id": "M0.1",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Workspace rust/ com ingetrazo-math e ingetrazo-geom sem PyO3",
+   "status": "em andamento",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.2",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Crate PyO3 vira o shim ingetrazo_py (testes nativos verdes)",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.3",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "golden/SCHEMA.md: roteiro de operações, assinaturas e tolerâncias",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.4",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Gravador do histórico e to_op() em todos os comandos",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.5",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Coleta automática dos testes: primeiros 500 gabaritos",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.6",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "ingetrazo-cli golden replay com o ponto da primeira divergência",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.7",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Escritor JSON igual ao do Python e ida-e-volta do .igz formato 1",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.8",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "Protótipo de interface: egui + docking + wgpu com a city-L",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M0.9",
+   "marco": "M0",
+   "marco_nome": "Base e gabarito",
+   "item": "CI: cargo test e clippy em Windows, Linux e macOS",
+   "status": "pendente",
+   "peso": 0.3889,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.1",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Vetores e matrizes do Qt reproduzidos bit a bit (incl. map)",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.2",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Comprimento do Qt (hypot) nas três bibliotecas C++",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.3",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Triangulação (earcut próprio)",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.4",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Offset",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.5",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Fillet",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.6",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Sweep (Siga-me)",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.7",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Chanfro de vértice",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.8",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Linhas ocultas: o que falta",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.9",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Simplificação",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M1.10",
+   "marco": "M1",
+   "marco_nome": "Matemática e geometria",
+   "item": "Gabaritos de geometria verdes",
+   "status": "pendente",
+   "peso": 0.4,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.1",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Malha editável em arenas (vértices, arestas, faces)",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.2",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Índice de solda com as chaves de 4 casas",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.3",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Cena, grupos e componentes",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.4",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Materiais, camadas e etiquetas",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.5",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Cotas, textos, guias, cortes e vistas salvas",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.6",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Desfazer por diário (journal)",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.7",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Leitura do .igz nos três formatos",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.8",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Escrita do .igz idêntica byte a byte",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.9",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Todos os .igz de exemplo e teste com ida-e-volta idêntica",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M2.10",
+   "marco": "M2",
+   "marco_nome": "Modelo e arquivo .igz",
+   "item": "Congelar recursos novos no app Python",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.1",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Planejador de edições (linhas, faces automáticas)",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.2",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Topologia (ciclos, regiões, laços)",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.3",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Costura: junções em T, colapso, fusão coplanar",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.4",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Empurrar/Puxar",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.5",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Mover, girar e escalar",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.6",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Siga-me",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.7",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Aplicar cruzamentos do Intersecar",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.8",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Sólidos com o Manifold (manifold-sys)",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.9",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Corte de seção",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.10",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Explodir e limpar (purge)",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.11",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Motor de snap e inferências",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.12",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Seleção por raio (picking)",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.13",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "Máquinas de estado das ferramentas, sem interface",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M3.14",
+   "marco": "M3",
+   "marco_nome": "Operações, snap e ferramentas",
+   "item": "90% dos gabaritos coletados verdes",
+   "status": "pendente",
+   "peso": 1.0714,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.1",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Renderizador wgpu: faces, arestas, estilos",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.2",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Seleção por buffer de ids",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.3",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "App egui mínima: janela e viewport",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.4",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Órbita, deslocamento e zoom",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.5",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Ferramentas: linha, retângulo, círculo",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.6",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Ferramentas: empurrar/puxar e mover",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.7",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Desfazer e refazer na interface",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.8",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Abrir e salvar .igz",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M4.9",
+   "marco": "M4",
+   "marco_nome": "Visualização e alfa",
+   "item": "Alfa: city-L a 60 quadros por segundo",
+   "status": "pendente",
+   "peso": 0.8333,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.1",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "OBJ (importar e exportar)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.2",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "STL (importar e exportar)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.3",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "glTF/GLB (importar e exportar)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.4",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "COLLADA (importar e exportar)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.5",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "DXF (importar e exportar)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.6",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "Ponte DWG (dwg2dxf)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.7",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "Leitor de SKP portado do openskp",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M5.8",
+   "marco": "M5",
+   "marco_nome": "Formatos",
+   "item": "Exportações idênticas byte a byte",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.1",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Janela principal e painéis acopláveis",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.2",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Bandeja lateral",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.3",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Estrutura do modelo (outliner)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.4",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Informações da entidade",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.5",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Materiais e biblioteca",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.6",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Preferências",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.7",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Busca de comandos (F3)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.8",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Atalhos de teclado",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.9",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Dicas de status e caixa de medidas",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.10",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Todas as ferramentas na interface",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.11",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Estilos e temas",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.12",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Traduções (10 idiomas)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M6.13",
+   "marco": "M6",
+   "marco_nome": "Interface completa (beta)",
+   "item": "Testes de interface portados (beta)",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M7.1",
+   "marco": "M7",
+   "marco_nome": "Georreferência",
+   "item": "Localização e datum",
+   "status": "pendente",
+   "peso": 0.8,
+   "concluido_em": ""
+  },
+  {
+   "id": "M7.2",
+   "marco": "M7",
+   "marco_nome": "Georreferência",
+   "item": "Tiles de mapa",
+   "status": "pendente",
+   "peso": 0.8,
+   "concluido_em": ""
+  },
+  {
+   "id": "M7.3",
+   "marco": "M7",
+   "marco_nome": "Georreferência",
+   "item": "Terreno a partir do relevo (DEM)",
+   "status": "pendente",
+   "peso": 0.8,
+   "concluido_em": ""
+  },
+  {
+   "id": "M7.4",
+   "marco": "M7",
+   "marco_nome": "Georreferência",
+   "item": "GeoTIFF",
+   "status": "pendente",
+   "peso": 0.8,
+   "concluido_em": ""
+  },
+  {
+   "id": "M7.5",
+   "marco": "M7",
+   "marco_nome": "Georreferência",
+   "item": "Busca de endereço, trajeto e perfil",
+   "status": "pendente",
+   "peso": 0.8,
+   "concluido_em": ""
+  },
+  {
+   "id": "M8.1",
+   "marco": "M8",
+   "marco_nome": "Scripts e IA",
+   "item": "Motor Rhai e API do modelo",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M8.2",
+   "marco": "M8",
+   "marco_nome": "Scripts e IA",
+   "item": "Console de scripts",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M8.3",
+   "marco": "M8",
+   "marco_nome": "Scripts e IA",
+   "item": "Script de vitrine portado",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M8.4",
+   "marco": "M8",
+   "marco_nome": "Scripts e IA",
+   "item": "Assistente de IA sobre Rhai",
+   "status": "pendente",
+   "peso": 1.0,
+   "concluido_em": ""
+  },
+  {
+   "id": "M9.1",
+   "marco": "M9",
+   "marco_nome": "Empacotamento",
+   "item": "Instalador Windows",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M9.2",
+   "marco": "M9",
+   "marco_nome": "Empacotamento",
+   "item": "App macOS assinado e notarizado",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M9.3",
+   "marco": "M9",
+   "marco_nome": "Empacotamento",
+   "item": "AppImage, Snap e Flatpak",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M9.4",
+   "marco": "M9",
+   "marco_nome": "Empacotamento",
+   "item": "Auditoria: nenhum Python nos pacotes",
+   "status": "pendente",
+   "peso": 0.75,
+   "concluido_em": ""
+  },
+  {
+   "id": "M10.1",
+   "marco": "M10",
+   "marco_nome": "IngeTrazo 2.0 sem Python",
+   "item": "Mapa de testes completo, gabaritos verdes",
+   "status": "pendente",
+   "peso": 0.5,
+   "concluido_em": ""
+  },
+  {
+   "id": "M10.2",
+   "marco": "M10",
+   "marco_nome": "IngeTrazo 2.0 sem Python",
+   "item": "Remover o Python da main",
+   "status": "pendente",
+   "peso": 0.5,
+   "concluido_em": ""
+  },
+  {
+   "id": "M10.3",
+   "marco": "M10",
+   "marco_nome": "IngeTrazo 2.0 sem Python",
+   "item": "Lançar a versão 2.0",
+   "status": "pendente",
+   "peso": 0.5,
+   "concluido_em": ""
+  }
+ ]
+}
