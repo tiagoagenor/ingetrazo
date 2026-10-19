@@ -5,18 +5,18 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Workspace rust/ com ingetrazo-math e ingetrazo-geom sem PyO3",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M0.2",
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Crate PyO3 vira o shim ingetrazo_py (testes nativos verdes)",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M0.3",

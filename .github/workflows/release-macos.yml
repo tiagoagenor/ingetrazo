@@ -46,15 +46,15 @@ jobs:
           grep -vE '^\s*pytest\b' requirements.txt > reqs.txt
           python -m pip install -r reqs.txt pyinstaller
 
-      # The EXPERIMENTAL Rust engine (rust/ingetrazo_core, Preferences ▸
+      # The EXPERIMENTAL Rust engine (rust/crates/ingetrazo_py, Preferences ▸
       # General; off by default), built for this runner's architecture.
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Rust engine (experimental)
         run: |
           python -m pip install maturin
-          maturin build --release -m rust/ingetrazo_core/Cargo.toml -o "$RUNNER_TEMP/wheels"
-          python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_core-*.whl
+          maturin build --release -m rust/crates/ingetrazo_py/Cargo.toml -o "$RUNNER_TEMP/wheels"
+          python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_py-*.whl
           INGETRAZO_RUST=1 python -c "import core._native as n; assert n.native is not None; print('engine:', n.engine())"
 
       # DWG on macOS (#101): LibreDWG publishes no Mac binaries, so build

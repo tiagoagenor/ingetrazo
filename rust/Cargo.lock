@@ -46,9 +46,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
-name = "ingetrazo_core"
+name = "ingetrazo-geom"
 version = "0.1.0"
 dependencies = [
+ "ingetrazo-math",
+ "rayon",
+]
+
+[[package]]
+name = "ingetrazo-math"
+version = "0.1.0"
+
+[[package]]
+name = "ingetrazo_py"
+version = "0.1.0"
+dependencies = [
+ "ingetrazo-geom",
+ "ingetrazo-math",
  "numpy",
  "pyo3",
  "rayon",

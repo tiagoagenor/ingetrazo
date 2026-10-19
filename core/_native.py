@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
-"""The experimental Rust engine (``rust/ingetrazo_core``, built with maturin).
+"""The experimental Rust engine (``rust/crates/ingetrazo_py``, built with maturin).
 
 ``native`` is the compiled module when the engine is on and loads, else
 ``None``. It is OFF unless Preferences ▸ General ▸ «Rust engine

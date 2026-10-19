@@ -10,22 +10,13 @@
 use std::collections::HashSet;
 
 use crate::facegeom::{length, normalized, plane_axes, Hypot, V3};
+use ingetrazo_math::pyfloat::{py_max2 as py_max, py_min2 as py_min};
 
 const MIN_LEN: f64 = 1e-5;
 
 #[inline]
 fn add(a: V3, b: V3) -> V3 {
     V3(a.0 + b.0, a.1 + b.1, a.2 + b.2)
-}
-
-/// Python's ``max(a, b)``/``min(a, b)``: the first argument on a tie.
-#[inline]
-fn py_max(a: f64, b: f64) -> f64 {
-    if b > a { b } else { a }
-}
-#[inline]
-fn py_min(a: f64, b: f64) -> f64 {
-    if b < a { b } else { a }
 }
 
 pub struct Poly {

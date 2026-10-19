@@ -52,7 +52,7 @@ jobs:
           ./venv/bin/python -m pip install --quiet "openskp @ git+https://github.com/iamahsanmehmood/openskp@291700bc213655a00461838de71e5f206311e619#subdirectory=packages/python"
           ./venv/bin/python -c "import openskp, openskp.legacy; print('openskp OK')"
 
-      # The EXPERIMENTAL Rust engine (rust/ingetrazo_core, Preferences ▸
+      # The EXPERIMENTAL Rust engine (rust/crates/ingetrazo_py, Preferences ▸
       # General; off by default). A build that cannot compile it fails here
       # instead of shipping without it.
       - uses: dtolnay/rust-toolchain@stable
@@ -60,8 +60,8 @@ jobs:
       - name: Rust engine (experimental)
         run: |
           ./venv/bin/python -m pip install --quiet maturin
-          ./venv/bin/maturin build --release -m rust/ingetrazo_core/Cargo.toml -o "$RUNNER_TEMP/wheels"
-          ./venv/bin/python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_core-*.whl
+          ./venv/bin/maturin build --release -m rust/crates/ingetrazo_py/Cargo.toml -o "$RUNNER_TEMP/wheels"
+          ./venv/bin/python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_py-*.whl
           INGETRAZO_RUST=1 ./venv/bin/python -c "import core._native as n; assert n.native is not None; print('engine:', n.engine())"
 
       - name: Tests
@@ -156,7 +156,7 @@ jobs:
           ./venv/bin/python -m pip install --quiet PySide6==6.11.2 numpy pyinstaller 'ezdxf>=1.4.4' 'manifold3d>=3.5.3'
           ./venv/bin/python -m pip install --quiet "openskp @ git+https://github.com/iamahsanmehmood/openskp@291700bc213655a00461838de71e5f206311e619#subdirectory=packages/python"
 
-      # The EXPERIMENTAL Rust engine (rust/ingetrazo_core, Preferences ▸
+      # The EXPERIMENTAL Rust engine (rust/crates/ingetrazo_py, Preferences ▸
       # General; off by default). A build that cannot compile it fails here
       # instead of shipping without it.
       - uses: dtolnay/rust-toolchain@stable
@@ -164,8 +164,8 @@ jobs:
       - name: Rust engine (experimental)
         run: |
           ./venv/bin/python -m pip install --quiet maturin
-          ./venv/bin/maturin build --release -m rust/ingetrazo_core/Cargo.toml -o "$RUNNER_TEMP/wheels"
-          ./venv/bin/python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_core-*.whl
+          ./venv/bin/maturin build --release -m rust/crates/ingetrazo_py/Cargo.toml -o "$RUNNER_TEMP/wheels"
+          ./venv/bin/python -m pip install "$RUNNER_TEMP"/wheels/ingetrazo_py-*.whl
           INGETRAZO_RUST=1 ./venv/bin/python -c "import core._native as n; assert n.native is not None; print('engine:', n.engine())"
 
       - name: Build the PyInstaller bundle

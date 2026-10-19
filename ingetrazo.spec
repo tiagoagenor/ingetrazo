@@ -140,7 +140,7 @@ hiddenimports += ['manifold3d', 'core.solids', 'tools.solid_tools']
 # Copy/Paste between windows (#76): imported lazily by the viewport and
 # the main window.
 hiddenimports += ['formats.clip']
-# The optional native kernels (rust/ingetrazo_core, built with maturin):
+# The optional native kernels (rust/crates/ingetrazo_py, built with maturin):
 # shipped when the build environment has them installed, and simply
 # absent otherwise (core._native falls back to Python).
 import importlib.util as _ilu

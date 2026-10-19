@@ -64,7 +64,7 @@ jobs:
           python -m pip install --quiet -r requirements.txt
           python -c "import PySide6, numpy, openskp, openskp.legacy; print('deps OK')"
 
-      # The Rust engine (rust/ingetrazo_core): built on every PR so the
+      # The Rust engine (rust/crates/ingetrazo_py): built on every PR so the
       # parity tests (tests/test_*_native.py) run instead of skipping — the
       # safety net of the Rust migration (docs/rust-migration-plan.md).
       - name: Rust
@@ -72,13 +72,13 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: rust/ingetrazo_core
+          workspaces: rust
 
       - name: Rust engine
         run: |
           python -m pip install --quiet maturin
-          maturin build --release -m rust/ingetrazo_core/Cargo.toml -o "$RUNNER_TEMP/wheels"
-          python -m pip install --quiet "$RUNNER_TEMP"/wheels/ingetrazo_core-*.whl
+          maturin build --release -m rust/crates/ingetrazo_py/Cargo.toml -o "$RUNNER_TEMP/wheels"
+          python -m pip install --quiet "$RUNNER_TEMP"/wheels/ingetrazo_py-*.whl
           INGETRAZO_RUST=1 python -c "import core._native as n; assert n.native is not None; print('engine:', n.engine())"
 
       - name: Tests

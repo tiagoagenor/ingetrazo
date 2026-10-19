@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
+//! IngeTrazo's geometry kernels, with no Python in them.
+//!
+//! Every kernel here mirrors a Python function line by line — the same
+//! arithmetic in the same order — so both give the same drawing. The only
+//! thing a kernel may add is an index that finds the SAME candidates faster.
+
+pub mod arrange;
+pub mod boxes;
+pub mod conform;
+pub mod facegeom;
+pub mod fuse;
+pub mod gltape;
+pub mod hlr;
+pub mod instances;
+pub mod intersect;
+pub mod occlusion;
+pub mod parity;
+pub mod plan;
+pub mod section;
+pub mod tiff;
+pub mod volume;
+pub mod weld;

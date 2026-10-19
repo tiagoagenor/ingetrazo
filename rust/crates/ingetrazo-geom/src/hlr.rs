@@ -10,6 +10,7 @@
 //! it, so the candidate SET is identical. Order does not matter: the
 //! occluded intervals are sorted before they are merged, as in Python.
 
+use ingetrazo_math::pyfloat::{py_max2 as py_max, py_min2 as py_min};
 use rayon::prelude::*;
 
 const T_EPS: f64 = 1e-6; // core.hlr._T_EPS
@@ -457,16 +458,4 @@ fn visible_spans(
     if cursor < 1.0 - T_EPS {
         out.push((cursor, 1.0));
     }
-}
-
-/// Python's built-in max(a, b): a unless b is greater (NaN stays as a).
-#[inline]
-fn py_max(a: f64, b: f64) -> f64 {
-    if b > a { b } else { a }
-}
-
-/// Python's built-in min(a, b): a unless b is smaller.
-#[inline]
-fn py_min(a: f64, b: f64) -> f64 {
-    if b < a { b } else { a }
 }

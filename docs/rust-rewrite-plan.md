@@ -285,5 +285,5 @@ after 2.0, so composer users have somewhere to go until 2.1.
 ### Critical files
 
 - `core/history.py`, `core/mesh.py`, `formats/igz.py`, `tools/pushpull.py`
-- `rust/ingetrazo_core/src/lib.rs`
+- `rust/crates/ingetrazo-geom` (the kernels) and `rust/crates/ingetrazo_py/src/lib.rs` (the shim)
 - `views/viewport.py`, `views/extension_api.py`

@@ -1,0 +1,20 @@
+# IngeTrazo's Rust workspace (docs/rust-rewrite-plan.md, section 2).
+[workspace]
+resolver = "2"
+members = ["crates/ingetrazo-math", "crates/ingetrazo-geom", "crates/ingetrazo_py"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[workspace.dependencies]
+ingetrazo-math = { path = "crates/ingetrazo-math" }
+ingetrazo-geom = { path = "crates/ingetrazo-geom" }
+rayon = "1.12.0"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

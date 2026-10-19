@@ -75,7 +75,7 @@ jobs:
           pip install "openskp @ git+https://github.com/iamahsanmehmood/openskp@291700bc213655a00461838de71e5f206311e619#subdirectory=packages/python"
           python -c "import openskp, openskp.legacy; print('openskp OK:', openskp.__name__)" 
 
-      # El motor Rust EXPERIMENTAL (rust/ingetrazo_core, Preferencias ▸
+      # El motor Rust EXPERIMENTAL (rust/crates/ingetrazo_py, Preferencias ▸
       # General; apagado por defecto). Si no compila, falla aquí: nunca
       # publicar un instalador que lo promete y no lo trae.
       - name: Rust
@@ -85,8 +85,8 @@ jobs:
         shell: bash
         run: |
           pip install maturin
-          maturin build --release -m rust/ingetrazo_core/Cargo.toml -o "$RUNNER_TEMP/wheels"
-          pip install "$RUNNER_TEMP"/wheels/ingetrazo_core-*.whl
+          maturin build --release -m rust/crates/ingetrazo_py/Cargo.toml -o "$RUNNER_TEMP/wheels"
+          pip install "$RUNNER_TEMP"/wheels/ingetrazo_py-*.whl
           INGETRAZO_RUST=1 python -c "import core._native as n; assert n.native is not None; print('motor:', n.engine())"
 
       # DWG en Windows (#101): el dwg2dxf.exe OFICIAL de LibreDWG (su

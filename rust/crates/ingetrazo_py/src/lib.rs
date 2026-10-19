@@ -1,31 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
-//! Native kernels for IngeTrazo. Optional: `core/_native.py` imports this
-//! module when it is built and falls back to the Python code otherwise.
-//!
-//! Every kernel here mirrors a Python function line by line — the same
-//! arithmetic in the same order — so both give the same drawing. The only
-//! thing a kernel may add is an index that finds the SAME candidates faster.
+//! The Python app's bridge to `ingetrazo-geom`. Optional: `core/_native.py`
+//! imports this module when it is built and falls back to the Python code
+//! otherwise. Only conversions live here: numpy arrays in, kernels called,
+//! numpy arrays out. Deleted with the Python app (rust-rewrite-plan M10).
 
 use numpy::{PyArray1, PyArray2, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray1};
 use pyo3::prelude::*;
 
-mod arrange;
-mod boxes;
-mod conform;
-mod facegeom;
-mod fuse;
-mod gltape;
-mod hlr;
-mod instances;
-mod intersect;
-mod occlusion;
-mod parity;
-mod plan;
-mod section;
-mod tiff;
-mod volume;
-mod weld;
+use ingetrazo_geom::{
+    arrange, boxes, conform, facegeom, fuse, gltape, hlr, instances, intersect, occlusion, parity, plan,
+    section, tiff, volume, weld,
+};
 
 #[pymodule]
 fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
