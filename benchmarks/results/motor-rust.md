@@ -56,7 +56,7 @@ Máquina de Tiago (Windows 11, 28 hilos). Modelos sintéticos de `scripts/bench_
 | abrir hasta el primer dibujo, city-M (motor encendido, Windows) | 4,34 s | 0,72 s | mallas ligeras dibujadas desde arreglos: `qt_hypot` ya reconoce MSVC |
 | abrir hasta el primer dibujo, city-L | 16,31 s | 1,64 s | |
 | `lazy_mesh.plan`, rejilla 300×300 (90 000 caras) | 407,5 ms | 155,6 ms | `plan_topology` + ids de curva/capa como arreglos |
-| aplicar 2 000 cruces de Intersecar, city-M | 10,2 s | 4,3 s → 2,9 s* | grafo de ciclos vivo; *con el filtro de cajas incremental |
+| aplicar 2 000 cruces de Intersecar, city-M | 10,2 s | 0,54 s | grafo de ciclos vivo (4,3 s) y filtro de cajas incremental |
 | aplicar 8 000 cruces de Intersecar, city-M | 195,5 s | 2,95 s | #541: los dos costes cuadráticos del planificador (Python) |
 | `_build_graph`, 300 paredes cortas (planta) | 70,2 ms | 3,8 ms | `arrangement_splits` |
 | `_build_graph`, 300 segmentos al azar que se cruzan | 178 ms | 66 ms | lo que queda es el grafo en Python |
@@ -65,6 +65,5 @@ Máquina de Tiago (Windows 11, 28 hilos). Modelos sintéticos de `scripts/bench_
 | Intersecar ▸ Con la selección (encontrar), city-L | 44,6 s | 10,0 s | |
 | `_conform_t_junctions`, muro con 2 000 puertas | 3 140 ms | 4 ms | |
 
-\* La medición de 2 000 cruces con el filtro incremental no se repitió aparte; 2,95 s es la de 8 000.
 
 El «degenerate edge» con 8 000 cruces no se reprodujo en city-M (la plaza no está en esta máquina): sigue pendiente de comprobar con `plaza.igz`.
