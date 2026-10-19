@@ -168,11 +168,49 @@ that waits for the gate, kernel by kernel, eager-mutation callers last.
 
 ### Phase 3: formats and georef
 
-`formats/` and `georef/` (DEM through `ndarray`). **openskp** (.skp) and
-**ezdxf** (DXF) stay in Python: no Rust equivalent of the first, and the
-`dxf` crate covers far less than the second. Done when `core/ tools/ georef/
-formats/` (but SKP/DXF) hold no domain logic in Python and the non-UI tests
-run without a `QApplication`. Then: decide on the UI.
+**openskp** (.skp) and **ezdxf** (DXF) stay in Python. Phases 1–2 showed
+where time goes: not building Python `Mesh` objects and removing quadratic
+algorithms gave the big wins; kernels paid only on pair loops or ≥ 20 µs
+per element. Phase 3 applies the same three tests.
+
+In order:
+
+- **A1 (Python)** `_maximal_holes` (`topology.py`): every pair of holes,
+  O(H²) on each open and save of a many-holed face — an AABB prefilter
+  (inside is tested by centroid), the old version kept as test oracle.
+- **A2 (Python)** `simplify_mesh`'s collapse loop (`fuse.py`) rescans from
+  the start after every collapse: resume from the lowest neighbour index,
+  same "first collapsible in list order" rule.
+- **L1 `lzw_decode`** (`georef/geotiff.py`): TIFF LZW decoded code by code
+  in Python; byte-equal output.
+- **A4 (NumPy)** STL binary read/write, one `struct` call per triangle now.
+- **A5 (Python) then K6 `fuse_regions`** (`fuse.py`, ~35 µs a triangle,
+  behind OBJ/DAE/SKP-legacy import and solids): first make `_trace_region`
+  independent of set order, then port.
+- **E1** exports from arrays (`meshexport`, STL/OBJ/glTF/DAE): world
+  points mapped per vertex in Python, then the weld and `face_geometry`
+  kernels, a small `tri_normals` kernel — byte-identical files.
+- **I1** imports produce lazy meshes (glb/skp/stl/OBJ/DAE).
+- **K7 `obj_scan`**: OBJ text into arrays (obj.py and photomesh.py).
+- **A3** DXF 3DFACE merge cap, **S1** `_share_repeats`, **G1** terrain
+  grid in NumPy: each landed or rejected with numbers.
+
+Done when those have landed (or been rejected with numbers), each kernel
+has a sabotage-checked parity test, motor-rust.md has city-M/L numbers for
+open, save and each import/export, `formats/` and `georef/` reach Qt only
+through `core.vecmath` and one image helper, and the non-UI tests run in CI
+without a `QApplication`. Linear Python glue stays: packing it would cost
+as much as it does.
+
+**Then the gate decides:** Rust mandatory (the five criteria), the order
+fallbacks go, and the UI. **Recommendation: no Rust UI rewrite.** Every big
+gain came from data structures or algorithms, never from Qt; what is left
+in interaction (a click 45 ms, a move's p95 222 ms, undo 99 ms) is the
+eager Python `Mesh`/`History`, which a Rust UI would still call. The next
+step after the gate is an editable array store with array undo snapshots
+(`docs/halfedge-migration-plan.md` M3), measured with `bench_interaction`;
+the UI is revisited only if more than half of a frame is then spent in
+`views/` Python.
 
 ## Rules for every port
 
