@@ -1,7 +1,7 @@
 # Rust migration plan: from Python kernels to a Rust core
 
-> Status: **in progress** (branch `rust-migration`): Phase 0 done, Phase 1
-> under way.
+> Status: **in progress** (branch `rust-migration`): Phases 0, 1 and 2 done
+> (numbers in `benchmarks/results/motor-rust.md`); Phase 3 next.
 > Written in English per the repo convention (code/docs/comments in English).
 
 ## Goal
@@ -103,9 +103,9 @@ store would need syncing on every edit. New work is stateless kernels over
   (`Viewport._face_under`, `PickEntities.peek`).
 - ✅ **C3** Selecting a group: box and counts from the plan
   (`vertex_positions`, `vertex_count`, `face_count` in Entity Info).
-- **C4** `Plan.pos32` cached; `curve`/`layer` as int arrays with lazy list
+- ✅ **C4** `Plan.pos32` cached; `curve`/`layer` as int arrays with lazy list
   views (drops the per-edge Python loop of `_plan_native`).
-- **C5** `signed_volume` kernel for Entity Info's solid volume of a lazy
+- ✅ **C5** `signed_volume` kernel for Entity Info's solid volume of a lazy
   group (`core/bim.py` `face_set_volume`'s sum, f32 Qt order, f64 total),
   closedness from `ef_start` alone.
 - **Postponed:** read-only topology queries (they run on meshes being
@@ -128,27 +128,27 @@ a kernel pays only where Python spends far more per element: pair loops
 
 In order:
 
-- **P0 (Python)** — #541 apply: one incremental cycle adjacency per plan
+- ✅ **P0 (Python)** — #541 apply: one incremental cycle adjacency per plan
   instead of `_cycle_adjacency` rebuilt per segment (`topology.py:107`,
   `edits.py:286`); fix the "degenerate edge" at 8 000 crossings. 2 000
   crossings take 4.2 s and 8 000 take 112 s; the cause is the algorithm,
   which no kernel fixes. Target: 8 000 in < 10 s. Plus `Face.normal()`
   memoised per scan.
-- **K1 `arrangement_splits`** — `arrangement.py` `_build_graph`'s all-pairs
+- ✅ **K1 `arrangement_splits`** — `arrangement.py` `_build_graph`'s all-pairs
   segment splits (1.2 µs a pair: 184 ms for 300 segments), behind push/pull
   cap rebuild, history and the Offset drag. f64 scalar, no hypot. Python
   keeps the graph, face tracing and classification (set order decides loop
   starts).
-- **K2 `section_loops`** — `hlr.py` chord chaining into rings, so the
+- ✅ **K2 `section_loops`** — `hlr.py` chord chaining into rings, so the
   section fill keeps up with a plane drag. The fill and hatch stay NumPy.
-- **K3 `intersect_cross`** — `intersect.py` per-face polygons and per-pair
+- ✅ **K3 `intersect_cross`** (`PolySet`) — `intersect.py` per-face polygons and per-pair
   crossing (36 µs a face, 20 µs a pair), the rest of plaza's 8.7 s
   `intersect_find`. Qt `normalized()` with both fuzz branches, through
   `Hypot`; world points still mapped in Python (`QMatrix4x4.map` changes
   arithmetic with the matrix type).
-- **K4 `conform_t_junctions`** — `solids.py`'s O(T·V) near-vertex scan, a
+- ✅ **K4 `conform_t_junctions`** — `solids.py`'s O(T·V) near-vertex scan, a
   grid in Rust (the Python twin first rewritten to scalar arithmetic).
-- **K5 `outer_shell_mask`** — the union-find labelling only; last, if K4
+- ✅ **K5 `outer_shell_mask`** (`shell_roots`) — the union-find labelling only; last, if K4
   lands.
 
 Not in Phase 2: **booleans** (manifold3d is already native C++, crossed
