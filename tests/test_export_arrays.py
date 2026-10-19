@@ -125,3 +125,64 @@ def test_city_stl_bytes(monkeypatch, tmp_path):
     a = _stl_bytes(monkeypatch, scene, tmp_path, False, "m")
     b = _stl_bytes(monkeypatch, scene, tmp_path, True, "m")
     assert a == b
+
+
+def _obj_bytes(monkeypatch, scene, tmp_path, use):
+    from formats import obj
+    monkeypatch.setattr(_native, "native", nat if use else None)
+    d = tmp_path / ("arrays" if use else "loop")
+    d.mkdir(exist_ok=True)
+    obj.save_obj(scene, d / "m.obj")
+    return (d / "m.obj").read_bytes(), (d / "m.mtl").read_bytes()
+
+
+def _paint(scene, rng, tmp_path):
+    from PySide6.QtGui import QImage
+    png = tmp_path / "t.png"
+    img = QImage(4, 4, QImage.Format_RGB32)
+    img.fill(0x8B5A2B)
+    img.save(str(png))
+    for f in scene.mesh.faces:
+        r = rng.random()
+        if r < 0.25:
+            f.attrs["texture"] = {"path": str(png), "sw": 0.5, "sh": 0.7,
+                                  "rot": 30}
+        elif r < 0.4:
+            f.attrs["texture"] = {"path": str(png),
+                                  "uvw": [1.0, 0.0, 0.0, 0.25, 0.0, 1.0,
+                                          0.0, 0.5]}
+        elif r < 0.6:
+            f.attrs["color"] = [0.2, 0.4, 0.6, 1.0]
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_obj_bytes(monkeypatch, tmp_path, seed):
+    scene = _scene(seed)
+    _paint(scene, random.Random(seed), tmp_path)
+    a = _obj_bytes(monkeypatch, scene, tmp_path, False)
+    b = _obj_bytes(monkeypatch, scene, tmp_path, True)
+    assert a == b and len(a[0]) > 40
+
+
+def test_city_obj_bytes(monkeypatch, tmp_path):
+    path = ROOT / "benchmarks" / "models" / "city-M.igz"
+    if not path.exists():
+        pytest.skip("scripts/bench_models.py M not run")
+    from formats import igz
+    scene = Scene()
+    igz.load_into(scene, path)
+    assert _obj_bytes(monkeypatch, scene, tmp_path, False) == \
+        _obj_bytes(monkeypatch, scene, tmp_path, True)
+
+
+def test_obj_vertex_key_tie(monkeypatch, tmp_path):
+    """2**-7 is a float32 and 2**-7 × 1e6 = 7812.5: round(x, 6) goes to the
+    even 0.007812, so it stays apart from 0.007813 (half-up would weld)."""
+    scene = Scene()
+    _add(scene.mesh, [V(2 ** -7, 0, 0), V(1, 0, 0), V(1, 1, 0)])
+    g = Group(name="apart")              # its own mesh: no weld with the loose one
+    _add(g.mesh, [V(0.007813, 0, 0), V(1, 1, 0), V(0, 1, 0)])
+    scene.groups.append(g)
+    a = _obj_bytes(monkeypatch, scene, tmp_path, False)
+    b = _obj_bytes(monkeypatch, scene, tmp_path, True)
+    assert a == b

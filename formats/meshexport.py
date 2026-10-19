@@ -37,7 +37,7 @@ def export_triangles(face):
             yield tri
 
 
-def batch_triangles(faces):
+def batch_triangles(faces, with_faces: bool = False):
     """``[t for f in faces for t in export_triangles(f)]`` as arrays —
     ``(pos (P,3) float32, tris (T,3) int64)``, the triangles' corners
     indexing ``pos`` in that very order — or ``None`` without the Rust
@@ -46,6 +46,7 @@ def batch_triangles(faces):
     Qt's normalized() does not divide — a Newell length within its fuzz of
     0 or 1 — and those few faces take Face.triangulate itself); the area
     filter is NumPy's, with the Python formula deciding at the threshold.
+    `with_faces`: a third array, each triangle's index in `faces`.
     tests/test_export_arrays.py."""
     import core._native as _native
     nat = _native.native
@@ -69,7 +70,9 @@ def batch_triangles(faces):
     pos = np.asarray(coords, dtype=np.float32).reshape(-1, 3)
     nf = len(counts)
     if nf == 0:
-        return pos, np.zeros((0, 3), dtype=np.int64)
+        empty = np.zeros((0, 3), dtype=np.int64)
+        return (pos, empty, np.zeros(0, dtype=np.int64)) if with_faces \
+            else (pos, empty)
     _n, ln, _c, _t, _tf, _u, tris_u, tri_face_u = nat.face_geometry(
         pos, np.arange(len(pos), dtype=np.int64),
         np.asarray(sizes, dtype=np.int64), np.asarray(counts, dtype=np.int64),
@@ -102,7 +105,7 @@ def batch_triangles(faces):
         tris = np.concatenate([tris, np.asarray(extra_tris, dtype=np.int64)])
         tface = np.concatenate([tface, np.asarray(extra_face, dtype=np.int64)])
         order = np.argsort(tface, kind="stable")
-        tris = tris[order]
+        tris, tface = tris[order], tface[order]
     # export_triangles' area filter, in float64 from the float32 corners.
     p64 = pos.astype(np.float64)
     a, b, c = p64[tris[:, 0]], p64[tris[:, 1]], p64[tris[:, 2]]
@@ -116,6 +119,8 @@ def batch_triangles(faces):
     for i in np.flatnonzero(np.abs(area - _MIN_TRI_AREA)
                             <= 1e-6 * _MIN_TRI_AREA).tolist():
         ok[i] = 0.5 * float(s[i]) ** 0.5 >= _MIN_TRI_AREA
+    if with_faces:
+        return pos, tris[ok], tface[ok]
     return pos, tris[ok]
 
 

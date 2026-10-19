@@ -42,6 +42,76 @@ def _faces(scene):
         yield from scene.faces
 
 
+def _obj_arrays(faces, uvidx):
+    """:func:`save_obj`'s ``(verts, materials, groups)`` with the faces'
+    triangles from :func:`batch_triangles` and the vertex numbering in
+    NumPy — the same lists (tests/test_export_arrays.py) — or ``None``
+    without the engine. ``round(x, 6)`` of a float32 is
+    ``round_ties_even(x · 1e6)`` (the product is exact), numbered in order
+    of first appearance; textured triangles still get their UVs one by one
+    here (``uvidx``), in the order the face loop gave them."""
+    from .meshexport import batch_triangles
+    hit = batch_triangles(faces, with_faces=True)
+    if hit is None:
+        return None
+    import numpy as np
+    from core.texture import affine_uv, planar_uv
+    pos, tris, tface = hit
+    corner = pos.astype(np.float64)[tris.reshape(-1)]          # (3T, 3)
+    if len(corner) and np.abs(corner).max() > 1e12:
+        return None                       # keys past int64: the loop's job
+    keys = np.round(corner * 1e6).astype(np.int64)  # ties to even, exact
+    if len(keys):
+        _u, first, inv = np.unique(keys, axis=0, return_index=True,
+                                   return_inverse=True)
+        order = np.argsort(first, kind="stable")
+        rank = np.empty_like(order)
+        rank[order] = np.arange(len(order))
+        vid = (rank[inv.reshape(-1)] + 1).reshape(-1, 3).tolist()
+        verts = [tuple(r) for r in corner[first[order]].tolist()]
+    else:
+        vid, verts = [], []
+    materials: dict = {}
+    groups: dict = {}
+    face_key: list = []
+    face_tex: list = []
+    for face in faces:
+        tex = face.attrs.get("texture")
+        if tex is not None and tex.get("path"):
+            src = Path(tex["path"])
+            key = ("tex", src.name)
+            materials.setdefault(key, {"color": (1.0, 1.0, 1.0),
+                                       "map": src.name, "src": src})
+            if face.attrs.get("mat") and "mat" not in materials[key]:
+                materials[key]["mat"] = face.attrs["mat"]
+            face_tex.append((face.normal(), tex.get("sw", 1.0) or 1.0,
+                             tex.get("sh", 1.0) or 1.0,
+                             float(tex.get("rot", 0.0)), tex.get("uvw")))
+        else:
+            col = tuple(face.attrs.get("color") or _DEFAULT_COLOR)[:3]
+            key = ("color", col)
+            materials.setdefault(key, {"color": col, "map": None})
+            if face.attrs.get("mat") and "mat" not in materials[key]:
+                materials[key]["mat"] = face.attrs["mat"]
+            face_tex.append(None)
+        face_key.append(key)
+    pts = pos.tolist()
+    for t, (f, tri) in enumerate(zip(tface.tolist(), tris.tolist())):
+        key = face_key[f]
+        tx = face_tex[f]
+        ids = vid[t]
+        if tx is None:
+            groups.setdefault(key, []).append([(ids[k], None)
+                                               for k in range(3)])
+            continue
+        n, sw, sh, rot, uvw = tx
+        q = [QVector3D(*pts[k]) for k in tri]
+        uv = affine_uv(uvw, q) if uvw else planar_uv(n, q, sw, sh, rot)
+        groups.setdefault(key, []).append(
+            [(ids[k], uvidx(uv[k])) for k in range(3)])
+    return verts, materials, groups
+
+
 def save_obj(scene, path) -> None:
     """Write the scene as ``path`` (.obj) + a sibling ``.mtl``. Solid colours
     become ``Kd`` materials; textured faces become ``map_Kd`` materials with the
@@ -77,7 +147,10 @@ def save_obj(scene, path) -> None:
     # (each triangle a list of (vi, ti|None)).
     materials: dict[tuple, dict] = {}
     groups: dict[tuple, list] = {}
-    for face in _faces(scene):
+    hit = _obj_arrays(list(_faces(scene)), uvidx)
+    if hit is not None:
+        verts, materials, groups = hit
+    for face in (() if hit is not None else _faces(scene)):
         tex = face.attrs.get("texture")
         if tex is not None and tex.get("path"):
             src = Path(tex["path"])
