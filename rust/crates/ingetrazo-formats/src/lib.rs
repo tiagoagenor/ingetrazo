@@ -4,4 +4,5 @@
 //! app writes, so either app can open the other's documents.
 
 pub mod igz;
+pub mod igz_geom;
 pub mod pyjson;
