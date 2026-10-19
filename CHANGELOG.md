@@ -352,6 +352,19 @@ follow [SemVer](https://semver.org).
   calculó Python (`scripts/golden/make_fillet_fixtures.py`: cajas giradas y
   aplastadas, prismas, una L, una pirámide, láminas plegadas, un hueco
   pasante): todo idéntico, bit a bit.
+- **Ubicación, MDT y GeoTIFF en Rust** (`rust/crates/ingetrazo-georef`,
+  M7.1 y M7.4): `georef/datum.py` (zona UTM, `utm_forward`/`utm_inverse`,
+  `SceneDatum` con el ángulo norte y sus conversiones, `to_dict`/`from_dict`
+  como valores de `pyjson`), el muestreo de `georef/dem.py` (decodificación
+  terrarium/mapbox en float32, `bilinear`, `pixel_in_tile` y el sondeo por
+  datum, sin Qt ni red) y `georef/geotiff.py` (cabecera TIFF/BigTIFF, GeoKeys,
+  tiras y teselas sin comprimir, Deflate, PackBits y LZW —reusando los de
+  `ingetrazo-geom`—, 8 y 16 bits, plano contiguo o separado, reducción por
+  bandas). `**` es `powf`, `math.hypot` es el algoritmo propio de CPython y
+  los `QVector3D` son f32. 18 000 registros de
+  `scripts/golden/make_georef_fixtures.py` (datum, MDT) y 98 TIFF
+  generados por Python vuelven idénticos al bit. Falta el JPEG dentro de
+  TIFF, que Python delega en Qt.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

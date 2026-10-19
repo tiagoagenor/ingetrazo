@@ -1,0 +1,16 @@
+[package]
+name = "ingetrazo-georef"
+description = "IngeTrazo's georeferencing: UTM datum, DEM sampling, GeoTIFF reading"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-math.workspace = true
+ingetrazo-geom.workspace = true
+ingetrazo-formats.workspace = true
+flate2 = "1.1"
+
+[lints]
+workspace = true
