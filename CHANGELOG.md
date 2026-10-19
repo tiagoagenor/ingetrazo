@@ -375,6 +375,18 @@ follow [SemVer](https://semver.org).
   lo que rechaza falla con la misma clase de excepción. 4400 casos que
   escribió Python (`scripts/golden/make_model_data_fixtures.py`): cada texto
   de `json.dumps` sale idéntico en Rust.
+- **Cotas, textos, guías, cortes, vistas guardadas e imágenes en Rust**
+  (`ingetrazo-model`, M2.5): los datos de `Dimension`, `TextLabel`, `Guide`,
+  `SectionPlane`, `SavedView` e `ImagePlane` con su geometría sin malla
+  (valor y texto de la cota con unidades y precisión, cota alineada y
+  lineal, línea y punto medio, `placement_for_cursor`, plano de corte y
+  su relleno efectivo, `from_lookat`, esquinas y escala de la imagen) y su
+  lectura y escritura en el `.igz`, `to_dict` con los mismos bytes que
+  `json.dumps`. Los anclajes de las cotas a vértices quedan como datos
+  sueltos hasta que exista la escena. Comparado con 5400 casos que calcularon
+  las clases de Python (`scripts/golden/make_annotation_fixtures.py`): al
+  bit en los vectores, igual de exacto en el texto y en los errores de
+  `from_dict`.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

@@ -1,0 +1,161 @@
+{"meta": {"qt": "6.11.2", "pyside": "6.11.2", "platform": "win32", "python": "3.12.14"}}
+{"syms":["\u00e9","AB","",null,"AA","B","C",null],"out":"A"}
+{"syms":["A","Z","x","AA","AB"],"out":"B"}
+{"syms":["AA","AA","AA"],"out":"A"}
+{"syms":["B","B","AZ","ZZ",null],"out":"A"}
+{"syms":["AB","B","ZZ","Z","AB","A","b","\u00e9"],"out":"C"}
+{"syms":["?",null,"AA","\u00e9","AB","?"],"out":"A"}
+{"syms":["AA","A","\u00e9","?"," a ",null,"\u00e9","B"],"out":"C"}
+{"syms":[" a ","","AB","AA","AB","?","B",""],"out":"C"}
+{"syms":["AZ","","ZZ","Z","AZ"," a ","","B"],"out":"C"}
+{"syms":["x","?","\u00e9","?","Z"],"out":"A"}
+{"syms":["x","ZZ","AB","ZZ"," a ","Z","","?"],"out":"B"}
+{"syms":["AB",null],"out":"A"}
+{"syms":["AB","","AA","?","Z","ZZ"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["x","x","\u00e9"," a ","x","Z","AA"],"out":"B"}
+{"syms":["\u00e9","\u00e9","","?"],"out":"A"}
+{"syms":["","A","Z","A","B","A","","ZZ"],"out":"C"}
+{"syms":["ZZ","ZZ"],"out":"A"}
+{"syms":["?","Z","C","ZZ","","Z"],"out":"A"}
+{"syms":["ZZ","A","b","AZ","x","Z"],"out":"C"}
+{"syms":["ZZ","AA"],"out":"A"}
+{"syms":["ZZ","x","ZZ","ZZ","ZZ"],"out":"A"}
+{"syms":["AB","AZ"],"out":"A"}
+{"syms":[" a ",null,"C","Z","AZ"],"out":"B"}
+{"syms":["AZ","C","Z","AA","?","C"],"out":"A"}
+{"syms":["\u00e9","?","A","AB","AA",null],"out":"B"}
+{"syms":["ZZ","B","AZ","","","Z","ZZ","C"],"out":"A"}
+{"syms":["Z","x","","A","?","x"],"out":"B"}
+{"syms":["x"," a ","Z","?"],"out":"B"}
+{"syms":["\u00e9","?"," a ",null,"x"],"out":"B"}
+{"syms":["Z","B","\u00e9","AB"],"out":"A"}
+{"syms":["AZ","b"," a "],"out":"C"}
+{"syms":["b","ZZ","C","x"],"out":"A"}
+{"syms":["\u00e9","AB"," a ","B","\u00e9","b"],"out":"C"}
+{"syms":["C","B","C"],"out":"A"}
+{"syms":["AB"],"out":"A"}
+{"syms":["AB","\u00e9","A","b","?"],"out":"C"}
+{"syms":["B","AA","C","ZZ","C"],"out":"A"}
+{"syms":["AZ",null,"AA","x","b","b","ZZ"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["?","B","\u00e9",null],"out":"A"}
+{"syms":["AZ"],"out":"A"}
+{"syms":["b","Z","\u00e9","AB","Z","C","AZ"],"out":"A"}
+{"syms":["AA",null,"?","?","B","ZZ","A"],"out":"C"}
+{"syms":["\u00e9","AZ","\u00e9","Z"],"out":"A"}
+{"syms":["A"],"out":"B"}
+{"syms":["ZZ","b"],"out":"A"}
+{"syms":["b","AZ",null,"?"],"out":"A"}
+{"syms":["C","AB"],"out":"A"}
+{"syms":["AA"],"out":"A"}
+{"syms":["ZZ"],"out":"A"}
+{"syms":["x","\u00e9","AZ","AZ","Z","AB","B","B"],"out":"A"}
+{"syms":["AZ","A","B","x","A",""],"out":"C"}
+{"syms":[null,"B"],"out":"A"}
+{"syms":["\u00e9","b","","b"," a "],"out":"C"}
+{"syms":["C"," a ","AZ","",null,"?"],"out":"B"}
+{"syms":[],"out":"A"}
+{"syms":["Z","A","b","AB",null],"out":"C"}
+{"syms":[null,"AB","\u00e9","","AB"],"out":"A"}
+{"syms":["B","b","AA","Z","?","AA"],"out":"A"}
+{"syms":["\u00e9"],"out":"A"}
+{"syms":["Z","x",null,"C"," a ","A"],"out":"B"}
+{"syms":["",null,""],"out":"A"}
+{"syms":["?","B","A","\u00e9"],"out":"C"}
+{"syms":["B","Z","AZ","x","A","x",null],"out":"C"}
+{"syms":["","x"],"out":"A"}
+{"syms":["B","AA","AA","B","b"],"out":"A"}
+{"syms":["?","Z","x","AZ"],"out":"A"}
+{"syms":["B","x","B","AB","ZZ","AZ","C"],"out":"A"}
+{"syms":["C","?","AA","A","AB"],"out":"B"}
+{"syms":["x","C","b","","b","ZZ"],"out":"A"}
+{"syms":[null,"x","x"],"out":"A"}
+{"syms":["A","ZZ","b",null,"","b"," a "],"out":"C"}
+{"syms":["AB","?",null,"\u00e9","C","AZ","B","AZ"],"out":"A"}
+{"syms":["?","AZ",null,"AA","ZZ","C","Z"],"out":"A"}
+{"syms":["AA","AA","Z","A","\u00e9"],"out":"B"}
+{"syms":["AA","AB","b","?",null,"ZZ","A"],"out":"C"}
+{"syms":["AB","B","Z","\u00e9","AA"],"out":"A"}
+{"syms":["AA","Z","AZ","B","x",null," a ","A"],"out":"C"}
+{"syms":["","AA","AZ","Z","b","Z"," a ","A"],"out":"C"}
+{"syms":["x","","AB","B"],"out":"A"}
+{"syms":[null],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["?"],"out":"A"}
+{"syms":["C","AA"],"out":"A"}
+{"syms":["x"," a ","C","AZ","Z"],"out":"B"}
+{"syms":["ZZ","Z"],"out":"A"}
+{"syms":["B","b","","B","","","AA","Z"],"out":"A"}
+{"syms":["","\u00e9"],"out":"A"}
+{"syms":["Z","?"],"out":"A"}
+{"syms":["AA"],"out":"A"}
+{"syms":["","AZ","\u00e9","b","B","","","C"],"out":"A"}
+{"syms":["x","AA","A","B"," a ","\u00e9","A"],"out":"C"}
+{"syms":[],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":[""," a "],"out":"B"}
+{"syms":["C","","AB","x","ZZ","AZ"],"out":"A"}
+{"syms":["Z","A","x","AB","Z","AB","A"],"out":"B"}
+{"syms":["?","\u00e9","A","AZ"," a ","x","\u00e9"],"out":"B"}
+{"syms":[null,"b","A","\u00e9"],"out":"C"}
+{"syms":["AB","\u00e9","AA","x"],"out":"A"}
+{"syms":["?","B","A"],"out":"C"}
+{"syms":["B"],"out":"A"}
+{"syms":["?"],"out":"A"}
+{"syms":["AZ","?",null],"out":"A"}
+{"syms":["A"," a ","x","Z","AA","x"],"out":"B"}
+{"syms":["C","B",null],"out":"A"}
+{"syms":["\u00e9","AZ","B","AA","Z","?","AB"],"out":"A"}
+{"syms":[" a ","B","AZ"],"out":"C"}
+{"syms":["B"],"out":"A"}
+{"syms":["b","b"],"out":"A"}
+{"syms":["Z","\u00e9"],"out":"A"}
+{"syms":["AZ","Z"," a ","b"],"out":"C"}
+{"syms":["AZ",null],"out":"A"}
+{"syms":["AB","AZ","C","Z","AA","AB","","C"],"out":"A"}
+{"syms":["AZ"],"out":"A"}
+{"syms":[" a ",""],"out":"B"}
+{"syms":["AB"," a ","\u00e9","AZ","b"],"out":"C"}
+{"syms":["B","AA",null,"?","?"],"out":"A"}
+{"syms":["B","Z","b","b"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["AZ","x","A","B"],"out":"C"}
+{"syms":["\u00e9","AA","ZZ","AB","b",null,"B"],"out":"A"}
+{"syms":["ZZ","C","AB"," a ","b"],"out":"D"}
+{"syms":["C",null,"","AZ","C","AB","A"],"out":"B"}
+{"syms":["b","AZ","B","B","A"],"out":"C"}
+{"syms":["x","A","A","x","ZZ"],"out":"B"}
+{"syms":["AB","AZ","B"," a ","Z","?","B","Z"],"out":"C"}
+{"syms":[],"out":"A"}
+{"syms":["C","A","?","Z"],"out":"B"}
+{"syms":["","AB","B","AA"],"out":"A"}
+{"syms":["AA","ZZ","\u00e9","?"],"out":"A"}
+{"syms":["Z","AZ","Z","x","x","AZ","\u00e9"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":[""],"out":"A"}
+{"syms":[null,"ZZ"," a ","AB","b"],"out":"C"}
+{"syms":["C","?"],"out":"A"}
+{"syms":[null,null,"Z","b"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["AB",null,"\u00e9","b","\u00e9","x","\u00e9"],"out":"A"}
+{"syms":["AA"," a ","AA","Z"," a ","AA"],"out":"B"}
+{"syms":["Z","C","A","C","?"," a "],"out":"B"}
+{"syms":["AB","x","AB","x","B",""],"out":"A"}
+{"syms":["?"],"out":"A"}
+{"syms":["AA"],"out":"A"}
+{"syms":["C","AB","","A","x"],"out":"B"}
+{"syms":["?"],"out":"A"}
+{"syms":["C","","B"],"out":"A"}
+{"syms":[],"out":"A"}
+{"syms":["A"],"out":"B"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y"],"out":"Z"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],"out":"AA"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA"],"out":"AB"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB"],"out":"AC"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC"],"out":"AD"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","BA","BB","BC","CA","CB","CC","DA","DB","DC","EA","EB","EC","FA","FB","FC","GA","GB","GC","HA","HB","HC","IA","IB"],"out":"AD"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","BA","BB","BC","CA","CB","CC","DA","DB","DC","EA","EB","EC","FA","FB","FC","GA","GB","GC","HA","HB","HC","IA","IB","IC","JA","JB","JC","KA","KB","KC","LA","LB","LC","MA","MB","MC","NA","NB","NC","OA","OB","OC","PA","PB","PC","QA","QB","QC","RA"],"out":"AD"}
+{"syms":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","BA","BB","BC","CA","CB","CC","DA","DB","DC","EA","EB","EC","FA","FB","FC","GA","GB","GC","HA","HB","HC","IA","IB","IC","JA","JB","JC","KA","KB","KC","LA","LB","LC","MA","MB","MC","NA","NB","NC","OA","OB","OC","PA","PB","PC","QA","QB","QC","RA","RB","RC","SA","SB","SC","TA","TB","TC","UA","UB","UC","VA","VB","VC","WA","WB","WC","XA","XB","XC","YA","YB"],"out":"AD"}
