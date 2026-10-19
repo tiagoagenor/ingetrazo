@@ -86,7 +86,7 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Vetores e matrizes do Qt reproduzidos bit a bit (incl. map)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.4,
    "concluido_em": ""
   },
@@ -230,7 +230,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Leitura do .igz nos três formatos",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -662,7 +662,7 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Localização e datum",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8,
    "concluido_em": ""
   },
@@ -689,7 +689,7 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "GeoTIFF",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8,
    "concluido_em": ""
   },
