@@ -592,6 +592,10 @@ class LazyPairs:
     def __getitem__(self, i):
         return (self.faces[i], self.owner)
 
+    def owner_at(self, i):
+        """``self[i][1]`` without building the face."""
+        return self.owner
+
     def __iter__(self):
         owner = self.owner
         return ((f, owner) for f in self.faces)
@@ -627,7 +631,7 @@ class PickEntities:
     def __bool__(self):
         return self._len > 0
 
-    def __getitem__(self, i):
+    def _locate(self, i):
         import bisect
         i = int(i)
         if i < 0:
@@ -635,7 +639,18 @@ class PickEntities:
         if not 0 <= i < self._len:
             raise IndexError(i)
         k = bisect.bisect_right(self._starts, i) - 1
-        return self._parts[k][i - self._starts[k]]
+        return self._parts[k], i - self._starts[k]
+
+    def __getitem__(self, i):
+        part, j = self._locate(i)
+        return part[j]
+
+    def owner_at(self, i):
+        """``self[i][1]`` — the group a pick landed on — without building a
+        lazy mesh's face to read it."""
+        part, j = self._locate(i)
+        owner_at = getattr(part, "owner_at", None)
+        return owner_at(j) if owner_at is not None else part[j][1]
 
     def __iter__(self):
         for part in self._parts:

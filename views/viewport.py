@@ -12454,7 +12454,12 @@ class Viewport(QOpenGLWidget):
                     face_t = np.where(idx.ent_loose, np.inf, face_t)
                     i = int(np.argmin(face_t))
                     if np.isfinite(face_t[i]):
-                        best = (float(face_t[i]), idx.entities[i][1])
+                        # The owner alone: reading the face would build
+                        # a lazy mesh on every hover over it.
+                        ents = idx.entities
+                        owner_at = getattr(ents, "owner_at", None)
+                        best = (float(face_t[i]), owner_at(i) if owner_at
+                                is not None else ents[i][1])
             for g in self._context_placements():
                 # The figure test first: it is an attribute, the layer test
                 # walks tags — asked of every placement on every hover it
