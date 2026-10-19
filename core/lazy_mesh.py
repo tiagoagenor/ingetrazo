@@ -24,8 +24,9 @@ class Plan:
     edges: np.ndarray          # (E, 2) int64 vertex indices, v0 → v1
     soft: np.ndarray           # (E,) bool
     hidden: np.ndarray         # (E,) bool
-    curve: list                # (E,) int or None
-    layer: list                # (E,) str or None
+    curve_ids: np.ndarray      # (E,) int64 curve id, -1 for None
+    layer_ids: np.ndarray      # (E,) int64 into layer_names, -1 for None
+    layer_names: list
     corners: np.ndarray        # every ring corner, vertex index
     ring_sizes: np.ndarray
     ring_counts: np.ndarray    # rings per face
@@ -36,6 +37,36 @@ class Plan:
     @property
     def nfaces(self) -> int:
         return len(self.ring_counts)
+
+    @property
+    def pos32(self) -> np.ndarray:
+        """``pos`` as contiguous float32 (exact: it holds float32 values),
+        made once — what the kernels read."""
+        hit = self.extra.get("pos32")
+        if hit is None:
+            hit = self.extra["pos32"] = np.ascontiguousarray(
+                self.pos, dtype=np.float32)
+        return hit
+
+    @property
+    def curve(self) -> list:
+        """Each edge's ``curve`` (int or None), as ``mesh.edges`` hold it —
+        made on first ask: the arrays are what the bake and the save read."""
+        hit = self.extra.get("curve")
+        if hit is None:
+            hit = self.extra["curve"] = [None if c < 0 else c
+                                         for c in self.curve_ids.tolist()]
+        return hit
+
+    @property
+    def layer(self) -> list:
+        """Each edge's ``layer`` (name or None), as ``mesh.edges`` hold it."""
+        hit = self.extra.get("layer")
+        if hit is None:
+            names = self.layer_names
+            hit = self.extra["layer"] = [None if i < 0 else names[i]
+                                         for i in self.layer_ids.tolist()]
+        return hit
 
 
 def weld(pos: np.ndarray, sequential: bool = False):
@@ -205,8 +236,8 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
         np.zeros((0, 2), np.int64)
     soft = np.zeros(ne1, dtype=bool)
     hidden = np.zeros(ne1, dtype=bool)
-    curve = [None] * ne1
-    layer = [None] * ne1
+    curve = np.full(ne1, -1, dtype=np.int64)
+    layer = np.full(ne1, -1, dtype=np.int64)
     if flags is not None and len(idx):
         f = flags[idx]
         np.logical_or.at(soft, einv, (f & 1).astype(bool))
@@ -218,7 +249,7 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
         if layers is not None:
             for e, l in zip(einv.tolist(), layers[idx].tolist()):
                 if l >= 0:
-                    layer[e] = layer_names[l]
+                    layer[e] = l
     # add_faces_welded: every ring segment, the boundary edges it lacks
     # appended in first-occurrence order and orientation.
     corners = inverse[rings] if len(rings) else np.empty(0, np.int64)
@@ -261,8 +292,8 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
         nn = len(new)
         soft = np.concatenate([soft, np.zeros(nn, dtype=bool)])
         hidden = np.concatenate([hidden, np.zeros(nn, dtype=bool)])
-        curve = curve + [None] * nn
-        layer = layer + [None] * nn
+        curve = np.concatenate([curve, np.full(nn, -1, dtype=np.int64)])
+        layer = np.concatenate([layer, np.full(nn, -1, dtype=np.int64)])
         # edge.faces: per edge, its segments' faces in global segment order.
         seg_face = np.repeat(np.arange(len(counts), dtype=np.int64),
                              np.add.reduceat(sizes, np.cumsum(counts)
@@ -273,8 +304,8 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
         ef_start = np.zeros(len(all_edges) + 1, dtype=np.int64)
         np.cumsum(np.bincount(seg_edge, minlength=len(all_edges)),
                   out=ef_start[1:])
-    return Plan(vpos, all_edges, soft, hidden, curve, layer, corners,
-                sizes, counts, ef_start, ef_face)
+    return Plan(vpos, all_edges, soft, hidden, curve, layer,
+                list(layer_names), corners, sizes, counts, ef_start, ef_face)
 
 
 def _plan_native(vpos, inverse, edges, flags, curves, layers, layer_names,
@@ -303,10 +334,8 @@ def _plan_native(vpos, inverse, edges, flags, curves, layers, layer_names,
             np.ascontiguousarray(edges, dtype=np.int64).reshape(-1, 2),
             col(flags), col(curves) if has else None,
             col(layers) if has else None, rings, sizes, counts)
-    curve = [None if c < 0 else c for c in curve.tolist()]
-    layer = [None if i < 0 else layer_names[i] for i in layer.tolist()]
-    return Plan(vpos, e, soft, hidden, curve, layer, corners, sizes, counts,
-                ef_start, ef_face)
+    return Plan(vpos, e, soft, hidden, curve, layer, list(layer_names),
+                corners, sizes, counts, ef_start, ef_face)
 
 
 def plan_of(mesh) -> Plan | None:

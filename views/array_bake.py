@@ -66,7 +66,7 @@ def _geometry(mesh, plan):
     hit = d.get("_deferred_geom")
     if hit is None:
         hit = d["_deferred_geom"] = _native.native.face_geometry(
-            plan.pos.astype(np.float32), plan.corners, plan.ring_sizes,
+            plan.pos32, plan.corners, plan.ring_sizes,
             plan.ring_counts, _native.qt_hypot(),
             sys.version_info >= (3, 12))
     return hit
@@ -251,7 +251,7 @@ def bake(vp, mesh, paint, msig, vkey, uid):
     table = _attrs_table(src)
     face_attr = np.asarray(src["face_attr"], dtype=np.int64)
     nf = plan.nfaces
-    pos32 = plan.pos.astype(np.float32)
+    pos32 = plan.pos32
 
     # Everything but the normal is decided by a face's attrs, i.e. by its
     # table entry (k; -1: no attrs): one row per entry.
