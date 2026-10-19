@@ -19,6 +19,7 @@ mod instances;
 mod occlusion;
 mod parity;
 mod plan;
+mod section;
 mod volume;
 mod weld;
 
@@ -35,6 +36,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(plan_topology, m)?)?;
     m.add_function(wrap_pyfunction!(signed_volume, m)?)?;
     m.add_function(wrap_pyfunction!(arrangement_splits, m)?)?;
+    m.add_function(wrap_pyfunction!(section_loops, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -451,6 +453,31 @@ fn arrangement_splits<'py>(
     let (start, pts) = py.detach(|| arrange::splits(&v));
     let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
     let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 2], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((PyArray1::from_vec(py, start), arr))
+}
+/// core.hlr.section_loops: ``chords`` (K,2,3) float64 plane∩triangle
+/// chords, ``tol`` the node-merge tolerance as the Python computed it.
+/// Returns ``(ring_start (R+1,), points (P,3))``, the closed rings in the
+/// Python's order.
+#[pyfunction]
+fn section_loops<'py>(
+    py: Python<'py>,
+    chords: PyReadonlyArray3<'_, f64>,
+    tol: f64,
+) -> PyResult<(Bound<'py, PyArray1<i64>>, Bound<'py, PyArray2<f64>>)> {
+    let c = chords.as_array();
+    if c.shape()[1] != 2 || c.shape()[2] != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("section_loops: (K,2,3)"));
+    }
+    let v: Vec<[[f64; 3]; 2]> = (0..c.shape()[0])
+        .map(|k| [[c[[k, 0, 0]], c[[k, 0, 1]], c[[k, 0, 2]]], [c[[k, 1, 0]], c[[k, 1, 1]], c[[k, 1, 2]]]])
+        .collect();
+    if !(tol > 0.0) || v.iter().flatten().flatten().any(|x| !x.is_finite()) {
+        return Err(pyo3::exceptions::PyValueError::new_err("section_loops: finite input, tol > 0"));
+    }
+    let (start, pts) = py.detach(|| section::loops(&v, tol));
+    let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 3], false) } else { PyArray2::from_vec2(py, &rows)? };
     Ok((PyArray1::from_vec(py, start), arr))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
