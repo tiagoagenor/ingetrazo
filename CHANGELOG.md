@@ -69,6 +69,15 @@ follow [SemVer](https://semver.org).
   enganche y la selección en esos modelos consultan un índice espacial
   nativo para saber qué componentes mirar, y las consultas tardan la mitad
   con el mismo resultado.
+  Las mallas ligeras se dibujan ahora también **en Windows** desde sus
+  arreglos (antes solo en Linux: el motor no sabía reproducir allí la
+  longitud de un vector de Qt bit a bit, y cada grupo se construía para
+  dibujarse); en macOS lo comprueba el propio programa al arrancar. En la
+  ciudad sintética de `scripts/bench_models.py`, abrir hasta el primer
+  dibujo pasa de 4,3 s a 0,7 s (73 102 caras) y de 16,3 s a 1,6 s
+  (331 124 caras). Pasar el cursor con Selección o con las herramientas de
+  dibujo, seleccionar un grupo y ver su información ya no construyen el
+  grupo, y la lectura de una malla ligera tarda la mitad.
 - **Modelos grandes más fluidos** (#158), con los dos motores: orbitar,
   desplazar y hacer zoom en esa planta pasa de 86 ms a 34 ms por cuadro (de
   12 a 30 imágenes por segundo en una gráfica integrada); mover un objeto,
