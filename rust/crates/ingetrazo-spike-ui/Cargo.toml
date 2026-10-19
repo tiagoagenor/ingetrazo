@@ -1,0 +1,16 @@
+[package]
+name = "ingetrazo-spike-ui"
+description = "M0.8 UI spike: egui + egui_dock + wgpu viewport (throwaway prototype)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-formats = { workspace = true }
+eframe = { version = "=0.36.2", features = ["accesskit", "wgpu"] }
+egui_dock = "=0.21.1"
+bytemuck = { version = "=1.25.2", features = ["derive"] }
+
+[lints]
+workspace = true

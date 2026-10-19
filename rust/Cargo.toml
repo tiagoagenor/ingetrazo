@@ -6,6 +6,7 @@ members = [
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
     "crates/ingetrazo_py",
+    "crates/ingetrazo-spike-ui",
 ]
 
 [workspace.package]
