@@ -275,7 +275,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Topologia (ciclos, regiões, laços)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -284,7 +284,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Costura: junções em T, colapso, fusão coplanar",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
