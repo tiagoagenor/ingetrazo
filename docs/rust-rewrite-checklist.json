@@ -23,16 +23,16 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "golden/SCHEMA.md: roteiro de operações, assinaturas e tolerâncias",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M0.4",
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Gravador do histórico e to_op() em todos os comandos",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.3889,
    "concluido_em": ""
   },
@@ -59,9 +59,9 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Escritor JSON igual ao do Python e ida-e-volta do .igz formato 1",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M0.8",
@@ -77,9 +77,9 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "CI: cargo test e clippy em Windows, Linux e macOS",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M1.1",
