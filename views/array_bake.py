@@ -52,6 +52,14 @@ class DeferredFaces:
         faces = self.mesh.faces
         return (faces[k] for k in self.index.tolist())
 
+    def loose(self, i):
+        """A stand-alone copy of drawn face ``i`` at the same positions,
+        while the mesh is unbuilt (the built face once it is): for readers
+        of its shape alone — a plane, a normal — never of its identity."""
+        if type(self.mesh) is not DeferredMesh:
+            return self[i]
+        return _loose_face(lazy_mesh.plan_of(self.mesh), int(self.index[i]))
+
 
 def _geometry(mesh, plan):
     d = mesh.__dict__
@@ -596,6 +604,11 @@ class LazyPairs:
         """``self[i][1]`` without building the face."""
         return self.owner
 
+    def peek(self, i):
+        """``self[i]`` with a stand-alone copy of the face (DeferredFaces.
+        loose): its shape, nothing built."""
+        return (self.faces.loose(i), self.owner)
+
     def __iter__(self):
         owner = self.owner
         return ((f, owner) for f in self.faces)
@@ -651,6 +664,14 @@ class PickEntities:
         part, j = self._locate(i)
         owner_at = getattr(part, "owner_at", None)
         return owner_at(j) if owner_at is not None else part[j][1]
+
+    def peek(self, i):
+        """``self[i]``, but a lazy mesh's face as a stand-alone copy (its
+        shape: plane, normal) — nothing built. Loose model faces are never
+        lazy, so they come back as themselves."""
+        part, j = self._locate(i)
+        peek = getattr(part, "peek", None)
+        return peek(j) if peek is not None else part[j]
 
     def __iter__(self):
         for part in self._parts:

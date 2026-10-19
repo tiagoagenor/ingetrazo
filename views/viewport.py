@@ -8294,7 +8294,7 @@ class Viewport(QOpenGLWidget):
         # status bar said "On face"). If a real face IS under the cursor,
         # believe the face — that is what the cursor is pointing at, and what
         # the inference is already promising.
-        face, group = self.pick_face_any(x, y)
+        face, group = self._face_under(x, y)
         if face is not None:
             from core.snap import face_plane_world
             fpoint, fnormal = face_plane_world(face, getattr(group, "xform", None))
@@ -8560,7 +8560,7 @@ class Viewport(QOpenGLWidget):
             # reference model) — use that face's plane so a new polygon
             # drawn "inside" it lands on the face instead of the ground.
             if cursor is not None and tool is not None:
-                face, grp = self.pick_face_placement(cursor[0], cursor[1])
+                face, grp = self._face_under(cursor[0], cursor[1], placement=True)
                 if face is not None:
                     from core.snap import face_plane_world
                     return face_plane_world(face, getattr(grp, "xform", None))
@@ -8639,7 +8639,7 @@ class Viewport(QOpenGLWidget):
     def _still_face_under(self, px: float, py: float) -> bool:
         """Whether a face the drag is NOT bending is under the cursor —
         the «On face» cue never names the face being moved."""
-        face, grp = self.pick_face_any(px, py)
+        face, grp = self._face_under(px, py)
         if face is None:
             return False
         moving = getattr(self.active_tool, "moving_face_ids", None)
@@ -8651,7 +8651,7 @@ class Viewport(QOpenGLWidget):
         Selected geometry remains a valid plane target for planar drawing
         tools; other tools must not land on geometry they are moving.
         """
-        face, grp = self.pick_face_placement(cursor[0], cursor[1])
+        face, grp = self._face_under(cursor[0], cursor[1], placement=True)
         if face is None:
             return None
         sel = self.scene.selection
@@ -12381,6 +12381,13 @@ class Viewport(QOpenGLWidget):
 
         Memoised per cursor position and view: a hover asks up to three
         times (work plane, acquisition, on-face flag) for the same answer."""
+        idx, chosen = self._face_any_choice(screen_x, screen_y)
+        return (None, None) if chosen is None else idx.entities[chosen]
+
+    def _face_any_choice(self, screen_x: float, screen_y: float):
+        """``(pick index, entity index or None)`` of :meth:`pick_face_any` —
+        the choice alone, so a reader of the face's plane can take it
+        without building a lazy mesh (:meth:`_face_under`)."""
         idx = self._pick_index(near=("px", screen_x, screen_y))
         try:
             cam = self.camera
@@ -12395,8 +12402,8 @@ class Viewport(QOpenGLWidget):
         # given the address of the one it replaced.
         if (key is not None and cached is not None and cached[0] == key
                 and len(cached) > 2 and cached[2] is idx):
-            return cached[1]
-        result = (None, None)
+            return idx, cached[1]
+        chosen = None
         origin, direction = self._pixel_to_ray(screen_x, screen_y)
         if origin is not None and direction is not None and idx.entities:
             import numpy as np
@@ -12410,11 +12417,29 @@ class Viewport(QOpenGLWidget):
                         chosen = int(cand[0])
                     else:
                         chosen = int(cand[np.argmin(idx.ent_area[cand])])
-                    result = idx.entities[chosen]
                     self._face_any_index = chosen
         if key is not None:
-            self._face_any_memo = (key, result, idx)
-        return result
+            self._face_any_memo = (key, chosen, idx)
+        return idx, chosen
+
+    def _face_under(self, screen_x: float, screen_y: float,
+                    placement: bool = False):
+        """:meth:`pick_face_any` (or, with ``placement``, :meth:`pick_face_
+        placement`) for readers of the face's SHAPE only — its plane: a lazy
+        mesh's face comes as a stand-alone copy at the same positions, so a
+        drawing tool's hover no longer builds the group under it. A loose
+        model face is never lazy and comes back as itself."""
+        idx, i = self._face_any_choice(screen_x, screen_y)
+        if i is None:
+            return None, None
+        ents = idx.entities
+        peek = getattr(ents, "peek", None)
+        face, grp = peek(i) if peek is not None else ents[i]
+        if placement:
+            pidx = getattr(idx, "ent_place_idx", None)
+            if pidx is not None and i < len(pidx) and pidx[i] >= 0:
+                grp = idx.ent_placements[int(pidx[i])]
+        return face, grp
 
     def pick_face_placement(self, screen_x: float, screen_y: float):
         """Like :meth:`pick_face_any`, but the group half is the PLACEMENT
