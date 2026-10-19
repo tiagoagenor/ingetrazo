@@ -444,7 +444,7 @@ pub fn earcut(pts: &[(f64, f64)], holes: &[usize]) -> Vec<[usize; 3]> {
 }
 
 /// `core.triangulate.is_convex`.
-fn is_convex(poly: &[(f64, f64)]) -> bool {
+pub fn is_convex(poly: &[(f64, f64)]) -> bool {
     let n = poly.len();
     if n < 4 {
         return true;

@@ -295,6 +295,11 @@ follow [SemVer](https://semver.org).
   clave de 4 decimales, la sonda de las 26 celdas vecinas y la cola de
   vértices desplazados. Comparado con 160 secuencias aleatorias de
   primitivas en la malla de Python, estado completo tras cada paso.
+- **Triangulación pública en Rust** (`ingetrazo_geom::triangulate`, M1.3):
+  `triangulate(contorno, huecos, normal)` y la normal de Newell, sobre el
+  earcut ya portado; los mismos triángulos, en el mismo orden, que
+  `core.triangulate` en 1500 contornos (convexos, estrellas, peines, con
+  huecos, colineales, repetidos, inclinados).
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

@@ -20,5 +20,6 @@ pub mod parity;
 pub mod plan;
 pub mod section;
 pub mod tiff;
+pub mod triangulate;
 pub mod volume;
 pub mod weld;
