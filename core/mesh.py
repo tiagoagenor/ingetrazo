@@ -1625,6 +1625,11 @@ class Mesh:
 
 
 
+#: How many deferred meshes have been built since start: the benches report
+#: it per gesture (every build a read could have spared is a cost to remove).
+DEFERRED_BUILDS = 0
+
+
 def _deferred_state(name):
     def get(self):
         self._materialize()
@@ -1669,6 +1674,8 @@ class DeferredMesh(Mesh):
         return True
 
     def _materialize(self) -> None:
+        global DEFERRED_BUILDS
+        DEFERRED_BUILDS += 1
         build = self.__dict__.pop("_deferred")
         del self.__dict__["_deferred_nfaces"]
         del self.__dict__["_deferred_source"]

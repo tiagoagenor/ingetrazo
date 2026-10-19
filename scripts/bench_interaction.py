@@ -410,7 +410,9 @@ def g_undo(d, pts):
 def run_model(d, path, repeat):
     open_s, first_s = d.open(path)
     sc = d.vp.scene
-    faces = sum(len(g.mesh.faces) for g in sc.groups)
+    from core import mesh as _mesh
+    # face_count: len(mesh.faces) would build every lazy mesh right here.
+    faces = sum(_mesh.face_count(g.mesh) for g in sc.groups)
     pts = d.model_points(60)
     out = {"document": Path(path).name, "faces_drawn": faces,
            "objects": len(sc.groups), "open_s": round(open_s, 2),
@@ -421,6 +423,7 @@ def run_model(d, path, repeat):
     undo_runs = []
     for name in GESTURES:
         runs = []
+        built = _mesh.DEFERRED_BUILDS
         for _ in range(repeat):
             if name == "undo":                  # timed right after each move
                 runs = undo_runs
@@ -437,6 +440,8 @@ def run_model(d, path, repeat):
         best = [min(evs, key=lambda e: e[0] + e[1] + e[2] + e[3])
                 for evs in zip(*runs)]
         row = out["gestures"][name] = summarise(best)
+        # Lazy meshes the gesture had to build (the first run pays them).
+        row["deferred_builds"] = _mesh.DEFERRED_BUILDS - built
         per_run = [summarise(r) for r in runs]
         worst = max(per_run, key=lambda r: r["p95_ms"])
         row["worst_run_p95_ms"] = worst["p95_ms"]
@@ -453,7 +458,8 @@ def run_model(d, path, repeat):
               f"{row['median_gpu_ms']:.1f}]  paints/event "
               f"{row['paints_per_event']:.1f}  hover compute "
               f"{row['median_hover_compute_ms']:.1f}/"
-              f"{row['p95_hover_compute_ms']:.1f}", flush=True)
+              f"{row['p95_hover_compute_ms']:.1f}  builds "
+              f"{row['deferred_builds']}", flush=True)
     return out
 
 
