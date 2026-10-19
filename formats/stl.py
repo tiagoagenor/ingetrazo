@@ -326,11 +326,43 @@ def add_stl_mesh(scene, path, target) -> None:
     scene.version += 1
 
 
+def _save_stl_arrays(scene, path, scale: float) -> bool:
+    """:func:`save_stl` from arrays — the same bytes (tests/
+    test_export_arrays.py): the triangles in one batch, the normals by the
+    Rust ``tri_normals`` (``_normal``'s Qt arithmetic), the records packed
+    by NumPy. False (nothing written) without the engine, or when a
+    coordinate is out of range: the record loop then raises as it did."""
+    from .meshexport import batch_triangles
+    hit = batch_triangles(list(_faces(scene)))
+    if hit is None:
+        return False
+    import numpy as np
+
+    import core._native as _native
+    pos, tris = hit
+    pts = pos.astype(np.float64)[tris] * scale            # (T, 3, 3)
+    if not (np.isfinite(pts) & (np.abs(pts) <= _MAX_FLOAT32)).all():
+        return False
+    normals = _native.native.tri_normals(
+        pos, tris.astype(np.uint32), _native.qt_hypot())
+    rec = np.zeros(len(tris), dtype=np.dtype(
+        [("n", "<f4", 3), ("v", "<f4", 9), ("a", "<u2")]))
+    rec["n"] = normals
+    rec["v"] = pts.reshape(-1, 9).astype(np.float32)
+    with open(Path(path), "wb") as f:
+        f.write(b"IngeTrazo STL export".ljust(80, b"\x00"))  # 80-byte header
+        f.write(struct.pack("<I", len(tris)))
+        f.write(rec.tobytes())
+    return True
+
+
 def save_stl(scene, path, unit: str = "m") -> None:
     """Write the scene as a binary STL to ``path``, its coordinates in
     ``unit`` (a key of ``STL_UNITS``). The model is in metres; a slicer reads
     an STL as millimetres, so a metre file came in 1000x too small (#513)."""
     scale = 1.0 / STL_UNITS[unit]
+    if _save_stl_arrays(scene, path, scale):
+        return
     tris = list(iter_triangles(scene))
     with open(Path(path), "wb") as f:
         f.write(b"IngeTrazo STL export".ljust(80, b"\x00"))  # 80-byte header

@@ -23,6 +23,25 @@ pub fn signed_volume(pos: &[[f32; 3]], tris: &[[u32; 3]]) -> f64 {
     total
 }
 
+/// `formats.stl._normal(a, b, c)` per triangle: Qt's float32
+/// `crossProduct(b - a, c - a)`, its `length()` through this Qt's hypot,
+/// divided by it when above 1e-12, else the zero vector.
+pub fn tri_normals(pos: &[crate::facegeom::V3], tris: &[[u32; 3]], h: crate::facegeom::Hypot) -> Vec<[f32; 3]> {
+    use crate::facegeom::{length, V3};
+    tris.iter()
+        .map(|t| {
+            let (a, b, c) = (pos[t[0] as usize], pos[t[1] as usize], pos[t[2] as usize]);
+            let n = b.sub(a).cross(c.sub(a));
+            let l = length(n, h);
+            if (l as f64) > 1e-12 {
+                let V3(x, y, z) = n.div(l);
+                [x, y, z]
+            } else {
+                [0.0, 0.0, 0.0]
+            }
+        })
+        .collect()
+}
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -37,6 +37,88 @@ def export_triangles(face):
             yield tri
 
 
+def batch_triangles(faces):
+    """``[t for f in faces for t in export_triangles(f)]`` as arrays —
+    ``(pos (P,3) float32, tris (T,3) int64)``, the triangles' corners
+    indexing ``pos`` in that very order — or ``None`` without the Rust
+    engine or a Qt-exact length. All faces are triangulated in one kernel
+    call (face_geometry's unit triangles: Face.triangulate's, except where
+    Qt's normalized() does not divide — a Newell length within its fuzz of
+    0 or 1 — and those few faces take Face.triangulate itself); the area
+    filter is NumPy's, with the Python formula deciding at the threshold.
+    tests/test_export_arrays.py."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "face_geometry"):
+        return None
+    hypot = _native.qt_hypot()
+    if hypot is None:
+        return None
+    import sys
+
+    import numpy as np
+    coords: list = []
+    sizes: list = []
+    counts: list = []
+    for f in faces:
+        rings = (f.vertices, *f.holes)
+        for ring in rings:
+            coords.extend((p.x(), p.y(), p.z()) for p in ring)
+            sizes.append(len(ring))
+        counts.append(len(rings))
+    pos = np.asarray(coords, dtype=np.float32).reshape(-1, 3)
+    nf = len(counts)
+    if nf == 0:
+        return pos, np.zeros((0, 3), dtype=np.int64)
+    _n, ln, _c, _t, _tf, _u, tris_u, tri_face_u = nat.face_geometry(
+        pos, np.arange(len(pos), dtype=np.int64),
+        np.asarray(sizes, dtype=np.int64), np.asarray(counts, dtype=np.int64),
+        hypot, sys.version_info >= (3, 12))
+    ln = np.asarray(ln, dtype=np.float32)
+    fuzz = np.float32(1e-5)
+    outer = np.asarray(sizes, dtype=np.int64)[
+        np.concatenate([[0], np.cumsum(counts)[:-1]])]
+    odd = ((ln <= fuzz) | ((np.abs(ln - np.float32(1.0)) <= fuzz)
+                           & (ln != np.float32(1.0))) | (outer < 3))
+    tris = np.asarray(tris_u, dtype=np.int64).reshape(-1, 3)
+    tface = np.asarray(tri_face_u, dtype=np.int64)
+    keep = ~odd[tface]
+    tris, tface = tris[keep], tface[keep]
+    # The few odd faces: Face.triangulate, their points appended.
+    extra_pos: list = []
+    extra_tris: list = []
+    extra_face: list = []
+    base = len(pos)
+    for i in np.flatnonzero(odd).tolist():
+        if len(faces[i].vertices) < 3:
+            continue
+        for tri in faces[i].triangulate():
+            k = base + len(extra_pos)
+            extra_pos.extend((p.x(), p.y(), p.z()) for p in tri)
+            extra_tris.append((k, k + 1, k + 2))
+            extra_face.append(i)
+    if extra_pos:
+        pos = np.concatenate([pos, np.asarray(extra_pos, dtype=np.float32)])
+        tris = np.concatenate([tris, np.asarray(extra_tris, dtype=np.int64)])
+        tface = np.concatenate([tface, np.asarray(extra_face, dtype=np.int64)])
+        order = np.argsort(tface, kind="stable")
+        tris = tris[order]
+    # export_triangles' area filter, in float64 from the float32 corners.
+    p64 = pos.astype(np.float64)
+    a, b, c = p64[tris[:, 0]], p64[tris[:, 1]], p64[tris[:, 2]]
+    ab, ac = b - a, c - a
+    cx = ab[:, 1] * ac[:, 2] - ab[:, 2] * ac[:, 1]
+    cy = ab[:, 2] * ac[:, 0] - ab[:, 0] * ac[:, 2]
+    cz = ab[:, 0] * ac[:, 1] - ab[:, 1] * ac[:, 0]
+    s = cx * cx + cy * cy + cz * cz
+    area = 0.5 * np.sqrt(s)
+    ok = area >= _MIN_TRI_AREA
+    for i in np.flatnonzero(np.abs(area - _MIN_TRI_AREA)
+                            <= 1e-6 * _MIN_TRI_AREA).tolist():
+        ok[i] = 0.5 * float(s[i]) ** 0.5 >= _MIN_TRI_AREA
+    return pos, tris[ok]
+
+
 def _has_billboard(group) -> bool:
     from core.group import iter_placements
     return any(getattr(g, "billboard", False) for g, _m in iter_placements(group))

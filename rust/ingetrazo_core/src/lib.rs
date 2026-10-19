@@ -47,6 +47,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(lzw_decode, m)?)?;
     m.add_function(wrap_pyfunction!(unpackbits, m)?)?;
     m.add_function(wrap_pyfunction!(fuse_regions, m)?)?;
+    m.add_function(wrap_pyfunction!(tri_normals, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -766,6 +767,30 @@ fn fuse_regions<'py>(
     }
     Ok((PyArray1::from_vec(py, traced), PyArray1::from_vec(py, rstart), PyArray1::from_vec(py, rloops),
         PyArray1::from_vec(py, ring_start), PyArray1::from_vec(py, bounds), PyArray1::from_vec(py, rpts)))
+}
+/// formats.stl._normal per triangle: ``pos`` (P,3) float32, ``tris``
+/// (T,3) uint32. Returns (T,3) float32 unit normals (zero below 1e-12).
+#[pyfunction]
+fn tri_normals<'py>(py: Python<'py>, pos: PyReadonlyArray2<'_, f32>, tris: PyReadonlyArray2<'_, u32>,
+                    hypot: &str) -> PyResult<Bound<'py, PyArray2<f32>>> {
+    let h = hypot_of(hypot)?;
+    let p = pos.as_array();
+    let t = tris.as_array();
+    if p.ncols() != 3 || t.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("tri_normals: (P,3) and (T,3)"));
+    }
+    let n = p.nrows() as u32;
+    let tr: Vec<[u32; 3]> = (0..t.nrows()).map(|i| [t[[i, 0]], t[[i, 1]], t[[i, 2]]]).collect();
+    if tr.iter().flatten().any(|&k| k >= n) {
+        return Err(pyo3::exceptions::PyValueError::new_err("tri_normals: index out of range"));
+    }
+    let v: Vec<facegeom::V3> = (0..p.nrows()).map(|i| facegeom::V3(p[[i, 0]], p[[i, 1]], p[[i, 2]])).collect();
+    let out = py.detach(|| volume::tri_normals(&v, &tr, h));
+    let rows: Vec<Vec<f32>> = out.iter().map(|r| r.to_vec()).collect();
+    if rows.is_empty() {
+        return Ok(PyArray2::zeros(py, [0, 3], false));
+    }
+    Ok(PyArray2::from_vec2(py, &rows)?)
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
