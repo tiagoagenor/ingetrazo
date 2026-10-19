@@ -4,7 +4,9 @@
 //! built-ins, reproduced exactly so the Rust app draws what the Python one
 //! did. No dependencies.
 
+pub mod matrix;
 pub mod pyfloat;
 pub mod qt;
 
+pub use matrix::M4;
 pub use qt::{length, normalized, Hypot, V3};

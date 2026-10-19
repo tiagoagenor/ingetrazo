@@ -279,6 +279,14 @@ follow [SemVer](https://semver.org).
   al motor Rust y a cuántos guiones bloquea (la lista de trabajo de M2–M3).
   `cargo test` lo exige en el CI. La firma trata texturas y su base por
   contenido (`embed` en el archivo, `path` al reabrir).
+- **`QMatrix4x4` y `QVector3D` de Qt en Rust, bit a bit** (`ingetrazo-math`,
+  M1.1): las 16 cifras y las banderas de tipo (traslación, escala, giro en Z,
+  giro, perspectiva) con los mismos atajos de cálculo que Qt 6.11 —la razón
+  de que una matriz recién girada y la misma leída de un archivo transformen
+  un punto con un ulp de diferencia—, más `map`, `mapVector`, `inverted`,
+  `determinant`, `optimize`, `lookAt`, `ortho` y `perspective`. Comparado con
+  3000 cadenas de operaciones y 2000 casos de vectores que calculó Qt
+  (`scripts/golden/make_qt_math_fixtures.py`): todo idéntico.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

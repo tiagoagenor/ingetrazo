@@ -20,10 +20,84 @@ pub enum Hypot {
     LibCxx,
 }
 
-#[derive(Clone, Copy)]
+/// A `QVector3D`: three float32. Methods are Qt's operators and member
+/// functions under their Qt names, each in Qt's operation order.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct V3(pub f32, pub f32, pub f32);
 
 impl V3 {
+    #[inline]
+    pub fn add(self, o: V3) -> V3 {
+        V3(self.0 + o.0, self.1 + o.1, self.2 + o.2)
+    }
+    #[inline]
+    pub fn neg(self) -> V3 {
+        V3(-self.0, -self.1, -self.2)
+    }
+    /// `v1 * v2`: component by component.
+    #[inline]
+    pub fn mul_v(self, o: V3) -> V3 {
+        V3(self.0 * o.0, self.1 * o.1, self.2 * o.2)
+    }
+    /// `v1 / v2`: component by component.
+    #[inline]
+    pub fn div_v(self, o: V3) -> V3 {
+        V3(self.0 / o.0, self.1 / o.1, self.2 / o.2)
+    }
+    #[inline]
+    pub fn length_squared(self) -> f32 {
+        self.0 * self.0 + self.1 * self.1 + self.2 * self.2
+    }
+    /// `isNull()`: every component exactly zero (either sign).
+    #[inline]
+    pub fn is_null(self) -> bool {
+        self.0 == 0.0 && self.1 == 0.0 && self.2 == 0.0
+    }
+    #[inline]
+    pub fn length(self, h: Hypot) -> f32 {
+        length(self, h)
+    }
+    /// `normalized()`: unchanged within 1e-5 of unit length, zero when null.
+    #[inline]
+    pub fn normalized(self, h: Hypot) -> V3 {
+        normalized(self, h)
+    }
+    /// `normalize()`: like `normalized()`, but a null vector stays as it is.
+    #[inline]
+    pub fn normalize(self, h: Hypot) -> V3 {
+        let len = length(self, h);
+        if fuzzy_null(len - 1.0) || fuzzy_null(len) {
+            self
+        } else {
+            V3(self.0 / len, self.1 / len, self.2 / len)
+        }
+    }
+    /// `QVector3D::normal(v1, v2)`.
+    pub fn normal2(v1: V3, v2: V3, h: Hypot) -> V3 {
+        v1.cross(v2).normalized(h)
+    }
+    /// `QVector3D::normal(v1, v2, v3)`.
+    pub fn normal3(v1: V3, v2: V3, v3: V3, h: Hypot) -> V3 {
+        v2.sub(v1).cross(v3.sub(v1)).normalized(h)
+    }
+    pub fn distance_to_point(self, p: V3, h: Hypot) -> f32 {
+        self.sub(p).length(h)
+    }
+    pub fn distance_to_plane(self, plane: V3, normal: V3) -> f32 {
+        self.sub(plane).dot(normal)
+    }
+    /// `distanceToPlane(plane1, plane2, plane3)`.
+    pub fn distance_to_plane3(self, p1: V3, p2: V3, p3: V3, h: Hypot) -> f32 {
+        let n = V3::normal2(p2.sub(p1), p3.sub(p1), h);
+        self.sub(p1).dot(n)
+    }
+    pub fn distance_to_line(self, point: V3, direction: V3, h: Hypot) -> f32 {
+        if direction.is_null() {
+            return self.sub(point).length(h);
+        }
+        let p = point.add(direction.mul(self.sub(point).dot(direction)));
+        self.sub(p).length(h)
+    }
     #[inline]
     pub fn sub(self, o: V3) -> V3 {
         V3(self.0 - o.0, self.1 - o.1, self.2 - o.2)

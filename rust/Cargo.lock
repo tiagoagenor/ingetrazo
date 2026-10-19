@@ -158,6 +158,9 @@ dependencies = [
 [[package]]
 name = "ingetrazo-math"
 version = "0.1.0"
+dependencies = [
+ "ingetrazo-formats",
+]
 
 [[package]]
 name = "ingetrazo_py"
