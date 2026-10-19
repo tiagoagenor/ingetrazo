@@ -306,6 +306,13 @@ follow [SemVer](https://semver.org).
   hijos es instancia) como `_load_into_inner`. Las 201 escenas de partida
   distintas del corpus abren en Rust con la misma firma L2 que la escena
   viva de Python (`ingetrazo-golden`, `model_signature`).
+- **Soldadura en bloque en Rust** (M2.2): `Mesh::bulk_weld`,
+  `add_edges_welded` y `add_faces_welded` con el orden exacto de la versión
+  vectorizada de Python (primero las celdas sin vecinas, luego la
+  reproducción secuencial de las candidatas, también contra el registro ya
+  presente), y el lector Rust de mallas usa el mismo umbral
+  (`_bulk_sized`) que `_load_mesh_json`. 24 cargas grandes con esquinas en
+  los bordes de celda dejan las listas en el mismo orden que Python.
 - **Lectura del `.igz` en los tres formatos** (M2.7,
   `rust/crates/ingetrazo-formats/src/igz_geom.rs`): Rust lee también los
   bloques binarios de geometría del formato 3 (`float32`, `int32`, `int64`,

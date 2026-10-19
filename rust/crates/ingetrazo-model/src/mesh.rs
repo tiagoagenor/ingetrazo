@@ -72,6 +72,15 @@ pub struct Face {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DegenerateEdge;
 
+/// Per-edge flags for `add_edges_welded`: `(soft, curve, layer, hidden)`.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct EdgeFlags {
+    pub soft: bool,
+    pub curve: Option<i64>,
+    pub layer: Option<String>,
+    pub hidden: bool,
+}
+
 /// An identity-keeping snapshot (`Mesh.capture_state`).
 #[derive(Clone, Debug)]
 pub struct State {
@@ -506,6 +515,274 @@ impl Mesh {
                 }
             }
         }
+    }
+
+    // ---- bulk construction (imports, .igz load) --------------------------------
+
+    /// `bulk_weld`: weld many points at once, the exact equivalent of
+    /// `vertex()` on each in order but in Python's vectorized ORDER: cells
+    /// with no neighbouring cell (in the batch or the registry) get their
+    /// vertex first, in order of first appearance, at the cell's first
+    /// point; then the points of the other ("candidate") cells replay the
+    /// sequential lookup-probe-create in input order. Returns the distinct
+    /// vertices touched (`vobjs`, in first-touch order) and, per point, its
+    /// index in that list.
+    pub fn bulk_weld(&mut self, pos: &[V3]) -> (Vec<VertexId>, Vec<usize>) {
+        if pos.is_empty() {
+            return (Vec::new(), Vec::new());
+        }
+        let keys: Vec<Key> = pos.iter().map(|&p| key(p)).collect();
+        // Unique cells in creation (first appearance) order.
+        let mut cell_of: HashMap<Key, usize> = HashMap::new();
+        let mut first: Vec<usize> = Vec::new();
+        let mut inverse: Vec<usize> = Vec::with_capacity(pos.len());
+        for (i, k) in keys.iter().enumerate() {
+            let c = *cell_of.entry(*k).or_insert_with(|| {
+                first.push(i);
+                first.len() - 1
+            });
+            inverse.push(c);
+        }
+        let nu = first.len();
+        let mut candidate = vec![false; nu];
+        for (c, &fi) in first.iter().enumerate() {
+            let k = keys[fi];
+            'n: for dx in -1..=1 {
+                for dy in -1..=1 {
+                    for dz in -1..=1 {
+                        if (dx, dy, dz) != (0, 0, 0) && cell_of.contains_key(&(k.0 + dx, k.1 + dy, k.2 + dz)) {
+                            candidate[c] = true;
+                            break 'n;
+                        }
+                    }
+                }
+            }
+        }
+        if !self.registry.is_empty() {
+            for (c, &fi) in first.iter().enumerate() {
+                if candidate[c] {
+                    continue;
+                }
+                let k = keys[fi];
+                'r: for dx in -1..=1 {
+                    for dy in -1..=1 {
+                        for dz in -1..=1 {
+                            if self.registry.contains_key(&(k.0 + dx, k.1 + dy, k.2 + dz)) {
+                                candidate[c] = true;
+                                break 'r;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        let mut vobjs: Vec<VertexId> = Vec::new();
+        let mut vindex: HashMap<VertexId, usize> = HashMap::new();
+        let mut vid = |v: VertexId, vobjs: &mut Vec<VertexId>| -> usize {
+            *vindex.entry(v).or_insert_with(|| {
+                vobjs.push(v);
+                vobjs.len() - 1
+            })
+        };
+        let mut point_ids = vec![0usize; pos.len()];
+        let mut cell_vid = vec![usize::MAX; nu];
+        for c in 0..nu {
+            if candidate[c] {
+                continue;
+            }
+            let p = pos[first[c]];
+            let v = VertexId(self.vs.len() as u32);
+            self.vs.push(Vertex { position: p, edges: Vec::new() });
+            self.registry.insert(keys[first[c]], v);
+            self.vertices.push(v);
+            cell_vid[c] = vid(v, &mut vobjs);
+        }
+        for i in 0..pos.len() {
+            if !candidate[inverse[i]] {
+                point_ids[i] = cell_vid[inverse[i]];
+            }
+        }
+        for i in 0..pos.len() {
+            if !candidate[inverse[i]] {
+                continue;
+            }
+            let k = keys[i];
+            let v = match self.registry.get(&k) {
+                Some(&v) => v,
+                None => match self.probe_neighbours(k, pos[i]) {
+                    Some(v) => v,
+                    None => {
+                        let v = VertexId(self.vs.len() as u32);
+                        self.vs.push(Vertex { position: pos[i], edges: Vec::new() });
+                        self.registry.insert(k, v);
+                        self.vertices.push(v);
+                        v
+                    }
+                },
+            };
+            point_ids[i] = vid(v, &mut vobjs);
+        }
+        (vobjs, point_ids)
+    }
+
+    fn new_edge(&mut self, v0: VertexId, v1: VertexId) -> EdgeId {
+        let e = EdgeId(self.es.len() as u32);
+        self.es.push(Edge { v0, v1, faces: Vec::new(), soft: false, hidden: false, layer: None, curve: None });
+        self.vs[v0.0 as usize].edges.push(e);
+        if v1 != v0 {
+            self.vs[v1.0 as usize].edges.push(e);
+        }
+        self.edges.push(e);
+        e
+    }
+
+    /// `add_edges_welded`: the edges `(vobjs[ia[i]], vobjs[ib[i]])`, welded
+    /// pairs skipped, duplicates within the call shared; `flags[i]` is
+    /// `(soft, curve, layer, hidden)`. Returns the pair → edge map for
+    /// `add_faces_welded`.
+    pub fn add_edges_welded(
+        &mut self,
+        vobjs: &[VertexId],
+        ia: &[usize],
+        ib: &[usize],
+        flags: Option<&[EdgeFlags]>,
+    ) -> HashMap<(usize, usize), EdgeId> {
+        self.touch();
+        let mut emap: HashMap<(usize, usize), EdgeId> = HashMap::new();
+        for i in 0..ia.len() {
+            let (a, b) = (ia[i], ib[i]);
+            let (v0, v1) = (vobjs[a], vobjs[b]);
+            if v0 == v1 {
+                continue;
+            }
+            let k = if a <= b { (a, b) } else { (b, a) };
+            let e = match emap.get(&k) {
+                Some(&e) => e,
+                None => {
+                    let e = self.new_edge(v0, v1);
+                    emap.insert(k, e);
+                    e
+                }
+            };
+            if let Some(fl) = flags {
+                let f = &fl[i];
+                let ed = &mut self.es[e.0 as usize];
+                if f.soft {
+                    ed.soft = true;
+                }
+                if f.hidden {
+                    ed.hidden = true;
+                }
+                if f.curve.is_some() {
+                    ed.curve = f.curve;
+                }
+                if f.layer.is_some() {
+                    ed.layer = f.layer.clone();
+                }
+            }
+        }
+        emap
+    }
+
+    /// `add_faces_welded`: faces from pre-welded corners (`inverse` indexes
+    /// `vobjs`; rings concatenated face by face, outer first). Boundary
+    /// edges are found or made in order of first segment occurrence; every
+    /// segment registers its face on its edge in global segment order.
+    pub fn add_faces_welded(
+        &mut self,
+        vobjs: &[VertexId],
+        inverse: &[usize],
+        ring_sizes: &[usize],
+        face_ring_counts: &[usize],
+        attrs: Option<&[Vec<(String, Value)>]>,
+        edge_map: Option<HashMap<(usize, usize), EdgeId>>,
+    ) -> Vec<FaceId> {
+        self.touch();
+        if face_ring_counts.is_empty() {
+            return Vec::new();
+        }
+        let mut ring_starts = Vec::with_capacity(ring_sizes.len());
+        let mut acc = 0usize;
+        for &n in ring_sizes {
+            ring_starts.push(acc);
+            acc += n;
+        }
+        let total = acc;
+        // Each corner to the next within its ring.
+        let mut seg_b = vec![0usize; total];
+        for (r, &st) in ring_starts.iter().enumerate() {
+            let n = ring_sizes[r];
+            for j in 0..n {
+                seg_b[st + j] = inverse[st + (j + 1) % n];
+            }
+        }
+        let mut emap = match edge_map {
+            Some(m) => m,
+            None => {
+                let mut m = HashMap::new();
+                let vid_of: HashMap<VertexId, usize> = vobjs.iter().enumerate().map(|(i, &v)| (v, i)).collect();
+                for &e in &self.edges {
+                    let ed = &self.es[e.0 as usize];
+                    if let (Some(&i0), Some(&i1)) = (vid_of.get(&ed.v0), vid_of.get(&ed.v1)) {
+                        m.entry(if i0 <= i1 { (i0, i1) } else { (i1, i0) }).or_insert(e);
+                    }
+                }
+                m
+            }
+        };
+        // Unique segments in order of first occurrence.
+        let mut seg_edge: Vec<EdgeId> = Vec::with_capacity(total);
+        let mut seen: HashMap<(usize, usize), EdgeId> = HashMap::new();
+        for s in 0..total {
+            let (a, b) = (inverse[s], seg_b[s]);
+            let k = (a.min(b), a.max(b));
+            let e = match seen.get(&k) {
+                Some(&e) => e,
+                None => {
+                    let e = match emap.get(&k) {
+                        Some(&e) => e,
+                        None => {
+                            let e = self.new_edge(vobjs[a], vobjs[b]);
+                            emap.insert(k, e);
+                            e
+                        }
+                    };
+                    seen.insert(k, e);
+                    e
+                }
+            };
+            seg_edge.push(e);
+        }
+        let corners: Vec<VertexId> = inverse.iter().map(|&i| vobjs[i]).collect();
+        let mut faces_out = Vec::with_capacity(face_ring_counts.len());
+        let mut seg_face = Vec::with_capacity(total);
+        let mut ri = 0usize;
+        for (fi, &nr) in face_ring_counts.iter().enumerate() {
+            let ring = |k: usize| corners[ring_starts[k]..ring_starts[k] + ring_sizes[k]].to_vec();
+            let outer = ring(ri);
+            let holes: Vec<Vec<VertexId>> = (1..nr).map(|k| ring(ri + k)).collect();
+            let f = FaceId(self.fs.len() as u32);
+            let mut face = Face { outer, holes, interior: false, attrs: Vec::new() };
+            if let Some(a) = attrs {
+                for (k, v) in &a[fi] {
+                    match face.attrs.iter_mut().find(|(x, _)| x == k) {
+                        Some(slot) => slot.1 = v.clone(),
+                        None => face.attrs.push((k.clone(), v.clone())),
+                    }
+                }
+            }
+            self.fs.push(face);
+            self.faces.push(f);
+            faces_out.push(f);
+            for k in 0..nr {
+                seg_face.extend(std::iter::repeat_n(f, ring_sizes[ri + k]));
+            }
+            ri += nr;
+        }
+        for s in 0..total {
+            self.es[seg_edge[s].0 as usize].faces.push(seg_face[s]);
+        }
+        faces_out
     }
 
     // ---- snapshots -----------------------------------------------------------

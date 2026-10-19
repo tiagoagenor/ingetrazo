@@ -182,3 +182,34 @@ fn mesh_primitives_match_core_mesh() {
     assert!(fails.is_empty(), "{} sequences diverge ({steps} steps matched):\n{}", fails.len(), fails.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
     assert!(steps > 1000, "only {steps} steps");
 }
+
+#[test]
+fn bulk_load_matches_load_mesh_json() {
+    use ingetrazo_model::scene::load_mesh;
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/mesh_bulk.jsonl");
+    let text = std::fs::read_to_string(path).unwrap();
+    let mut fails = Vec::new();
+    let mut n = 0;
+    for (ci, line) in text.lines().enumerate() {
+        let case = loads(line).unwrap();
+        let mut m = Mesh::new();
+        for q in arr(case.get("pre").unwrap()) {
+            let outer: Vec<V3> = arr(q).iter().map(p).collect();
+            m.add_face(&outer, &[]);
+        }
+        load_mesh(&mut m, case.get("payload").unwrap()).unwrap();
+        let want = canon(case.get("state").unwrap());
+        let got = state(&m);
+        if got != want {
+            let at = got.bytes().zip(want.bytes()).take_while(|(a, b)| a == b).count();
+            let lo = at.saturating_sub(80);
+            fails.push(format!(
+                "case {ci}:\n  rust:   {}\n  python: {}",
+                &got[lo..(at + 80).min(got.len())],
+                &want[lo..(at + 80).min(want.len())]
+            ));
+        }
+        n += 1;
+    }
+    assert!(fails.is_empty(), "{} of {n} bulk loads differ:\n{}", fails.len(), fails.iter().take(4).cloned().collect::<Vec<_>>().join("\n"));
+}

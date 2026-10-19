@@ -191,11 +191,116 @@ fn face_attrs(raw: &Value) -> Vec<(String, Value)> {
     attrs
 }
 
-/// `igz._load_mesh_small`: the per-entity walk (edges, then faces).
+/// `igz._BULK_MIN`: a mesh at least this big (edges + 4 per face) loads in
+/// one bulk pass, which numbers its vertices differently.
+pub const BULK_MIN: usize = 1024;
+
+/// `igz._bulk_sized`.
+pub fn bulk_sized(n_edges: usize, n_faces: usize) -> bool {
+    n_edges + n_faces * 4 >= BULK_MIN
+}
+
+fn finite3(p: &V3) -> bool {
+    p.0.is_finite() && p.1.is_finite() && p.2.is_finite()
+}
+
+/// `igz._load_mesh_json`: the per-entity walk for a small mesh, the bulk
+/// weld (`Mesh.bulk_weld` + `add_edges_welded` + `add_faces_welded`) for a
+/// big one. Points that are not finite are dropped first, as
+/// `_without_nonfinite` does.
 pub fn load_mesh(mesh: &mut Mesh, payload: &Value) -> Result<(), LoadError> {
     if payload.get("geom").is_some() {
         return Err(LoadError::Format("format-3 geometry block (expand it first)".into()));
     }
+    let n_edges = match payload.get("edges") {
+        Some(Value::Array(a)) => a.len(),
+        _ => 0,
+    };
+    let n_faces = match payload.get("faces") {
+        Some(Value::Array(a)) => a.len(),
+        _ => 0,
+    };
+    if bulk_sized(n_edges, n_faces) {
+        return load_mesh_bulk(mesh, payload);
+    }
+    load_mesh_small(mesh, payload)
+}
+
+fn load_mesh_bulk(mesh: &mut Mesh, payload: &Value) -> Result<(), LoadError> {
+    use crate::mesh::EdgeFlags;
+    let ring = |v: Option<&Value>| -> Option<Vec<V3>> {
+        match v {
+            Some(Value::Array(ps)) => ps.iter().map(point).collect(),
+            _ => None,
+        }
+    };
+    let mut flat: Vec<V3> = Vec::new();
+    let mut flags: Vec<EdgeFlags> = Vec::new();
+    if let Some(Value::Array(edges)) = payload.get("edges") {
+        for raw in edges {
+            let (Some(a), Some(b)) = (raw.get("a").and_then(point), raw.get("b").and_then(point)) else {
+                continue;
+            };
+            if !finite3(&a) || !finite3(&b) {
+                continue;
+            }
+            flat.push(a);
+            flat.push(b);
+            flags.push(EdgeFlags {
+                soft: truthy(raw.get("soft")),
+                curve: raw.get("curve").and_then(Value::as_i64),
+                layer: match raw.get("layer") {
+                    Some(Value::Str(l)) => Some(l.clone()),
+                    _ => None,
+                },
+                hidden: truthy(raw.get("hidden")),
+            });
+        }
+    }
+    let n_edge_pts = flat.len();
+    let mut ring_sizes: Vec<usize> = Vec::new();
+    let mut ring_counts: Vec<usize> = Vec::new();
+    let mut attrs: Vec<Vec<(String, Value)>> = Vec::new();
+    if let Some(Value::Array(faces)) = payload.get("faces") {
+        for raw in faces {
+            let Some(outer) = ring(raw.get("vertices")) else { continue };
+            let holes: Vec<Vec<V3>> = match raw.get("holes") {
+                Some(Value::Array(hs)) => hs.iter().filter_map(|h| ring(Some(h))).collect(),
+                _ => Vec::new(),
+            };
+            if !outer.iter().all(finite3) || !holes.iter().all(|h| h.iter().all(finite3)) {
+                continue;
+            }
+            // Python runs _maximal_holes here for 2+ holes (topology, M3):
+            // until it lands, holes are kept as written.
+            ring_counts.push(1 + holes.len());
+            ring_sizes.push(outer.len());
+            flat.extend(outer);
+            for h in holes {
+                ring_sizes.push(h.len());
+                flat.extend(h);
+            }
+            attrs.push(face_attrs(raw));
+        }
+    }
+    if flat.is_empty() {
+        return Ok(());
+    }
+    let (vobjs, inverse) = mesh.bulk_weld(&flat);
+    let mut emap = None;
+    if !flags.is_empty() {
+        let ia: Vec<usize> = (0..n_edge_pts).step_by(2).map(|i| inverse[i]).collect();
+        let ib: Vec<usize> = (1..n_edge_pts).step_by(2).map(|i| inverse[i]).collect();
+        emap = Some(mesh.add_edges_welded(&vobjs, &ia, &ib, Some(&flags)));
+    }
+    if !ring_counts.is_empty() {
+        mesh.add_faces_welded(&vobjs, &inverse[n_edge_pts..], &ring_sizes, &ring_counts, Some(&attrs), emap);
+    }
+    Ok(())
+}
+
+/// `igz._load_mesh_small`: the per-entity walk (edges, then faces).
+fn load_mesh_small(mesh: &mut Mesh, payload: &Value) -> Result<(), LoadError> {
     if let Some(Value::Array(edges)) = payload.get("edges") {
         for raw in edges {
             let (Some(a), Some(b)) = (raw.get("a").and_then(point), raw.get("b").and_then(point)) else {

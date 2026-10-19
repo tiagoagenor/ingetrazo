@@ -187,12 +187,75 @@ def sequence(g: Gen, steps: int) -> list:
     return out
 
 
+def bulk_case(r: random.Random) -> dict:
+    """A payload big enough for _load_mesh_json's bulk pass (edges + 4 per
+    face >= _BULK_MIN), with corners near weld-cell boundaries, loaded into
+    a mesh that may already hold faces (the registry then joins the
+    candidate test)."""
+    from formats import igz
+
+    def c(v: float) -> float:
+        roll = r.random()
+        if roll < 0.15:
+            return v + r.choice([0.49e-4, 0.51e-4, -0.49e-4, 0.5e-4, 0.2e-4, -0.02e-4])
+        return v
+    faces, edges = [], []
+    nx, ny = r.randint(18, 24), r.randint(20, 26)
+    s = r.choice([0.5, 1.0, 0.25])
+    for i in range(nx):
+        for j in range(ny):
+            if r.random() < 0.12:
+                continue
+            x, y, z = i * s, j * s, r.choice([0.0, 0.0, 0.5])
+            quad = [[c(x), c(y), z], [c(x + s), c(y), z], [c(x + s), c(y + s), z], [c(x), c(y + s), z]]
+            if r.random() < 0.5:
+                quad.reverse()
+            face = {"vertices": quad}
+            if r.random() < 0.08:
+                face["color"] = [r.randint(0, 255), r.randint(0, 255), r.randint(0, 255)]
+            if r.random() < 0.05:
+                h = 0.1 * s
+                cx, cy = x + 0.5 * s, y + 0.5 * s
+                face["holes"] = [[[cx - h, cy - h, z], [cx + h, cy - h, z], [cx + h, cy + h, z], [cx - h, cy + h, z]]]
+            faces.append(face)
+    for _ in range(r.randint(0, 60)):
+        a = [c(r.randint(0, nx) * s), c(r.randint(0, ny) * s), 0.0]
+        b = [c(r.randint(0, nx) * s), c(r.randint(0, ny) * s), r.choice([0.0, 1.0])]
+        e = {"a": a, "b": b}
+        if r.random() < 0.3:
+            e["soft"] = True
+        if r.random() < 0.2:
+            e["curve"] = r.randint(1, 4)
+        if r.random() < 0.1:
+            e["layer"] = r.choice(["A", "B", ""])
+        if r.random() < 0.05:
+            e["hidden"] = True
+        edges.append(e)
+    payload = {"edges": edges, "faces": faces}
+    assert igz._bulk_sized(len(edges), len(faces))
+    mesh, n = Mesh(), Names()
+    pre = []
+    if r.random() < 0.5:
+        for _ in range(r.randint(1, 6)):
+            x, y = r.randint(0, nx) * s, r.randint(0, ny) * s
+            q = [V(c(x), c(y), 0.0), V(x + s, y, 0.0), V(x + s, y + s, 0.0), V(x, y + s, 0.0)]
+            pre.append([pbits(p) for p in q])
+            mesh.add_face(q)
+    igz._load_mesh_json(mesh, payload)
+    n.scan(mesh)
+    return {"pre": pre, "payload": payload, "state": state(mesh, n)}
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     g = Gen(20261020)
     with open(OUT / "mesh_ops.jsonl", "w", encoding="ascii", newline="\n") as fh:
         for _ in range(160):
             fh.write(json.dumps(sequence(g, g.r.randint(5, 30)), separators=(",", ":")) + "\n")
+    rb = random.Random(2202)
+    with open(OUT / "mesh_bulk.jsonl", "w", encoding="ascii", newline="\n") as fh:
+        for _ in range(24):
+            fh.write(json.dumps(bulk_case(rb), separators=(",", ":")) + "\n")
     (OUT / ".gitattributes").write_text("# Bits Python produced; compared exactly.\n* -text\n")
     print("written", (OUT / "mesh_ops.jsonl").stat().st_size, "bytes")
 
