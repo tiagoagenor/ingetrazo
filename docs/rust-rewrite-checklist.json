@@ -176,16 +176,16 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Malha editável em arenas (vértices, arestas, faces)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M2.2",
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Índice de solda com as chaves de 4 casas",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
