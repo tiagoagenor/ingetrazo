@@ -18,3 +18,16 @@ rayon = "1.12.0"
 opt-level = 3
 lto = "thin"
 codegen-units = 1
+
+# Kept on purpose in the parity kernels, which mirror Python and Qt line by
+# line: `!(a < b)` keeps NaN behaving as in Python; `a <= x && x <= b` and
+# index loops read like the Python they port; argument lists and tuple
+# types follow the Python signatures; V3's sub/mul/div are Qt's operators
+# without Rust's operator traits, so f32 order stays explicit.
+[workspace.lints.clippy]
+neg_cmp_op_on_partial_ord = "allow"
+manual_range_contains = "allow"
+needless_range_loop = "allow"
+too_many_arguments = "allow"
+type_complexity = "allow"
+should_implement_trait = "allow"

@@ -154,7 +154,7 @@ impl Occluders {
     }
 
     /// Every triangle whose grid cells meet the box, each once (superset).
-    fn gather(&self, lo: [f64; 2], hi: [f64; 2], stamp: &mut Vec<u32>, tick: u32, out: &mut Vec<u32>) {
+    fn gather(&self, lo: [f64; 2], hi: [f64; 2], stamp: &mut [u32], tick: u32, out: &mut Vec<u32>) {
         out.clear();
         out.extend_from_slice(&self.grid.always);
         for &i in &self.grid.always {

@@ -19,3 +19,6 @@ ingetrazo-geom.workspace = true
 numpy = "0.29"
 pyo3 = { version = "0.29", features = ["extension-module", "abi3-py310"] }
 rayon.workspace = true
+
+[lints]
+workspace = true

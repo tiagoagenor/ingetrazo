@@ -130,6 +130,10 @@ impl Tris {
         self.a.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.a.is_empty()
+    }
+
     #[inline]
     fn hits_box(n: &Node, o: [f64; 3], inv: [f64; 3]) -> bool {
         let mut tmin = f64::NEG_INFINITY;

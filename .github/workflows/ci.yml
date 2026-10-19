@@ -98,3 +98,34 @@ jobs:
           QT_QPA_PLATFORM: offscreen
           INGETRAZO_RUST: "1"
         run: python -m pytest -q tests/test_*_native.py tests/test_lazy_mesh_plan.py tests/test_vecmath.py
+
+  # The Rust workspace on its own (docs/rust-rewrite-plan.md, M0.9): unit
+  # tests and clippy on the three systems the 2.0 app ships for. The PyO3
+  # shim is linted but not tested here: it only links inside Python, and the
+  # parity tests in the job above exercise it.
+  rust:
+    name: rust (${{ matrix.os }})
+    if: github.event_name != 'push' || !github.event.repository.private
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5   # pyo3's build script needs an interpreter
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - name: cargo clippy
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: cargo test
+        run: cargo test --workspace --exclude ingetrazo_py --locked

@@ -9,3 +9,6 @@ publish.workspace = true
 [dependencies]
 ingetrazo-math.workspace = true
 rayon.workspace = true
+
+[lints]
+workspace = true

@@ -248,7 +248,8 @@ follow [SemVer](https://semver.org).
   `ingetrazo-geom` (todos los núcleos). `rust/crates/ingetrazo_py` queda
   como puente fino que sigue exponiendo el módulo `ingetrazo_core`; la
   rueda se llama ahora `ingetrazo_py-*.whl`. `cargo test` corre por fin las
-  pruebas Rust, que el crate cdylib no podía ejecutar.
+  pruebas Rust, que el crate cdylib no podía ejecutar; el CI las corre, con
+  `clippy -D warnings`, en Linux, Windows y macOS.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

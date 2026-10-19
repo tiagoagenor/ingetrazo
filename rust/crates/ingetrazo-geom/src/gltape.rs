@@ -34,7 +34,7 @@ pub struct Tape {
 impl Tape {
     /// `addrs`: the entry points, in opcode order; none may be null.
     pub fn new(addrs: &[usize]) -> Option<Tape> {
-        if addrs.len() != N_FUNCS || addrs.iter().any(|&a| a == 0) {
+        if addrs.len() != N_FUNCS || addrs.contains(&0) {
             return None;
         }
         let mut f = [0usize; N_FUNCS];

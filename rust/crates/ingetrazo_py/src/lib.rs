@@ -269,7 +269,7 @@ fn face_geometry<'py>(
     let corners: Vec<u32> = corners.as_array().iter().map(|&c| {
         if c < 0 || c >= nv { u32::MAX } else { c as u32 }
     }).collect();
-    if corners.iter().any(|&c| c == u32::MAX) {
+    if corners.contains(&u32::MAX) {
         return Err(pyo3::exceptions::PyValueError::new_err("corner out of range"));
     }
     let sizes = ring_sizes.as_array().to_vec();
@@ -579,7 +579,7 @@ impl PolySet {
         let flat: Vec<f32> = segs.iter().flat_map(|(p, q)| [p.0, p.1, p.2, q.0, q.1, q.2]).collect();
         use numpy::PyArrayMethods;
         let arr = numpy::PyArray1::from_vec(py, flat);
-        Ok(arr.reshape([segs.len(), 2, 3])?)
+        arr.reshape([segs.len(), 2, 3])
     }
 }
 
@@ -873,7 +873,7 @@ impl InstanceSet {
         let pr: Vec<std::sync::Arc<instances::Proto>> = protos.iter().map(|p| p.inner.clone()).collect();
         let po = proto_of.as_array();
         let m = mats.as_array();
-        if m.shape()[0] != po.len() || (po.len() > 0 && m.shape()[1] != 16) {
+        if m.shape()[0] != po.len() || (!po.is_empty() && m.shape()[1] != 16) {
             return Err(pyo3::exceptions::PyValueError::new_err("placements"));
         }
         let mut places = Vec::with_capacity(po.len());

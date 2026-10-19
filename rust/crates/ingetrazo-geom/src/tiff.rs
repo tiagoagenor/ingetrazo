@@ -78,7 +78,7 @@ pub fn unpackbits(data: &[u8]) -> Vec<u8> {
             i += h + 1;
         } else if h > 128 {
             if i < n {
-                out.extend(std::iter::repeat(data[i]).take(257 - h));
+                out.extend(std::iter::repeat_n(data[i], 257 - h));
             }
             i += 1;
         }
