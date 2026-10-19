@@ -68,6 +68,8 @@ for scope in (QSettings.UserScope, QSettings.SystemScope):
 
 import pytest  # noqa: E402
 
+pytest_plugins = ["tests.golden.plugin"]
+
 
 @pytest.fixture(autouse=True)
 def _world_drawing_axes():

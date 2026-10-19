@@ -41,16 +41,19 @@ A hand-written script uses a name of its own starting with `hand-`.
 ```json
 {
   "schema": 1,
-  "id": "test_pushpull__test_push_cap__deep-3f9a01c2",
-  "source": {"pytest": "tests/test_pushpull.py::test_push_cap[deep]",
+  "id": "test_faces__test_draw_and_flip-3f9a01c2",
+  "source": {"pytest": "tests/test_faces.py::test_draw_and_flip",
              "app_version": "0.5.8", "harvested": "2026-10-19"},
-  "start": {"empty": true},
+  "start": {"file": "start.igz"},
   "steps": [
-    {"op": "add_face", "loop": [[0,0,0],[2,0,0],[2,1,0],[0,1,0]]},
-    {"op": "pushpull", "face": {"loop": [[0,0,0],[2,0,0],[2,1,0],[0,1,0]]}, "d": 2.5},
-    {"op": "undo"},
-    {"op": "redo"},
-    {"op": "save", "fmt": "igz"}
+    {"op": "add_face",
+     "args": {"vertices": [{"$v": [0,0,0]}, {"$v": [2,0,0]}, {"$v": [2,1,0]}, {"$v": [0,1,0]}]},
+     "counters": {"group": 1, "curve": 1}, "sig": "9c41…"},
+    {"op": "flip_faces",
+     "args": {"faces": [{"$face": {"loop": [[0,0,0],[2,0,0],[2,1,0],[0,1,0]], "in": null}}]},
+     "counters": {"group": 1, "curve": 1}, "sig": "07d2…"},
+    {"op": "undo", "ok": true, "sig": "9c41…"},
+    {"op": "redo", "ok": true, "sig": "07d2…"}
   ]
 }
 ```
@@ -61,21 +64,24 @@ A hand-written script uses a name of its own starting with `hand-`.
 |---|---|
 | `{"empty": true}` | a new scene |
 | `{"igz": "<path>"}` | a file in the repository (`examples/…`, `tests/data/…`), opened |
-| `{"document": {…}}` | an .igz document (format 1 JSON) inline, opened |
+| `{"file": "start.igz"}` | the .igz in this script's `out/<id>/` folder: the test's own setup, saved by the app when the first command ran |
 
 ### Steps
 
-A step is an object with an `op` and that op's fields. There are three kinds.
+A step is an object with an `op`. Every step carries `sig`, the L2 hash of
+the scene after it (§5); `undo`/`redo` carry `ok`, what History returned.
 
 **Command steps** replay one `Command` subclass of the Python app. `op` is
 the class name in snake case without `Command` (`AddEdgeCommand` →
-`add_edge`, `SetFaceMaterialTagCommand` → `set_face_material_tag`); the other
-fields are its constructor arguments by parameter name, with live objects
-replaced by selectors (§4). Each class serialises itself with `to_op()` and
-is rebuilt with `from_op()`; a class without them cannot be harvested yet.
-`compound` holds `"steps": [...]` and runs them as one undo step.
-Optional `"in": <group selector>` runs the step inside that group's mesh
-(editing context).
+`add_edge`, `SetFaceMaterialTagCommand` → `set_face_material_tag`). `args`
+holds the constructor arguments by parameter name — nested, because one of
+them is itself called `op` (`SolidOperationCommand`) — encoded as in §4.
+`counters` are the process-wide counters as they stood when the command ran
+(see Determinism, §5); the runner sets them first. `rejected` holds the
+`CommandRejected` message when the command declined (the model is then
+unchanged). The recorder (`tests/golden/recorder.py`) captures every class
+generically: the constructor's arguments are its `to_op()`, and `from_op()`
+calls the constructor again with them decoded.
 
 **Tool steps** are the operations that reach the history as a
 `SnapshotMutation` (a closure, so no constructor to record). The tool tags
@@ -90,8 +96,8 @@ the mutation with the op it performed, at the level a user means it:
 | `rotate` | `targets`, `origin`, `axis`, `deg`, optional `copy`, `n` |
 | `scale` | `targets`, `origin`, `factors` ([sx, sy, sz]) |
 
-A tool not in this table records nothing and its test is not harvested;
-adding it means adding a row here.
+Until a tool tags its mutation (and can be driven without a window, M3),
+a script that holds one is not harvested.
 
 **Control steps**:
 
@@ -102,33 +108,47 @@ adding it means adding a row here.
 | `save` | `{"fmt": "igz"}`; optional `"large": true` forces the compact, level-1 path |
 | `export` | `{"fmt": "stl" \| "obj" \| "dae" \| "glb" \| "gltf" \| "dxf", "options": {…}}` |
 | `import` | `{"file": "<repo path>", "fmt": …, "options": {…}}` |
-| `select` | `{"targets": …}` — sets the selection later steps may use as `"targets": "selection"` |
 
-## 4. Selectors
+## 4. Argument values and selectors
+
+Plain JSON values (null, booleans, numbers, strings, lists, objects with
+plain string keys) stand for themselves. Everything else is a one-key object
+whose key starts with `$`:
+
+| Form | Value |
+|---|---|
+| `{"$v": [x,y,z]}` | a `QVector3D` (float32 widened, so exact) |
+| `{"$m": [16 numbers]}` | a `QMatrix4x4`, `data()` order (column major) |
+| `{"$color": "#aarrggbb"}` | a `QColor` |
+| `{"$t": [...]}` | a tuple |
+| `{"$set": [...]}` | a set (items sorted by their JSON) |
+| `{"$dict": [[k, v], ...]}` | a dict whose keys are not all plain strings |
+| `{"$obj": "<class>", "data": {...}}` | a scene object passed by value (a new guide, section plane, label…): its `to_dict()`, rebuilt with `from_dict()`; `"Dimension"` holds `a`, `b`, `offset`, `layer`, `text`, `axis` |
+| `{"$cmd": <op>}` | another command, run by this one (`CompoundCommand`, `SnapshotCompound`, `MeshSnapshotCommand`…); it is rebuilt when it runs, so its selectors see the scene as it is then |
+| `{"$ran": n}` | a command that already ran in this step (the op holding `"rid": n`) — the same instance, as `AutoTagDrawnFacesCommand` reads the faces its siblings made |
 
 Live objects are named by where they are, never by Python ids. A selector
-must match **exactly one** object when the script is harvested; if it does
-not, the harvest skips the test (it reports why) rather than write an
-ambiguous script.
+must match **exactly one** object when the script is recorded; if it does
+not, the recorder marks the step and the test is not harvested.
 
 | Object | Selector |
 |---|---|
-| vertex | `{"v": [x,y,z]}` — the float32 position, exactly |
-| edge | `{"edge": [[x,y,z],[x,y,z]]}` — its two ends, in either order |
-| face | `{"face": {"loop": [[…],…]}}` — the outer loop's vertex SET, exactly; `{"face": {"near": [x,y,z], "normal": [x,y,z]}}` — the face whose centroid is nearest, for faces with a loop too long to spell (above 64 vertices) |
-| group | `{"group": [i, j, …]}` — index path from `scene.groups` through `children` |
-| component definition | `{"definition": <group selector of an instance>}` |
-| dimension, label, guide, section plane, image plane, geo path, saved view, sheet | `{"<kind>": i}` — its index in the scene's list of that kind, kind in snake case (`text_label`, `section_plane`, `geo_path`, `scene_view`…) |
-| several | a list of selectors, or `"selection"` |
+| face | `{"$face": {"loop": [[x,y,z], …], "in": <group path or null>}}` — the outer loop's vertex SET, exactly (the list keeps the face's own order) |
+| edge | `{"$edge": {"ends": [[x,y,z],[x,y,z]], "in": …}}` — its two ends, in either order |
+| vertex | `{"$vertex": {"at": [x,y,z], "in": …}}` |
+| group | `{"$group": [i, j, …]}` — index path from `scene.groups` through `children` |
+| kept component | `{"$kept": i}` — index in `scene.kept_components` |
+| mesh | `{"$mesh": <group path or null>}` — a group's mesh, or the loose one |
+| annotation, guide, plane, path, view, layer | `{"$ref": ["<scene list>", i]}` — the list is one of `dimensions`, `text_labels`, `guides`, `section_planes`, `image_planes`, `geo_paths`, `geo_points`, `saved_views`, `compositions`, `layers` |
 
-Faces and edges are looked up in the mesh of the step's `in` group, or the
-loose mesh.
+`in` is the group whose mesh holds the face, edge or vertex (the first group
+of a shared component mesh); `null` is the loose mesh.
 
 ## 5. Outputs — `out/<id>/`
 
 | File | Contents |
 |---|---|
-| `steps.jsonl` | one line per step: `{"i": n, "sig": "<L2 hash>"}`, or `{"i": n, "rejected": "<message>"}` when the command raised `CommandRejected` (the model must then be unchanged: same hash as the step before) |
+| `start.igz` | the start scene, saved by the app (`"start": {"file": "start.igz"}`); each step's L2 hash is in the script itself (`sig`) |
 | `start.sig.json` | the full L2 signature before the first step |
 | `final.sig.json` | the full L2 signature after the last step |
 | `save-<i>.document.json` | L1: the exact `document.json` bytes a `save` step produced |
@@ -153,9 +173,11 @@ sorted keys; its hash is the SHA-256 of those bytes, lower-case hex.
 ```json
 {
   "mesh": <mesh signature of the loose mesh>,
-  "groups": [<group signature>, …],      // sorted by their own hash
-  "materials": [<material>, …],          // as in the document, sorted by name
-  "layers": [<layer>, …],                // as in the document, sorted by name
+  "groups": [<group signature>, …],      // sorted by their JSON
+  "defs": {"<def hash>": <mesh signature>, …},
+  "shares": [["<instance hash>", …], …],  // instances sharing one prototype
+  "materials": [<material JSON>, …],     // sorted
+  "layers": [<layer JSON>, …],           // sorted
   "counts": {"dimensions": n, "text_labels": n, "guides": n,
              "section_planes": n, "image_planes": n, "geo_paths": n}
 }
@@ -175,21 +197,25 @@ A **mesh signature**:
   SHA-256 of `json.dumps(face.attrs, sort_keys=True, separators=(",", ":"))`
   (`""` when empty). Interior faces carry `"i"` as a fourth entry.
 
-A **group signature**: `{"name", "kind" ("group" | "component"), "def"
-(component definitions numbered by first appearance in this order), "m" (the
-transform, 16 float32 hex), "material", "layer", "locked", "hidden", "rest"
-(the first 16 hex digits of the SHA-256 of the group's .igz entry without
-`mesh`, `children` and `uid`, written with sorted keys — every other field,
-such as `ifc`, `billboard`, `axes` or `text3d`, is in there), "mesh" (its mesh
-signature, written once per definition: instances carry only "def"),
-"children" (sorted group signatures)}`.
+A **group signature**: `{"name", "kind" ("group" | "component"), "m" (the
+transform, 16 float32 hex, or null), "material", "layer", "locked",
+"hidden", "rest" (the first 16 hex digits of the SHA-256 of every other
+group field — `ifc`, `billboard`, `axes`, `text3d`, `ext`… — written with
+sorted keys; not `uid`), "mesh" (a plain group: its mesh signature) or "def"
+(a component instance: the first 16 hex digits of the SHA-256 of its
+prototype's mesh signature, which is written once under `defs`), "children"
+(sorted group signatures)}`. `shares` groups the instances (by the first 16
+hex digits of the SHA-256 of their signature) that share one prototype
+object, each list sorted, the lists sorted: two copies of a component are
+one list, a copy made unique is a list of its own.
 
 ### Determinism
 
 Names and ids the app numbers from process-wide counters (`Group N`, curve
-ids, uids) would depend on which tests ran before. The harvest resets those
-counters before each test, so a script starts from the state of a fresh app;
-the Rust runner starts its counters the same way.
+ids) depend on what ran before in the same process. Each command step
+therefore records them as they stood when it ran (`counters`: `group`, the
+next default group number; `curve`, the next curve id), and the runner sets
+them before running the step. Random uids are left out of signatures.
 
 ## 6. Tolerances — `tolerances.toml`
 

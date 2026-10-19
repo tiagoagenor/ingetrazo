@@ -257,6 +257,18 @@ follow [SemVer](https://semver.org).
   sangría, orden de claves) y `json.loads`. Gabaritos escritos por Python en
   `tests/data` (`scripts/golden/make_pyjson_fixtures.py`) y los 12 `.igz` del
   repositorio vuelven idénticos.
+- **Grabador de la historia para el corpus de gabaritos** (`tests/golden`,
+  M0.4): `pytest --golden-check` graba cada `History` que maneja un test,
+  con los argumentos de cada uno de los 107 comandos (genérico: sin escribir
+  `to_op()` clase por clase), caras, aristas y grupos como selectores por
+  posición, y lo repite en una escena nueva comparando la firma L2 tras cada
+  paso. En la suite rápida: 1540 guiones, 621 se repiten idénticos y 83 de
+  las 91 clases ejercitadas vuelven exactas; lo que falta son sobre todo las
+  herramientas que confirman con `SnapshotMutation` (push/pull, mover…), que
+  esperan su versión sin ventana (M3). Halló un caso real: «Enderezar modelo»
+  da 1 ulp distinto en un modelo recién dibujado y en uno reabierto (las
+  banderas de tipo de `QMatrix4x4`). `--golden-harvest` escribe los guiones
+  exactos en `golden/`.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
