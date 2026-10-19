@@ -148,6 +148,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ingetrazo-georef"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "ingetrazo-formats",
+ "ingetrazo-geom",
+ "ingetrazo-math",
+]
+
+[[package]]
 name = "ingetrazo-golden"
 version = "0.1.0"
 dependencies = [
