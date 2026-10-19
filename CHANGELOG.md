@@ -317,6 +317,15 @@ follow [SemVer](https://semver.org).
   huecos y atributos, textura embebida, componentes que comparten
   prototipo, hijos anidados) en formato 1, 2 y 3, con la firma que Python
   calcula al reabrirlas; `cargo test` las compara.
+- **Offset y perfiles de chaflán en Rust** (`ingetrazo-geom`, M1.4):
+  `offset` porta `core/offset.py` línea por línea (aristas deslizadas,
+  esquinas en inglete o bisel, descarte de regiones por distancia con signo,
+  cadenas abiertas) en float32 al orden de Qt, y `bevel_profiles` porta los
+  perfiles (escalones, soportes, cornisa, moldura) con el `math.hypot` y el
+  `round` de Python. El arreglo plano y la triangulación (M1.3) aún no están
+  en Rust: `offset_regions` los recibe como funciones. Comparado bit a bit
+  con lo que calcula Python en 1380 casos de offset y 2340 de perfiles
+  (`scripts/golden/make_offset_fixtures.py`): todo idéntico.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

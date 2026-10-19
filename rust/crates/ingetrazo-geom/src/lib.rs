@@ -7,6 +7,7 @@
 //! thing a kernel may add is an index that finds the SAME candidates faster.
 
 pub mod arrange;
+pub mod bevel_profiles;
 pub mod boxes;
 pub mod conform;
 pub mod facegeom;
@@ -16,6 +17,7 @@ pub mod hlr;
 pub mod instances;
 pub mod intersect;
 pub mod occlusion;
+pub mod offset;
 pub mod parity;
 pub mod plan;
 pub mod section;
