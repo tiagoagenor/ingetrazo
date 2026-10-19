@@ -78,6 +78,17 @@ follow [SemVer](https://semver.org).
   (331 124 caras). Pasar el cursor con Selección o con las herramientas de
   dibujo, seleccionar un grupo y ver su información ya no construyen el
   grupo, y la lectura de una malla ligera tarda la mitad.
+  Con el motor encendido, además: Intersecar caras calcula los cruces
+  unas cuatro veces más rápido (ciudad sintética de 331 124 caras: de
+  45 s a 10 s), el relleno de un corte de sección se arma unas seis veces
+  más rápido, y las operaciones sólidas preparan las mallas con uniones
+  en T casi al instante (un muro con 2 000 puertas: de 3 s a 4 ms). El
+  resultado es el mismo, comprobado segmento por segmento.
+- **Aplicar miles de cruces de Intersecar caras ya no tarda minutos**
+  (#541), con los dos motores: el plan de las aristas nuevas rehacía, por
+  cada cruce, el grafo y las cajas de todo lo que ya llevaba. En la ciudad
+  sintética, 8 000 cruces pasan de 196 s a 3 s y 2 000 de 10 s a 0,5 s,
+  con las mismas aristas y caras.
 - **Modelos grandes más fluidos** (#158), con los dos motores: orbitar,
   desplazar y hacer zoom en esa planta pasa de 86 ms a 34 ms por cuadro (de
   12 a 30 imágenes por segundo en una gráfica integrada); mover un objeto,
