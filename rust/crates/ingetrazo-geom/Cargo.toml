@@ -10,8 +10,8 @@ publish.workspace = true
 ingetrazo-math.workspace = true
 rayon.workspace = true
 
-[lints]
-workspace = true
-
 [dev-dependencies]
 ingetrazo-formats.workspace = true
+
+[lints]
+workspace = true

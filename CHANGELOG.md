@@ -339,6 +339,19 @@ follow [SemVer](https://semver.org).
   1650 casos sueltos (`math.hypot` de CPython incluido) y 313 mallas
   simplificadas que calculó Python
   (`scripts/golden/make_sweep_fixtures.py`).
+- **Redondeo de aristas y chaflán de vértices en Rust** (`ingetrazo-geom`,
+  M1.5 y M1.7): `fillet.rs` y `vertex_bevel.rs` planifican, con la misma
+  aritmética en el mismo orden que `core/fillet.py` y `core/vertex_bevel.py`,
+  el arco o chaflán de cada arista (radio, desplazamiento, ancho o
+  profundidad; perfil de superelipse o contorno dibujado), los cortes en
+  tapas, cadenas y esquinas de tres aristas (esfera, superelipsoide, producto
+  del contorno, escalones, corte plano) y el cierre de cada esquina. Entran
+  como topología plana (`TopoMesh`) y salen como datos (puntos, lazos, índices
+  de caras y aristas), y los rechazos como un enum con el mismo mensaje;
+  aplicar el plan a la malla queda para M2/M3. Comparado con 361 casos que
+  calculó Python (`scripts/golden/make_fillet_fixtures.py`: cajas giradas y
+  aplastadas, prismas, una L, una pirámide, láminas plegadas, un hueco
+  pasante): todo idéntico, bit a bit.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
