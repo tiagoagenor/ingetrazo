@@ -287,6 +287,14 @@ follow [SemVer](https://semver.org).
   `determinant`, `optimize`, `lookAt`, `ortho` y `perspective`. Comparado con
   3000 cadenas de operaciones y 2000 casos de vectores que calculó Qt
   (`scripts/golden/make_qt_math_fixtures.py`): todo idéntico.
+- **La malla editable en Rust** (crate `ingetrazo-model`, M2.1): vértices,
+  aristas y caras en arenas con identificadores estables, de modo que quitar y
+  volver a enlazar conserva el mismo objeto, como el deshacer de Python. Las
+  listas `vertices`, `edges` y `faces` siguen el orden exacto de las de
+  `core.mesh` (de él dependen los bytes del `.igz`), con la soldadura por
+  clave de 4 decimales, la sonda de las 26 celdas vecinas y la cola de
+  vértices desplazados. Comparado con 160 secuencias aleatorias de
+  primitivas en la malla de Python, estado completo tras cada paso.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

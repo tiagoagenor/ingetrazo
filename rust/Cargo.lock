@@ -163,6 +163,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ingetrazo-model"
+version = "0.1.0"
+dependencies = [
+ "ingetrazo-formats",
+ "ingetrazo-math",
+]
+
+[[package]]
 name = "ingetrazo_py"
 version = "0.1.0"
 dependencies = [
