@@ -143,6 +143,7 @@ dependencies = [
 name = "ingetrazo-geom"
 version = "0.1.0"
 dependencies = [
+ "ingetrazo-formats",
  "ingetrazo-math",
  "rayon",
 ]
