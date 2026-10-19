@@ -185,9 +185,9 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Índice de solda com as chaves de 4 casas",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.3",
@@ -221,9 +221,9 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Desfazer por diário (journal)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.7",
