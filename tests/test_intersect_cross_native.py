@@ -122,7 +122,7 @@ def test_empty_sides(monkeypatch):
         assert rs == py == []
 
 
-def test_bad_pairs_are_refused():
+def test_bad_pairs_are_refused(monkeypatch):
     import numpy as np
     s = nat.PolySet(np.zeros((3, 3), np.float32), np.array([0, 3]),
                     np.array([0, 1]), _native.qt_hypot())
@@ -131,4 +131,5 @@ def test_bad_pairs_are_refused():
     with pytest.raises(ValueError):
         nat.PolySet(np.zeros((3, 3), np.float32), np.array([0, 2]),
                     np.array([0, 1]), _native.qt_hypot())
-    assert intersect._poly_set([]) is not None or nat is None
+    monkeypatch.setattr(_native, "native", nat)
+    assert intersect._poly_set([]) is not None      # an empty set is a set
