@@ -357,6 +357,8 @@ def build_mesh(batches, progress=None):
     if not flat_parts:
         raise ValueError("No triangle geometry found in the glTF file")
     flat = np.concatenate(flat_parts, axis=0)
+    if _defer_glb(mesh, np.asarray(flat, dtype=np.float64), attrs_list):
+        return mesh
     # Quantize like the interactive weld tolerance so shared corners merge.
     vobjs, inverse = mesh.bulk_weld(np.asarray(flat, dtype=np.float64))
     n_faces = len(flat) // 3
@@ -372,6 +374,141 @@ def build_mesh(batches, progress=None):
         soften_smooth_edges(mesh)
     _hide_cutout_card_edges(mesh)
     return mesh
+
+
+#: Below this many triangles a glTF is built at once: a lazy mesh pays a
+#: plan and a face-geometry pass up front, a loss on small models.
+_LAZY_MIN_TRIS = 2000
+
+
+def _defer_glb(mesh, flat, attrs_list) -> bool:
+    """With the Rust engine on, make ``mesh`` a lazy one instead of
+    building it (core.mesh.DeferredMesh): the same mesh :func:`build_mesh`
+    makes — bulk weld, welded faces, then soften_smooth_edges and
+    _hide_cutout_card_edges — with those two passes worked out on the
+    plan's arrays (``Face.normal`` is the face-geometry Newell vector over
+    its float32 length; ``Face.area`` half that length) and their flags
+    carried by edges the build adds first, in the order the faces would
+    add them. tests/test_glb_lazy.py. False: build as before."""
+    import numpy as np
+
+    import core._native as _native
+    from core import lazy_mesh
+    from core.mesh import DeferredMesh
+    n = len(flat) // 3
+    nat = _native.native
+    if (n < _LAZY_MIN_TRIS or not _native.wanted() or nat is None
+            or not hasattr(nat, "face_geometry") or _native.qt_hypot() is None):
+        return False
+    sizes = np.full(n, 3, dtype=np.int64)
+    counts = np.ones(n, dtype=np.int64)
+    rings = np.arange(3 * n, dtype=np.int64)
+    empty_e = np.zeros((0, 2), dtype=np.int64)
+    plan = lazy_mesh.plan(flat, empty_e, None, None, None, [], rings, sizes,
+                          counts)
+    ne = len(plan.edges)
+    flags = np.zeros(ne, dtype=np.uint8)
+    deg = np.diff(plan.ef_start)
+    two = np.flatnonzero(deg == 2)
+    f0 = plan.ef_face[plan.ef_start[two]]
+    f1 = plan.ef_face[plan.ef_start[two] + 1]
+    geom = None
+    if ne <= _SOFTEN_EDGE_CAP:
+        geom = lazy_mesh.face_geometry(mesh, plan)
+        # face_geometry's normal IS Face.normal(): the Newell vector over
+        # its float32 length, (0, 0, 1) at or below 1e-9.
+        unit = np.asarray(geom[0], dtype=np.float32)
+        from formats.fuse import _smooth_sig
+        sig_id: dict = {}
+        memo: dict = {}                  # a batch shares one attrs dict
+
+        def sig_of(a):
+            hit = memo.get(id(a))
+            if hit is None:
+                hit = memo[id(a)] = sig_id.setdefault(_smooth_sig(a or {}),
+                                                      len(sig_id))
+            return hit
+        sigs = np.array([sig_of(a) for a in attrs_list], dtype=np.int64)
+        a, b = unit[f0], unit[f1]
+        dot = np.abs(a[:, 0] * b[:, 0] + a[:, 1] * b[:, 1] + a[:, 2] * b[:, 2])
+        # abs(QVector3D.dotProduct(n0, n1)) > 0.85: the float32 dot, as a
+        # Python float against the float 0.85.
+        soft = ((f0 != f1) & (sigs[f0] == sigs[f1])
+                & (dot.astype(np.float64) > 0.85))
+        flags[two[soft]] |= 1
+    # _hide_cutout_card_edges: per texture, its faces' count and summed
+    # area in face order (Face.area = 0.5 · Newell length), then the edges
+    # all of whose faces are foliage.
+    tex_of = [(a or {}).get("texture") or {} for a in attrs_list]
+    paths = [t.get("path") for t in tex_of]
+    if any(paths):
+        if geom is None:
+            geom = lazy_mesh.face_geometry(mesh, plan)
+        half = (0.5 * np.asarray(geom[1], dtype=np.float32)
+                .astype(np.float64)).tolist()
+        stats: dict = {}
+        for i, p in enumerate(paths):
+            if p:
+                cnt, area = stats.get(p, (0, 0.0))
+                stats[p] = (cnt + 1, area + half[i])
+        from PySide6.QtGui import QImage
+        foliage: dict = {}
+        for p, (cnt, area) in stats.items():
+            img = QImage(p)
+            foliage[p] = ((not img.isNull() and img.hasAlphaChannel())
+                          or (cnt > 200 and area / cnt < 0.02))
+        if any(foliage.values()):
+            leafy = np.array([bool(p and foliage.get(p)) for p in paths])
+            per_edge = np.add.reduceat(leafy[plan.ef_face].astype(np.int64),
+                                       plan.ef_start[:-1]) if len(
+                plan.ef_face) else np.zeros(ne, dtype=np.int64)
+            per_edge[deg == 0] = 0
+            hidden = (deg > 0) & (per_edge == deg)
+            flags[hidden] |= 2
+    # The build: the edges first (their flags on), as the faces would add
+    # them, then the faces — build_mesh's mesh, flags included.
+    _w, ids, origin = lazy_mesh._weld(flat)
+    first_pt = np.empty(len(plan.pos), dtype=np.int64)
+    first_pt[ids[::-1]] = np.arange(len(ids))[::-1]
+    edges_pts = first_pt[plan.edges]
+
+    def build(m):
+        vobjs, inverse = m.bulk_weld(flat)
+        eflags = [(bool(f & 1), None, None, bool(f & 2))
+                  for f in flags.tolist()]
+        emap = m.add_edges_welded(vobjs, inverse[edges_pts[:, 0]],
+                                  inverse[edges_pts[:, 1]], eflags)
+        m.add_faces_welded(vobjs, inverse, sizes, counts, attrs_list,
+                           edge_map=emap)
+    table: list = []
+    index: dict = {}
+    face_attr = np.empty(n, dtype=np.int64)
+    by_obj: dict = {}
+    for i, a in enumerate(attrs_list):
+        if not a:
+            face_attr[i] = -1
+            continue
+        k = by_obj.get(id(a))
+        if k is None:
+            key = json.dumps(a, sort_keys=True)
+            k = index.get(key)
+            if k is None:
+                k = index[key] = len(table)
+                table.append(a)
+            by_obj[id(a)] = k
+        face_attr[i] = k
+    source = dict(meta={"face_attrs": table}, pos=flat, edges=edges_pts,
+                  flags=flags, curves=None, layers=None, rings=rings,
+                  sizes=sizes, counts=counts, face_attr=face_attr)
+    if not DeferredMesh.defer(mesh, build, n, source):
+        mesh.__dict__.pop("_deferred_geom", None)
+        return False
+    # The plan worked out here is this mesh's (its edges are the ones the
+    # build adds first, in that order): keep it, with the flags on.
+    plan.soft = (flags & 1).astype(bool)
+    plan.hidden = (flags & 2).astype(bool)
+    mesh.__dict__["_deferred_plan"] = plan
+    return True
 
 
 def _hide_cutout_card_edges(mesh) -> None:
