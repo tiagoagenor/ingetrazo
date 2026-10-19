@@ -1,10 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
 """A binary STL's facets read in NumPy (formats.stl._binary_triangles)
-build the mesh the record-by-record loop built: random and lattice
-triangles, degenerate ones and ones at the 1e-12 area threshold, more
-than one 4 096-triangle batch, scales, and the same error on a coordinate
-out of range."""
+keep the triangles the record-by-record loop kept: random and lattice
+triangles, degenerate ones and ones at the 1e-12 area threshold, scales,
+and the same error on a coordinate out of range."""
 from __future__ import annotations
 
 import math
@@ -18,16 +17,8 @@ from core.mesh import Mesh
 from formats import stl
 
 
-def _oracle(raw, count, scale, target):
+def _oracle(raw, count, scale):
     batch = []
-
-    def flush():
-        if batch:
-            n = len(batch)
-            target.add_faces_bulk(
-                np.asarray(batch, dtype=np.float64).reshape(-1, 3),
-                np.full(n, 3, dtype=np.int64), np.ones(n, dtype=np.int64))
-            batch.clear()
     for index in range(count):
         record = raw[index * 50:(index + 1) * 50]
         if len(record) != 50:
@@ -36,9 +27,7 @@ def _oracle(raw, count, scale, target):
         tri = tuple(stl._scaled_point(data[i:i + 3], scale) for i in (3, 6, 9))
         if stl._non_degenerate(tri):
             batch.append(tri)
-            if len(batch) >= stl._BATCH_SIZE:
-                flush()
-    flush()
+    return batch
 
 
 def _raw(tris):
@@ -77,11 +66,9 @@ def _tris(rng, n):
 @pytest.mark.parametrize("scale", [1.0, 0.001, 25.4])
 def test_same_mesh_as_the_record_loop(seed, n, scale):
     raw = _raw(_tris(random.Random(seed), n))
-    a, b = Mesh(), Mesh()
-    _oracle(raw, n, scale, a)
-    stl._binary_triangles(raw, n, scale, b, None)
-    assert _signature(b) == _signature(a)
-    assert len(b.faces) > 0
+    want = _oracle(raw, n, scale)
+    got = stl._binary_triangles(raw, n, scale, None)
+    assert got.tolist() == [list(map(list, t)) for t in want] and want
 
 
 def test_out_of_range_raises_the_same():
@@ -89,9 +76,9 @@ def test_out_of_range_raises_the_same():
     tris[7][1][2] = 3.0e38
     raw = _raw(tris)
     with pytest.raises(ValueError) as want:
-        _oracle(raw, 20, 2.0, Mesh())
+        _oracle(raw, 20, 2.0)
     with pytest.raises(ValueError) as got:
-        stl._binary_triangles(raw, 20, 2.0, Mesh(), None)
+        stl._binary_triangles(raw, 20, 2.0, None)
     assert str(got.value) == str(want.value)
 
 
@@ -99,10 +86,8 @@ def test_threshold_decided_by_hypot():
     """Lengths within the recheck band go through math.hypot, as before."""
     s = math.sqrt(2e-12)
     raw = _raw([[[0, 0, 0], [s, 0, 0], [0, s, 0]]])
-    a, b = Mesh(), Mesh()
-    _oracle(raw, 1, 1.0, a)
-    stl._binary_triangles(raw, 1, 1.0, b, None)
-    assert _signature(b) == _signature(a)
+    assert stl._binary_triangles(raw, 1, 1.0, None).tolist() == \
+        [list(map(list, t)) for t in _oracle(raw, 1, 1.0)]
 
 
 def test_near_threshold_asks_math_hypot(monkeypatch):
@@ -118,6 +103,5 @@ def test_near_threshold_asks_math_hypot(monkeypatch):
         calls.append(xs)
         return 0.0                                   # "degenerate"
     monkeypatch.setattr(stl.math, "hypot", fake)
-    m = Mesh()
-    stl._binary_triangles(raw, 1, 1.0, m, None)
-    assert calls and not m.faces
+    kept = stl._binary_triangles(raw, 1, 1.0, None)
+    assert calls and not len(kept)
