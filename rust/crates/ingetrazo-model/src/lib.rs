@@ -5,5 +5,6 @@
 //! undo follow.
 
 pub mod mesh;
+pub mod scene;
 
 pub use mesh::{Edge, EdgeId, Face, FaceId, Mesh, Vertex, VertexId};

@@ -10,6 +10,7 @@
 //! milestone that lands an op (M2 the model, M3 the operations) moves the
 //! first divergence further on.
 
+pub mod model_sig;
 pub mod sig;
 
 use std::path::{Path, PathBuf};
@@ -109,4 +110,13 @@ pub fn replay(script: &Script) -> Outcome {
         },
         _ => Outcome::Broken("no steps".into()),
     }
+}
+
+/// The L2 signature of an .igz opened into the Rust model (`Scene`),
+/// rather than computed from the document.
+pub fn model_signature(raw: &[u8]) -> Result<Value, String> {
+    let doc = igz::read_document(raw).map_err(|e| e.to_string())?;
+    let zip = if igz::is_container(raw) { Some(Zip::open(raw).map_err(|e| e.to_string())?) } else { None };
+    let scene = ingetrazo_model::scene::Scene::from_document(&doc).map_err(|e| format!("{e:?}"))?;
+    Ok(model_sig::scene_signature(&scene, &sig::Files { zip: zip.as_ref() }))
 }

@@ -300,6 +300,12 @@ follow [SemVer](https://semver.org).
   earcut ya portado; los mismos triángulos, en el mismo orden, que
   `core.triangulate` en 1500 contornos (convexos, estrellas, peines, con
   huecos, colineales, repetidos, inclinados).
+- **La escena en Rust y la apertura de un `.igz` en ella** (M2.3):
+  `Scene::from_document` arma la malla suelta, los prototipos compartidos,
+  los grupos y componentes anidados (con la regla de `adopt`: quien tiene
+  hijos es instancia) como `_load_into_inner`. Las 201 escenas de partida
+  distintas del corpus abren en Rust con la misma firma L2 que la escena
+  viva de Python (`ingetrazo-golden`, `model_signature`).
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

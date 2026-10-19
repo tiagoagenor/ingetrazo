@@ -25,7 +25,7 @@ pub fn sha_hex(bytes: &[u8], n: usize) -> String {
     s
 }
 
-fn sha(text: &str, n: usize) -> String {
+pub fn sha(text: &str, n: usize) -> String {
     sha_hex(text.as_bytes(), n)
 }
 
@@ -80,7 +80,7 @@ impl Files<'_> {
     /// `"embed"`/`"base_embed"` (an archive member) and reopens as
     /// `"path"`/`"base"` (formats/igz.py `_unpack_textures`); anything else
     /// is looked up on disk, as Python does.
-    fn canonical(&self, v: &Value) -> Value {
+    pub fn canonical(&self, v: &Value) -> Value {
         match v {
             Value::Object(items) => Value::Object(
                 items
