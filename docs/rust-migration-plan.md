@@ -50,7 +50,10 @@ Rust becomes mandatory only once all of these hold:
 3. `qt_hypot()` matches Qt on Linux, Windows and macOS (Linux and Windows
    proven; macOS's libc++ formula awaits a macOS run);
 4. one release has shipped with the engine **on by default** and no
-   `rust-engine` regressions.
+   `rust-engine` regressions;
+5. every Phase 2 kernel's parity test runs on Windows and Linux CI.
+
+manifold3d stays a Python dependency either way.
 
 Even then, fallbacks are removed one module at a time, eager-mesh mutation
 paths last.
@@ -115,11 +118,53 @@ store would need syncing on every edit. New work is stateless kernels over
 
 ### Phase 2: geometry operations
 
-`intersect`, `offset`, `sweep`, `fillet`, `section`, `snap`/`inference`, and
-the solid booleans of `core/solids.py` (manifold through its C API with
-bindgen, validated against the current solids suite). Done when every module
-has a green native parity test, Rust is the default, and the corresponding
-Python fallback is removed.
+**Pure compute kernels only.** Python packs what an operation touches into
+arrays, Rust computes, Python applies the result through the existing
+`Mesh`/`History` API. No Rust-side mesh and no Rust mutation: it would have
+to duplicate the weld, `edge.faces`, attributes, textures and undo. Packing
+costs ~1–2 µs per point (`points_to_array` 0.89, `array_to_points` 1.2), so
+a kernel pays only where Python spends far more per element: pair loops
+(n²) or ≥ 20 µs of geometry each. Linear walks over objects do not qualify.
+
+In order:
+
+- **P0 (Python)** — #541 apply: one incremental cycle adjacency per plan
+  instead of `_cycle_adjacency` rebuilt per segment (`topology.py:107`,
+  `edits.py:286`); fix the "degenerate edge" at 8 000 crossings. 2 000
+  crossings take 4.2 s and 8 000 take 112 s; the cause is the algorithm,
+  which no kernel fixes. Target: 8 000 in < 10 s. Plus `Face.normal()`
+  memoised per scan.
+- **K1 `arrangement_splits`** — `arrangement.py` `_build_graph`'s all-pairs
+  segment splits (1.2 µs a pair: 184 ms for 300 segments), behind push/pull
+  cap rebuild, history and the Offset drag. f64 scalar, no hypot. Python
+  keeps the graph, face tracing and classification (set order decides loop
+  starts).
+- **K2 `section_loops`** — `hlr.py` chord chaining into rings, so the
+  section fill keeps up with a plane drag. The fill and hatch stay NumPy.
+- **K3 `intersect_cross`** — `intersect.py` per-face polygons and per-pair
+  crossing (36 µs a face, 20 µs a pair), the rest of plaza's 8.7 s
+  `intersect_find`. Qt `normalized()` with both fuzz branches, through
+  `Hypot`; world points still mapped in Python (`QMatrix4x4.map` changes
+  arithmetic with the matrix type).
+- **K4 `conform_t_junctions`** — `solids.py`'s O(T·V) near-vertex scan, a
+  grid in Rust (the Python twin first rewritten to scalar arithmetic).
+- **K5 `outer_shell_mask`** — the union-find labelling only; last, if K4
+  lands.
+
+Not in Phase 2: **booleans** (manifold3d is already native C++, crossed
+once per operation; the time is the object glue around it, which a Rust
+binding would leave in place — manifold3d stays a Python dependency);
+**read-only topology queries** (linear walks: packing costs as much);
+**snap/inference** (~10 ms a hover, ~20 rules of callbacks, occlusion
+already native); **sweep, fillet, vertex bevel, offset** outside K1 (tiny
+compute, the cost is mesh mutation); **`QMatrix4x4.map`** (a parity trap).
+
+Done when P0 is in (8 000 crossings < 10 s, no rollback), K1–K4 each have
+an exact `tests/test_<kernel>_native.py` that catches its sabotages, the
+numbers are in `benchmarks/results/motor-rust.md`, `bench_engine` gains
+`section_fill` and `arrangement_300`, and the fast suite is green on
+Windows and Linux CI with the engine on. **Phase 2 removes no fallback**:
+that waits for the gate, kernel by kernel, eager-mutation callers last.
 
 ### Phase 3: formats and georef
 
