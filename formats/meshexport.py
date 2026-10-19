@@ -326,8 +326,7 @@ def collect_geometry(scene, face_me=None):
     """
     materials: dict[tuple, dict] = {}
     prims: dict[tuple, list] = {}
-    for face in world_faces(scene, face_me):
-        _add_face(face, materials, prims)
+    _add_faces(world_faces(scene, face_me), materials, prims)
     _resolve_finishes(scene, materials)
     return materials, prims
 
@@ -339,8 +338,7 @@ def collect_geometry_split(scene, face_me):
     (see :func:`faceme_figures`); ``materials`` covers all of them."""
     materials: dict[tuple, dict] = {}
     prims: dict[tuple, list] = {}
-    for face in world_faces(scene, face_me, figures=False):
-        _add_face(face, materials, prims)
+    _add_faces(world_faces(scene, face_me, figures=False), materials, prims)
     figures = []
     for faces, feet, yaw in faceme_figures(scene, face_me):
         own: dict[tuple, list] = {}
@@ -352,9 +350,32 @@ def collect_geometry_split(scene, face_me):
     return materials, prims, figures
 
 
-def _add_face(face, materials, prims) -> None:
+def _add_faces(faces, materials, prims) -> None:
+    """``for f in faces: _add_face(f, materials, prims)``, the triangles
+    from :func:`batch_triangles` when the engine is on — the same
+    materials and triangles in the same order (tests/test_export_arrays.py:
+    glTF and COLLADA files byte for byte)."""
+    faces = list(faces)
+    hit = batch_triangles(faces, with_faces=True) if faces else None
+    if hit is None:
+        for f in faces:
+            _add_face(f, materials, prims)
+        return
+    from core.vecmath import QVector3D
+    pos, tris, tface = hit
+    by_face: list = [[] for _ in faces]
+    pts = pos.tolist()
+    for f, tri in zip(tface.tolist(), tris.tolist()):
+        by_face[f].append([QVector3D(*pts[k]) for k in tri])
+    for face, tri_pts in zip(faces, by_face):
+        _add_face(face, materials, prims, tri_pts)
+
+
+def _add_face(face, materials, prims, triangles=None) -> None:
     """One face's triangles into ``prims`` under its material's key."""
     from core.texture import affine_uv, planar_uv
+    # ``triangles``: export_triangles(face)'s, when the caller made them.
+    tris = export_triangles(face) if triangles is None else triangles
     n = face.normal()
     op = face.attrs.get("opacity")
     op = None if op is None or float(op) >= 0.999 else round(float(op), 3)
@@ -371,7 +392,7 @@ def _add_face(face, materials, prims) -> None:
         sh = tex.get("sh", 1.0) or 1.0
         rot = float(tex.get("rot", 0.0))
         uvw = tex.get("uvw")
-        for tri in export_triangles(face):
+        for tri in tris:
             pts = list(tri)
             uv = affine_uv(uvw, pts) if uvw else planar_uv(n, pts, sw, sh, rot)
             prims.setdefault(key, []).append(
@@ -385,7 +406,7 @@ def _add_face(face, materials, prims) -> None:
                                    "opacity": op})
         if face.attrs.get("mat") and "mat" not in materials[key]:
             materials[key]["mat"] = face.attrs["mat"]
-        for tri in export_triangles(face):
+        for tri in tris:
             pts = list(tri)
             prims.setdefault(key, []).append(
                 (n, [(pts[k], None) for k in range(3)]))

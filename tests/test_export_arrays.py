@@ -186,3 +186,27 @@ def test_obj_vertex_key_tie(monkeypatch, tmp_path):
     a = _obj_bytes(monkeypatch, scene, tmp_path, False)
     b = _obj_bytes(monkeypatch, scene, tmp_path, True)
     assert a == b
+
+
+def _file_bytes(monkeypatch, scene, tmp_path, use, ext):
+    from formats import dae, gltf
+    monkeypatch.setattr(_native, "native", nat if use else None)
+    d = tmp_path / f"{ext}-{use}"
+    d.mkdir(exist_ok=True)
+    out = d / f"m.{ext}"
+    (gltf.save_glb if ext == "glb" else dae.save_dae)(scene, out)
+    data = out.read_bytes()
+    if ext == "dae":                     # the clock, not the geometry
+        import re
+        data = re.sub(rb"<(created|modified)>[^<]*</\1>", b"", data)
+    return data
+
+
+@pytest.mark.parametrize("seed", range(6))
+@pytest.mark.parametrize("ext", ["glb", "dae"])
+def test_glb_and_dae_bytes(monkeypatch, tmp_path, seed, ext):
+    scene = _scene(seed)
+    _paint(scene, random.Random(seed), tmp_path)
+    a = _file_bytes(monkeypatch, scene, tmp_path, False, ext)
+    b = _file_bytes(monkeypatch, scene, tmp_path, True, ext)
+    assert a == b and len(a) > 100
