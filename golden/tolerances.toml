@@ -1,0 +1,15 @@
+# The only comparisons of the golden corpus that are not exact
+# (golden/SCHEMA.md, section 6). Every entry needs its reason.
+
+[text3d_outline]   # font outlines: FreeType (Qt) vs the Rust rasteriser
+applies = "ops whose steps include edit_text3d or insert_group of a 3D text"
+coords_m = 1e-4
+
+[georef_network]   # tiles and geocoding come from servers, not from the code
+applies = "ops with a georef step that reaches the network"
+skip = true
+
+[render_pixels]    # GPU rasterisation differs between drivers
+applies = "image outputs"
+channel = 2
+fraction_equal = 0.995
