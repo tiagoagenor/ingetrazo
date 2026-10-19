@@ -28,10 +28,9 @@
 //!   `maximal_holes` (None keeps every hole);
 //! - `add_face`'s `except Exception` fallback to the original loops is not
 //!   reproduced (nothing in the arrays can raise);
-//! - `Mesh._probe_neighbours` probes keys ±1.0 away (not ±1e-4: it adds the
-//!   integer offset to the rounded float), whose vertices are a unit
-//!   distance apart and can never be within the 1e-4 weld tolerance: it
-//!   never matches, so the welding here is the exact-key lookup alone;
+//! - `Mesh._probe_neighbours` is reproduced (weld cells are the integer
+//!   `round(x * 1e4)` of `core.mesh._key`; points straddling a cell edge
+//!   still weld when within 1e-4);
 //! - `v.edges` is a Python set (id-ordered); here insertion order. It can
 //!   only change which end a collapse-created edge calls `v0` and the order
 //!   of that edge's face list.
@@ -167,12 +166,38 @@ impl Soup {
         if let Some(&v) = self.registry.get(&k) {
             return v;
         }
+        if let Some(v) = self.probe_neighbours(k, p) {
+            return v;
+        }
         let v = self.pos.len();
         self.pos.push(p);
         self.vedges.push(vec![]);
         self.registry.insert(k, v);
         self.vert_list.push(v);
         v
+    }
+
+    /// `Mesh._probe_neighbours`: the 26 adjacent weld cells in dx, dy, dz
+    /// order; the first registered vertex whose float32 squared distance is
+    /// under (1e-4)^2 (compared in f64) is the one.
+    fn probe_neighbours(&self, k: [i64; 3], p: V3) -> Option<usize> {
+        let step = 10f64.powi(-4);
+        let tol2 = step * step;
+        for dx in -1..=1 {
+            for dy in -1..=1 {
+                for dz in -1..=1 {
+                    if dx == 0 && dy == 0 && dz == 0 {
+                        continue;
+                    }
+                    if let Some(&n) = self.registry.get(&[k[0] + dx, k[1] + dy, k[2] + dz]) {
+                        if (self.pos[n].sub(p).length_squared() as f64) < tol2 {
+                            return Some(n);
+                        }
+                    }
+                }
+            }
+        }
+        None
     }
 
     fn other(&self, e: usize, v: usize) -> usize {

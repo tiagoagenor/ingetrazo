@@ -933,6 +933,38 @@ def simplify_cases(g: Gen, n: int):
         c = simplify_case(mesh, g.r.choice([0.0, 1.0]))
         if c is not None:
             out.append(c)
+    # weld probe: corners that straddle a 1e-4 cell boundary (0.49e-4 vs 0.51e-4
+    # past a cell edge, 2e-5 apart, or just over the 1e-4 tolerance) must weld
+    # (or not) as Mesh._probe_neighbours says
+    for i in range(n // 2):
+        mesh = Mesh()
+        k = g.r.randint(-50, 50)
+        base = k * 1e-4
+        gap = g.r.choice([2e-5, 1e-5, 4e-5, 0.2e-4, 0.99e-4, 1.01e-4, 3e-4, 0.02e-4])
+        off = g.r.choice([0.49e-4, 0.5e-4, 0.51e-4, 0.4999e-4])
+
+        def jig(x, y, z, d):
+            return QV(x + (d if g.r.random() < 0.5 else 0.0), y, z)
+
+        x0 = base + off
+        # two coplanar triangles whose shared corners are given twice, 'gap' apart
+        # across the boundary at x0
+        a, b, c, d = (QV(x0, 0, 0), QV(x0 + 1, 0, 0), QV(x0 + 1, 1, 0), QV(x0, 1, 0))
+        a2, d2 = QV(x0 + gap, 0, 0), QV(x0 + gap * g.r.choice([1, -1]), 1, 0)
+        mesh.add_face((a, b, c))
+        # add_face would weld the near pair itself; place them far apart and
+        # slide the vertices over (as a move leaves a mesh), so only the
+        # re-welding of simplify_mesh can join them
+        f2 = mesh.add_face((QV(x0 + 7, 0, 0), c, QV(x0 + 7, 1, 0)))
+        f2.loop[0].position = a2
+        f2.loop[2].position = d2
+        if g.r.random() < 0.5:
+            mesh.add_face((QV(x0 + gap / 2, 0, 5e-5), QV(x0 + 1, 3, 0), QV(x0 + 2, 3, 1)))
+        for _ in range(g.r.randint(0, 2)):
+            mesh.add_face((QV(x0 + g.r.choice([-1, 1]) * gap, 2, 0), QV(x0 + 2, 2, 0), QV(x0 + 2, 3, 0)))
+        c2 = simplify_case(mesh, g.r.choice([0.0, 1.0]))
+        if c2 is not None:
+            out.append(c2)
     # empty mesh and bad angles
     for ang in (float("nan"), float("inf"), -0.5, 5.0001, 7.0):
         c = simplify_case(build_grid(g, ([1, 0, 0], [0, 1, 0]), 2, 2, 0.0, 0.0, "ab", None), ang)
