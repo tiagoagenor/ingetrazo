@@ -4,7 +4,14 @@
 //! first; the scene, groups and components, annotations and the journal
 //! undo follow.
 
+pub mod bim;
+pub mod face_attrs;
+pub mod layers;
+pub mod materials;
 pub mod mesh;
 pub mod scene;
+mod pyalnum;
+pub mod pyval;
+pub mod texture;
 
 pub use mesh::{Edge, EdgeId, Face, FaceId, Mesh, Vertex, VertexId};

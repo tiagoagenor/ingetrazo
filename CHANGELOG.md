@@ -365,6 +365,16 @@ follow [SemVer](https://semver.org).
   `scripts/golden/make_georef_fixtures.py` (datum, MDT) y 98 TIFF
   generados por Python vuelven idénticos al bit. Falta el JPEG dentro de
   TIFF, que Python delega en Qt.
+- **Materiales, capas, etiquetas BIM y datos de textura en Rust** (crate
+  `ingetrazo-model`, M2.4): `Material` y su registro (`register`, el
+  repintado de contenedores, `material_sig`), `Layer` y el bloque `layers`
+  del `.igz`, las etiquetas IFC de caras y grupos, `texture_file_name`,
+  `is_image_file` y los atributos de cara que lee y escribe el `.igz`. Lo
+  que Python acepta de un documento a mano o heredado (un texto por color,
+  una lista de pares por textura, opacidad como `"0.7"`) se acepta igual, y
+  lo que rechaza falla con la misma clase de excepción. 4400 casos que
+  escribió Python (`scripts/golden/make_model_data_fixtures.py`): cada texto
+  de `json.dumps` sale idéntico en Rust.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
