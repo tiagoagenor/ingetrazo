@@ -68,9 +68,9 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Protótipo de interface: egui + docking + wgpu com a city-L",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M0.9",
@@ -113,43 +113,43 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Offset",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.5",
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Fillet",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.6",
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Sweep (Siga-me)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.7",
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Chanfro de vértice",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.8",
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Linhas ocultas: o que falta",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.4,
    "concluido_em": ""
   },
@@ -158,9 +158,9 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Simplificação",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.10",
@@ -194,27 +194,27 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Cena, grupos e componentes",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.4",
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Materiais, camadas e etiquetas",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.5",
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Cotas, textos, guias, cortes e vistas salvas",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.6",
@@ -230,9 +230,9 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Leitura do .igz nos três formatos",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.8",
@@ -662,9 +662,9 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Localização e datum",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M7.2",
@@ -689,9 +689,9 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "GeoTIFF",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M7.5",
