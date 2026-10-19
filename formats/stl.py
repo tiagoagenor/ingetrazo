@@ -332,8 +332,9 @@ def _save_stl_arrays(scene, path, scale: float) -> bool:
     Rust ``tri_normals`` (``_normal``'s Qt arithmetic), the records packed
     by NumPy. False (nothing written) without the engine, or when a
     coordinate is out of range: the record loop then raises as it did."""
-    from .meshexport import batch_triangles
-    hit = batch_triangles(list(_faces(scene)))
+    from .meshexport import batch_triangles, world_triangles
+    # Placed copies and lazy meshes straight from arrays when it can.
+    hit = world_triangles(scene) or batch_triangles(list(_faces(scene)))
     if hit is None:
         return False
     import numpy as np

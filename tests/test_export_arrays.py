@@ -210,3 +210,73 @@ def test_glb_and_dae_bytes(monkeypatch, tmp_path, seed, ext):
     a = _file_bytes(monkeypatch, scene, tmp_path, False, ext)
     b = _file_bytes(monkeypatch, scene, tmp_path, True, ext)
     assert a == b and len(a) > 100
+
+
+def _placed_scene(seed, tmp_path):
+    """A document with big and small prototypes placed many times, saved
+    and reopened so its meshes are lazy."""
+    from formats import igz
+    rng = random.Random(seed)
+    scene = Scene()
+    protos = []
+    for k, n in enumerate((3, 18, 26)):              # small, big, big
+        g = Group(name=f"proto{k}")
+        for i in range(n):
+            for j in range(n):
+                z = rng.choice([0.0, 0.0, 0.25])
+                _add(g.mesh, [V(i, j, z), V(i + 1, j, z), V(i + 1, j + 1, z),
+                              V(i, j + 1, z)])
+        if k == 1:                                   # 1.5e-4 apart: welded at x0.5
+            _add(g.mesh, [V(30, 0, 0), V(31, 0, 0), V(31, 1, 0)])
+            _add(g.mesh, [V(30 + 1.5e-4, 0, 0), V(29, -1, 0), V(31, -1, 0)])
+        if k == 2:
+            _add(g.mesh, [V(0, 0, -1), V(4, 0, -1), V(4, 4, -1), V(0, 4, -1)],
+                 [[V(1, 1, -1), V(1, 2, -1), V(2, 2, -1), V(2, 1, -1)],
+                  [V(2.5, 2.5, -1), V(2.5, 3.5, -1), V(3.5, 3.5, -1),
+                   V(3.5, 2.5, -1)]])
+        protos.append(g)
+    for p in protos:
+        scene.groups.append(p)
+        for _ in range(3):
+            c = Group(name=p.name + "-copy")
+            c.mesh = p.mesh
+            c.xform = QMatrix4x4()
+            c.xform.translate(rng.uniform(-40, 40), rng.uniform(-40, 40), 0)
+            c.xform.rotate(rng.uniform(0, 360), 0, 0, 1)
+            c.xform.scale(rng.choice([1.0, 0.5, 2.0]) if _ else 0.5)
+            scene.groups.append(c)
+    path = tmp_path / f"placed{seed}.igz"
+    igz.save_scene(scene, path)
+    monkey = Scene()
+    igz.load_into(monkey, path)
+    return monkey
+
+
+@pytest.mark.parametrize("seed", range(4))
+def test_placed_and_lazy_stl_bytes(monkeypatch, tmp_path, seed):
+    from core import mesh as M
+    from formats import igz
+    monkeypatch.setattr(igz, "_LARGE_DOCUMENT", 0)
+    monkeypatch.setattr(igz, "_BULK_MIN", 1)
+    monkeypatch.setattr(_native, "wanted", lambda: True)
+    scene = _placed_scene(seed, tmp_path)
+    lazy = [g.mesh for g in scene.groups if type(g.mesh) is M.DeferredMesh]
+    builds = M.DEFERRED_BUILDS
+    b = _stl_bytes(monkeypatch, scene, tmp_path, True, "m")
+    if lazy:
+        # Only the small prototype: its copies take transformed_mesh's walk.
+        assert M.DEFERRED_BUILDS - builds <= 1
+    a = _stl_bytes(monkeypatch, scene, tmp_path, False, "m")
+    assert a == b and len(a) > 84
+
+
+def test_city_l_stl_bytes(monkeypatch, tmp_path):
+    path = ROOT / "benchmarks" / "models" / "city-L.igz"
+    if not path.exists():
+        pytest.skip("scripts/bench_models.py L not run")
+    from formats import igz
+    scene = Scene()
+    igz.load_into(scene, path)
+    b = _stl_bytes(monkeypatch, scene, tmp_path, True, "m")
+    a = _stl_bytes(monkeypatch, scene, tmp_path, False, "m")
+    assert a == b
