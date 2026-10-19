@@ -28,23 +28,23 @@ pub struct V3(pub f32, pub f32, pub f32);
 
 impl V3 {
     #[inline]
-    fn sub(self, o: V3) -> V3 {
+    pub(crate) fn sub(self, o: V3) -> V3 {
         V3(self.0 - o.0, self.1 - o.1, self.2 - o.2)
     }
     #[inline]
-    fn mul(self, s: f32) -> V3 {
+    pub(crate) fn mul(self, s: f32) -> V3 {
         V3(self.0 * s, self.1 * s, self.2 * s)
     }
     #[inline]
-    fn div(self, s: f32) -> V3 {
+    pub(crate) fn div(self, s: f32) -> V3 {
         V3(self.0 / s, self.1 / s, self.2 / s)
     }
     #[inline]
-    fn dot(self, o: V3) -> f32 {
+    pub(crate) fn dot(self, o: V3) -> f32 {
         self.0 * o.0 + self.1 * o.1 + self.2 * o.2
     }
     #[inline]
-    fn cross(self, o: V3) -> V3 {
+    pub(crate) fn cross(self, o: V3) -> V3 {
         V3(
             self.1 * o.2 - self.2 * o.1,
             self.2 * o.0 - self.0 * o.2,

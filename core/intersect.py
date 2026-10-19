@@ -192,33 +192,95 @@ def intersect(polys_a: list, polys_b: list, same: bool = False,
     if not polys_a or not polys_b:
         return out
     lo_a, hi_a = boxes_a if boxes_a is not None else _boxes(polys_a)
-    if same:
-        lo_b, hi_b = lo_a, hi_a
-        ia = ib = None
-    else:
-        import numpy as np
-        lo_b, hi_b = boxes_b if boxes_b is not None else _boxes(polys_b)
-        # Only the faces that reach the OTHER side's whole box can cross
-        # it: a big object (a pavement under a thousand others) is cut
-        # down to the few faces near each neighbour before the pair test.
-        eps = 1e-6
-        ia = np.nonzero(np.all((lo_a <= hi_b.max(axis=0) + eps)
-                               & (hi_a >= lo_b.min(axis=0) - eps), axis=1))[0]
-        if not len(ia):
-            return out
-        lo_a, hi_a = lo_a[ia], hi_a[ia]
-        ib = np.nonzero(np.all((lo_b <= hi_a.max(axis=0) + eps)
-                               & (hi_b >= lo_a.min(axis=0) - eps), axis=1))[0]
-        if not len(ib):
-            return out
-        lo_b, hi_b = lo_b[ib], hi_b[ib]
-    for i, j in _touching(lo_a, hi_a, lo_b, hi_b, same):
-        if ia is not None:
-            i, j = int(ia[i]), int(ib[j])
+    lo_b, hi_b = (boxes_b if boxes_b is not None else _boxes(polys_b)) \
+        if not same else (lo_a, hi_a)
+    for i, j in _pairs(lo_a, hi_a, lo_b, hi_b, same):
         a, b = polys_a[i], polys_b[j]
         if a is not b:
             out.extend(cross(a, b))
     return _dedupe(out)
+
+
+def _pairs(lo_a, hi_a, lo_b, hi_b, same: bool):
+    """The ``(i, j)`` pairs :func:`intersect` crosses, in its order: every
+    pair whose boxes touch (``same``: one list, j > i)."""
+    if same:
+        yield from _touching(lo_a, hi_a, lo_a, hi_a, True)
+        return
+    import numpy as np
+    # Only the faces that reach the OTHER side's whole box can cross
+    # it: a big object (a pavement under a thousand others) is cut
+    # down to the few faces near each neighbour before the pair test.
+    eps = 1e-6
+    ia = np.nonzero(np.all((lo_a <= hi_b.max(axis=0) + eps)
+                           & (hi_a >= lo_b.min(axis=0) - eps), axis=1))[0]
+    if not len(ia):
+        return
+    lo_a, hi_a = lo_a[ia], hi_a[ia]
+    ib = np.nonzero(np.all((lo_b <= hi_a.max(axis=0) + eps)
+                           & (hi_b >= lo_a.min(axis=0) - eps), axis=1))[0]
+    if not len(ib):
+        return
+    lo_b, hi_b = lo_b[ib], hi_b[ib]
+    for i, j in _touching(lo_a, hi_a, lo_b, hi_b, False):
+        yield int(ia[i]), int(ib[j])
+
+
+def _poly_set(entities):
+    """:func:`polys_of` as the Rust engine's ``PolySet`` — the faces'
+    world points packed, the polygons built natively — or ``None`` (no
+    engine, an older one, or no Qt-exact length on this platform: the
+    polygons go through QVector3D.normalized). The world mapping stays
+    here: QMatrix4x4.map's arithmetic changes with the matrix's type."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "PolySet"):
+        return None
+    hypot = _native.qt_hypot()
+    if hypot is None:
+        return None
+    import numpy as np
+    from core.group import Group, iter_placements
+    from core.mesh import Face
+    pts: list = []
+    ring_start = [0]
+    face_start = [0]
+
+    def put(face, xf):
+        for ring in (face.vertices, *face.holes):
+            for p in ring:
+                q = xf.map(p) if xf is not None else p
+                pts.append((q.x(), q.y(), q.z()))
+            ring_start.append(len(pts))
+        face_start.append(len(ring_start) - 1)
+    for e in entities:
+        if isinstance(e, Face):
+            put(e, None)
+        elif isinstance(e, Group):
+            for g, xf in iter_placements(e):
+                for f in g.mesh.faces:
+                    put(f, xf)
+    arr = np.asarray(pts, dtype=np.float32).reshape(-1, 3)
+    return nat.PolySet(arr, np.asarray(ring_start, dtype=np.int64),
+                       np.asarray(face_start, dtype=np.int64), hypot)
+
+
+def _intersect_sets(set_a, set_b, same: bool = False) -> list:
+    """:func:`intersect` of two ``PolySet``: the same pairs in the same
+    order, crossed and deduped in Rust (tests/test_intersect_cross_native
+    .py)."""
+    import numpy as np
+    lo_a, hi_a = set_a.lo, set_a.hi
+    lo_b, hi_b = (lo_a, hi_a) if same else (set_b.lo, set_b.hi)
+    if not len(lo_a) or not len(lo_b):
+        return []
+    pairs = list(_pairs(lo_a, hi_a, lo_b, hi_b, same))
+    if not pairs:
+        return []
+    ii = np.fromiter((p[0] for p in pairs), dtype=np.int64, count=len(pairs))
+    jj = np.fromiter((p[1] for p in pairs), dtype=np.int64, count=len(pairs))
+    segs = set_a.cross_pairs(None if same else set_b, ii, jj)
+    return [(QVector3D(*s[0]), QVector3D(*s[1])) for s in segs.tolist()]
 
 
 def _dedupe(segs: list, tol: float = 1e-6) -> list:
@@ -272,8 +334,11 @@ def segments_for(scene, mode: str) -> list:
     sel = [e for e in scene.selection if isinstance(e, (Face, Group))]
     if not sel:
         return []
-    mine = polys_of(sel)
+    native = _poly_set(sel)
+    mine = polys_of(sel) if native is None else None
     if mode == WITH_SELECTION:
+        if native is not None:
+            return _intersect_sets(native, native, same=True)
         return intersect(mine, mine, same=True)
     selected = set(map(id, sel))
     rest = [f for f in scene.mesh.faces if id(f) not in selected]
@@ -282,5 +347,7 @@ def segments_for(scene, mode: str) -> list:
         kids = (getattr(owner, "children", None) or []) if owner is not None \
             else scene.groups
         rest += [g for g in kids if id(g) not in selected]
+    if native is not None:
+        return _intersect_sets(native, _poly_set(rest))
     others = polys_of(rest)
     return intersect(mine, others)

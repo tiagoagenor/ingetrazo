@@ -16,6 +16,7 @@ mod facegeom;
 mod gltape;
 mod hlr;
 mod instances;
+mod intersect;
 mod occlusion;
 mod parity;
 mod plan;
@@ -37,6 +38,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(signed_volume, m)?)?;
     m.add_function(wrap_pyfunction!(arrangement_splits, m)?)?;
     m.add_function(wrap_pyfunction!(section_loops, m)?)?;
+    m.add_class::<PolySet>()?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -479,6 +481,128 @@ fn section_loops<'py>(
     let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
     let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 3], false) } else { PyArray2::from_vec2(py, &rows)? };
     Ok((PyArray1::from_vec(py, start), arr))
+}
+/// core.intersect's world polygons as one set (Intersect Faces):
+/// ``PolySet(pts (P,3) float32, ring_start (R+1,), face_start (F+1,),
+/// hypot)`` — every face's world points, outer ring first. ``kept``: the
+/// input faces world_polys keeps (in order), ``lo``/``hi`` (F',3) their
+/// boxes; ``cross_pairs`` crosses kept faces ``ii`` of this set with
+/// ``jj`` of ``other`` (this set when None), in that pair order, and
+/// returns the deduped segments (S,2,3) float32.
+#[pyclass(frozen)]
+struct PolySet {
+    polys: Vec<intersect::Poly>,
+    kept: Vec<i64>,
+    h: facegeom::Hypot,
+}
+
+#[pymethods]
+impl PolySet {
+    #[new]
+    fn new(
+        py: Python<'_>,
+        pts: PyReadonlyArray2<'_, f32>,
+        ring_start: PyReadonlyArray1<'_, i64>,
+        face_start: PyReadonlyArray1<'_, i64>,
+        hypot: &str,
+    ) -> PyResult<Self> {
+        let h = hypot_of(hypot)?;
+        let p = pts.as_array();
+        let rs = ring_start.as_slice()?;
+        let fs = face_start.as_slice()?;
+        let np_ = p.nrows() as i64;
+        let ok = p.ncols() == 3
+            && rs.first() == Some(&0)
+            && fs.first() == Some(&0)
+            && rs.windows(2).all(|w| w[0] <= w[1])
+            && fs.windows(2).all(|w| w[0] < w[1])
+            && *rs.last().unwrap_or(&0) == np_
+            && *fs.last().unwrap_or(&0) == rs.len() as i64 - 1;
+        if !ok {
+            return Err(pyo3::exceptions::PyValueError::new_err("PolySet: inconsistent input"));
+        }
+        let v: Vec<facegeom::V3> = (0..p.nrows()).map(|i| facegeom::V3(p[[i, 0]], p[[i, 1]], p[[i, 2]])).collect();
+        let (polys, kept) = py.detach(|| {
+            let mut polys = Vec::new();
+            let mut kept = Vec::new();
+            for f in 0..fs.len() - 1 {
+                let rings: Vec<&[facegeom::V3]> = (fs[f] as usize..fs[f + 1] as usize)
+                    .map(|r| &v[rs[r] as usize..rs[r + 1] as usize])
+                    .collect();
+                if let Some(pl) = intersect::poly(&rings, h) {
+                    polys.push(pl);
+                    kept.push(f as i64);
+                }
+            }
+            (polys, kept)
+        });
+        Ok(Self { polys, kept, h })
+    }
+
+    #[getter]
+    fn kept<'py>(&self, py: Python<'py>) -> Bound<'py, PyArray1<i64>> {
+        PyArray1::from_vec(py, self.kept.clone())
+    }
+
+    #[getter]
+    fn lo<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        self.boxes(py, true)
+    }
+
+    #[getter]
+    fn hi<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        self.boxes(py, false)
+    }
+
+    #[pyo3(signature = (other, ii, jj))]
+    fn cross_pairs<'py>(
+        &self,
+        py: Python<'py>,
+        other: Option<PyRef<'_, PolySet>>,
+        ii: PyReadonlyArray1<'_, i64>,
+        jj: PyReadonlyArray1<'_, i64>,
+    ) -> PyResult<Bound<'py, numpy::PyArray3<f32>>> {
+        let b: &PolySet = match &other {
+            Some(o) => o,
+            None => self,
+        };
+        let (ii, jj) = (ii.as_slice()?, jj.as_slice()?);
+        if ii.len() != jj.len()
+            || ii.iter().any(|&i| i < 0 || i as usize >= self.polys.len())
+            || jj.iter().any(|&j| j < 0 || j as usize >= b.polys.len())
+        {
+            return Err(pyo3::exceptions::PyValueError::new_err("cross_pairs: bad pairs"));
+        }
+        let h = self.h;
+        let segs = py.detach(|| {
+            let mut out = Vec::new();
+            for (&i, &j) in ii.iter().zip(jj) {
+                intersect::cross(&self.polys[i as usize], &b.polys[j as usize], h, &mut out);
+            }
+            intersect::dedupe(out)
+        });
+        let flat: Vec<f32> = segs.iter().flat_map(|(p, q)| [p.0, p.1, p.2, q.0, q.1, q.2]).collect();
+        use numpy::PyArrayMethods;
+        let arr = numpy::PyArray1::from_vec(py, flat);
+        Ok(arr.reshape([segs.len(), 2, 3])?)
+    }
+}
+
+impl PolySet {
+    fn boxes<'py>(&self, py: Python<'py>, low: bool) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let rows: Vec<Vec<f64>> = self
+            .polys
+            .iter()
+            .map(|p| {
+                let b = if low { p.lo } else { p.hi };
+                vec![b[0] as f64, b[1] as f64, b[2] as f64]
+            })
+            .collect();
+        if rows.is_empty() {
+            return Ok(PyArray2::zeros(py, [0, 3], false));
+        }
+        Ok(PyArray2::from_vec2(py, &rows)?)
+    }
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
