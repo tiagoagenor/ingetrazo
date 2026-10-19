@@ -157,7 +157,7 @@ class Group:
         the vertices otherwise — and walking the vertices would move the
         group's own mesh while leaving its children behind. An identity
         transform costs nothing and closes that road."""
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         self.children = list(children)
         if self.children and self.xform is None:
             self.xform = QMatrix4x4()
@@ -195,7 +195,7 @@ class Group:
         A copied GROUP (the copy entering a group makes unique on the way
         in) bakes into a classic group without nested placements
         (``materialize``), or keeps its tree, privately, with them."""
-        from PySide6.QtGui import QMatrix4x4
+        from core.vecmath import QMatrix4x4
         if self.is_component():
             self.mesh = transformed_mesh(self.mesh, QMatrix4x4())
             self.children = [_independent_copy(c)
@@ -223,7 +223,7 @@ def carry_axes(group, m) -> None:
     instance). Instances are left alone — their ``xform`` already moved."""
     if group is None or getattr(group, "xform", None) is not None:
         return
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     base = group.axes if group.axes is not None else QMatrix4x4()
     group.axes = m * base
 
@@ -248,7 +248,7 @@ def frame_axes(m):
     square to each other (a scaled or skewed placement still draws
     orthogonal axes; red first, green squared to it, blue from both — and
     a mirrored placement keeps its handedness). ``m=None`` is the world."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     if m is None:
         return (QVector3D(0, 0, 0), QVector3D(1, 0, 0), QVector3D(0, 1, 0),
                 QVector3D(0, 0, 1))
@@ -274,7 +274,7 @@ def make_billboard_group(image_path: str, height: float, name: str,
     """A face-me billboard group: one textured quad, ``height`` metres tall,
     anchored at ``position`` (origin by default). The viewport rotates it
     around that anchor to face the camera."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     mesh = Mesh()
     w = height * aspect
     p = position if position is not None else QVector3D(0, 0, 0)
@@ -428,7 +428,7 @@ def iter_placements(group, base=None):
 
 
 def _copy_mesh(mesh) -> Mesh:
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     return transformed_mesh(mesh, QMatrix4x4())
 
 
@@ -510,7 +510,7 @@ def transformed_mesh(src: Mesh, m) -> Mesh:
 
 def _transformed_mesh_walk(src: Mesh, m) -> Mesh:
     """Sequential per-entity copy — exact semantics for small meshes."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     new = Mesh()
 
     def W(p) -> QVector3D:
@@ -597,7 +597,7 @@ def copy_group(group, delta=None, _in_definition=False):
     becomes an identity placement first — same place in the world — so the
     original and the copy hold the same mesh and an edit inside either
     shares back to both."""
-    from PySide6.QtGui import QMatrix4x4, QVector3D
+    from core.vecmath import QMatrix4x4, QVector3D
     share = _in_definition or (group.xform is not None
                                and bool(getattr(group, "component", True)))
     if share:
@@ -643,7 +643,7 @@ def _independent_copy(group):
     """``copy_group`` without the sharing: every mesh in the subtree is a
     copy of its own, so editing it never reaches the original's copies.
     The copy keeps the uid — it REPLACES the original in its parent."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     g = copy_group(group)
     if group.xform is not None:
         g.mesh = transformed_mesh(group.mesh, QMatrix4x4())
@@ -743,7 +743,7 @@ def frame_from_points(positions) -> tuple:
     frame from face geometry instead and picked triangulation DIAGONALS for
     the long axis, which is how a rectangle ends up with a skew frame."""
     import numpy as np
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     world = (QVector3D(1.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0),
              QVector3D(0.0, 0.0, 1.0))
     if positions is None or len(positions) < 3:
@@ -788,15 +788,15 @@ def placement_points(group, cache=None):
     out: list = []
     if cache is None:
         cache = {}
+    from core.mesh import vertex_positions
     for g, m in iter_placements(group):
-        verts = g.mesh.vertices
-        if not verts:
-            continue
         arr = cache.get(id(g.mesh))
         if arr is None:
-            arr = cache[id(g.mesh)] = np.array(
-                [[v.position.x(), v.position.y(), v.position.z()]
-                 for v in verts], dtype=np.float64)
+            # A lazy mesh's from its plan: selecting a group no longer
+            # builds it to measure its box.
+            arr = cache[id(g.mesh)] = vertex_positions(g.mesh)
+        if not len(arr):
+            continue
         if m is not None:
             d = m.data()                      # column-major
             rot = np.array([[d[0], d[4], d[8]],
@@ -817,7 +817,7 @@ def oriented_bounds(mesh, frame=None, points=None) -> tuple:
     :func:`placement_points`, so a component with nested placements is not
     merged into one mesh just to be measured."""
     import numpy as np
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     if frame is None:
         frame = (QVector3D(1.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0),
                  QVector3D(0.0, 0.0, 1.0))
@@ -826,11 +826,10 @@ def oriented_bounds(mesh, frame=None, points=None) -> tuple:
             return frame, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)
         pos = points
     else:
-        verts = mesh.vertices
-        if not verts:
+        from core.mesh import vertex_positions
+        pos = vertex_positions(mesh)
+        if not len(pos):
             return frame, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)
-        pos = np.array([[v.position.x(), v.position.y(), v.position.z()]
-                        for v in verts], dtype=np.float64)
     axes = np.array([[a.x(), a.y(), a.z()] for a in frame], dtype=np.float64)
     proj = pos @ axes.T
     return frame, tuple(proj.min(axis=0)), tuple(proj.max(axis=0))
@@ -838,7 +837,7 @@ def oriented_bounds(mesh, frame=None, points=None) -> tuple:
 
 def oriented_box_corners(frame, lo, hi) -> list:
     """The eight corners of an oriented box, in world coordinates."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     u, v, w = frame
     out = []
     for i in range(8):

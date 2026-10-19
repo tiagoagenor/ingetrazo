@@ -30,7 +30,7 @@ from __future__ import annotations
 from typing import Optional
 
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.snap import SnapResult, compute_snap
 

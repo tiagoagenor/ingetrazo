@@ -54,7 +54,7 @@ from pathlib import Path
 
 from core.version import __version__
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.dimension import Dimension
 from core.group import Group
@@ -574,20 +574,27 @@ def _pack_plan(mesh, plan, sink: dict) -> dict:
     }
     flags = (plan.soft.astype(np.uint8) | (plan.hidden.astype(np.uint8) << 1))
     arrays["edge_flags"] = flags
-    if any(c is not None for c in plan.curve):
-        arrays["edge_curve"] = np.array(
-            [-1 if c is None else c for c in plan.curve], dtype=np.int64)
+    if (plan.curve_ids >= 0).any():
+        arrays["edge_curve"] = plan.curve_ids.astype(np.int64)
     layer_table: list = []
-    if any(l is not None for l in plan.layer):
+    ids = plan.layer_ids
+    used = np.flatnonzero(ids >= 0)
+    if len(used):
+        # The table in the order the names first appear on the edges, as
+        # the per-edge walk numbered them (the saved file is byte for byte
+        # the built mesh's).
+        uniq, first = np.unique(ids[used], return_index=True)
         layer_index: dict = {}
+        lut = np.full(len(plan.layer_names), -1, dtype=np.int32)
+        for i in uniq[np.argsort(first, kind="stable")].tolist():
+            name = plan.layer_names[i]
+            k = layer_index.get(name)
+            if k is None:
+                k = layer_index[name] = len(layer_table)
+                layer_table.append(name)
+            lut[i] = k
         layers = np.full(ne, -1, dtype=np.int32)
-        for i, l in enumerate(plan.layer):
-            if l is not None:
-                k = layer_index.get(l)
-                if k is None:
-                    k = layer_index[l] = len(layer_table)
-                    layer_table.append(l)
-                layers[i] = k
+        layers[used] = lut[ids[used]]
         arrays["edge_layer"] = layers
     return _write_geometry(arrays, table, layer_table, sink)
 
@@ -1221,7 +1228,7 @@ def _load_into_inner(scene, path: Path, progress=None) -> None:
         if name:
             names.append(name)
         if raw.get("xform") is not None and "proto" in raw:
-            from PySide6.QtGui import QMatrix4x4
+            from core.vecmath import QMatrix4x4
             group = Group(proto_meshes[int(raw["proto"])], name=name)
             vals = [float(x) for x in raw["xform"]]
             # data() is column-major; the constructor takes row-major.
@@ -1231,7 +1238,7 @@ def _load_into_inner(scene, path: Path, progress=None) -> None:
             group = Group(name=name)
             _load_mesh(group.mesh, raw, geom)
         if isinstance(raw.get("axes"), list) and len(raw["axes"]) == 16:
-            from PySide6.QtGui import QMatrix4x4
+            from core.vecmath import QMatrix4x4
             vals = [float(x) for x in raw["axes"]]
             group.axes = QMatrix4x4(*[vals[col * 4 + row] for row in range(4)
                                       for col in range(4)])

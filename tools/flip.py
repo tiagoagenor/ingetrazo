@@ -14,7 +14,8 @@ parent-context axes, and the magenta custom plane from hovering a face.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QPen, QPolygonF, QVector3D
+from PySide6.QtGui import QColor, QPen, QPolygonF
+from core.vecmath import QVector3D
 from PySide6.QtCore import QPointF
 
 from core.group import Group, copy_group, transformed_attrs

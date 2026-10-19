@@ -31,7 +31,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 #: How far past the offset corner a mitre may reach before it is bevelled,
 #: as a multiple of the distance. Clipper's default is 2; the same value

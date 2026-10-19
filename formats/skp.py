@@ -139,7 +139,7 @@ def apply_payload(scene, payload) -> str:
     to one that came through the converter. Cheap relative to the parse; the
     caller wraps it in a command for undo. Returns the backend name."""
     import gc
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.group import Group
     from core.mesh import Mesh
     from formats.dae import _add_fused
@@ -159,7 +159,7 @@ def apply_payload(scene, payload) -> str:
 
 
 def _apply_payload_inner(scene, payload) -> str:
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.group import Group
     from core.mesh import Mesh
     from formats.dae import _add_fused
@@ -327,7 +327,7 @@ def _apply_payload_inner(scene, payload) -> str:
     # from the a–b segment to the dimension line, so turn the .skp scalar
     # into the in-plane perpendicular direction × distance.
     if payload.get("dimensions"):
-        from PySide6.QtGui import QVector3D
+        from core.vecmath import QVector3D
         from core.dimension import Dimension
         for raw in payload["dimensions"]:
             a = QVector3D(*raw["a"])
@@ -351,7 +351,7 @@ def _apply_payload_inner(scene, payload) -> str:
     # joins them) — screen texts carry no label position and float at the
     # anchor itself.
     if payload.get("texts"):
-        from PySide6.QtGui import QVector3D
+        from core.vecmath import QVector3D
         from core.textlabel import TextLabel
         for raw in payload["texts"]:
             if raw.get("hidden"):
@@ -372,7 +372,7 @@ def _apply_payload_inner(scene, payload) -> str:
                 # The .skp instance's transformation, kept as the
                 # group's own axes (issue #44) — its mesh stays in world
                 # coordinates. Column-major, as QMatrix4x4.data() wrote it.
-                from PySide6.QtGui import QMatrix4x4
+                from core.vecmath import QMatrix4x4
                 m = QMatrix4x4(*[axes[c * 4 + r] for r in range(4)
                                  for c in range(4)])
                 if not m.isIdentity():

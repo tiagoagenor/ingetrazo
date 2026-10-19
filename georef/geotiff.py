@@ -498,9 +498,9 @@ def _decode_block(data: bytes, info: GeoTiffInfo, samples: int) -> np.ndarray:
     if comp in (COMPRESSION_DEFLATE, COMPRESSION_DEFLATE_OLD):
         data = zlib.decompress(data)
     elif comp == COMPRESSION_PACKBITS:
-        data = _unpackbits(data)
+        data = _decoder("unpackbits", _unpackbits)(data)
     elif comp == COMPRESSION_LZW:
-        data = _lzw_decode(data)
+        data = _decoder("lzw_decode", _lzw_decode)(data)
     bits = info.bits[0]
     if bits == 16:
         arr = np.frombuffer(data, dtype=info.byte_order + "u2")
@@ -628,6 +628,18 @@ class _RowReducer:
         cols = min(mean.shape[1], self.out.shape[1])
         self.out[self.row:self.row + n, :cols] = mean[:, :cols].astype(np.uint8)
         self.row += n
+
+
+def _decoder(name: str, python):
+    """The Rust engine's `name` decompressor when it is on (byte for byte
+    the Python's: tests/test_tiff_native.py), else `python`. LZW code by
+    code in Python took minutes on a tiled orthophoto."""
+    import core._native as _native
+    nat = _native.native
+    fn = getattr(nat, name, None) if nat is not None else None
+    if fn is None:
+        return python
+    return lambda data: fn(data if isinstance(data, bytes) else bytes(data))
 
 
 def _unpackbits(data: bytes) -> bytes:

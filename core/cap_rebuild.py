@@ -34,7 +34,7 @@ import random
 from collections import defaultdict
 from typing import Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.arrangement import (
     _TOL,

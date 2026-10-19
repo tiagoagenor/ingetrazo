@@ -40,7 +40,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core import bevel_profiles
 from core.i18n import tr

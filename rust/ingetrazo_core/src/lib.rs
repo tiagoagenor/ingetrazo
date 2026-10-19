@@ -10,13 +10,21 @@
 use numpy::{PyArray1, PyArray2, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray1};
 use pyo3::prelude::*;
 
+mod arrange;
 mod boxes;
+mod conform;
 mod facegeom;
+mod fuse;
 mod gltape;
 mod hlr;
 mod instances;
+mod intersect;
 mod occlusion;
 mod parity;
+mod plan;
+mod section;
+mod tiff;
+mod volume;
 mod weld;
 
 #[pymodule]
@@ -29,6 +37,17 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(face_geometry, m)?)?;
     m.add_function(wrap_pyfunction!(qt_vector_probe, m)?)?;
     m.add_function(wrap_pyfunction!(weld_points, m)?)?;
+    m.add_function(wrap_pyfunction!(plan_topology, m)?)?;
+    m.add_function(wrap_pyfunction!(signed_volume, m)?)?;
+    m.add_function(wrap_pyfunction!(arrangement_splits, m)?)?;
+    m.add_function(wrap_pyfunction!(section_loops, m)?)?;
+    m.add_class::<PolySet>()?;
+    m.add_function(wrap_pyfunction!(conform_t_junctions, m)?)?;
+    m.add_function(wrap_pyfunction!(shell_roots, m)?)?;
+    m.add_function(wrap_pyfunction!(lzw_decode, m)?)?;
+    m.add_function(wrap_pyfunction!(unpackbits, m)?)?;
+    m.add_function(wrap_pyfunction!(fuse_regions, m)?)?;
+    m.add_function(wrap_pyfunction!(tri_normals, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -199,6 +218,8 @@ impl ParityTris {
 fn hypot_of(name: &str) -> PyResult<facegeom::Hypot> {
     match name {
         "libstdc++" => Ok(facegeom::Hypot::LibStdCxx),
+        "msvc" => Ok(facegeom::Hypot::Msvc),
+        "libc++" => Ok(facegeom::Hypot::LibCxx),
         _ => Err(pyo3::exceptions::PyValueError::new_err("unknown hypot")),
     }
 }
@@ -358,6 +379,419 @@ fn weld_points<'py>(
     Ok((arr, PyArray1::from_vec(py, ids), PyArray1::from_vec(py, origin)))
 }
 
+/// core.lazy_mesh.plan after the weld (add_edges_welded + add_faces_welded
+/// on an empty mesh): ``inverse`` (N,) point → vertex, ``edges`` (E,2)
+/// point pairs, ``flags``/``curves``/``layers`` (E,) or None, ``rings``
+/// every ring corner (point index), ``sizes`` corners per ring, ``counts``
+/// rings per face — every size and count > 0, ``sum(sizes) == len(rings)``.
+/// Returns ``(edges (E',2), soft, hidden, curve (-1 = None), layer
+/// (-1 = None), corners, ef_start (E'+1,), ef_face)``.
+#[pyfunction]
+#[pyo3(signature = (inverse, edges, flags, curves, layers, rings, sizes, counts))]
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
+fn plan_topology<'py>(
+    py: Python<'py>,
+    inverse: PyReadonlyArray1<'_, i64>,
+    edges: PyReadonlyArray2<'_, i64>,
+    flags: Option<PyReadonlyArray1<'_, i64>>,
+    curves: Option<PyReadonlyArray1<'_, i64>>,
+    layers: Option<PyReadonlyArray1<'_, i64>>,
+    rings: PyReadonlyArray1<'_, i64>,
+    sizes: PyReadonlyArray1<'_, i64>,
+    counts: PyReadonlyArray1<'_, i64>,
+) -> PyResult<(Bound<'py, PyArray2<i64>>, Bound<'py, PyArray1<bool>>, Bound<'py, PyArray1<bool>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>)> {
+    let inverse = inverse.as_slice()?;
+    let e = edges.as_array();
+    let pairs: Vec<[i64; 2]> = (0..e.shape()[0]).map(|i| [e[[i, 0]], e[[i, 1]]]).collect();
+    let flags = flags.as_ref().map(|a| a.as_slice()).transpose()?;
+    let curves = curves.as_ref().map(|a| a.as_slice()).transpose()?;
+    let layers = layers.as_ref().map(|a| a.as_slice()).transpose()?;
+    let (rings, sizes, counts) = (rings.as_slice()?, sizes.as_slice()?, counts.as_slice()?);
+    let n = inverse.len() as i64;
+    if pairs.iter().flatten().chain(rings).any(|&p| p < 0 || p >= n)
+        || sizes.iter().chain(counts).any(|&s| s <= 0)
+        || sizes.iter().sum::<i64>() != rings.len() as i64
+        || counts.iter().sum::<i64>() != sizes.len() as i64
+        || [flags, curves, layers].iter().flatten().any(|a| a.len() != pairs.len())
+    {
+        return Err(pyo3::exceptions::PyValueError::new_err("plan_topology: inconsistent input"));
+    }
+    let t = py.detach(|| plan::topology(inverse, &pairs, flags, curves, layers, rings, sizes, counts));
+    let rows: Vec<Vec<i64>> = t.edges.iter().map(|v| v.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 2], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((arr, PyArray1::from_vec(py, t.soft), PyArray1::from_vec(py, t.hidden),
+        PyArray1::from_vec(py, t.curve), PyArray1::from_vec(py, t.layer),
+        PyArray1::from_vec(py, t.corners), PyArray1::from_vec(py, t.ef_start),
+        PyArray1::from_vec(py, t.ef_face)))
+}
+/// core.bim.face_set_volume's signed sum (before ``abs``) over a lazy
+/// mesh's triangles: ``pos`` (V,3) float32, ``tris`` (T,3) uint32 vertex
+/// indices in face order (face_geometry's unit triangles — Face.
+/// triangulate()'s).
+#[pyfunction]
+fn signed_volume(py: Python<'_>, pos: PyReadonlyArray2<'_, f32>, tris: PyReadonlyArray2<'_, u32>) -> PyResult<f64> {
+    let p = pos.as_array();
+    let t = tris.as_array();
+    if p.ncols() != 3 || t.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("signed_volume: (V,3) and (T,3)"));
+    }
+    let n = p.nrows() as u32;
+    let tri: Vec<[u32; 3]> = (0..t.nrows()).map(|i| [t[[i, 0]], t[[i, 1]], t[[i, 2]]]).collect();
+    if tri.iter().flatten().any(|&k| k >= n) {
+        return Err(pyo3::exceptions::PyValueError::new_err("signed_volume: index out of range"));
+    }
+    let pts: Vec<[f32; 3]> = (0..p.nrows()).map(|i| [p[[i, 0]], p[[i, 1]], p[[i, 2]]]).collect();
+    Ok(py.detach(|| volume::signed_volume(&pts, &tri)))
+}
+/// core.arrangement._build_graph's split points: ``segs`` (n,2,2) float64
+/// 2D segments. Returns ``(start (n+1,), points (m,2))`` — segment i's
+/// sorted split points (its endpoints and every hit, in Python's order)
+/// are ``points[start[i]:start[i+1]]``.
+#[pyfunction]
+fn arrangement_splits<'py>(
+    py: Python<'py>,
+    segs: PyReadonlyArray3<'_, f64>,
+) -> PyResult<(Bound<'py, PyArray1<i64>>, Bound<'py, PyArray2<f64>>)> {
+    let s = segs.as_array();
+    if s.shape()[1] != 2 || s.shape()[2] != 2 {
+        return Err(pyo3::exceptions::PyValueError::new_err("arrangement_splits: (n,2,2)"));
+    }
+    let v: Vec<[[f64; 2]; 2]> = (0..s.shape()[0])
+        .map(|i| [[s[[i, 0, 0]], s[[i, 0, 1]]], [s[[i, 1, 0]], s[[i, 1, 1]]]])
+        .collect();
+    let (start, pts) = py.detach(|| arrange::splits(&v));
+    let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 2], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((PyArray1::from_vec(py, start), arr))
+}
+/// core.hlr.section_loops: ``chords`` (K,2,3) float64 plane∩triangle
+/// chords, ``tol`` the node-merge tolerance as the Python computed it.
+/// Returns ``(ring_start (R+1,), points (P,3))``, the closed rings in the
+/// Python's order.
+#[pyfunction]
+fn section_loops<'py>(
+    py: Python<'py>,
+    chords: PyReadonlyArray3<'_, f64>,
+    tol: f64,
+) -> PyResult<(Bound<'py, PyArray1<i64>>, Bound<'py, PyArray2<f64>>)> {
+    let c = chords.as_array();
+    if c.shape()[1] != 2 || c.shape()[2] != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("section_loops: (K,2,3)"));
+    }
+    let v: Vec<[[f64; 3]; 2]> = (0..c.shape()[0])
+        .map(|k| [[c[[k, 0, 0]], c[[k, 0, 1]], c[[k, 0, 2]]], [c[[k, 1, 0]], c[[k, 1, 1]], c[[k, 1, 2]]]])
+        .collect();
+    if !(tol > 0.0) || v.iter().flatten().flatten().any(|x| !x.is_finite()) {
+        return Err(pyo3::exceptions::PyValueError::new_err("section_loops: finite input, tol > 0"));
+    }
+    let (start, pts) = py.detach(|| section::loops(&v, tol));
+    let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 3], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((PyArray1::from_vec(py, start), arr))
+}
+/// core.intersect's world polygons as one set (Intersect Faces):
+/// ``PolySet(pts (P,3) float32, ring_start (R+1,), face_start (F+1,),
+/// hypot)`` — every face's world points, outer ring first. ``kept``: the
+/// input faces world_polys keeps (in order), ``lo``/``hi`` (F',3) their
+/// boxes; ``cross_pairs`` crosses kept faces ``ii`` of this set with
+/// ``jj`` of ``other`` (this set when None), in that pair order, and
+/// returns the deduped segments (S,2,3) float32.
+#[pyclass(frozen)]
+struct PolySet {
+    polys: Vec<intersect::Poly>,
+    kept: Vec<i64>,
+    h: facegeom::Hypot,
+}
+
+#[pymethods]
+impl PolySet {
+    #[new]
+    fn new(
+        py: Python<'_>,
+        pts: PyReadonlyArray2<'_, f32>,
+        ring_start: PyReadonlyArray1<'_, i64>,
+        face_start: PyReadonlyArray1<'_, i64>,
+        hypot: &str,
+    ) -> PyResult<Self> {
+        let h = hypot_of(hypot)?;
+        let p = pts.as_array();
+        let rs = ring_start.as_slice()?;
+        let fs = face_start.as_slice()?;
+        let np_ = p.nrows() as i64;
+        let ok = p.ncols() == 3
+            && rs.first() == Some(&0)
+            && fs.first() == Some(&0)
+            && rs.windows(2).all(|w| w[0] <= w[1])
+            && fs.windows(2).all(|w| w[0] < w[1])
+            && *rs.last().unwrap_or(&0) == np_
+            && *fs.last().unwrap_or(&0) == rs.len() as i64 - 1;
+        if !ok {
+            return Err(pyo3::exceptions::PyValueError::new_err("PolySet: inconsistent input"));
+        }
+        let v: Vec<facegeom::V3> = (0..p.nrows()).map(|i| facegeom::V3(p[[i, 0]], p[[i, 1]], p[[i, 2]])).collect();
+        let (polys, kept) = py.detach(|| {
+            let mut polys = Vec::new();
+            let mut kept = Vec::new();
+            for f in 0..fs.len() - 1 {
+                let rings: Vec<&[facegeom::V3]> = (fs[f] as usize..fs[f + 1] as usize)
+                    .map(|r| &v[rs[r] as usize..rs[r + 1] as usize])
+                    .collect();
+                if let Some(pl) = intersect::poly(&rings, h) {
+                    polys.push(pl);
+                    kept.push(f as i64);
+                }
+            }
+            (polys, kept)
+        });
+        Ok(Self { polys, kept, h })
+    }
+
+    #[getter]
+    fn kept<'py>(&self, py: Python<'py>) -> Bound<'py, PyArray1<i64>> {
+        PyArray1::from_vec(py, self.kept.clone())
+    }
+
+    #[getter]
+    fn lo<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        self.boxes(py, true)
+    }
+
+    #[getter]
+    fn hi<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        self.boxes(py, false)
+    }
+
+    #[pyo3(signature = (other, ii, jj))]
+    fn cross_pairs<'py>(
+        &self,
+        py: Python<'py>,
+        other: Option<PyRef<'_, PolySet>>,
+        ii: PyReadonlyArray1<'_, i64>,
+        jj: PyReadonlyArray1<'_, i64>,
+    ) -> PyResult<Bound<'py, numpy::PyArray3<f32>>> {
+        let b: &PolySet = match &other {
+            Some(o) => o,
+            None => self,
+        };
+        let (ii, jj) = (ii.as_slice()?, jj.as_slice()?);
+        if ii.len() != jj.len()
+            || ii.iter().any(|&i| i < 0 || i as usize >= self.polys.len())
+            || jj.iter().any(|&j| j < 0 || j as usize >= b.polys.len())
+        {
+            return Err(pyo3::exceptions::PyValueError::new_err("cross_pairs: bad pairs"));
+        }
+        let h = self.h;
+        let segs = py.detach(|| {
+            let mut out = Vec::new();
+            for (&i, &j) in ii.iter().zip(jj) {
+                intersect::cross(&self.polys[i as usize], &b.polys[j as usize], h, &mut out);
+            }
+            intersect::dedupe(out)
+        });
+        let flat: Vec<f32> = segs.iter().flat_map(|(p, q)| [p.0, p.1, p.2, q.0, q.1, q.2]).collect();
+        use numpy::PyArrayMethods;
+        let arr = numpy::PyArray1::from_vec(py, flat);
+        Ok(arr.reshape([segs.len(), 2, 3])?)
+    }
+}
+
+impl PolySet {
+    fn boxes<'py>(&self, py: Python<'py>, low: bool) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let rows: Vec<Vec<f64>> = self
+            .polys
+            .iter()
+            .map(|p| {
+                let b = if low { p.lo } else { p.hi };
+                vec![b[0] as f64, b[1] as f64, b[2] as f64]
+            })
+            .collect();
+        if rows.is_empty() {
+            return Ok(PyArray2::zeros(py, [0, 3], false));
+        }
+        Ok(PyArray2::from_vec2(py, &rows)?)
+    }
+}
+/// core.solids._conform_t_junctions: ``v`` (V,3) float64 finite
+/// vertices, ``t`` (T,3) int64 triangles, ``f`` (T,) int64 face ids,
+/// ``tol`` as the Python computed it. Returns ``(vertices (V',3) float64,
+/// triangles (T',3) uint32, face_ids (T',) uint32)``.
+#[pyfunction]
+#[allow(clippy::type_complexity)]
+fn conform_t_junctions<'py>(
+    py: Python<'py>,
+    v: PyReadonlyArray2<'_, f64>,
+    t: PyReadonlyArray2<'_, i64>,
+    f: PyReadonlyArray1<'_, i64>,
+    tol: f64,
+) -> PyResult<(Bound<'py, PyArray2<f64>>, Bound<'py, PyArray2<u32>>, Bound<'py, PyArray1<u32>>)> {
+    let va = v.as_array();
+    let ta = t.as_array();
+    let fs = f.as_slice()?;
+    let n = va.nrows() as i64;
+    if va.ncols() != 3 || ta.ncols() != 3 || fs.len() != ta.nrows() || ta.nrows() == 0 {
+        return Err(pyo3::exceptions::PyValueError::new_err("conform_t_junctions: shapes"));
+    }
+    let verts: Vec<[f64; 3]> = (0..va.nrows()).map(|i| [va[[i, 0]], va[[i, 1]], va[[i, 2]]]).collect();
+    let tris: Vec<[i64; 3]> = (0..ta.nrows()).map(|i| [ta[[i, 0]], ta[[i, 1]], ta[[i, 2]]]).collect();
+    if verts.iter().flatten().any(|x| !x.is_finite())
+        || tris.iter().flatten().any(|&k| k < 0 || k >= n)
+        || fs.iter().any(|&x| x < 0 || x > u32::MAX as i64)
+        || !(tol >= 0.0)
+    {
+        return Err(pyo3::exceptions::PyValueError::new_err("conform_t_junctions: bad input"));
+    }
+    let o = py.detach(|| conform::conform(&verts, &tris, fs, tol));
+    let vr: Vec<Vec<f64>> = o.verts.iter().map(|p| p.to_vec()).collect();
+    let tr: Vec<Vec<u32>> = o.tris.iter().map(|p| p.to_vec()).collect();
+    Ok((PyArray2::from_vec2(py, &vr)?, PyArray2::from_vec2(py, &tr)?, PyArray1::from_vec(py, o.fids)))
+}
+/// core.solids._outer_shell_mask's union-find: ``t`` (T,3) int64 over
+/// ``nv`` vertices, merged triangle by triangle as the Python does (path
+/// halving, b's root then c's under a's). Returns each triangle's root
+/// (of its first corner), (T,) int64.
+#[pyfunction]
+fn shell_roots<'py>(py: Python<'py>, t: PyReadonlyArray2<'_, i64>, nv: usize) -> PyResult<Bound<'py, PyArray1<i64>>> {
+    let ta = t.as_array();
+    if ta.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("shell_roots: (T,3)"));
+    }
+    let tris: Vec<[usize; 3]> = (0..ta.nrows())
+        .map(|i| [ta[[i, 0]], ta[[i, 1]], ta[[i, 2]]])
+        .map(|r| r.map(|k| if k >= 0 { k as usize } else { usize::MAX }))
+        .collect();
+    if tris.iter().flatten().any(|&k| k >= nv) {
+        return Err(pyo3::exceptions::PyValueError::new_err("shell_roots: index out of range"));
+    }
+    let roots = py.detach(|| {
+        let mut parent: Vec<usize> = (0..nv).collect();
+        fn find(parent: &mut [usize], mut x: usize) -> usize {
+            while parent[x] != x {
+                parent[x] = parent[parent[x]];
+                x = parent[x];
+            }
+            x
+        }
+        for &[a, b, c] in &tris {
+            let ra = find(&mut parent, a);
+            let rb = find(&mut parent, b);
+            let rc = find(&mut parent, c);
+            parent[rb] = ra;
+            let r = find(&mut parent, rc);
+            parent[r] = ra;
+        }
+        tris.iter().map(|t| find(&mut parent, t[0]) as i64).collect::<Vec<i64>>()
+    });
+    Ok(PyArray1::from_vec(py, roots))
+}
+/// georef.geotiff._lzw_decode: a TIFF LZW strip or tile, decoded.
+#[pyfunction]
+fn lzw_decode<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBytes> {
+    let out = py.detach(|| tiff::lzw_decode(data));
+    pyo3::types::PyBytes::new(py, &out)
+}
+
+/// georef.geotiff._unpackbits: a PackBits strip or tile, decoded.
+#[pyfunction]
+fn unpackbits<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBytes> {
+    let out = py.detach(|| tiff::unpackbits(data));
+    pyo3::types::PyBytes::new(py, &out)
+}
+/// formats.fuse.fuse_coplanar_loops after the signatures: ``pts`` (P,3)
+/// float32 every loop's points, ``loop_start`` (L+1,), per loop ``sig``
+/// (equal ids: equal signatures), ``tex_group`` (equal non-negative ids:
+/// same colour, extras and image, a fuzzy-UV candidate), ``rank`` (2
+/// textured, 1 else), ``uvw`` (L,W) float64 with ``uvw_len`` (L,) used
+/// values each. Returns ``(traced (R,) u8, region_start (R+1,),
+/// region_loops, ring_start (R+1,) into ring_bounds, ring_bounds,
+/// ring_pts)``: region r's loops in order; when traced, its rings
+/// (outer first) as point indices.
+#[pyfunction]
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
+fn fuse_regions<'py>(
+    py: Python<'py>,
+    pts: PyReadonlyArray2<'_, f32>,
+    loop_start: PyReadonlyArray1<'_, i64>,
+    sig: PyReadonlyArray1<'_, i64>,
+    tex_group: PyReadonlyArray1<'_, i64>,
+    rank: PyReadonlyArray1<'_, u8>,
+    uvw: PyReadonlyArray2<'_, f64>,
+    uvw_len: PyReadonlyArray1<'_, i64>,
+    cos_tol: f64,
+    principal: bool,
+    hypot: &str,
+) -> PyResult<(Bound<'py, PyArray1<u8>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>)> {
+    let h = hypot_of(hypot)?;
+    let pa = pts.as_array();
+    let ls = loop_start.as_slice()?;
+    let (sig, tg, rk, ul) = (sig.as_slice()?, tex_group.as_slice()?, rank.as_slice()?, uvw_len.as_slice()?);
+    let ua = uvw.as_array();
+    let nl = ls.len().saturating_sub(1);
+    let ok = pa.ncols() == 3
+        && ls.first() == Some(&0)
+        && ls.windows(2).all(|w| w[0] <= w[1])
+        && *ls.last().unwrap_or(&0) == pa.nrows() as i64
+        && [sig.len(), tg.len(), rk.len(), ul.len(), ua.nrows()].iter().all(|&x| x == nl)
+        && ul.iter().all(|&x| x >= 0 && x as usize <= ua.ncols());
+    if !ok {
+        return Err(pyo3::exceptions::PyValueError::new_err("fuse_regions: inconsistent input"));
+    }
+    let v: Vec<facegeom::V3> = (0..pa.nrows()).map(|i| facegeom::V3(pa[[i, 0]], pa[[i, 1]], pa[[i, 2]])).collect();
+    let starts: Vec<usize> = ls.iter().map(|&x| x as usize).collect();
+    let uv: Vec<Vec<f64>> = (0..nl).map(|i| (0..ul[i] as usize).map(|k| ua[[i, k]]).collect()).collect();
+    let regions = py.detach(|| {
+        let inp = fuse::Input { pts: &v, loop_start: &starts, sig, tex_group: tg, rank: rk, uvw: &uv };
+        fuse::fuse(&inp, cos_tol, principal, h)
+    });
+    let (mut traced, mut rstart, mut rloops) = (Vec::new(), vec![0i64], Vec::new());
+    let (mut ring_start, mut bounds, mut rpts) = (vec![0i64], vec![0i64], Vec::new());
+    for r in regions {
+        match r {
+            fuse::Region::Pass(l) => {
+                traced.push(0u8);
+                rloops.extend(l.iter().map(|&x| x as i64));
+            }
+            fuse::Region::Traced(rings, l) => {
+                traced.push(1u8);
+                rloops.extend(l.iter().map(|&x| x as i64));
+                for ring in rings {
+                    rpts.extend(ring.iter().map(|&x| x as i64));
+                    bounds.push(rpts.len() as i64);
+                }
+            }
+        }
+        rstart.push(rloops.len() as i64);
+        ring_start.push(bounds.len() as i64 - 1);
+    }
+    Ok((PyArray1::from_vec(py, traced), PyArray1::from_vec(py, rstart), PyArray1::from_vec(py, rloops),
+        PyArray1::from_vec(py, ring_start), PyArray1::from_vec(py, bounds), PyArray1::from_vec(py, rpts)))
+}
+/// formats.stl._normal per triangle: ``pos`` (P,3) float32, ``tris``
+/// (T,3) uint32. Returns (T,3) float32 unit normals (zero below 1e-12).
+#[pyfunction]
+fn tri_normals<'py>(py: Python<'py>, pos: PyReadonlyArray2<'_, f32>, tris: PyReadonlyArray2<'_, u32>,
+                    hypot: &str) -> PyResult<Bound<'py, PyArray2<f32>>> {
+    let h = hypot_of(hypot)?;
+    let p = pos.as_array();
+    let t = tris.as_array();
+    if p.ncols() != 3 || t.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("tri_normals: (P,3) and (T,3)"));
+    }
+    let n = p.nrows() as u32;
+    let tr: Vec<[u32; 3]> = (0..t.nrows()).map(|i| [t[[i, 0]], t[[i, 1]], t[[i, 2]]]).collect();
+    if tr.iter().flatten().any(|&k| k >= n) {
+        return Err(pyo3::exceptions::PyValueError::new_err("tri_normals: index out of range"));
+    }
+    let v: Vec<facegeom::V3> = (0..p.nrows()).map(|i| facegeom::V3(p[[i, 0]], p[[i, 1]], p[[i, 2]])).collect();
+    let out = py.detach(|| volume::tri_normals(&v, &tr, h));
+    let rows: Vec<Vec<f32>> = out.iter().map(|r| r.to_vec()).collect();
+    if rows.is_empty() {
+        return Ok(PyArray2::zeros(py, [0, 3], false));
+    }
+    Ok(PyArray2::from_vec2(py, &rows)?)
+}
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
 /// eleven entry points in opcode order (glDrawArraysInstanced,

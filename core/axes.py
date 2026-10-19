@@ -20,7 +20,7 @@ the engine anything.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 _WORLD = {"x": (1.0, 0.0, 0.0), "y": (0.0, 1.0, 0.0), "z": (0.0, 0.0, 1.0)}
 
@@ -71,7 +71,7 @@ def sync(frame) -> None:
     ORIGIN.setX(o.x())
     ORIGIN.setY(o.y())
     ORIGIN.setZ(o.z())
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     _current = QMatrix4x4(frame)
 
 
@@ -111,7 +111,7 @@ def frame_matrix(o: QVector3D, x: QVector3D, y: QVector3D,
                  z: QVector3D):
     """The world matrix whose columns are ``x``, ``y``, ``z`` and whose
     translation is ``o`` — a frame back into matrix form."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     return QMatrix4x4(x.x(), y.x(), z.x(), o.x(),
                       x.y(), y.y(), z.y(), o.y(),
                       x.z(), y.z(), z.z(), o.z(),

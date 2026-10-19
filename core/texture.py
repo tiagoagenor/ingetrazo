@@ -26,7 +26,7 @@ from dataclasses import dataclass
 import re
 from pathlib import Path
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.triangulate import plane_axes
 

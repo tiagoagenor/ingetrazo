@@ -21,7 +21,7 @@ from __future__ import annotations
 import csv
 import io
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 class GeoPoint:

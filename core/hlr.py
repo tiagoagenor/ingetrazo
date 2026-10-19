@@ -257,6 +257,16 @@ def section_loops(cut_edges, tol: float | None = None) -> list:
     if tol is None:
         span = float((E.max(axis=(0, 1)) - E.min(axis=(0, 1))).max())
         tol = max(span * 1e-7, 1e-9)
+    import core._native as _native
+    nat = _native.native
+    if (nat is not None and hasattr(nat, "section_loops") and tol > 0
+            and np.isfinite(E).all()):
+        # The Rust engine: the same merge and walk, the same rings in the
+        # same order (tests/test_section_native.py) — fast enough for the
+        # fill to follow a section plane being dragged.
+        start, pts = nat.section_loops(np.ascontiguousarray(E), float(tol))
+        st = start.tolist()
+        return [pts[st[r]:st[r + 1]].copy() for r in range(len(st) - 1)]
     # Endpoints → node ids, merging anything closer than tol (a 3×3×3
     # neighbourhood of quantised cells, so a point on a cell boundary still
     # finds its twin on the other side).

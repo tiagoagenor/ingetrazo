@@ -13,7 +13,6 @@ of the face, as they are a few. tests/test_array_bake.py holds the result
 to the object bake."""
 from __future__ import annotations
 
-import sys
 from array import array
 
 import numpy as np
@@ -52,16 +51,17 @@ class DeferredFaces:
         faces = self.mesh.faces
         return (faces[k] for k in self.index.tolist())
 
+    def loose(self, i):
+        """A stand-alone copy of drawn face ``i`` at the same positions,
+        while the mesh is unbuilt (the built face once it is): for readers
+        of its shape alone — a plane, a normal — never of its identity."""
+        if type(self.mesh) is not DeferredMesh:
+            return self[i]
+        return _loose_face(lazy_mesh.plan_of(self.mesh), int(self.index[i]))
 
-def _geometry(mesh, plan):
-    d = mesh.__dict__
-    hit = d.get("_deferred_geom")
-    if hit is None:
-        hit = d["_deferred_geom"] = _native.native.face_geometry(
-            plan.pos.astype(np.float32), plan.corners, plan.ring_sizes,
-            plan.ring_counts, _native.qt_hypot(),
-            sys.version_info >= (3, 12))
-    return hit
+
+#: The face geometry of a lazy mesh (core.lazy_mesh.face_geometry).
+_geometry = lazy_mesh.face_geometry
 
 
 def prefetch(meshes) -> None:
@@ -243,7 +243,7 @@ def bake(vp, mesh, paint, msig, vkey, uid):
     table = _attrs_table(src)
     face_attr = np.asarray(src["face_attr"], dtype=np.int64)
     nf = plan.nfaces
-    pos32 = plan.pos.astype(np.float32)
+    pos32 = plan.pos32
 
     # Everything but the normal is decided by a face's attrs, i.e. by its
     # table entry (k; -1: no attrs): one row per entry.
@@ -592,6 +592,15 @@ class LazyPairs:
     def __getitem__(self, i):
         return (self.faces[i], self.owner)
 
+    def owner_at(self, i):
+        """``self[i][1]`` without building the face."""
+        return self.owner
+
+    def peek(self, i):
+        """``self[i]`` with a stand-alone copy of the face (DeferredFaces.
+        loose): its shape, nothing built."""
+        return (self.faces.loose(i), self.owner)
+
     def __iter__(self):
         owner = self.owner
         return ((f, owner) for f in self.faces)
@@ -627,7 +636,7 @@ class PickEntities:
     def __bool__(self):
         return self._len > 0
 
-    def __getitem__(self, i):
+    def _locate(self, i):
         import bisect
         i = int(i)
         if i < 0:
@@ -635,7 +644,26 @@ class PickEntities:
         if not 0 <= i < self._len:
             raise IndexError(i)
         k = bisect.bisect_right(self._starts, i) - 1
-        return self._parts[k][i - self._starts[k]]
+        return self._parts[k], i - self._starts[k]
+
+    def __getitem__(self, i):
+        part, j = self._locate(i)
+        return part[j]
+
+    def owner_at(self, i):
+        """``self[i][1]`` — the group a pick landed on — without building a
+        lazy mesh's face to read it."""
+        part, j = self._locate(i)
+        owner_at = getattr(part, "owner_at", None)
+        return owner_at(j) if owner_at is not None else part[j][1]
+
+    def peek(self, i):
+        """``self[i]``, but a lazy mesh's face as a stand-alone copy (its
+        shape: plane, normal) — nothing built. Loose model faces are never
+        lazy, so they come back as themselves."""
+        part, j = self._locate(i)
+        peek = getattr(part, "peek", None)
+        return peek(j) if peek is not None else part[j]
 
     def __iter__(self):
         for part in self._parts:

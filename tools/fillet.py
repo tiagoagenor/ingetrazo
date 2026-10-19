@@ -20,7 +20,7 @@ untouched.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.fillet import CIRCULAR, apply_fillet, plan_fillet
 from core.units import fmt_len_fine

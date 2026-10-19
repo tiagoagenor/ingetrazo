@@ -456,7 +456,7 @@ def fit_scale(scene, view, w_mm: float, h_mm: float,
     lo, hi = scene.bounds()
     if lo is None:
         return 100.0
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.camera import OrbitCamera
     cam = OrbitCamera()
     cam.target = QVector3D(*view.target)

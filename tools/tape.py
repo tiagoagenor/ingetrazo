@@ -28,7 +28,7 @@ locks onto, erasable with the Eraser or Edit ▸ Delete Guides. Esc cancels.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.guide import Guide
 from core.history import AddGuideCommand

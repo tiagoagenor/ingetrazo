@@ -30,7 +30,7 @@ the seams of curved surfaces stay soft.
 from __future__ import annotations
 
 import numpy as np
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.group import Group, world_mesh
 from core.mesh import Mesh
@@ -78,8 +78,54 @@ def solid_volume(group) -> float | None:
     else ``None``. Nested groups disqualify it."""
     if not isinstance(group, Group) or getattr(group, "children", None):
         return None
-    ok, vol = solid_report(world_mesh(group))
+    hit = _lazy_solid_report(group)
+    ok, vol = hit if hit is not None else solid_report(world_mesh(group))
     return vol if ok else None
+
+
+def _lazy_solid_report(group):
+    """:func:`solid_report` of a group whose mesh is still lazy, from its
+    plan and the Rust engine — nothing built (Entity Info on a click) — or
+    ``None`` to build it: no engine, no Qt-exact length (the triangles go
+    through Face.triangulate's normal), or a placement matrix (world_mesh
+    then welds a moved copy, whose topology may differ).
+
+    A lazy mesh was never edited, so none of its faces is ``interior``:
+    «every edge between exactly two faces» is its edge→face counts, which
+    is also face_set_volume's closure test (its segments are the edges)."""
+    from core.mesh import DeferredMesh
+    mesh = group.mesh
+    if type(mesh) is not DeferredMesh or getattr(group, "xform", None) \
+            is not None:
+        return None
+    import core._native as _native
+    nat = _native.native
+    if (nat is None or not hasattr(nat, "signed_volume")
+            or _native.qt_hypot() is None):
+        return None
+    import numpy as np
+    from core import lazy_mesh
+    plan = lazy_mesh.plan_of(mesh)
+    if plan.nfaces == 0:
+        return False, None
+    if (np.diff(plan.ef_start) != 2).any():
+        return False, None
+    geom = lazy_mesh.face_geometry(mesh, plan)
+    # The kernel's unit triangles take Qt's normalized() of the Newell
+    # vector; Face.triangulate (face_set_volume's) divides by hand. They
+    # agree but where normalized() does not divide: a length within Qt's
+    # fuzz of 0 (a null vector) or of 1 (the vector as is). Such a face:
+    # build, rather than risk other triangles.
+    ln = np.asarray(geom[1], dtype=np.float32)
+    fuzz = np.float32(1e-5)
+    if ((ln <= fuzz) | ((np.abs(ln - np.float32(1.0)) <= fuzz)
+                        & (ln != np.float32(1.0)))).any():
+        return None
+    tris_u = np.ascontiguousarray(geom[6], dtype=np.uint32).reshape(-1, 3)
+    vol = abs(nat.signed_volume(plan.pos32, tris_u))
+    if vol <= 1e-12:
+        return False, None
+    return True, vol
 
 
 # ---- Group <-> manifold --------------------------------------------------------
@@ -165,7 +211,20 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
     sliver comes out). Returns new ``(vertices, triangles, face_ids)``."""
     scale = max(1.0, float(np.abs(v).max())) if len(v) else 1.0
     tol = rel_tol * scale
-    verts = [tuple(p) for p in v.tolist()]
+    import core._native as _native
+    nat = _native.native
+    if (nat is not None and hasattr(nat, "conform_t_junctions") and len(t)
+            and np.isfinite(v).all() and np.asarray(f).min() >= 0):
+        # The Rust engine: the same splits, with a sorted-x index in place
+        # of a scan of every vertex per triangle edge (O(T·V) on a big
+        # solid). tests/test_conform_native.py.
+        return nat.conform_t_junctions(
+            np.ascontiguousarray(v, dtype=np.float64),
+            np.ascontiguousarray(t, dtype=np.int64).reshape(-1, 3),
+            np.ascontiguousarray(f, dtype=np.int64).reshape(-1), float(tol))
+    vl = v.tolist()
+    verts = [tuple(p) for p in vl]
+    tol2 = tol * tol
     out_t: list = []
     out_f: list = []
     for tri, fid in zip(t.tolist(), f.tolist()):
@@ -174,24 +233,30 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
         for k in range(3):
             a, b = tri[k], tri[(k + 1) % 3]
             ring.append(a)
-            pa, pb = v[a], v[b]
-            d = pb - pa
-            length2 = float(d @ d)
-            if length2 <= tol * tol:
+            (ax, ay, az), (bx, by, bz) = vl[a], vl[b]
+            # Scalar float arithmetic, in a fixed order (a NumPy ``@``
+            # could sum through BLAS, its own way).
+            dx, dy, dz = bx - ax, by - ay, bz - az
+            length2 = dx * dx + dy * dy + dz * dz
+            if length2 <= tol2:
                 continue
-            box_lo = np.minimum(pa, pb) - tol
-            box_hi = np.maximum(pa, pb) + tol
+            box_lo = np.minimum(v[a], v[b]) - tol
+            box_hi = np.maximum(v[a], v[b]) + tol
             near = np.flatnonzero(np.all((v >= box_lo) & (v <= box_hi),
                                          axis=1))
             hits = []
             for i in near.tolist():
                 if i in (a, b):
                     continue
-                s = float((v[i] - pa) @ d) / length2
+                px, py, pz = vl[i]
+                s = ((px - ax) * dx + (py - ay) * dy + (pz - az) * dz) \
+                    / length2
                 if s <= 1e-9 or s >= 1.0 - 1e-9:
                     continue
-                off = v[i] - (pa + s * d)
-                if float(off @ off) <= tol * tol:
+                ox = px - (ax + s * dx)
+                oy = py - (ay + s * dy)
+                oz = pz - (az + s * dz)
+                if ox * ox + oy * oy + oz * oz <= tol2:
                     hits.append((s, i))
             if hits:
                 split = True
@@ -201,7 +266,9 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
             out_f.append(fid)
             continue
         c = len(verts)
-        verts.append(tuple(v[tri].mean(axis=0).tolist()))
+        (x0, y0, z0), (x1, y1, z1), (x2, y2, z2) = (vl[k] for k in tri)
+        verts.append(((x0 + x1 + x2) / 3.0, (y0 + y1 + y2) / 3.0,
+                      (z0 + z1 + z2) / 3.0))
         n = len(ring)
         for k in range(n):
             out_t.append((c, ring[k], ring[(k + 1) % n]))
@@ -237,19 +304,27 @@ def _outer_shell_mask(v, t):
     """Keep the triangles of the shells that bound volume from outside:
     an inner void is a connected shell of negative signed volume."""
     n = len(t)
-    parent = list(range(len(v)))
+    import core._native as _native
+    nat = _native.native
+    if nat is not None and hasattr(nat, "shell_roots") and n:
+        # The same union-find, merged in the same order (tests/
+        # test_conform_native.py) — a Python loop per triangle otherwise.
+        roots = nat.shell_roots(np.ascontiguousarray(t, dtype=np.int64)
+                                .reshape(-1, 3), len(v))
+    else:
+        parent = list(range(len(v)))
 
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
 
-    for a, b, c in t.tolist():
-        ra, rb, rc = find(a), find(b), find(c)
-        parent[rb] = ra
-        parent[find(rc)] = ra
-    roots = np.array([find(a) for a in t[:, 0].tolist()])
+        for a, b, c in t.tolist():
+            ra, rb, rc = find(a), find(b), find(c)
+            parent[rb] = ra
+            parent[find(rc)] = ra
+        roots = np.array([find(a) for a in t[:, 0].tolist()])
     a, b, c = v[t[:, 0]], v[t[:, 1]], v[t[:, 2]]
     vol = np.einsum("ij,ij->i", a, np.cross(b, c))
     keep = np.ones(n, dtype=bool)

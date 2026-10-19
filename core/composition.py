@@ -1866,7 +1866,7 @@ def roll_camera(camera, deg: float) -> None:
     c, s_ = math.cos(th), math.sin(th)
     up = tuple(u[i] * c - r[i] * s_ for i in range(3))
     try:
-        from PySide6.QtGui import QVector3D
+        from core.vecmath import QVector3D
         camera.up = QVector3D(*up)
     except ImportError:                    # headless tests use plain tuples
         camera.up = up
@@ -1890,7 +1890,7 @@ def apply_frame_camera(camera, frame: MarcoVista,
             # views go to a TRUE 90° and swap the up vector to +Y.
             camera.pitch = math.radians(90.0 if key == "top" else -90.0)
             try:
-                from PySide6.QtGui import QVector3D
+                from core.vecmath import QVector3D
                 camera.up = QVector3D(0.0, 1.0, 0.0)
             except ImportError:      # headless tests use plain tuples
                 camera.up = (0.0, 1.0, 0.0)
@@ -1909,14 +1909,14 @@ def apply_frame_camera(camera, frame: MarcoVista,
         camera.pitch = float(frame.cam_pitch)
         if abs(frame.cam_pitch) < math.radians(89.5):
             try:                            # orbited off a plan: Z is up again
-                from PySide6.QtGui import QVector3D
+                from core.vecmath import QVector3D
                 camera.up = QVector3D(0.0, 0.0, 1.0)
             except ImportError:
                 camera.up = (0.0, 0.0, 1.0)
     if frame.cam_target is not None:
         x, y, z = (float(v) for v in frame.cam_target)
         try:
-            from PySide6.QtGui import QVector3D
+            from core.vecmath import QVector3D
             camera.target = QVector3D(x, y, z)
         except ImportError:
             camera.target = (x, y, z)

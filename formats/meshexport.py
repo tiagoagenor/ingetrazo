@@ -37,6 +37,281 @@ def export_triangles(face):
             yield tri
 
 
+def _engine():
+    """``(native module, hypot name)`` when the array exports can run."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "face_geometry"):
+        return None
+    hypot = _native.qt_hypot()
+    return None if hypot is None else (nat, hypot)
+
+
+def batch_triangles(faces, with_faces: bool = False):
+    """``[t for f in faces for t in export_triangles(f)]`` as arrays —
+    ``(pos (P,3) float32, tris (T,3) int64)``, the triangles' corners
+    indexing ``pos`` in that very order — or ``None`` without the Rust
+    engine or a Qt-exact length. ``with_faces``: a third array, each
+    triangle's index in ``faces``. See :func:`_ring_triangles`."""
+    if _engine() is None:
+        return None
+    import numpy as np
+    coords: list = []
+    sizes: list = []
+    counts: list = []
+    for f in faces:
+        rings = (f.vertices, *f.holes)
+        for ring in rings:
+            coords.extend((p.x(), p.y(), p.z()) for p in ring)
+            sizes.append(len(ring))
+        counts.append(len(rings))
+    pos = np.asarray(coords, dtype=np.float32).reshape(-1, 3)
+    return _ring_triangles(pos, np.arange(len(pos), dtype=np.int64), sizes,
+                           counts, faces.__getitem__, with_faces)
+
+
+def _ring_triangles(pos, corners, sizes, counts, face_at, with_faces=False):
+    """export_triangles of every face given as rings — ``corners`` index
+    ``pos``, ``sizes`` corners per ring, ``counts`` rings per face (outer
+    first) — in face order. All faces are triangulated in one kernel call
+    (face_geometry's unit triangles: Face.triangulate's, except where Qt's
+    normalized() does not divide — a Newell length within its fuzz of 0 or
+    1 — or a face has under three corners: those take
+    ``face_at(i).triangulate()``); the area filter is NumPy's, with the
+    Python formula deciding at the threshold. tests/test_export_arrays.py."""
+    import sys
+
+    import numpy as np
+    nat, hypot = _engine()
+    pos = np.ascontiguousarray(pos, dtype=np.float32).reshape(-1, 3)
+    nf = len(counts)
+    if nf == 0:
+        empty = np.zeros((0, 3), dtype=np.int64)
+        return (pos, empty, np.zeros(0, dtype=np.int64)) if with_faces \
+            else (pos, empty)
+    sizes = np.asarray(sizes, dtype=np.int64)
+    counts = np.asarray(counts, dtype=np.int64)
+    _n, ln, _c, _t, _tf, _u, tris_u, tri_face_u = nat.face_geometry(
+        pos, np.ascontiguousarray(corners, dtype=np.int64), sizes, counts,
+        hypot, sys.version_info >= (3, 12))
+    ln = np.asarray(ln, dtype=np.float32)
+    fuzz = np.float32(1e-5)
+    outer = sizes[np.concatenate([[0], np.cumsum(counts)[:-1]])]
+    odd = ((ln <= fuzz) | ((np.abs(ln - np.float32(1.0)) <= fuzz)
+                           & (ln != np.float32(1.0))) | (outer < 3))
+    tris = np.asarray(tris_u, dtype=np.int64).reshape(-1, 3)
+    tface = np.asarray(tri_face_u, dtype=np.int64)
+    keep = ~odd[tface]
+    tris, tface = tris[keep], tface[keep]
+    # The few odd faces: Face.triangulate, their points appended.
+    extra_pos: list = []
+    extra_tris: list = []
+    extra_face: list = []
+    base = len(pos)
+    for i in np.flatnonzero(odd).tolist():
+        face = face_at(i)
+        if len(face.vertices) < 3:
+            continue
+        for tri in face.triangulate():
+            k = base + len(extra_pos)
+            extra_pos.extend((p.x(), p.y(), p.z()) for p in tri)
+            extra_tris.append((k, k + 1, k + 2))
+            extra_face.append(i)
+    if extra_pos:
+        pos = np.concatenate([pos, np.asarray(extra_pos, dtype=np.float32)])
+        tris = np.concatenate([tris, np.asarray(extra_tris, dtype=np.int64)])
+        tface = np.concatenate([tface, np.asarray(extra_face, dtype=np.int64)])
+        order = np.argsort(tface, kind="stable")
+        tris, tface = tris[order], tface[order]
+    # export_triangles' area filter, in float64 from the float32 corners.
+    p64 = pos.astype(np.float64)
+    a, b, c = p64[tris[:, 0]], p64[tris[:, 1]], p64[tris[:, 2]]
+    ab, ac = b - a, c - a
+    cx = ab[:, 1] * ac[:, 2] - ab[:, 2] * ac[:, 1]
+    cy = ab[:, 2] * ac[:, 0] - ab[:, 0] * ac[:, 2]
+    cz = ab[:, 0] * ac[:, 1] - ab[:, 1] * ac[:, 0]
+    s = cx * cx + cy * cy + cz * cz
+    area = 0.5 * np.sqrt(s)
+    ok = area >= _MIN_TRI_AREA
+    for i in np.flatnonzero(np.abs(area - _MIN_TRI_AREA)
+                            <= 1e-6 * _MIN_TRI_AREA).tolist():
+        ok[i] = 0.5 * float(s[i]) ** 0.5 >= _MIN_TRI_AREA
+    if with_faces:
+        return pos, tris[ok], tface[ok]
+    return pos, tris[ok]
+
+
+def _rings_face(pos, corners, sizes, counts, i):
+    """A stand-alone Face of face ``i`` of a rings description (its own
+    vertices at the same positions): for the few faces Face.triangulate
+    must do itself."""
+    import numpy as np
+    from core.mesh import Face, Vertex
+    from core.vecmath import QVector3D
+    ring0 = int(np.sum(counts[:i]))
+    start = int(np.sum(sizes[:ring0]))
+    rings = []
+    for k in range(ring0, ring0 + int(counts[i])):
+        idx = corners[start:start + int(sizes[k])].tolist()
+        rings.append([Vertex(QVector3D(*pos[j].tolist())) for j in idx])
+        start += int(sizes[k])
+    return Face(rings[0], rings[1:] or None)
+
+
+def _source_rings(src, cache):
+    """The ``flat`` points transformed_mesh's bulk pass builds from
+    ``src`` — every edge's two ends, then each face's outer ring and its
+    maximal holes — with ``(n_edge_pts, sizes, counts)``; memoised in
+    ``cache`` per mesh (a prototype placed many times is read once). A
+    lazy mesh is read from its plan: nothing built."""
+    hit = cache.get(id(src))
+    if hit is not None and hit[0] is src:
+        return hit[1]
+    import numpy as np
+    from core import lazy_mesh
+    from core.mesh import DeferredMesh
+    from core.topology import _maximal_holes
+    from core.vecmath import QVector3D
+    if type(src) is DeferredMesh:
+        plan = lazy_mesh.plan_of(src)
+        p = plan.pos
+        parts = [p[plan.edges].reshape(-1, 3)]
+        n_edge_pts = 2 * len(plan.edges)
+        sizes: list = []
+        counts: list = []
+        rs = np.concatenate([[0], np.cumsum(plan.ring_sizes)]).tolist()
+        r = 0
+        for nring in plan.ring_counts.tolist():
+            rings = [plan.corners[rs[r + k]:rs[r + k + 1]]
+                     for k in range(nring)]
+            holes = rings[1:]
+            if len(holes) > 1:
+                qh = [[QVector3D(*p[j].tolist()) for j in h.tolist()]
+                      for h in holes]
+                kept = {id(h) for h in _maximal_holes(qh)}
+                holes = [h for h, q in zip(holes, qh) if id(q) in kept]
+            counts.append(1 + len(holes))
+            for ring in (rings[0], *holes):
+                sizes.append(len(ring))
+                parts.append(p[ring])
+            r += nring
+        flat = np.concatenate(parts) if parts else np.zeros((0, 3))
+    else:
+        rows: list = []
+        for e in src.edges:
+            rows.append((e.a.x(), e.a.y(), e.a.z()))
+            rows.append((e.b.x(), e.b.y(), e.b.z()))
+        n_edge_pts = len(rows)
+        sizes, counts = [], []
+        for f in src.faces:
+            holes = f.holes or []
+            if len(holes) > 1:
+                holes = _maximal_holes([list(h) for h in holes])
+            counts.append(1 + len(holes))
+            sizes.append(len(f.vertices))
+            rows.extend((v.x(), v.y(), v.z()) for v in f.vertices)
+            for h in holes:
+                sizes.append(len(h))
+                rows.extend((v.x(), v.y(), v.z()) for v in h)
+        flat = np.array(rows, dtype=np.float64).reshape(-1, 3)
+    out = (flat, n_edge_pts, sizes, counts)
+    cache[id(src)] = (src, out)
+    return out
+
+
+def world_triangles(scene):
+    """``(pos, tris)`` of :func:`formats.stl._faces`' faces, in its order —
+    every face in world space — without building the placed copies: a big
+    placed mesh's world faces are its transformed points welded as
+    transformed_mesh's bulk pass welds them (core.lazy_mesh.weld is that
+    weld), and a lazy mesh is read from its plan. Loose faces and small
+    placed meshes (transformed_mesh's per-face walk) stay Face objects.
+    ``None`` without the engine or for a scene this does not cover (no
+    placed group at all: the render_faces path)."""
+    if _engine() is None or not hasattr(scene, "render_faces"):
+        return None
+    groups = getattr(scene, "groups", [])
+    if not any(getattr(g, "xform", None) is not None for g in groups):
+        return None
+    import numpy as np
+    from core import lazy_mesh
+    from core.group import np_affine, world_mesh
+    from core.mesh import DeferredMesh
+    segs: list = []          # (pos, corners, sizes, counts, faces|None)
+
+    def add_faces(faces):
+        faces = list(faces)
+        coords, sizes, counts = [], [], []
+        for f in faces:
+            rings = (f.vertices, *f.holes)
+            for ring in rings:
+                coords.extend((p.x(), p.y(), p.z()) for p in ring)
+                sizes.append(len(ring))
+            counts.append(len(rings))
+        pos = np.asarray(coords, dtype=np.float32).reshape(-1, 3)
+        segs.append((pos, np.arange(len(pos), dtype=np.int64), sizes, counts,
+                     faces))
+    add_faces(f for f in scene.loose_mesh.faces if scene.entity_visible(f))
+    cache: dict = {}
+    for g in groups:
+        if not scene.entity_visible(g) or getattr(g, "billboard", False):
+            continue
+        src = g.mesh
+        m = getattr(g, "xform", None)
+        if getattr(g, "children", None):
+            add_faces(world_mesh(g).faces)
+            continue
+        lazy = type(src) is DeferredMesh
+        if m is None:
+            if lazy:
+                plan = lazy_mesh.plan_of(src)
+                segs.append((plan.pos32, plan.corners, plan.ring_sizes,
+                             plan.ring_counts, None))
+            else:
+                add_faces(src.faces)
+            continue
+        if lazy:
+            plan = lazy_mesh.plan_of(src)
+            n_e, n_f = len(plan.edges), plan.nfaces
+        else:
+            n_e, n_f = len(src.edges), len(src.faces)
+        if n_e * 2 + n_f * 4 < 1024:          # transformed_mesh's walk
+            add_faces(world_mesh(g).faces)
+            continue
+        flat, n_edge_pts, sizes, counts = _source_rings(src, cache)
+        if not len(flat) or not counts:
+            continue
+        rot, trans = np_affine(m)
+        pts = flat @ rot.T + trans
+        vpos, ids = lazy_mesh.weld(pts)
+        segs.append((vpos.astype(np.float32), ids[n_edge_pts:], sizes,
+                     counts, None))
+    # One rings description for all of them.
+    pos_parts, corner_parts, all_sizes, all_counts, makers = [], [], [], [], []
+    base = 0
+    for pos, corners, sizes, counts, faces in segs:
+        pos_parts.append(pos)
+        corner_parts.append(np.asarray(corners, dtype=np.int64) + base)
+        all_sizes.extend(np.asarray(sizes).tolist())
+        all_counts.extend(np.asarray(counts).tolist())
+        makers.extend([(len(pos_parts) - 1, i) for i in range(len(counts))])
+        base += len(pos)
+    if not pos_parts:
+        return None
+    sizes_np = [np.asarray(s, dtype=np.int64) for _p, _c, s, _n, _f in segs]
+    counts_np = [np.asarray(n, dtype=np.int64) for _p, _c, _s, n, _f in segs]
+
+    def face_at(k):
+        j, i = makers[k]
+        pos, corners, _s, _n, faces = segs[j]
+        if faces is not None:
+            return faces[i]
+        return _rings_face(pos, np.asarray(corners), sizes_np[j],
+                           counts_np[j], i)
+    return _ring_triangles(np.concatenate(pos_parts),
+                           np.concatenate(corner_parts), all_sizes, all_counts,
+                           face_at)
+
 def _has_billboard(group) -> bool:
     from core.group import iter_placements
     return any(getattr(g, "billboard", False) for g, _m in iter_placements(group))
@@ -47,7 +322,7 @@ def _turned_toward(mesh, toward):
     its largest face looks along ``toward(anchor)`` — what the viewport does
     to a face-me figure every frame (views.viewport._draw_faceme_mesh)."""
     import math
-    from PySide6.QtGui import QMatrix4x4, QVector3D
+    from core.vecmath import QMatrix4x4, QVector3D
     from core.group import transformed_mesh
     faces = list(mesh.faces)
     verts = [v.position for v in mesh.vertices]
@@ -86,7 +361,7 @@ def _facing_quad(mesh, toward):
     planar texture anchored to the world, so the picture slid and repeated
     across it — Sumari came out as two thin halves (#181)."""
     import math
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.mesh import Mesh
     from core.texture import fit_uv_affine
     verts = [v.position for v in mesh.vertices]
@@ -141,7 +416,7 @@ def _placements_facing(group, toward, figures: bool = True):
 def _feet(mesh):
     """Where a figure stands: the middle of its footprint, at its lowest
     point — the vertical it turns about."""
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     verts = [v.position for v in mesh.vertices]
     if not verts:
         return None
@@ -239,8 +514,7 @@ def collect_geometry(scene, face_me=None):
     """
     materials: dict[tuple, dict] = {}
     prims: dict[tuple, list] = {}
-    for face in world_faces(scene, face_me):
-        _add_face(face, materials, prims)
+    _add_faces(world_faces(scene, face_me), materials, prims)
     _resolve_finishes(scene, materials)
     return materials, prims
 
@@ -252,8 +526,7 @@ def collect_geometry_split(scene, face_me):
     (see :func:`faceme_figures`); ``materials`` covers all of them."""
     materials: dict[tuple, dict] = {}
     prims: dict[tuple, list] = {}
-    for face in world_faces(scene, face_me, figures=False):
-        _add_face(face, materials, prims)
+    _add_faces(world_faces(scene, face_me, figures=False), materials, prims)
     figures = []
     for faces, feet, yaw in faceme_figures(scene, face_me):
         own: dict[tuple, list] = {}
@@ -265,9 +538,32 @@ def collect_geometry_split(scene, face_me):
     return materials, prims, figures
 
 
-def _add_face(face, materials, prims) -> None:
+def _add_faces(faces, materials, prims) -> None:
+    """``for f in faces: _add_face(f, materials, prims)``, the triangles
+    from :func:`batch_triangles` when the engine is on — the same
+    materials and triangles in the same order (tests/test_export_arrays.py:
+    glTF and COLLADA files byte for byte)."""
+    faces = list(faces)
+    hit = batch_triangles(faces, with_faces=True) if faces else None
+    if hit is None:
+        for f in faces:
+            _add_face(f, materials, prims)
+        return
+    from core.vecmath import QVector3D
+    pos, tris, tface = hit
+    by_face: list = [[] for _ in faces]
+    pts = pos.tolist()
+    for f, tri in zip(tface.tolist(), tris.tolist()):
+        by_face[f].append([QVector3D(*pts[k]) for k in tri])
+    for face, tri_pts in zip(faces, by_face):
+        _add_face(face, materials, prims, tri_pts)
+
+
+def _add_face(face, materials, prims, triangles=None) -> None:
     """One face's triangles into ``prims`` under its material's key."""
     from core.texture import affine_uv, planar_uv
+    # ``triangles``: export_triangles(face)'s, when the caller made them.
+    tris = export_triangles(face) if triangles is None else triangles
     n = face.normal()
     op = face.attrs.get("opacity")
     op = None if op is None or float(op) >= 0.999 else round(float(op), 3)
@@ -284,7 +580,7 @@ def _add_face(face, materials, prims) -> None:
         sh = tex.get("sh", 1.0) or 1.0
         rot = float(tex.get("rot", 0.0))
         uvw = tex.get("uvw")
-        for tri in export_triangles(face):
+        for tri in tris:
             pts = list(tri)
             uv = affine_uv(uvw, pts) if uvw else planar_uv(n, pts, sw, sh, rot)
             prims.setdefault(key, []).append(
@@ -298,7 +594,7 @@ def _add_face(face, materials, prims) -> None:
                                    "opacity": op})
         if face.attrs.get("mat") and "mat" not in materials[key]:
             materials[key]["mat"] = face.attrs["mat"]
-        for tri in export_triangles(face):
+        for tri in tris:
             pts = list(tri)
             prims.setdefault(key, []).append(
                 (n, [(pts[k], None) for k in range(3)]))

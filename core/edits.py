@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 from typing import Iterable, Optional, Sequence
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.geometry import Edge, Face
 from core.history import (
@@ -67,6 +67,10 @@ def plan_edge_commands(
     near = _Nearby(simulated, faces_snapshot)
     from core.topology import KeyMemo
     near.key = KeyMemo()            # nothing moves while a plan is made
+    # The cycle search's graph of `simulated`, kept in step with it (one
+    # rebuild per segment made 8 000 crossings take 112 s, #541).
+    from core.topology import CycleGraph
+    graph = CycleGraph(simulated, key=near.key) if detect_faces else None
 
     for a, b in segments:
         # The searches only look at what can touch the segment (a box test
@@ -83,6 +87,9 @@ def plan_edge_commands(
             commands.append(DeleteEdgesCommand([edge], cascade_faces=False))
             if edge in simulated:
                 simulated.remove(edge)
+                near.drop_edge(edge)
+                if graph is not None:
+                    graph.remove(edge)
             # Sub-edges inherit the split edge's curve/soft flags, so cutting a
             # circle leaves its pieces selectable as the same curve entity.
             e_soft = getattr(edge, "soft", False) or None
@@ -93,6 +100,9 @@ def plan_edge_commands(
                     commands.append(
                         AddEdgeCommand(sa, sb, soft=e_soft, curve=e_curve))
                     simulated.append(Edge(sa, sb))
+                    near.add_edge(simulated[-1])
+                    if graph is not None:
+                        graph.add(simulated[-1])
 
             # Carry the split into faces sharing this edge — but not the face
             # the drawn segment chord-splits, which inserts the point itself.
@@ -139,9 +149,12 @@ def plan_edge_commands(
             commands.append(AddEdgeCommand(sa, sb))
             if already is None:
                 simulated.append(Edge(sa, sb))
+                near.add_edge(simulated[-1])
+                if graph is not None:
+                    graph.add(simulated[-1])
             if detect_faces:
                 _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye,
-                            near)
+                            near, graph)
 
     return commands
 
@@ -172,9 +185,22 @@ class _Nearby:
             self._row[id(f)] = len(self._items)
             self._items.append(f)
             rows.append(self._points_box(f.vertices))
-        self._arr = (np.asarray(rows, dtype=np.float64) if rows
-                     else np.zeros((0, 6)))
-        self._extra: dict = {}
+        self._n = len(rows)
+        cap = max(16, 2 * self._n)
+        self._arr = np.zeros((cap, 6))
+        if rows:
+            self._arr[:self._n] = rows
+        # The planner's own edge list, followed through add_edge/drop_edge:
+        # its rows in list order (the list only grows at the end, and a
+        # removal keeps the others' order), so a search reads its hits
+        # from the mask alone instead of walking the list.
+        self._sim = edges
+        self._is_edge = np.zeros(cap, dtype=bool)
+        self._alive = np.zeros(cap, dtype=bool)
+        ne = len(edges)
+        self._is_edge[:ne] = True
+        self._alive[:self._n] = True
+        self._live_edges = ne
 
     @staticmethod
     def _points_box(pts):
@@ -185,14 +211,46 @@ class _Nearby:
             return (0.0,) * 6
         return (min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))
 
-    def _box(self, item):
-        hit = self._extra.get(id(item))
-        if hit is not None and hit[0] is item:
-            return hit[1]
+    def _register(self, item) -> None:
+        """Box one of the plan's own new pieces, once, into the array (kept
+        alive in ``_items``, so its id is never reused). Boxing them again
+        on every search, in Python, made a plan of 8 000 crossings spend
+        2 minutes here (#541): O(searches × new pieces)."""
+        np = self._np
+        if self._n == len(self._arr):
+            cap = 2 * len(self._arr)
+            for name, dtype in (("_arr", None), ("_is_edge", bool),
+                                ("_alive", bool)):
+                old = getattr(self, name)
+                grown = (np.zeros((cap, 6)) if dtype is None
+                         else np.zeros(cap, dtype=dtype))
+                grown[:self._n] = old[:self._n]
+                setattr(self, name, grown)
         pts = item.vertices if hasattr(item, "vertices") else (item.a, item.b)
-        box = self._points_box(pts)
-        self._extra[id(item)] = (item, box)
-        return box
+        self._arr[self._n] = self._points_box(pts)
+        self._alive[self._n] = True
+        self._row[id(item)] = self._n
+        self._items.append(item)
+        self._n += 1
+
+    def add_edge(self, edge) -> None:
+        """``edge`` was appended to the planner's edge list."""
+        if id(edge) not in self._row:
+            self._register(edge)
+            self._is_edge[self._n - 1] = True
+            self._live_edges += 1
+        else:
+            self._live_edges = -1           # not a fresh piece: walk instead
+
+    def drop_edge(self, edge) -> None:
+        """``edge`` was removed from the planner's edge list."""
+        r = self._row.get(id(edge))
+        if (r is not None and self._items[r] is edge and self._is_edge[r]
+                and self._alive[r]):
+            self._alive[r] = False
+            self._live_edges -= 1
+        else:
+            self._live_edges = -1
 
     @staticmethod
     def _window(pts):
@@ -210,31 +268,45 @@ class _Nearby:
     def _pick(self, items, pts):
         np = self._np
         w = self._window(pts)
-        arr = self._arr
+        ids = list(map(id, items))
+        new = set(ids).difference(self._row)
+        if new:
+            # The plan's own new pieces: boxed once, then the mask's.
+            for it in items:
+                if id(it) in new and id(it) not in self._row:
+                    self._register(it)
+        arr = self._arr[:self._n]
         mask = ((arr[:, 3] >= w[0]) & (arr[:, 0] <= w[3])
                 & (arr[:, 4] >= w[1]) & (arr[:, 1] <= w[4])
                 & (arr[:, 5] >= w[2]) & (arr[:, 2] <= w[5]))
         known = self._items
-        # Boxed at the start (kept alive in ``known``, so an id is never
-        # reused): the mask says. The plan's own new pieces are boxed here.
-        # The set work runs in C; only the hits and the new pieces reach
-        # Python, and the result keeps the order of ``items``.
+        # Every box is in the array (each item kept alive in ``known``, so
+        # an id is never reused): the mask says. The set work runs in C;
+        # only the hits reach Python, and the result keeps the order of
+        # ``items``.
         keep = {id(known[r]) for r in np.flatnonzero(mask)}
-        ids = list(map(id, items))
-        new = set(ids).difference(self._row)
-        if new:
-            for it in items:
-                if id(it) in new:
-                    x0, y0, z0, x1, y1, z1 = self._box(it)
-                    if (x1 >= w[0] and x0 <= w[3] and y1 >= w[1]
-                            and y0 <= w[4] and z1 >= w[2] and z0 <= w[5]):
-                        keep.add(id(it))
         if not keep:
             return []
         return [it for it, i in zip(items, ids) if i in keep]
 
     def edges(self, edges, a, b):
+        if edges is self._sim and self._live_edges == len(edges):
+            return self._pick_live_edges((a, b))
         return self._pick(edges, (a, b))
+
+    def _pick_live_edges(self, pts):
+        """:meth:`_pick` of the planner's own edge list, from the mask alone:
+        its live rows are the list, in its order."""
+        np = self._np
+        w = self._window(pts)
+        n = self._n
+        arr = self._arr[:n]
+        mask = ((arr[:, 3] >= w[0]) & (arr[:, 0] <= w[3])
+                & (arr[:, 4] >= w[1]) & (arr[:, 1] <= w[4])
+                & (arr[:, 5] >= w[2]) & (arr[:, 2] <= w[5])
+                & self._is_edge[:n] & self._alive[:n])
+        known = self._items
+        return [known[r] for r in np.flatnonzero(mask).tolist()]
 
     def faces(self, faces, a, b):
         return self._pick(faces, (a, b))
@@ -250,7 +322,7 @@ def _around(near, faces, loop):
 
 
 def _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye=None,
-                near=None) -> None:
+                near=None, graph=None) -> None:
     """Emit the face commands for a freshly added edge ``sa``–``sb``.
 
     Two paths, mutually exclusive:
@@ -285,7 +357,8 @@ def _plan_faces(commands, faces_snapshot, simulated, sa, sb, eye=None,
 
     for cycle in find_cycles_through(
             simulated, sa, sb,
-            key=getattr(near, "key", None) if near is not None else None):
+            key=getattr(near, "key", None) if near is not None else None,
+            graph=graph):
         if is_planar(cycle) and not face_exists(
                 _around(near, faces_snapshot, cycle), cycle):
             cycle = face_up_or_toward(cycle, eye)

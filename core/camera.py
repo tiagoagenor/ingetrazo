@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import math
 
-from PySide6.QtGui import QMatrix4x4, QVector3D
+from core.vecmath import QMatrix4x4, QVector3D
 
 
 #: How close the camera may get to what it is looking at. A component is
@@ -228,7 +228,7 @@ class OrbitCamera:
         pitch turn about the view's horizontal axis, so the horizon stays
         level (no roll) and the distance to the target never changes.
         """
-        from PySide6.QtGui import QQuaternion
+        from core.vecmath import QQuaternion
 
         if not all(math.isfinite(c) for c in (pivot.x(), pivot.y(), pivot.z())):
             self.orbit(dx_pixels, dy_pixels, viewport_h)  # about the target
@@ -447,7 +447,7 @@ class OrbitCamera:
         on screen, then walk the distance in until its wider half-span sits
         at ``1 / margin`` of the window — never past a corner reaching the
         camera."""
-        from PySide6.QtGui import QVector4D
+        from core.vecmath import QVector4D
         goal = 1.0 / margin
         t = math.tan(math.radians(self.fov_deg) / 2.0)
         for _ in range(8):

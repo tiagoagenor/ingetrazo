@@ -9,7 +9,7 @@ the point's coordinates.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.history import AddTextLabelCommand
 from core.i18n import tr

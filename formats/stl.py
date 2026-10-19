@@ -15,7 +15,7 @@ import math
 import struct
 from pathlib import Path
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 STL_UNITS = {"m": 1.0, "cm": 0.01, "mm": 0.001, "in": 0.0254, "ft": 0.3048}
 _BINARY_HEADER_SIZE = 84
@@ -81,6 +81,71 @@ def _non_degenerate(triangle) -> bool:
              ab[2] * ac[0] - ab[0] * ac[2],
              ab[0] * ac[1] - ab[1] * ac[0])
     return math.hypot(*cross) > 1e-12
+
+
+def _binary_triangles(raw: bytes, count: int, scale: float, progress):
+    """A binary STL's facets, in NumPy: what a ``struct.unpack``, a
+    ``_scaled_point`` and a ``_non_degenerate`` per triangle did — the same
+    values, the same errors. Returns the kept triangles, ``(T, 3, 3)``
+    float64."""
+    import numpy as np
+    whole = len(raw) // _BINARY_TRIANGLE_SIZE
+    rec = np.dtype([("n", "<f4", 3), ("v", "<f4", 9), ("a", "<u2")])
+    facets = np.frombuffer(raw, dtype=rec, count=min(whole, count))
+    # value * scale on the float32 values, as Python floats.
+    tri = facets["v"].astype(np.float64).reshape(-1, 3, 3) * scale
+    bad = ~(np.isfinite(tri) & (np.abs(tri) <= _MAX_FLOAT32)).all(axis=(1, 2))
+    first_bad = int(np.argmax(bad)) if bad.any() else len(tri)
+    if whole < count or first_bad < len(tri):
+        # The record loop raised at the first bad or missing facet.
+        raise ValueError("STL binary facet data is truncated"
+                         if first_bad >= len(tri) else
+                         "STL contains a coordinate outside the supported "
+                         "range")
+    _tick(progress, 0.35, "Reading file…")
+    a, b, c = tri[:, 0], tri[:, 1], tri[:, 2]
+    ab, ac = b - a, c - a
+    cross = np.stack([ab[:, 1] * ac[:, 2] - ab[:, 2] * ac[:, 1],
+                      ab[:, 2] * ac[:, 0] - ab[:, 0] * ac[:, 2],
+                      ab[:, 0] * ac[:, 1] - ab[:, 1] * ac[:, 0]], axis=1)
+    with np.errstate(over="ignore", under="ignore"):
+        length = np.sqrt((cross * cross).sum(axis=1))
+    keep = length > 1e-12
+    # math.hypot rounds its own way: decide the near-threshold ones with it.
+    near = np.flatnonzero(np.abs(length - 1e-12) <= 1e-15)
+    for i in near.tolist():
+        keep[i] = math.hypot(*cross[i].tolist()) > 1e-12
+    _tick(progress, 0.70, "Reading file…")
+    return tri[keep]
+
+
+def _bulk_mesh(tris):
+    """A big binary import's mesh: its triangles in one bulk pass
+    (``add_faces_bulk``: bulk weld + welded faces). With the Rust engine
+    on, that pass is deferred — the mesh is a lazy one whose plan
+    (core.lazy_mesh) is that very pass, drawn from its arrays and built on
+    first touch (tests/test_stl_lazy.py)."""
+    import numpy as np
+
+    from core import _native
+    from core.mesh import DeferredMesh, Mesh
+    n = len(tris)
+    pos = np.ascontiguousarray(tris, dtype=np.float64).reshape(-1, 3)
+    sizes = np.full(n, 3, dtype=np.int64)
+    counts = np.ones(n, dtype=np.int64)
+    mesh = Mesh()
+
+    def build(m):
+        m.add_faces_bulk(pos, sizes, counts)
+    if _native.wanted() and DeferredMesh.defer(
+            mesh, build, n,
+            dict(meta={}, pos=pos, edges=np.zeros((0, 2), dtype=np.int64),
+                 flags=np.zeros(0, dtype=np.uint8), curves=None, layers=None,
+                 rings=np.arange(3 * n, dtype=np.int64), sizes=sizes,
+                 counts=counts, face_attr=np.full(n, -1, dtype=np.int64))):
+        return mesh
+    build(mesh)
+    return mesh
 
 
 def _ascii_stl(path: Path, scale: float, progress, file_size: int):
@@ -228,20 +293,22 @@ def _parse_stl_inner(path: Path, progress=None, scale: float = 1.0,
     if binary:
         with path.open("rb") as source:
             source.seek(_BINARY_HEADER_SIZE)
-            for index in range(count):
-                record = source.read(_BINARY_TRIANGLE_SIZE)
-                if len(record) != _BINARY_TRIANGLE_SIZE:
-                    raise ValueError("STL binary facet data is truncated")
-                data = struct.unpack("<12fH", record)
-                triangle = tuple(
-                    _scaled_point(data[i:i + 3], scale) for i in (3, 6, 9))
-                if _non_degenerate(triangle):
-                    batch.append(triangle)
-                    if len(batch) >= _BATCH_SIZE:
-                        flush_batch()
-                if index % max(count // 100, 1) == 0:
-                    _tick(progress, 0.05 + 0.65 * (index + 1) /
-                          max(count, 1), "Reading file…")
+            raw = source.read(count * _BINARY_TRIANGLE_SIZE)
+        kept = _binary_triangles(raw, count, scale, progress)
+        if not len(kept):
+            raise ValueError("STL file contains no usable triangles")
+        from formats.dae import _MAX_FUSE_LOOPS
+        if simplify_mode == "none" and len(kept) > _MAX_FUSE_LOOPS:
+            # A big import stays one reference group: lazy with the engine
+            # (drawn from its arrays, built on first edit), and built in ONE
+            # bulk pass either way — the lazy plan is that pass.
+            _tick(progress, 1.0, "Done")
+            return _bulk_mesh(kept)
+        import numpy as np
+        n = len(kept)
+        target.add_faces_bulk(kept.reshape(-1, 3),
+                              np.full(n, 3, dtype=np.int64),
+                              np.ones(n, dtype=np.int64))
     else:
         for triangle in _ascii_stl(path, scale, progress, size):
             if _non_degenerate(triangle):
@@ -285,7 +352,8 @@ def add_stl_mesh(scene, path, target) -> None:
     """Insert a prepared STL mesh into a scene (must run on the UI thread)."""
     from formats.dae import _MAX_FUSE_LOOPS
 
-    if len(target.faces) > _MAX_FUSE_LOOPS:
+    from core.mesh import face_count
+    if face_count(target) > _MAX_FUSE_LOOPS:     # a lazy one stays unbuilt
         from core.group import Group
         scene.groups.append(Group(target, name=Path(path).stem))
     else:
@@ -294,11 +362,44 @@ def add_stl_mesh(scene, path, target) -> None:
     scene.version += 1
 
 
+def _save_stl_arrays(scene, path, scale: float) -> bool:
+    """:func:`save_stl` from arrays — the same bytes (tests/
+    test_export_arrays.py): the triangles in one batch, the normals by the
+    Rust ``tri_normals`` (``_normal``'s Qt arithmetic), the records packed
+    by NumPy. False (nothing written) without the engine, or when a
+    coordinate is out of range: the record loop then raises as it did."""
+    from .meshexport import batch_triangles, world_triangles
+    # Placed copies and lazy meshes straight from arrays when it can.
+    hit = world_triangles(scene) or batch_triangles(list(_faces(scene)))
+    if hit is None:
+        return False
+    import numpy as np
+
+    import core._native as _native
+    pos, tris = hit
+    pts = pos.astype(np.float64)[tris] * scale            # (T, 3, 3)
+    if not (np.isfinite(pts) & (np.abs(pts) <= _MAX_FLOAT32)).all():
+        return False
+    normals = _native.native.tri_normals(
+        pos, tris.astype(np.uint32), _native.qt_hypot())
+    rec = np.zeros(len(tris), dtype=np.dtype(
+        [("n", "<f4", 3), ("v", "<f4", 9), ("a", "<u2")]))
+    rec["n"] = normals
+    rec["v"] = pts.reshape(-1, 9).astype(np.float32)
+    with open(Path(path), "wb") as f:
+        f.write(b"IngeTrazo STL export".ljust(80, b"\x00"))  # 80-byte header
+        f.write(struct.pack("<I", len(tris)))
+        f.write(rec.tobytes())
+    return True
+
+
 def save_stl(scene, path, unit: str = "m") -> None:
     """Write the scene as a binary STL to ``path``, its coordinates in
     ``unit`` (a key of ``STL_UNITS``). The model is in metres; a slicer reads
     an STL as millimetres, so a metre file came in 1000x too small (#513)."""
     scale = 1.0 / STL_UNITS[unit]
+    if _save_stl_arrays(scene, path, scale):
+        return
     tris = list(iter_triangles(scene))
     with open(Path(path), "wb") as f:
         f.write(b"IngeTrazo STL export".ljust(80, b"\x00"))  # 80-byte header

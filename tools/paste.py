@@ -10,7 +10,7 @@ The clipboard is kept — paste again for another copy.
 from __future__ import annotations
 
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.geometry import Face as PreviewFace
 from core.group import copy_group, translated_attrs

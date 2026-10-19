@@ -48,7 +48,7 @@ def _yup_matrix(m) -> list:
     """A Z-up placement matrix as the matching glTF node matrix — the same
     change of axes the vertices get (:func:`_yup`) on both sides, column
     major as glTF wants it."""
-    from PySide6.QtGui import QMatrix4x4
+    from core.vecmath import QMatrix4x4
     c = QMatrix4x4(1, 0, 0, 0,
                    0, 0, 1, 0,
                    0, -1, 0, 0,
@@ -84,10 +84,10 @@ def _file_hierarchy(scene, only=None):
     :data:`_FILE_FACING`, with ``ingetrazo_faceme`` = feet and heading,
     as the Render with Blender export writes it."""
     import math
-    from PySide6.QtGui import QVector3D
+    from core.vecmath import QVector3D
     from core.group import transformed_mesh
     from core.i18n import tr
-    from .meshexport import (_add_face, _facing_quad, _feet,
+    from .meshexport import (_add_faces, _facing_quad, _feet,
                              _resolve_finishes, _turned_toward)
     materials: dict = {}
     meshes: dict = {}
@@ -102,8 +102,7 @@ def _file_hierarchy(scene, only=None):
              if scene.entity_visible(f) and (only is None or f in only)]
     if loose:
         prims: dict = {}
-        for f in loose:
-            _add_face(f, materials, prims)
+        _add_faces(loose, materials, prims)
         meshes["loose"] = prims
         roots.append({"name": tr("Loose geometry"), "matrix": None,
                       "mesh": "loose", "children": []})
@@ -120,8 +119,7 @@ def _file_hierarchy(scene, only=None):
             turned = (_turned_toward(mesh, toward) if kind == "mesh"
                       else _facing_quad(mesh, toward))
             prims = {}
-            for f in turned.faces:
-                _add_face(f, materials, prims)
+            _add_faces(turned.faces, materials, prims)
             if prims:
                 key = ("figure", len(figures))
                 meshes[key] = prims
@@ -135,8 +133,7 @@ def _file_hierarchy(scene, only=None):
         key = id(g.mesh)
         if key not in meshes:
             prims = {}
-            for f in g.mesh.faces:
-                _add_face(f, materials, prims)
+            _add_faces(g.mesh.faces, materials, prims)
             meshes[key] = prims
         node = {"name": getattr(g, "name", "") or tr("Group"),
                 "matrix": m, "mesh": key if meshes[key] else None,

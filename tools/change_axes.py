@@ -16,7 +16,7 @@ which is how you line the axes up with the geometry you meant.
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.i18n import tr
 from tools.base import Tool, ToolContext

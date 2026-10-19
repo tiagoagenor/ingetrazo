@@ -13,7 +13,7 @@ value label shows the live measurement. The committed dimension lives in
 """
 from __future__ import annotations
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.dimension import Dimension
 from core.snap import project_to_view_plane

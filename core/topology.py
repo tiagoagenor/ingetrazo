@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections import deque
 from typing import Iterable, Optional
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.geometry import Edge, Face
 
@@ -118,6 +118,78 @@ def _cycle_adjacency(edges, ka, kb, key=_key) -> dict:
         adj.setdefault(ea, []).append((eb, edge.b))
         adj.setdefault(eb, []).append((ea, edge.a))
     return adj
+
+
+class CycleGraph:
+    """:func:`_cycle_adjacency` of an edge list that changes edge by edge —
+    kept up to date instead of rebuilt per segment. A planner adding 8 000
+    crossings rebuilt the whole graph for each one (O(segments × edges):
+    112 s, #541). Each node's list keeps the edge order (an edge added
+    goes last, one removed leaves the others in place), so the search is
+    the one the rebuilt graph gives; the segment's own copy is left out at
+    search time (:class:`_AdjWithout`)."""
+
+    def __init__(self, edges=(), key=_key) -> None:
+        self.key = key
+        self.adj: dict = {}
+        self._entries: dict = {}
+        for edge in edges:
+            self.add(edge)
+
+    def add(self, edge) -> None:
+        ea, eb = self.key(edge.a), self.key(edge.b)
+        if ea == eb:
+            return
+        x, y = (eb, edge.b), (ea, edge.a)
+        self.adj.setdefault(ea, []).append(x)
+        self.adj.setdefault(eb, []).append(y)
+        self._entries[id(edge)] = (edge, ea, x, eb, y)
+
+    def remove(self, edge) -> None:
+        hit = self._entries.get(id(edge))
+        if hit is None or hit[0] is not edge:
+            return
+        del self._entries[id(edge)]
+        _e, ea, x, eb, y = hit
+        for k, entry in ((ea, x), (eb, y)):
+            lst = self.adj[k]
+            for i, it in enumerate(lst):
+                if it is entry:
+                    del lst[i]
+                    break
+            if not lst:
+                del self.adj[k]
+
+
+class _AdjWithout:
+    """A :class:`CycleGraph`'s adjacency read as :func:`_cycle_adjacency`
+    would have built it without the segment ``ka``–``kb`` (every copy of
+    that edge left out, a node it leaves bare absent) — for
+    :func:`_smallest_cycle`, which only uses ``in``, ``[]`` and ``get``."""
+
+    __slots__ = ("_adj", "_ka", "_kb")
+
+    def __init__(self, adj, ka, kb) -> None:
+        self._adj, self._ka, self._kb = adj, ka, kb
+
+    def get(self, u, default=()):
+        lst = self._adj.get(u)
+        if lst is None:
+            return default
+        if u == self._ka:
+            lst = [e for e in lst if e[0] != self._kb]
+        elif u == self._kb:
+            lst = [e for e in lst if e[0] != self._ka]
+        return lst if lst else default
+
+    def __contains__(self, u) -> bool:
+        return bool(self.get(u))
+
+    def __getitem__(self, u):
+        lst = self.get(u, None)
+        if lst is None:
+            raise KeyError(u)
+        return lst
 
 
 def _smallest_cycle(adj, a, b, ka, kb, max_len: int = 32,
@@ -997,7 +1069,7 @@ def _same_cycle(c1: list[QVector3D], c2: list[QVector3D]) -> bool:
 
 def find_cycles_through(
     edges: Iterable[Edge], a: QVector3D, b: QVector3D, max_results: int = 2,
-    key=None,
+    key=None, graph: "CycleGraph | None" = None,
 ) -> list[list[QVector3D]]:
     """Up to ``max_results`` distinct minimal cycles through segment ``a``–``b``.
 
@@ -1016,7 +1088,9 @@ def find_cycles_through(
     ka, kb = _key(a), _key(b)
     if ka == kb:
         return []
-    adj = _cycle_adjacency(edges, ka, kb, key)
+    # ``graph``: the planner's live adjacency of ``edges`` (same order).
+    adj = (_AdjWithout(graph.adj, ka, kb) if graph is not None
+           else _cycle_adjacency(edges, ka, kb, key))
     first = _smallest_cycle(adj, a, b, ka, kb)
     if first is None:
         return []
@@ -1196,6 +1270,26 @@ def _maximal_holes(holes: list) -> list:
         return abs(a) / 2.0
 
     areas = [area(h) for h in holes]
+    # Every pair of holes was tested in full — a projection of the bigger
+    # one and, failing its centroid, a triangulation of the smaller: a
+    # façade of 2 000 windows ran 4 M of them on every open and save. Both
+    # points _loop_inside_loop tries lie in the smaller hole's box, and the
+    # holes of one face share its plane, so a bigger hole whose box misses
+    # that one (by more than a float32 plane's wobble) cannot hold it: those
+    # pairs are skipped, the rest tested in the same order — the same
+    # answer, any() having nothing else to do.
+    import numpy as np
+    boxes = []
+    for h in holes:
+        xs = [p.x() for p in h]
+        ys = [p.y() for p in h]
+        zs = [p.z() for p in h]
+        boxes.append((min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))
+                     if xs else (0.0,) * 6)
+    box = np.asarray(boxes, dtype=np.float64).reshape(-1, 6)
+    span = float(np.abs(box).max()) if len(box) else 0.0
+    margin = 1e-4 * (1.0 + span)
+    area_arr = np.asarray(areas, dtype=np.float64)
     keep = []
     for i, h in enumerate(holes):
         # The plane normal from the hole itself (any 3 non-collinear points).
@@ -1204,10 +1298,15 @@ def _maximal_holes(holes: list) -> list:
             keep.append(h)
             continue
         nrm = nrm.normalized()
+        b = box[i]
+        cand = np.flatnonzero(
+            (area_arr > areas[i] + 1e-6)
+            & (box[:, 3] >= b[0] - margin) & (box[:, 0] <= b[3] + margin)
+            & (box[:, 4] >= b[1] - margin) & (box[:, 1] <= b[4] + margin)
+            & (box[:, 5] >= b[2] - margin) & (box[:, 2] <= b[5] + margin))
         nested = any(
-            j != i and areas[j] > areas[i] + 1e-6
-            and _loop_inside_loop(h, holes[j], nrm)
-            for j in range(len(holes))
+            j != i and _loop_inside_loop(h, holes[j], nrm)
+            for j in cand.tolist()
         )
         if not nested:
             keep.append(h)

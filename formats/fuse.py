@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import math
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 def _key(p: QVector3D):
@@ -119,6 +119,9 @@ def fuse_coplanar_loops(loops, cos_tol: float = 0.99999,
     drift guard compares each union against the region's root normal, so a
     faceted curve (real dihedral steps) never chain-merges into a non-planar
     blob."""
+    hit = _fuse_native(loops, cos_tol, principal_planes)
+    if hit is not None:
+        return hit
     faces: list = []
     # Coincident duplicates (a two-sided export writes every
     # triangle twice, front + reversed back): keep ONE copy — they z-fight
@@ -201,6 +204,70 @@ def fuse_coplanar_loops(loops, cos_tol: float = 0.99999,
     return out
 
 
+def _fuse_native(loops, cos_tol, principal_planes):
+    """:func:`fuse_coplanar_loops` through the Rust engine's
+    ``fuse_regions`` — the signatures made here, as ids, the regions and
+    their outlines there (tests/test_fuse_native.py) — or ``None`` (no
+    engine, an older one, no Qt-exact length: the normals go through
+    QVector3D.length)."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "fuse_regions"):
+        return None
+    hypot = _native.qt_hypot()
+    if hypot is None:
+        return None
+    import numpy as np
+    flat: list = []
+    starts = [0]
+    sigs, groups, ranks, uvws = [], [], [], []
+    sig_ids: dict = {}
+    group_ids: dict = {}
+    memo: dict = {}
+    for pts, attrs in loops:
+        flat.extend(pts)
+        starts.append(len(flat))
+        s = memo.get(id(attrs))
+        if s is None:
+            s = memo[id(attrs)] = _attrs_sig(attrs)     # loops keep attrs alive
+        sigs.append(sig_ids.setdefault(s, len(sig_ids)))
+        t = s[1]
+        if t is not None and t[4]:
+            groups.append(group_ids.setdefault((s[0], s[2], t[0]),
+                                               len(group_ids)))
+            uvws.append(t[4])
+        else:
+            groups.append(-1)
+            uvws.append(())
+        ranks.append(2 if t is not None else 1)
+    width = max((len(u) for u in uvws), default=0)
+    uvw = np.zeros((len(loops), width))
+    for i, u in enumerate(uvws):
+        uvw[i, :len(u)] = u
+    pts = np.array([(p.x(), p.y(), p.z()) for p in flat],
+                   dtype=np.float32).reshape(-1, 3)
+    traced, rs, rl, ring_start, bounds, rpts = nat.fuse_regions(
+        pts, np.asarray(starts, dtype=np.int64),
+        np.asarray(sigs, dtype=np.int64), np.asarray(groups, dtype=np.int64),
+        np.asarray(ranks, dtype=np.uint8), uvw,
+        np.asarray([len(u) for u in uvws], dtype=np.int64),
+        float(cos_tol), bool(principal_planes), hypot)
+    rs, rl, ring_start = rs.tolist(), rl.tolist(), ring_start.tolist()
+    bounds, rpts = bounds.tolist(), rpts.tolist()
+    out: list = []
+    for r, is_traced in enumerate(traced.tolist()):
+        lps = rl[rs[r]:rs[r + 1]]
+        if is_traced:
+            rings = [[QVector3D(flat[k]) for k in rpts[bounds[j]:bounds[j + 1]]]
+                     for j in range(ring_start[r], ring_start[r + 1])]
+            out.append((rings[0], rings[1:], loops[lps[0]][1],
+                        [loops[f][0] for f in lps]))
+        else:
+            out.extend((loops[f][0], [], loops[f][1], [loops[f][0]])
+                       for f in lps)
+    return out
+
+
 def simplify_mesh(mesh, max_angle_degrees: float = 0.0,
                   principal_planes: bool = False) -> int:
     """Merge connected near-coplanar faces in-place and return faces removed.
@@ -259,19 +326,38 @@ def simplify_mesh(mesh, max_angle_degrees: float = 0.0,
         if flags is not None:
             stamp_edge_flags(edge, flags)
 
-    while True:
-        collapsed = False
-        for vertex in list(simplified.vertices):
-            if simplified.collapsible_vertex(vertex):
-                simplified.collapse_vertex(vertex)
-                collapsed = True
-                break
-        if not collapsed:
-            break
+    _collapse_all(simplified)
 
     soften_smooth_edges(simplified)
     mesh.restore_state(simplified.capture_state())
     return max(original_count - len(mesh.faces), 0)
+
+
+def _collapse_all(mesh) -> None:
+    """Collapse redundant collinear vertices, always the FIRST collapsible
+    one in vertex-list order, until none is left — as a rescan from the
+    start after each collapse did, without the rescan (O(V × collapses):
+    the whole cost of simplifying a big mesh).
+
+    Whether a vertex is collapsible reads its two edges and their faces
+    only, and collapsing ``v`` changes the edges of its two neighbours and
+    nobody else's; the list only loses ``v``. So every vertex before the
+    scan point stays not collapsible, and after a collapse the scan goes
+    back no further than the lowest of ``v``'s and its neighbours' places."""
+    order = list(mesh.vertices)
+    place = {id(v): i for i, v in enumerate(order)}
+    gone = [False] * len(order)
+    i = 0
+    while i < len(order):
+        v = order[i]
+        if gone[i] or not mesh.collapsible_vertex(v):
+            i += 1
+            continue
+        e1, e2 = list(v.edges)
+        n1, n2 = e1.other(v), e2.other(v)
+        mesh.collapse_vertex(v)
+        gone[i] = True
+        i = min(i, place.get(id(n1), i), place.get(id(n2), i))
 
 
 def _trace_region(loops):
@@ -280,8 +366,14 @@ def _trace_region(loops):
     if len(loops) == 1:
         pts, attrs, _n = loops[0]
         return (pts, [], attrs, [pts])
-    # Boundary edges appear exactly once across the region's loops.
+    # Boundary edges appear exactly once across the region's loops. Each
+    # undirected edge is keyed by its ends in order and remembers the
+    # direction it was first met in, and the walk starts at the boundary
+    # edges in the order the loops list them: no set or frozenset order
+    # decides where a traced loop starts or which way it runs (what the
+    # Rust twin can reproduce; before, CPython's hashing did).
     count: dict = {}
+    first: dict = {}
     pos: dict = {}
     for pts, _a, _n in loops:
         m = len(pts)
@@ -289,8 +381,9 @@ def _trace_region(loops):
             ka, kb = _key(pts[k]), _key(pts[(k + 1) % m])
             if ka == kb:
                 continue
-            e = frozenset((ka, kb))
+            e = (ka, kb) if ka <= kb else (kb, ka)
             count[e] = count.get(e, 0) + 1
+            first.setdefault(e, (ka, kb))
             pos.setdefault(ka, pts[k])
             pos.setdefault(kb, pts[(k + 1) % m])
     boundary = [e for e, c in count.items() if c == 1]
@@ -298,7 +391,7 @@ def _trace_region(loops):
         return None                       # non-manifold inside the plane
     adj: dict = {}
     for e in boundary:
-        a, b = tuple(e)
+        a, b = first[e]
         adj.setdefault(a, []).append(b)
         adj.setdefault(b, []).append(a)
     if any(len(v) != 2 for v in adj.values()):
@@ -306,15 +399,16 @@ def _trace_region(loops):
     # Walk the boundary into closed loops.
     unvisited = set(boundary)
     traced: list = []
-    while unvisited:
-        e0 = next(iter(unvisited))
-        start, cur = tuple(e0)
+    for e0 in boundary:
+        if e0 not in unvisited:
+            continue
+        start, cur = first[e0]
         unvisited.discard(e0)
         walk = [start, cur]
         while True:
             a, b = adj[cur]
             nxt = b if a == walk[-2] else a
-            edge = frozenset((cur, nxt))
+            edge = (cur, nxt) if cur <= nxt else (nxt, cur)
             if edge not in unvisited:
                 break
             unvisited.discard(edge)

@@ -28,7 +28,7 @@ Rectangle and the arcs do (Marco, 2026-09-10: «sospecho que no es igual»).
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 from core.edits import build_add_edges
 from core.i18n import tr

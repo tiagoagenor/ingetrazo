@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import math
 
-from PySide6.QtGui import QVector3D
+from core.vecmath import QVector3D
 
 
 class GeoPath:
