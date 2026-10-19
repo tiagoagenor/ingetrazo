@@ -6,4 +6,14 @@
 
 pub mod mesh;
 
+pub mod annotations;
+pub mod dimension;
+pub mod guide;
+pub mod image_plane;
+pub mod pyconv;
+pub mod saved_views;
+pub mod section;
+pub mod textlabel;
+pub mod units;
+
 pub use mesh::{Edge, EdgeId, Face, FaceId, Mesh, Vertex, VertexId};
