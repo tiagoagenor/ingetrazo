@@ -207,6 +207,15 @@ follow [SemVer](https://semver.org).
   una ventana propia; eran 43 ventanitas que aparecían y desaparecían al
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
+### Para desarrolladores
+- **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
+  pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
+  respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
+  única puerta a la matemática vectorial de Qt para `core`, `tools`,
+  `formats` y `georef` (una prueba lo vigila), con `points_to_array` /
+  `array_to_points` para pasar puntos al motor. El CI compila ahora el
+  motor en cada PR y corre las pruebas de paridad, que antes se saltaban.
+
 ## [0.5.8] — 2026-10-12
 
 **Gestor de extensiones, unidades para todo el documento y un Navegador del
