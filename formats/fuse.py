@@ -259,19 +259,38 @@ def simplify_mesh(mesh, max_angle_degrees: float = 0.0,
         if flags is not None:
             stamp_edge_flags(edge, flags)
 
-    while True:
-        collapsed = False
-        for vertex in list(simplified.vertices):
-            if simplified.collapsible_vertex(vertex):
-                simplified.collapse_vertex(vertex)
-                collapsed = True
-                break
-        if not collapsed:
-            break
+    _collapse_all(simplified)
 
     soften_smooth_edges(simplified)
     mesh.restore_state(simplified.capture_state())
     return max(original_count - len(mesh.faces), 0)
+
+
+def _collapse_all(mesh) -> None:
+    """Collapse redundant collinear vertices, always the FIRST collapsible
+    one in vertex-list order, until none is left — as a rescan from the
+    start after each collapse did, without the rescan (O(V × collapses):
+    the whole cost of simplifying a big mesh).
+
+    Whether a vertex is collapsible reads its two edges and their faces
+    only, and collapsing ``v`` changes the edges of its two neighbours and
+    nobody else's; the list only loses ``v``. So every vertex before the
+    scan point stays not collapsible, and after a collapse the scan goes
+    back no further than the lowest of ``v``'s and its neighbours' places."""
+    order = list(mesh.vertices)
+    place = {id(v): i for i, v in enumerate(order)}
+    gone = [False] * len(order)
+    i = 0
+    while i < len(order):
+        v = order[i]
+        if gone[i] or not mesh.collapsible_vertex(v):
+            i += 1
+            continue
+        e1, e2 = list(v.edges)
+        n1, n2 = e1.other(v), e2.other(v)
+        mesh.collapse_vertex(v)
+        gone[i] = True
+        i = min(i, place.get(id(n1), i), place.get(id(n2), i))
 
 
 def _trace_region(loops):
