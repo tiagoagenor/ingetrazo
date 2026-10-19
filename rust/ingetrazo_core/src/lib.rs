@@ -22,6 +22,7 @@ mod occlusion;
 mod parity;
 mod plan;
 mod section;
+mod tiff;
 mod volume;
 mod weld;
 
@@ -42,6 +43,8 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PolySet>()?;
     m.add_function(wrap_pyfunction!(conform_t_junctions, m)?)?;
     m.add_function(wrap_pyfunction!(shell_roots, m)?)?;
+    m.add_function(wrap_pyfunction!(lzw_decode, m)?)?;
+    m.add_function(wrap_pyfunction!(unpackbits, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -678,6 +681,19 @@ fn shell_roots<'py>(py: Python<'py>, t: PyReadonlyArray2<'_, i64>, nv: usize) ->
         tris.iter().map(|t| find(&mut parent, t[0]) as i64).collect::<Vec<i64>>()
     });
     Ok(PyArray1::from_vec(py, roots))
+}
+/// georef.geotiff._lzw_decode: a TIFF LZW strip or tile, decoded.
+#[pyfunction]
+fn lzw_decode<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBytes> {
+    let out = py.detach(|| tiff::lzw_decode(data));
+    pyo3::types::PyBytes::new(py, &out)
+}
+
+/// georef.geotiff._unpackbits: a PackBits strip or tile, decoded.
+#[pyfunction]
+fn unpackbits<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBytes> {
+    let out = py.detach(|| tiff::unpackbits(data));
+    pyo3::types::PyBytes::new(py, &out)
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
