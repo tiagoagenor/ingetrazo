@@ -221,7 +221,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Desfazer por diário (journal)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -239,7 +239,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Escrita do .igz idêntica byte a byte",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -473,7 +473,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "OBJ (importar e exportar)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -482,7 +482,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "STL (importar e exportar)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -671,7 +671,7 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Tiles de mapa",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8,
    "concluido_em": ""
   },
@@ -680,7 +680,7 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Terreno a partir do relevo (DEM)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8,
    "concluido_em": ""
   },
@@ -698,7 +698,7 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Busca de endereço, trajeto e perfil",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8,
    "concluido_em": ""
   },
