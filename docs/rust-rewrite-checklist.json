@@ -104,9 +104,9 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Triangulação (earcut próprio)",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.4",
@@ -194,7 +194,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Cena, grupos e componentes",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -203,7 +203,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Materiais, camadas e etiquetas",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -212,7 +212,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Cotas, textos, guias, cortes e vistas salvas",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
