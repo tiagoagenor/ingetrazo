@@ -81,3 +81,26 @@ def test_soften_smooth_edges_marks_shallow_dihedrals():
     assert len(soft) == 1
     ys = {round(soft[0].a.y(), 2), round(soft[0].b.y(), 2)}
     assert ys == {1.0}                      # the shallow fold, not the corner
+
+
+def test_traced_loops_start_where_the_loops_list_them():
+    """_trace_region walks from the first boundary edge the region's loops
+    list, in the direction it is listed — no set or frozenset order picks
+    the start (what lets the Rust engine reproduce it). A 2 x 2 grid of
+    squares: the first square's first edge is a boundary edge."""
+    from PySide6.QtGui import QVector3D as V
+
+    from formats.fuse import _trace_region
+    up = V(0, 0, 1)
+
+    def sq(x, y):
+        return [V(x, y, 0), V(x + 1, y, 0), V(x + 1, y + 1, 0), V(x, y + 1, 0)]
+    region = [(sq(0, 0), None, up), (sq(1, 0), None, up), (sq(1, 1), None, up),
+              (sq(0, 1), None, up)]
+    outer, holes, _attrs, _orig = _trace_region(region)
+    assert not holes
+    assert [p.toTuple()[:2] for p in outer] == [
+        (0, 0), (1, 0), (2, 0), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1)]
+    # The same region listed from another square starts there instead.
+    again, _h, _a, _o = _trace_region(region[2:] + region[:2])
+    assert again[0].toTuple()[:2] == (2, 1)

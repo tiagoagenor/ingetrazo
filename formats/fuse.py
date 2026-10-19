@@ -299,8 +299,14 @@ def _trace_region(loops):
     if len(loops) == 1:
         pts, attrs, _n = loops[0]
         return (pts, [], attrs, [pts])
-    # Boundary edges appear exactly once across the region's loops.
+    # Boundary edges appear exactly once across the region's loops. Each
+    # undirected edge is keyed by its ends in order and remembers the
+    # direction it was first met in, and the walk starts at the boundary
+    # edges in the order the loops list them: no set or frozenset order
+    # decides where a traced loop starts or which way it runs (what the
+    # Rust twin can reproduce; before, CPython's hashing did).
     count: dict = {}
+    first: dict = {}
     pos: dict = {}
     for pts, _a, _n in loops:
         m = len(pts)
@@ -308,8 +314,9 @@ def _trace_region(loops):
             ka, kb = _key(pts[k]), _key(pts[(k + 1) % m])
             if ka == kb:
                 continue
-            e = frozenset((ka, kb))
+            e = (ka, kb) if ka <= kb else (kb, ka)
             count[e] = count.get(e, 0) + 1
+            first.setdefault(e, (ka, kb))
             pos.setdefault(ka, pts[k])
             pos.setdefault(kb, pts[(k + 1) % m])
     boundary = [e for e, c in count.items() if c == 1]
@@ -317,7 +324,7 @@ def _trace_region(loops):
         return None                       # non-manifold inside the plane
     adj: dict = {}
     for e in boundary:
-        a, b = tuple(e)
+        a, b = first[e]
         adj.setdefault(a, []).append(b)
         adj.setdefault(b, []).append(a)
     if any(len(v) != 2 for v in adj.values()):
@@ -325,15 +332,16 @@ def _trace_region(loops):
     # Walk the boundary into closed loops.
     unvisited = set(boundary)
     traced: list = []
-    while unvisited:
-        e0 = next(iter(unvisited))
-        start, cur = tuple(e0)
+    for e0 in boundary:
+        if e0 not in unvisited:
+            continue
+        start, cur = first[e0]
         unvisited.discard(e0)
         walk = [start, cur]
         while True:
             a, b = adj[cur]
             nxt = b if a == walk[-2] else a
-            edge = frozenset((cur, nxt))
+            edge = (cur, nxt) if cur <= nxt else (nxt, cur)
             if edge not in unvisited:
                 break
             unvisited.discard(edge)
