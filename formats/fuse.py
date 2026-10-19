@@ -119,6 +119,9 @@ def fuse_coplanar_loops(loops, cos_tol: float = 0.99999,
     drift guard compares each union against the region's root normal, so a
     faceted curve (real dihedral steps) never chain-merges into a non-planar
     blob."""
+    hit = _fuse_native(loops, cos_tol, principal_planes)
+    if hit is not None:
+        return hit
     faces: list = []
     # Coincident duplicates (a two-sided export writes every
     # triangle twice, front + reversed back): keep ONE copy — they z-fight
@@ -198,6 +201,70 @@ def fuse_coplanar_loops(loops, cos_tol: float = 0.99999,
             out.append(fused)
         else:
             out.extend((pts, [], attrs, [pts]) for pts, attrs, _n in region)
+    return out
+
+
+def _fuse_native(loops, cos_tol, principal_planes):
+    """:func:`fuse_coplanar_loops` through the Rust engine's
+    ``fuse_regions`` — the signatures made here, as ids, the regions and
+    their outlines there (tests/test_fuse_native.py) — or ``None`` (no
+    engine, an older one, no Qt-exact length: the normals go through
+    QVector3D.length)."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "fuse_regions"):
+        return None
+    hypot = _native.qt_hypot()
+    if hypot is None:
+        return None
+    import numpy as np
+    flat: list = []
+    starts = [0]
+    sigs, groups, ranks, uvws = [], [], [], []
+    sig_ids: dict = {}
+    group_ids: dict = {}
+    memo: dict = {}
+    for pts, attrs in loops:
+        flat.extend(pts)
+        starts.append(len(flat))
+        s = memo.get(id(attrs))
+        if s is None:
+            s = memo[id(attrs)] = _attrs_sig(attrs)     # loops keep attrs alive
+        sigs.append(sig_ids.setdefault(s, len(sig_ids)))
+        t = s[1]
+        if t is not None and t[4]:
+            groups.append(group_ids.setdefault((s[0], s[2], t[0]),
+                                               len(group_ids)))
+            uvws.append(t[4])
+        else:
+            groups.append(-1)
+            uvws.append(())
+        ranks.append(2 if t is not None else 1)
+    width = max((len(u) for u in uvws), default=0)
+    uvw = np.zeros((len(loops), width))
+    for i, u in enumerate(uvws):
+        uvw[i, :len(u)] = u
+    pts = np.array([(p.x(), p.y(), p.z()) for p in flat],
+                   dtype=np.float32).reshape(-1, 3)
+    traced, rs, rl, ring_start, bounds, rpts = nat.fuse_regions(
+        pts, np.asarray(starts, dtype=np.int64),
+        np.asarray(sigs, dtype=np.int64), np.asarray(groups, dtype=np.int64),
+        np.asarray(ranks, dtype=np.uint8), uvw,
+        np.asarray([len(u) for u in uvws], dtype=np.int64),
+        float(cos_tol), bool(principal_planes), hypot)
+    rs, rl, ring_start = rs.tolist(), rl.tolist(), ring_start.tolist()
+    bounds, rpts = bounds.tolist(), rpts.tolist()
+    out: list = []
+    for r, is_traced in enumerate(traced.tolist()):
+        lps = rl[rs[r]:rs[r + 1]]
+        if is_traced:
+            rings = [[QVector3D(flat[k]) for k in rpts[bounds[j]:bounds[j + 1]]]
+                     for j in range(ring_start[r], ring_start[r + 1])]
+            out.append((rings[0], rings[1:], loops[lps[0]][1],
+                        [loops[f][0] for f in lps]))
+        else:
+            out.extend((loops[f][0], [], loops[f][1], [loops[f][0]])
+                       for f in lps)
     return out
 
 

@@ -14,6 +14,7 @@ mod arrange;
 mod boxes;
 mod conform;
 mod facegeom;
+mod fuse;
 mod gltape;
 mod hlr;
 mod instances;
@@ -45,6 +46,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(shell_roots, m)?)?;
     m.add_function(wrap_pyfunction!(lzw_decode, m)?)?;
     m.add_function(wrap_pyfunction!(unpackbits, m)?)?;
+    m.add_function(wrap_pyfunction!(fuse_regions, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -694,6 +696,76 @@ fn lzw_decode<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBy
 fn unpackbits<'py>(py: Python<'py>, data: &[u8]) -> Bound<'py, pyo3::types::PyBytes> {
     let out = py.detach(|| tiff::unpackbits(data));
     pyo3::types::PyBytes::new(py, &out)
+}
+/// formats.fuse.fuse_coplanar_loops after the signatures: ``pts`` (P,3)
+/// float32 every loop's points, ``loop_start`` (L+1,), per loop ``sig``
+/// (equal ids: equal signatures), ``tex_group`` (equal non-negative ids:
+/// same colour, extras and image, a fuzzy-UV candidate), ``rank`` (2
+/// textured, 1 else), ``uvw`` (L,W) float64 with ``uvw_len`` (L,) used
+/// values each. Returns ``(traced (R,) u8, region_start (R+1,),
+/// region_loops, ring_start (R+1,) into ring_bounds, ring_bounds,
+/// ring_pts)``: region r's loops in order; when traced, its rings
+/// (outer first) as point indices.
+#[pyfunction]
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
+fn fuse_regions<'py>(
+    py: Python<'py>,
+    pts: PyReadonlyArray2<'_, f32>,
+    loop_start: PyReadonlyArray1<'_, i64>,
+    sig: PyReadonlyArray1<'_, i64>,
+    tex_group: PyReadonlyArray1<'_, i64>,
+    rank: PyReadonlyArray1<'_, u8>,
+    uvw: PyReadonlyArray2<'_, f64>,
+    uvw_len: PyReadonlyArray1<'_, i64>,
+    cos_tol: f64,
+    principal: bool,
+    hypot: &str,
+) -> PyResult<(Bound<'py, PyArray1<u8>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>)> {
+    let h = hypot_of(hypot)?;
+    let pa = pts.as_array();
+    let ls = loop_start.as_slice()?;
+    let (sig, tg, rk, ul) = (sig.as_slice()?, tex_group.as_slice()?, rank.as_slice()?, uvw_len.as_slice()?);
+    let ua = uvw.as_array();
+    let nl = ls.len().saturating_sub(1);
+    let ok = pa.ncols() == 3
+        && ls.first() == Some(&0)
+        && ls.windows(2).all(|w| w[0] <= w[1])
+        && *ls.last().unwrap_or(&0) == pa.nrows() as i64
+        && [sig.len(), tg.len(), rk.len(), ul.len(), ua.nrows()].iter().all(|&x| x == nl)
+        && ul.iter().all(|&x| x >= 0 && x as usize <= ua.ncols());
+    if !ok {
+        return Err(pyo3::exceptions::PyValueError::new_err("fuse_regions: inconsistent input"));
+    }
+    let v: Vec<facegeom::V3> = (0..pa.nrows()).map(|i| facegeom::V3(pa[[i, 0]], pa[[i, 1]], pa[[i, 2]])).collect();
+    let starts: Vec<usize> = ls.iter().map(|&x| x as usize).collect();
+    let uv: Vec<Vec<f64>> = (0..nl).map(|i| (0..ul[i] as usize).map(|k| ua[[i, k]]).collect()).collect();
+    let regions = py.detach(|| {
+        let inp = fuse::Input { pts: &v, loop_start: &starts, sig, tex_group: tg, rank: rk, uvw: &uv };
+        fuse::fuse(&inp, cos_tol, principal, h)
+    });
+    let (mut traced, mut rstart, mut rloops) = (Vec::new(), vec![0i64], Vec::new());
+    let (mut ring_start, mut bounds, mut rpts) = (vec![0i64], vec![0i64], Vec::new());
+    for r in regions {
+        match r {
+            fuse::Region::Pass(l) => {
+                traced.push(0u8);
+                rloops.extend(l.iter().map(|&x| x as i64));
+            }
+            fuse::Region::Traced(rings, l) => {
+                traced.push(1u8);
+                rloops.extend(l.iter().map(|&x| x as i64));
+                for ring in rings {
+                    rpts.extend(ring.iter().map(|&x| x as i64));
+                    bounds.push(rpts.len() as i64);
+                }
+            }
+        }
+        rstart.push(rloops.len() as i64);
+        ring_start.push(bounds.len() as i64 - 1);
+    }
+    Ok((PyArray1::from_vec(py, traced), PyArray1::from_vec(py, rstart), PyArray1::from_vec(py, rloops),
+        PyArray1::from_vec(py, ring_start), PyArray1::from_vec(py, bounds), PyArray1::from_vec(py, rpts)))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
