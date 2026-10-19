@@ -1,7 +1,7 @@
 # Rust migration plan: from Python kernels to a Rust core
 
-> Status: **in progress** (branch `rust-migration`): Phases 0, 1 and 2 done
-> (numbers in `benchmarks/results/motor-rust.md`); Phase 3 next.
+> Status: Phases 0–3 done on branch `rust-migration` (numbers in
+> `benchmarks/results/motor-rust.md`); next is the gate review.
 > Written in English per the repo convention (code/docs/comments in English).
 
 ## Goal
@@ -173,28 +173,35 @@ where time goes: not building Python `Mesh` objects and removing quadratic
 algorithms gave the big wins; kernels paid only on pair loops or ≥ 20 µs
 per element. Phase 3 applies the same three tests.
 
-In order:
+Outcome (numbers in `benchmarks/results/motor-rust.md`):
 
-- **A1 (Python)** `_maximal_holes` (`topology.py`): every pair of holes,
-  O(H²) on each open and save of a many-holed face — an AABB prefilter
-  (inside is tested by centroid), the old version kept as test oracle.
-- **A2 (Python)** `simplify_mesh`'s collapse loop (`fuse.py`) rescans from
-  the start after every collapse: resume from the lowest neighbour index,
-  same "first collapsible in list order" rule.
-- **L1 `lzw_decode`** (`georef/geotiff.py`): TIFF LZW decoded code by code
-  in Python; byte-equal output.
-- **A4 (NumPy)** STL binary read/write, one `struct` call per triangle now.
-- **A5 (Python) then K6 `fuse_regions`** (`fuse.py`, ~35 µs a triangle,
-  behind OBJ/DAE/SKP-legacy import and solids): first make `_trace_region`
-  independent of set order, then port.
-- **E1** exports from arrays (`meshexport`, STL/OBJ/glTF/DAE): world
-  points mapped per vertex in Python, then the weld and `face_geometry`
-  kernels, a small `tri_normals` kernel — byte-identical files.
-- **I1** imports produce lazy meshes (glb/skp/stl/OBJ/DAE).
-- **K7 `obj_scan`**: OBJ text into arrays (obj.py and photomesh.py).
-- **A3** DXF 3DFACE merge cap, **S1** `_share_repeats`, **G1** terrain
-  grid in NumPy: each landed or rejected with numbers.
-
+- ✅ **A1** `_maximal_holes` box prefilter: a façade of 2 000 windows
+  59.3 → 0.11 s.
+- ✅ **A2** collapse worklist: ~2× (most vertices fail the first check;
+  what is left is `collapse_vertex`'s own list removal).
+- ✅ **A4** STL binary read in NumPy: no gain by itself (the Mesh build
+  dominates) — the array source of the lazy STL import.
+- ✅ **L1** `lzw_decode`/`unpackbits`: 843 → 19 ms on 4.2 MB.
+- ✅ **A5** `_trace_region` independent of set order; ✅ **K6**
+  `fuse_regions`: 67.7 → 8.9 µs a triangle.
+- ✅ **E1** exports from arrays, byte for byte: STL city-L 43.1 → 4.4 s
+  (placed copies and lazy meshes never built), OBJ 44.5 → 22.4 s, COLLADA
+  ~10 %, GLB unchanged (it triangulates each prototype once).
+- ✅ **I1** lazy imports: binary STL (one bulk pass; 200 000 triangles
+  14.3 → 0.12 s) and glTF (736 672 triangles 17.9 → 2.5 s, smoothing and
+  foliage flags worked out on arrays). **Not done:** SKP (soft edges found
+  through `vertex_at` after the build, and a material rename that mutates
+  the attrs dicts after the defer would desync the bake's table), OBJ and
+  COLLADA (they build fused polygons with `add_face`; their fuse is K6).
+- ✅ **A3** DXF: a layer above the fuse limit is fused, not stitched —
+  20 000 coplanar 3DFACEs 16.6 → 2.7 s.
+- ❌ **K7** `obj_scan` rejected: the text parse is 4 % of an OBJ import
+  (0.68 of 16.5 s on city-M); the cost is the polygon build.
+- ❌ **S1** `_share_repeats` rejected: `save_skp` has no caller (the .skp
+  export is off).
+- ❌ **G1** terrain grid rejected: 0.46 s at the 180 × 180 cap, once per
+  terrain, and an exact vectorized UTM inverse is not possible (NumPy's
+  transcendental functions round their own way).
 Done when those have landed (or been rejected with numbers), each kernel
 has a sabotage-checked parity test, motor-rust.md has city-M/L numbers for
 open, save and each import/export, `formats/` and `georef/` reach Qt only

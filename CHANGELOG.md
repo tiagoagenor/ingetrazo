@@ -84,6 +84,19 @@ follow [SemVer](https://semver.org).
   más rápido, y las operaciones sólidas preparan las mallas con uniones
   en T casi al instante (un muro con 2 000 puertas: de 3 s a 4 ms). El
   resultado es el mismo, comprobado segmento por segmento.
+- **Exportar e importar modelos grandes, mucho más rápido.** Con el motor
+  encendido, exportar a STL no construye las copias de cada componente ni
+  las mallas ligeras: la ciudad sintética de 331 124 caras pasa de 43 s a
+  4,4 s; OBJ, de 44 s a 22 s. Los archivos salen idénticos byte a byte. Un
+  STL o un glTF grandes se importan como mallas ligeras: 200 000 triángulos
+  de STL en 0,1 s (antes 14 s; sin el motor, ahora 6 s) y 736 672 de glTF en
+  2,5 s (antes 18 s). Leer una ortofoto GeoTIFF comprimida en LZW es unas
+  cuarenta veces más rápido.
+- **Importar un DXF con miles de caras 3D en una capa ya no se atasca**,
+  con los dos motores: por encima de 400 caras se funden en una pasada,
+  como en los demás formatos (20 000 caras de un plano: de 17 s a 2,7 s).
+  Las caras con muchos agujeros (una fachada de 2 000 ventanas) se abren y
+  guardan sin la espera de casi un minuto.
 - **Aplicar miles de cruces de Intersecar caras ya no tarda minutos**
   (#541), con los dos motores: el plan de las aristas nuevas rehacía, por
   cada cruce, el grafo y las cajas de todo lo que ya llevaba. En la ciudad

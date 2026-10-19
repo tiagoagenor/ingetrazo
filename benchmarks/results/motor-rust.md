@@ -67,3 +67,24 @@ Máquina de Tiago (Windows 11, 28 hilos). Modelos sintéticos de `scripts/bench_
 
 
 El «degenerate edge» con 8 000 cruces no se reprodujo en city-M (la plaza no está en esta máquina): sigue pendiente de comprobar con `plaza.igz`.
+
+## Migración a Rust, fase 3 (formatos y georreferencia)
+
+Misma máquina, prioridad baja. Los archivos exportados son idénticos byte a byte a los del camino Python (COLLADA: salvo sus marcas `<created>`/`<modified>`, que cambian entre dos ejecuciones también sin motor).
+
+| Operación | Antes | Después | Nota |
+|---|---:|---:|---|
+| fachada con 2 000 ventanas, `_maximal_holes` | 59,3 s | 0,11 s | A1, Python |
+| simplificar malla, 6 541 vértices | 1,12 s | 0,68 s | A2, Python |
+| LZW, 4,2 MB de imagen | 843 ms | 19 ms | L1 |
+| fusionar 45 000 triángulos coplanares | 3,05 s | 0,40 s | K6 |
+| exportar STL, city-M | 9,09 s | 0,94 s | E1 |
+| exportar STL, city-L | 43,13 s | 4,37 s | E1 |
+| exportar OBJ, city-M | 9,10 s | 4,75 s | E1 |
+| exportar OBJ, city-L | 44,48 s | 22,35 s | E1 |
+| exportar COLLADA, city-M | 10,35 s | 9,41 s | E1 |
+| importar STL de 200 000 triángulos | 14,3 s | 5,97 s / 0,12 s | sin motor (una pasada) / con motor (malla ligera) |
+| importar GLB de 736 672 triángulos (`build_mesh`) | 17,88 s | 2,48 s | I1 |
+| DXF, 20 000 3DFACE coplanares | 16,63 s | 2,69 s | A3 |
+
+Rechazados con números: leer el texto de un OBJ es el 4 % de importarlo (0,68 de 16,5 s, city-M); la exportación .skp no tiene llamador; la rejilla de terreno tarda 0,46 s en su tope de 180 × 180.
