@@ -83,6 +83,50 @@ def _non_degenerate(triangle) -> bool:
     return math.hypot(*cross) > 1e-12
 
 
+def _binary_triangles(raw: bytes, count: int, scale: float, target,
+                      progress) -> None:
+    """A binary STL's facets into ``target``, in NumPy: what a
+    ``struct.unpack``, a ``_scaled_point`` and a ``_non_degenerate`` per
+    triangle did — the same values, the same errors, and the triangles
+    kept handed to ``add_faces_bulk`` in the same batches of
+    ``_BATCH_SIZE`` (the bulk weld runs per batch)."""
+    import numpy as np
+    whole = len(raw) // _BINARY_TRIANGLE_SIZE
+    rec = np.dtype([("n", "<f4", 3), ("v", "<f4", 9), ("a", "<u2")])
+    facets = np.frombuffer(raw, dtype=rec, count=min(whole, count))
+    # value * scale on the float32 values, as Python floats.
+    tri = facets["v"].astype(np.float64).reshape(-1, 3, 3) * scale
+    bad = ~(np.isfinite(tri) & (np.abs(tri) <= _MAX_FLOAT32)).all(axis=(1, 2))
+    first_bad = int(np.argmax(bad)) if bad.any() else len(tri)
+    if whole < count or first_bad < len(tri):
+        # The record loop raised at the first bad or missing facet.
+        raise ValueError("STL binary facet data is truncated"
+                         if first_bad >= len(tri) else
+                         "STL contains a coordinate outside the supported "
+                         "range")
+    _tick(progress, 0.35, "Reading file…")
+    a, b, c = tri[:, 0], tri[:, 1], tri[:, 2]
+    ab, ac = b - a, c - a
+    cross = np.stack([ab[:, 1] * ac[:, 2] - ab[:, 2] * ac[:, 1],
+                      ab[:, 2] * ac[:, 0] - ab[:, 0] * ac[:, 2],
+                      ab[:, 0] * ac[:, 1] - ab[:, 1] * ac[:, 0]], axis=1)
+    with np.errstate(over="ignore", under="ignore"):
+        length = np.sqrt((cross * cross).sum(axis=1))
+    keep = length > 1e-12
+    # math.hypot rounds its own way: decide the near-threshold ones with it.
+    near = np.flatnonzero(np.abs(length - 1e-12) <= 1e-15)
+    for i in near.tolist():
+        keep[i] = math.hypot(*cross[i].tolist()) > 1e-12
+    kept = tri[keep]
+    for s in range(0, len(kept), _BATCH_SIZE):
+        part = kept[s:s + _BATCH_SIZE]
+        n = len(part)
+        target.add_faces_bulk(part.reshape(-1, 3),
+                              np.full(n, 3, dtype=np.int64),
+                              np.ones(n, dtype=np.int64))
+    _tick(progress, 0.70, "Reading file…")
+
+
 def _ascii_stl(path: Path, scale: float, progress, file_size: int):
     state = "outside"
     vertices = []
@@ -228,20 +272,8 @@ def _parse_stl_inner(path: Path, progress=None, scale: float = 1.0,
     if binary:
         with path.open("rb") as source:
             source.seek(_BINARY_HEADER_SIZE)
-            for index in range(count):
-                record = source.read(_BINARY_TRIANGLE_SIZE)
-                if len(record) != _BINARY_TRIANGLE_SIZE:
-                    raise ValueError("STL binary facet data is truncated")
-                data = struct.unpack("<12fH", record)
-                triangle = tuple(
-                    _scaled_point(data[i:i + 3], scale) for i in (3, 6, 9))
-                if _non_degenerate(triangle):
-                    batch.append(triangle)
-                    if len(batch) >= _BATCH_SIZE:
-                        flush_batch()
-                if index % max(count // 100, 1) == 0:
-                    _tick(progress, 0.05 + 0.65 * (index + 1) /
-                          max(count, 1), "Reading file…")
+            raw = source.read(count * _BINARY_TRIANGLE_SIZE)
+        _binary_triangles(raw, count, scale, target, progress)
     else:
         for triangle in _ascii_stl(path, scale, progress, size):
             if _non_degenerate(triangle):
