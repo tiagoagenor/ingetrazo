@@ -12,6 +12,7 @@ use pyo3::prelude::*;
 
 mod arrange;
 mod boxes;
+mod conform;
 mod facegeom;
 mod gltape;
 mod hlr;
@@ -39,6 +40,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(arrangement_splits, m)?)?;
     m.add_function(wrap_pyfunction!(section_loops, m)?)?;
     m.add_class::<PolySet>()?;
+    m.add_function(wrap_pyfunction!(conform_t_junctions, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -603,6 +605,40 @@ impl PolySet {
         }
         Ok(PyArray2::from_vec2(py, &rows)?)
     }
+}
+/// core.solids._conform_t_junctions: ``v`` (V,3) float64 finite
+/// vertices, ``t`` (T,3) int64 triangles, ``f`` (T,) int64 face ids,
+/// ``tol`` as the Python computed it. Returns ``(vertices (V',3) float64,
+/// triangles (T',3) uint32, face_ids (T',) uint32)``.
+#[pyfunction]
+#[allow(clippy::type_complexity)]
+fn conform_t_junctions<'py>(
+    py: Python<'py>,
+    v: PyReadonlyArray2<'_, f64>,
+    t: PyReadonlyArray2<'_, i64>,
+    f: PyReadonlyArray1<'_, i64>,
+    tol: f64,
+) -> PyResult<(Bound<'py, PyArray2<f64>>, Bound<'py, PyArray2<u32>>, Bound<'py, PyArray1<u32>>)> {
+    let va = v.as_array();
+    let ta = t.as_array();
+    let fs = f.as_slice()?;
+    let n = va.nrows() as i64;
+    if va.ncols() != 3 || ta.ncols() != 3 || fs.len() != ta.nrows() || ta.nrows() == 0 {
+        return Err(pyo3::exceptions::PyValueError::new_err("conform_t_junctions: shapes"));
+    }
+    let verts: Vec<[f64; 3]> = (0..va.nrows()).map(|i| [va[[i, 0]], va[[i, 1]], va[[i, 2]]]).collect();
+    let tris: Vec<[i64; 3]> = (0..ta.nrows()).map(|i| [ta[[i, 0]], ta[[i, 1]], ta[[i, 2]]]).collect();
+    if verts.iter().flatten().any(|x| !x.is_finite())
+        || tris.iter().flatten().any(|&k| k < 0 || k >= n)
+        || fs.iter().any(|&x| x < 0 || x > u32::MAX as i64)
+        || !(tol >= 0.0)
+    {
+        return Err(pyo3::exceptions::PyValueError::new_err("conform_t_junctions: bad input"));
+    }
+    let o = py.detach(|| conform::conform(&verts, &tris, fs, tol));
+    let vr: Vec<Vec<f64>> = o.verts.iter().map(|p| p.to_vec()).collect();
+    let tr: Vec<Vec<u32>> = o.tris.iter().map(|p| p.to_vec()).collect();
+    Ok((PyArray2::from_vec2(py, &vr)?, PyArray2::from_vec2(py, &tr)?, PyArray1::from_vec(py, o.fids)))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the

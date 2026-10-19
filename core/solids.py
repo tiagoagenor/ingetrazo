@@ -211,7 +211,20 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
     sliver comes out). Returns new ``(vertices, triangles, face_ids)``."""
     scale = max(1.0, float(np.abs(v).max())) if len(v) else 1.0
     tol = rel_tol * scale
-    verts = [tuple(p) for p in v.tolist()]
+    import core._native as _native
+    nat = _native.native
+    if (nat is not None and hasattr(nat, "conform_t_junctions") and len(t)
+            and np.isfinite(v).all() and np.asarray(f).min() >= 0):
+        # The Rust engine: the same splits, with a sorted-x index in place
+        # of a scan of every vertex per triangle edge (O(T·V) on a big
+        # solid). tests/test_conform_native.py.
+        return nat.conform_t_junctions(
+            np.ascontiguousarray(v, dtype=np.float64),
+            np.ascontiguousarray(t, dtype=np.int64).reshape(-1, 3),
+            np.ascontiguousarray(f, dtype=np.int64).reshape(-1), float(tol))
+    vl = v.tolist()
+    verts = [tuple(p) for p in vl]
+    tol2 = tol * tol
     out_t: list = []
     out_f: list = []
     for tri, fid in zip(t.tolist(), f.tolist()):
@@ -220,24 +233,30 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
         for k in range(3):
             a, b = tri[k], tri[(k + 1) % 3]
             ring.append(a)
-            pa, pb = v[a], v[b]
-            d = pb - pa
-            length2 = float(d @ d)
-            if length2 <= tol * tol:
+            (ax, ay, az), (bx, by, bz) = vl[a], vl[b]
+            # Scalar float arithmetic, in a fixed order (a NumPy ``@``
+            # could sum through BLAS, its own way).
+            dx, dy, dz = bx - ax, by - ay, bz - az
+            length2 = dx * dx + dy * dy + dz * dz
+            if length2 <= tol2:
                 continue
-            box_lo = np.minimum(pa, pb) - tol
-            box_hi = np.maximum(pa, pb) + tol
+            box_lo = np.minimum(v[a], v[b]) - tol
+            box_hi = np.maximum(v[a], v[b]) + tol
             near = np.flatnonzero(np.all((v >= box_lo) & (v <= box_hi),
                                          axis=1))
             hits = []
             for i in near.tolist():
                 if i in (a, b):
                     continue
-                s = float((v[i] - pa) @ d) / length2
+                px, py, pz = vl[i]
+                s = ((px - ax) * dx + (py - ay) * dy + (pz - az) * dz) \
+                    / length2
                 if s <= 1e-9 or s >= 1.0 - 1e-9:
                     continue
-                off = v[i] - (pa + s * d)
-                if float(off @ off) <= tol * tol:
+                ox = px - (ax + s * dx)
+                oy = py - (ay + s * dy)
+                oz = pz - (az + s * dz)
+                if ox * ox + oy * oy + oz * oz <= tol2:
                     hits.append((s, i))
             if hits:
                 split = True
@@ -247,7 +266,9 @@ def _conform_t_junctions(v, t, f, rel_tol: float = 1e-9):
             out_f.append(fid)
             continue
         c = len(verts)
-        verts.append(tuple(v[tri].mean(axis=0).tolist()))
+        (x0, y0, z0), (x1, y1, z1), (x2, y2, z2) = (vl[k] for k in tri)
+        verts.append(((x0 + x1 + x2) / 3.0, (y0 + y1 + y2) / 3.0,
+                      (z0 + z1 + z2) / 3.0))
         n = len(ring)
         for k in range(n):
             out_t.append((c, ring[k], ring[(k + 1) % n]))
