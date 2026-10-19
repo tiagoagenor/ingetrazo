@@ -13,7 +13,6 @@ of the face, as they are a few. tests/test_array_bake.py holds the result
 to the object bake."""
 from __future__ import annotations
 
-import sys
 from array import array
 
 import numpy as np
@@ -61,15 +60,8 @@ class DeferredFaces:
         return _loose_face(lazy_mesh.plan_of(self.mesh), int(self.index[i]))
 
 
-def _geometry(mesh, plan):
-    d = mesh.__dict__
-    hit = d.get("_deferred_geom")
-    if hit is None:
-        hit = d["_deferred_geom"] = _native.native.face_geometry(
-            plan.pos32, plan.corners, plan.ring_sizes,
-            plan.ring_counts, _native.qt_hypot(),
-            sys.version_info >= (3, 12))
-    return hit
+#: The face geometry of a lazy mesh (core.lazy_mesh.face_geometry).
+_geometry = lazy_mesh.face_geometry
 
 
 def prefetch(meshes) -> None:

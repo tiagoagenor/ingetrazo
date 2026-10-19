@@ -18,6 +18,7 @@ mod instances;
 mod occlusion;
 mod parity;
 mod plan;
+mod volume;
 mod weld;
 
 #[pymodule]
@@ -31,6 +32,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(qt_vector_probe, m)?)?;
     m.add_function(wrap_pyfunction!(weld_points, m)?)?;
     m.add_function(wrap_pyfunction!(plan_topology, m)?)?;
+    m.add_function(wrap_pyfunction!(signed_volume, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -408,6 +410,25 @@ fn plan_topology<'py>(
         PyArray1::from_vec(py, t.curve), PyArray1::from_vec(py, t.layer),
         PyArray1::from_vec(py, t.corners), PyArray1::from_vec(py, t.ef_start),
         PyArray1::from_vec(py, t.ef_face)))
+}
+/// core.bim.face_set_volume's signed sum (before ``abs``) over a lazy
+/// mesh's triangles: ``pos`` (V,3) float32, ``tris`` (T,3) uint32 vertex
+/// indices in face order (face_geometry's unit triangles — Face.
+/// triangulate()'s).
+#[pyfunction]
+fn signed_volume(py: Python<'_>, pos: PyReadonlyArray2<'_, f32>, tris: PyReadonlyArray2<'_, u32>) -> PyResult<f64> {
+    let p = pos.as_array();
+    let t = tris.as_array();
+    if p.ncols() != 3 || t.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("signed_volume: (V,3) and (T,3)"));
+    }
+    let n = p.nrows() as u32;
+    let tri: Vec<[u32; 3]> = (0..t.nrows()).map(|i| [t[[i, 0]], t[[i, 1]], t[[i, 2]]]).collect();
+    if tri.iter().flatten().any(|&k| k >= n) {
+        return Err(pyo3::exceptions::PyValueError::new_err("signed_volume: index out of range"));
+    }
+    let pts: Vec<[f32; 3]> = (0..p.nrows()).map(|i| [p[[i, 0]], p[[i, 1]], p[[i, 2]]]).collect();
+    Ok(py.detach(|| volume::signed_volume(&pts, &tri)))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the

@@ -354,6 +354,25 @@ def plan_of(mesh) -> Plan | None:
     return hit
 
 
+def face_geometry(mesh, plan):
+    """The Rust ``face_geometry`` of a lazy mesh's plan (memoised on the
+    mesh): ``(normal, ln, centroid, tris, tri_face, unit, tris_unit,
+    tri_face_unit)`` — views.viewport._face_geometry's values, and
+    ``tris_unit`` Face.triangulate()'s triangles. Needs the engine and
+    ``core._native.qt_hypot()``."""
+    import sys
+
+    import core._native as _native
+    d = mesh.__dict__
+    hit = d.get("_deferred_geom")
+    if hit is None:
+        hit = d["_deferred_geom"] = _native.native.face_geometry(
+            plan.pos32, plan.corners, plan.ring_sizes,
+            plan.ring_counts, _native.qt_hypot(),
+            sys.version_info >= (3, 12))
+    return hit
+
+
 def entity_count(mesh) -> int:
     """``len(mesh.faces) + len(mesh.edges)``, a lazy mesh left unbuilt."""
     plan = plan_of(mesh)

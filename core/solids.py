@@ -78,8 +78,54 @@ def solid_volume(group) -> float | None:
     else ``None``. Nested groups disqualify it."""
     if not isinstance(group, Group) or getattr(group, "children", None):
         return None
-    ok, vol = solid_report(world_mesh(group))
+    hit = _lazy_solid_report(group)
+    ok, vol = hit if hit is not None else solid_report(world_mesh(group))
     return vol if ok else None
+
+
+def _lazy_solid_report(group):
+    """:func:`solid_report` of a group whose mesh is still lazy, from its
+    plan and the Rust engine — nothing built (Entity Info on a click) — or
+    ``None`` to build it: no engine, no Qt-exact length (the triangles go
+    through Face.triangulate's normal), or a placement matrix (world_mesh
+    then welds a moved copy, whose topology may differ).
+
+    A lazy mesh was never edited, so none of its faces is ``interior``:
+    «every edge between exactly two faces» is its edge→face counts, which
+    is also face_set_volume's closure test (its segments are the edges)."""
+    from core.mesh import DeferredMesh
+    mesh = group.mesh
+    if type(mesh) is not DeferredMesh or getattr(group, "xform", None) \
+            is not None:
+        return None
+    import core._native as _native
+    nat = _native.native
+    if (nat is None or not hasattr(nat, "signed_volume")
+            or _native.qt_hypot() is None):
+        return None
+    import numpy as np
+    from core import lazy_mesh
+    plan = lazy_mesh.plan_of(mesh)
+    if plan.nfaces == 0:
+        return False, None
+    if (np.diff(plan.ef_start) != 2).any():
+        return False, None
+    geom = lazy_mesh.face_geometry(mesh, plan)
+    # The kernel's unit triangles take Qt's normalized() of the Newell
+    # vector; Face.triangulate (face_set_volume's) divides by hand. They
+    # agree but where normalized() does not divide: a length within Qt's
+    # fuzz of 0 (a null vector) or of 1 (the vector as is). Such a face:
+    # build, rather than risk other triangles.
+    ln = np.asarray(geom[1], dtype=np.float32)
+    fuzz = np.float32(1e-5)
+    if ((ln <= fuzz) | ((np.abs(ln - np.float32(1.0)) <= fuzz)
+                        & (ln != np.float32(1.0)))).any():
+        return None
+    tris_u = np.ascontiguousarray(geom[6], dtype=np.uint32).reshape(-1, 3)
+    vol = abs(nat.signed_volume(plan.pos32, tris_u))
+    if vol <= 1e-12:
+        return False, None
+    return True, vol
 
 
 # ---- Group <-> manifold --------------------------------------------------------
