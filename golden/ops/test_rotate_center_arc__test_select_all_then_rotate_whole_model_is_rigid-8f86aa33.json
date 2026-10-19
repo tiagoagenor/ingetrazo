@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_rotate_center_arc__test_select_all_then_rotate_whole_model_is_rigid-8f86aa33",
+ "source": {"pytest": "tests/test_rotate_center_arc.py::test_select_all_then_rotate_whole_model_is_rigid", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[4.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,4.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}]}}}]},"counters":{"group":108,"curve":196},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[9.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,0.0,0.0]},"b":{"$v":[9.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,2.0,0.0]},"b":{"$v":[6.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,2.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[6.0,0.0,0.0]},{"$v":[9.0,0.0,0.0]},{"$v":[9.0,2.0,0.0]},{"$v":[6.0,2.0,0.0]}]}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,0.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":108,"curve":196},"sig":"d78a45f9b11192da1bb765329357b47a780403dd4ebc645f6a299c11c4a75c08"},
+  {"op":"rotate_vertices","args":{"positions":[{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[9.0,0.0,0.0]},{"$v":[9.0,2.0,0.0]},{"$v":[6.0,2.0,0.0]},{"$v":[0.0,4.0,0.0]},{"$v":[0.0,0.0,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":37.0},"counters":{"group":108,"curve":196},"sig":"714c8537ef543f443dbc31d7cbbf63c22b5f262aa5b168cf4d9465c2452a4490"}
+ ]
+}

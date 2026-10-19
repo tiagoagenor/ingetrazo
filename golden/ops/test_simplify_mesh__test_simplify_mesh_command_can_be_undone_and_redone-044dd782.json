@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_simplify_mesh__test_simplify_mesh_command_can_be_undone_and_redone-044dd782",
+ "source": {"pytest": "tests/test_simplify_mesh.py::test_simplify_mesh_command_can_be_undone_and_redone", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d472c01e66c5500e.igz"},
+ "start_sig": "dd5796eb379bb87b646a558d9cc03f992b212aa369c848a8de662da43f08c9ed",
+ "steps": [
+  {"op":"simplify_mesh","args":{},"counters":{"group":112,"curve":196},"sig":"fc6412f8ee0cbbcd92804bae94b784aba752f27012177c526928a8c347600967"},
+  {"op":"undo","ok":true,"sig":"dd5796eb379bb87b646a558d9cc03f992b212aa369c848a8de662da43f08c9ed"},
+  {"op":"redo","ok":true,"sig":"fc6412f8ee0cbbcd92804bae94b784aba752f27012177c526928a8c347600967"}
+ ]
+}

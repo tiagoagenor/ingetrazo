@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_intersect_faces__test_with_model_two_groups_leave_the_edges_outside_them-8bb8335a",
+ "source": {"pytest": "tests/test_intersect_faces.py::test_with_model_two_groups_leave_the_edges_outside_them", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/956dfb8186faed5e.igz"},
+ "start_sig": "5c6b06ce27f0f0813dcf6eb248727a55cbcb13bcb2ab6d443524396fe077461e",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,1.0,2.0]},"b":{"$v":[2.0,1.0,2.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,2.0,2.0]},"b":{"$v":[1.0,1.0,2.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,1.0,1.0]},"b":{"$v":[2.0,2.0,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,1.0,2.0]},"b":{"$v":[2.0,1.0,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,1.0]},"b":{"$v":[1.0,2.0,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,2.0,1.0]},"b":{"$v":[1.0,2.0,2.0]}}}}]},"counters":{"group":91,"curve":161},"sig":"6021cf2743da30a52aceabb7c5062121c53eede5450dd060d8fdfb377e25f6f5"},
+  {"op":"undo","ok":true,"sig":"5c6b06ce27f0f0813dcf6eb248727a55cbcb13bcb2ab6d443524396fe077461e"}
+ ]
+}

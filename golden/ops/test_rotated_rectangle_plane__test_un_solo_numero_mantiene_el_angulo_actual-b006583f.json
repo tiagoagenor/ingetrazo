@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotated_rectangle_plane__test_un_solo_numero_mantiene_el_angulo_actual-b006583f",
+ "source": {"pytest": "tests/test_rotated_rectangle_plane.py::test_un_solo_numero_mantiene_el_angulo_actual", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[9.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,0.0,0.0]},"b":{"$v":[9.0,1.2246468525851679e-16,2.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,1.2246468525851679e-16,2.0]},"b":{"$v":[0.0,1.2246468525851679e-16,2.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,1.2246468525851679e-16,2.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[9.0,0.0,0.0]},{"$v":[9.0,1.2246468525851679e-16,2.0]},{"$v":[0.0,1.2246468525851679e-16,2.0]}]}}}]},"counters":{"group":112,"curve":196},"sig":"33aa30f389fdbeef9ee73f60ee82e339b9850d07fab6cef62ca2e42acd7ca910"}
+ ]
+}

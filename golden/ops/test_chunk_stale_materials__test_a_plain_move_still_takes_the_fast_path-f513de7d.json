@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_chunk_stale_materials__test_a_plain_move_still_takes_the_fast_path-f513de7d",
+ "source": {"pytest": "tests/test_chunk_stale_materials.py::test_a_plain_move_still_takes_the_fast_path", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/1fcc198d7e67fc4c.igz"},
+ "start_sig": "0c62b9d45257b86ea4c43198773619e94efc6a9fada419ce57dbc65d598874cf",
+ "steps": [
+  {"op":"move_group","args":{"group":{"$group":[0]},"delta":{"$v":[5.0,0.0,0.0]}},"counters":{"group":13,"curve":10},"sig":"142524050471d5da2a2a2d76809bddad39f5c167a0a037dc4fcf47a1babc80b4"}
+ ]
+}

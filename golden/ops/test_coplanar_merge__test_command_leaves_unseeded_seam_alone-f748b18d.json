@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_command_leaves_unseeded_seam_alone-f748b18d",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_command_leaves_unseeded_seam_alone", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3908341348d8a48e.igz"},
+ "start_sig": "93c960160a732dd8001c4e7a21ecc71e0831412f2da0fba7f13958e3cdbae013",
+ "steps": [
+  {"op":"coplanar_merge","args":{"seed_positions":[{"$v":[9.0,9.0,0.0]}]},"counters":{"group":13,"curve":10},"sig":"93c960160a732dd8001c4e7a21ecc71e0831412f2da0fba7f13958e3cdbae013"}
+ ]
+}

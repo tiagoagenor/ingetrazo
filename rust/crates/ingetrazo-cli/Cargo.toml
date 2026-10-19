@@ -1,0 +1,17 @@
+[package]
+name = "ingetrazo-cli"
+description = "IngeTrazo without a window: golden replay, conversions, benchmarks"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "ingetrazo-cli"
+path = "src/main.rs"
+
+[dependencies]
+ingetrazo-golden = { path = "../ingetrazo-golden" }
+
+[lints]
+workspace = true

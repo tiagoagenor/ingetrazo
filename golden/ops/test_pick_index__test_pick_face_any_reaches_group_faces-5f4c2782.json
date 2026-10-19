@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pick_index__test_pick_face_any_reaches_group_faces-5f4c2782",
+ "source": {"pytest": "tests/test_pick_index.py::test_pick_face_any_reaches_group_faces", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7ceaba3e7c315b6a.igz"},
+ "start_sig": "a11623bdae805574fcd619da394ac5588edb6bf850f9a5eb46e2230a277ec670",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[-2.0,-2.0,0.0],[2.0,-2.0,0.0],[2.0,2.0,0.0],[-2.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":101,"curve":168},"sig":"3a120140d481e8890278566a4c38bd60f7b8141cc826593785b3177e21b6bdea"}
+ ]
+}

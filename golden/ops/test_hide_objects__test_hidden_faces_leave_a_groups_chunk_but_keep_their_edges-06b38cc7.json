@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_hide_objects__test_hidden_faces_leave_a_groups_chunk_but_keep_their_edges-06b38cc7",
+ "source": {"pytest": "tests/test_hide_objects.py::test_hidden_faces_leave_a_groups_chunk_but_keep_their_edges", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/edec1d6d8f2dbf88.igz"},
+ "start_sig": "efcf1859b9d87c414a0f5ded0f53b556e493629480aba1aa175f17c5b37c07bd",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$face":{"loop":[[0.0,0.0,0.0],[0.0,1.0,0.0],[1.0,1.0,0.0],[1.0,0.0,0.0]],"in":[1]}}]},"counters":{"group":88,"curve":161},"sig":"7b88fb0f20dea7c3be928905ac34369b6d8cf5ace29f368c8649f2e8a2ad98cf"},
+  {"op":"undo","ok":true,"sig":"efcf1859b9d87c414a0f5ded0f53b556e493629480aba1aa175f17c5b37c07bd"}
+ ]
+}

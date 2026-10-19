@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_purge__test_the_purge_button_sweeps_and_ctrl_z_brings_them_back-5436e977",
+ "source": {"pytest": "tests/test_purge.py::test_the_purge_button_sweeps_and_ctrl_z_brings_them_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/20bb4f471f7be3f1.igz"},
+ "start_sig": "13b436b94907dd29f4d7cdcdd6a75e75d599a6a1f65eed0be9c5212516c87419",
+ "steps": [
+  {"op":"purge_unused","args":{"layers":true,"materials":false},"counters":{"group":105,"curve":171},"sig":"78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb"},
+  {"op":"undo","ok":true,"sig":"13b436b94907dd29f4d7cdcdd6a75e75d599a6a1f65eed0be9c5212516c87419"}
+ ]
+}

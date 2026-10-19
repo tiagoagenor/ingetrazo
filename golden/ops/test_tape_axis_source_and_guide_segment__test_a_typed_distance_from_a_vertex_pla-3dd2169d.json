@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_tape_axis_source_and_guide_segment__test_a_typed_distance_from_a_vertex_pla-3dd2169d",
+ "source": {"pytest": "tests/test_tape_axis_source_and_guide_segment.py::test_a_typed_distance_from_a_vertex_places_the_point_along_the_pull", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_guide","args":{"guide":{"$obj":"core.guide.Guide","data":{"point":[1.5,0.0,0.0],"origin":[0.0,0.0,0.0]}}},"counters":{"group":119,"curve":205},"sig":"e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d"}
+ ]
+}

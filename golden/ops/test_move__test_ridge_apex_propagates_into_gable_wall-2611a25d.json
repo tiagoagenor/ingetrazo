@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_move__test_ridge_apex_propagates_into_gable_wall-2611a25d",
+ "source": {"pytest": "tests/test_move.py::test_ridge_apex_propagates_into_gable_wall", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/ca962b5b8e1dbd57.igz"},
+ "start_sig": "82d8b35b83caf6b1ba9f1f0c09ada65919c03e5693675b91112cbd56c6578f0b",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,2.0]},"b":{"$v":[4.0,0.0,2.0]}},"counters":{"group":100,"curve":163},"sig":"82d8b35b83caf6b1ba9f1f0c09ada65919c03e5693675b91112cbd56c6578f0b"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,2.0,2.0]},"b":{"$v":[4.0,2.0,2.0]}},"counters":{"group":100,"curve":163},"sig":"82d8b35b83caf6b1ba9f1f0c09ada65919c03e5693675b91112cbd56c6578f0b"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,2.0],[4.0,0.0,2.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,2.0]},"b":{"$v":[2.0,0.0,2.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,2.0]},"b":{"$v":[4.0,0.0,2.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,0.0,2.0],[0.0,0.0,2.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,0.0,2.0]},{"$v":[2.0,0.0,2.0]},{"$v":[0.0,0.0,2.0]}],"auto":false,"holes":null,"attrs":null}}},{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[4.0,2.0,2.0],[0.0,2.0,2.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,2.0,2.0]},"b":{"$v":[2.0,2.0,2.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,2.0]},"b":{"$v":[0.0,2.0,2.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,2.0]},"b":{"$v":[2.0,2.0,2.0]}}}},{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,2.0],[4.0,0.0,2.0],[4.0,2.0,2.0],[0.0,2.0,2.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,2.0]},{"$v":[4.0,0.0,2.0]},{"$v":[4.0,2.0,2.0]},{"$v":[2.0,2.0,2.0]}],"attrs":null}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,2.0,2.0]},{"$v":[0.0,2.0,2.0]},{"$v":[0.0,0.0,2.0]},{"$v":[2.0,0.0,2.0]}],"attrs":null}}}]},"counters":{"group":100,"curve":163},"sig":"20a5e28b19d72249af072f1b7321014aa356c3beb28b9a240a5486b5f4a4abac"},
+  {"op":"move_vertices","args":{"positions":[{"$v":[2.0,0.0,2.0]},{"$v":[2.0,2.0,2.0]}],"delta":{"$v":[0.0,0.0,1.0]}},"counters":{"group":100,"curve":163},"sig":"73e9058b22a8fd358fe679486833ec26e84c0523044ae6495182b2ed19585aec"}
+ ]
+}

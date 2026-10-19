@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotate_precision__test_a_group_lands_exactly_on_the_snapped_endpoint-5315e1d5",
+ "source": {"pytest": "tests/test_rotate_precision.py::test_a_group_lands_exactly_on_the_snapped_endpoint", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/60b6da2aebd81c70.igz"},
+ "start_sig": "7fe5b24842ff6280c73974850507e6fbdc3a9b0ab1aaf2dc2d8d017178215f42",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":-70.27889983966138},"counters":{"group":112,"curve":196},"sig":"ca8562ecbe570a9da24c64cf75f4332f7b4d1044eeecf59f28086f6875b0e512"}
+ ]
+}

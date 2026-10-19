@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_stitch_resolves_t_junction_then_merges_coplanar-1e01364a",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_stitch_resolves_t_junction_then_merges_coplanar", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d0babd5a4fb7d99a.igz"},
+ "start_sig": "6437cca13bdf88045b4b2f70ebe25de48d54135466950bba5bdfcabd4980e6df",
+ "steps": [
+  {"op":"stitch_solid","args":{"seed_positions":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,1.0,0.0]},{"$v":[2.0,1.0,0.0]},{"$v":[4.0,2.0,0.0]}]},"counters":{"group":13,"curve":10},"sig":"63daf29fec14de3e712edc1bc46707d7329fd96dfbf1c86e0cec3b9137639f21"},
+  {"op":"undo","ok":true,"sig":"6437cca13bdf88045b4b2f70ebe25de48d54135466950bba5bdfcabd4980e6df"}
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "schema": 1,
+ "id": "test_arrangement__test_command_skips_non_flat_mesh-9ed2d9de",
+ "source": {"pytest": "tests/test_arrangement.py::test_command_skips_non_flat_mesh", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"faedc761824856de3bb5df30d08735d92fccc162e497e4e1eda9cb416ed3631d"},
+  {"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[4.0,4.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"af548fb5a5f3ee1918b847bd86ce6e039eb69e37ad4b779a8cd51d2261d3696f"},
+  {"op":"add_edge","args":{"a":{"$v":[4.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"97cc3bf1f8794470507b46ba01dffb493815a35cbd329de98bfb59ec09c3616e"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,4.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"c280e5d45b4f410aea1b7673a441fc43c60421c5b338037f593d91b11f05d9e6"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[0.0,0.0,3.0]}},"counters":{"group":1,"curve":3},"sig":"be6825864964d409c3521d48a29419c3667d37cb9e96721611c8eab99919e312"},
+  {"op":"rebuild_planar_faces","args":{},"counters":{"group":1,"curve":3},"sig":"be6825864964d409c3521d48a29419c3667d37cb9e96721611c8eab99919e312"}
+ ]
+}

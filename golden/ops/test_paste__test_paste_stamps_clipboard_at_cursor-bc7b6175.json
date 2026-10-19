@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paste__test_paste_stamps_clipboard_at_cursor-bc7b6175",
+ "source": {"pytest": "tests/test_paste.py::test_paste_stamps_clipboard_at_cursor", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/964e08259af26275.igz"},
+ "start_sig": "553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"prune_on_undo","args":{}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[5.0,5.0,0.0]},"b":{"$v":[7.0,5.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.0,5.0,0.0]},"b":{"$v":[7.0,7.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.0,7.0,0.0]},"b":{"$v":[5.0,7.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[5.0,7.0,0.0]},"b":{"$v":[5.0,5.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[5.0,5.0,0.0]},{"$v":[7.0,5.0,0.0]},{"$v":[7.0,7.0,0.0]},{"$v":[5.0,7.0,0.0]}],"auto":false,"holes":null,"attrs":null}}}]},"counters":{"group":101,"curve":168},"sig":"908d4044411c1b46c2e4eb89be7221ea294e1f7630c11feebd68472d02a2ee40"},
+  {"op":"undo","ok":true,"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}

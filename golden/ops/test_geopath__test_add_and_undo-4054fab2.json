@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_geopath__test_add_and_undo-4054fab2",
+ "source": {"pytest": "tests/test_geopath.py::test_add_and_undo", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_geo_path","args":{"path":{"$obj":"georef.geopath.GeoPath","data":{"points":[[0.0,0.0,0.0],[10.0,0.0,0.0]]}}},"counters":{"group":72,"curve":113},"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"}
+ ]
+}

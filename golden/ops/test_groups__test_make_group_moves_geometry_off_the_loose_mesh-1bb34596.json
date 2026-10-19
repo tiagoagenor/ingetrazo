@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_groups__test_make_group_moves_geometry_off_the_loose_mesh-1bb34596",
+ "source": {"pytest": "tests/test_groups.py::test_make_group_moves_geometry_off_the_loose_mesh", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/de3ac84a52d27fa4.igz"},
+ "start_sig": "1d29fefad829be8cb55e3aa7bf41701cee1c28160dbab2e7549c6882ea307f8b",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":83,"curve":113},"sig":"ba3bc3a77b2440a1754da5cb1be30f01278d0a12b86d6caf18d8b530dec376c8"},
+  {"op":"undo","ok":true,"sig":"1d29fefad829be8cb55e3aa7bf41701cee1c28160dbab2e7549c6882ea307f8b"}
+ ]
+}

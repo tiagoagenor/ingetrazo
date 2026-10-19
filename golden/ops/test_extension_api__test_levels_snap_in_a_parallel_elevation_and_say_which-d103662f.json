@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_extension_api__test_levels_snap_in_a_parallel_elevation_and_say_which-d103662f",
+ "source": {"pytest": "tests/test_extension_api.py::test_levels_snap_in_a_parallel_elevation_and_say_which", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/af7800eaab0e054b.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"set_plugin_data","args":{"key":"niveles","value":{"levels":[{"name":"PA","z":2.6}],"guides":true}},"counters":{"group":21,"curve":113},"sig":"78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb"}
+ ]
+}

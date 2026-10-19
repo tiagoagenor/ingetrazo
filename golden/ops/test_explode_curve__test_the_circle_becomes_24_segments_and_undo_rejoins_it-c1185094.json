@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_explode_curve__test_the_circle_becomes_24_segments_and_undo_rejoins_it-c1185094",
+ "source": {"pytest": "tests/test_explode_curve.py::test_the_circle_becomes_24_segments_and_undo_rejoins_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e30439c65bf91a4a.igz"},
+ "start_sig": "725e9013a26f010a80df4844d9c4f14d6904a30e9b59871844edda770388e07d",
+ "steps": [
+  {"op":"explode_curves","args":{"edges":[{"$edge":{"ends":[[1.0,0.0,0.0],[0.9659258127212524,0.258819043636322,0.0]],"in":null}}]},"counters":{"group":18,"curve":111},"sig":"532ea9e87232a1cea0f009928d03e4f0fc23f11cb464ca0d32991be636ab59e7"},
+  {"op":"undo","ok":true,"sig":"725e9013a26f010a80df4844d9c4f14d6904a30e9b59871844edda770388e07d"},
+  {"op":"redo","ok":true,"sig":"532ea9e87232a1cea0f009928d03e4f0fc23f11cb464ca0d32991be636ab59e7"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_phase1_dod__test_dod_pushpull_on_split_triangle-d71c8390",
+ "source": {"pytest": "tests/test_phase1_dod.py::test_dod_pushpull_on_split_triangle", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[0.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,2.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]}]}}}]},"counters":{"group":101,"curve":168},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]},{"$v":[0.0,0.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,0.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":101,"curve":168},"sig":"e6047c4903dbdab7d1813f0d9035044eac17c143a146c5a971f29c9aae698b0a"}
+ ]
+}

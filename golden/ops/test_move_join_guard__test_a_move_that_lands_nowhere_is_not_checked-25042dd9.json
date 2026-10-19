@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_join_guard__test_a_move_that_lands_nowhere_is_not_checked-25042dd9",
+ "source": {"pytest": "tests/test_move_join_guard.py::test_a_move_that_lands_nowhere_is_not_checked", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/171daf7b8552ba98.igz"},
+ "start_sig": "659a623b10dcfa6c8f1c10af792b590f14a314952e5a6de6638dfb4007d0575a",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[3.0,0.0,2.5999999046325684]},{"$v":[3.0,4.0,2.5999999046325684]}],"delta":{"$v":[0.0,0.0,-1.0]}},"counters":{"group":95,"curve":163},"sig":"79a61be73faee5b15ddce27422ee8ed69371d8c01e2d3c204f68ea4386bf26ab"}
+ ]
+}

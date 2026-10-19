@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_geopath__test_convert_open_path_to_edges-1bcfeca0",
+ "source": {"pytest": "tests/test_geopath.py::test_convert_open_path_to_edges", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9fb0159d4c9c423d.igz"},
+ "start_sig": "34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[10.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[10.0,0.0,0.0]},"b":{"$v":[10.0,10.0,0.0]}}}}]}}},{"$cmd":{"op":"delete_geo_paths","args":{"paths":[{"$ref":["geo_paths",0]}]}}}]},"counters":{"group":72,"curve":113},"sig":"da4d4af46a1acafc32b63fff47f0f25e6f9bb273d91900ff945682539cf459af"},
+  {"op":"undo","ok":true,"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"}
+ ]
+}

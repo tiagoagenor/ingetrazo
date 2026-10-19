@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_paste__test_paste_in_place_menu_action_keeps_the_active_tool-f3fca19f",
+ "source": {"pytest": "tests/test_paste.py::test_paste_in_place_menu_action_keeps_the_active_tool", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/12b822fb81fc397f.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"prune_on_undo","args":{}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[1.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,1.0,0.0]},"b":{"$v":[0.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,1.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[1.0,0.0,0.0]},{"$v":[1.0,1.0,0.0]},{"$v":[0.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":null}}}]},"counters":{"group":101,"curve":168},"sig":"a64a44e41dbe3d239256f88c80377160281a0961cb0bd0d9e60ede3f72e74dc1"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_move_rotation_grips__test_taking_a_grip_turns_the_group_about_its_centre_by-5136f959",
+ "source": {"pytest": "tests/test_move_rotation_grips.py::test_taking_a_grip_turns_the_group_about_its_centre_by_a_typed_angle", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e16306da900b83a0.igz"},
+ "start_sig": "925340f497d2e0c76bb3503640f49ad1eb81ca6e7738b3d8369766a02b2138e5",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[2.0,0.5,1.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":90.0},"counters":{"group":100,"curve":163},"sig":"b64c960a866bed95554529cbb05473830546240956ce0bc0bb14b70bd29db454"},
+  {"op":"undo","ok":true,"sig":"925340f497d2e0c76bb3503640f49ad1eb81ca6e7738b3d8369766a02b2138e5"}
+ ]
+}

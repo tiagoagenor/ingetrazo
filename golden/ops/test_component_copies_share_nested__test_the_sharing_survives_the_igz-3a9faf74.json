@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_component_copies_share_nested__test_the_sharing_survives_the_igz-3a9faf74",
+ "source": {"pytest": "tests/test_component_copies_share_nested.py::test_the_sharing_survives_the_igz", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/5e53df891c96a0f9.igz"},
+ "start_sig": "8401fa6a0e49cee0ecd39092a53011bf6f3cef2212347a83d4cec008782dcdca",
+ "steps": [
+  {"op":"make_component_of","args":{"faces":[],"edges":[],"groups":[{"$group":[0]},{"$group":[1]}],"name":"Banca"},"counters":{"group":13,"curve":10},"sig":"7cd841c9864adc410cfa40a2a6fc0eb74b194035ddf1c6cb0da58f08ccd070da"}
+ ]
+}

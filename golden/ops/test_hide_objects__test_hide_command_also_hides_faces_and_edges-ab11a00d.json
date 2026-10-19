@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_hide_objects__test_hide_command_also_hides_faces_and_edges-ab11a00d",
+ "source": {"pytest": "tests/test_hide_objects.py::test_hide_command_also_hides_faces_and_edges", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/bbe20d1a43234b14.igz"},
+ "start_sig": "eb19b8bf975381c80fcf6b73582b782d3c8d641144e08f83e6b55b2b895501de",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$edge":{"ends":[[0.0,0.0,0.0],[0.0,1.0,0.0]],"in":null}},{"$face":{"loop":[[0.0,0.0,0.0],[0.0,1.0,0.0],[1.0,1.0,0.0],[1.0,0.0,0.0]],"in":null}}]},"counters":{"group":88,"curve":161},"sig":"48206156d8c15b4a8811f10eefa1b41e8a9d2ef065c526c5c1b1cf290723d2ca"},
+  {"op":"undo","ok":true,"sig":"eb19b8bf975381c80fcf6b73582b782d3c8d641144e08f83e6b55b2b895501de"},
+  {"op":"hide_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[0.0,1.0,0.0]],"in":null}}],"hidden":true},"counters":{"group":88,"curve":161},"sig":"fa096f368f61aa7913c0f87c5a7bae28b87f83728c4cb15018007b526e9187ff"}
+ ]
+}

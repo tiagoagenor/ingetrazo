@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_move_on_an_anchored_dimension_slides_its_line_only-870fa419",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_move_on_an_anchored_dimension_slides_its_line_only", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[0.0,0.0,0.0],"b":[4.0,0.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":15,"curve":39},"sig":"9c8d545bb011de07cd924a38b87703190405de0b58596bb9b25f9ab439882eee"},
+  {"op":"move_dimensions","args":{"modes":{"$dict":[[{"$ref":["dimensions",0]},"line"]]},"delta":{"$v":[1.0,-2.0,0.0]}},"counters":{"group":15,"curve":39},"sig":"9c8d545bb011de07cd924a38b87703190405de0b58596bb9b25f9ab439882eee"},
+  {"op":"undo","ok":true,"sig":"9c8d545bb011de07cd924a38b87703190405de0b58596bb9b25f9ab439882eee"}
+ ]
+}

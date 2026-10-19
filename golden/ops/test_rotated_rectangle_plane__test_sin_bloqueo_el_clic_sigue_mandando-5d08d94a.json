@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotated_rectangle_plane__test_sin_bloqueo_el_clic_sigue_mandando-5d08d94a",
+ "source": {"pytest": "tests/test_rotated_rectangle_plane.py::test_sin_bloqueo_el_clic_sigue_mandando", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.199999809265137,21.399999618530273,0.0]},"b":{"$v":[16.200000762939453,21.399999618530273,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[16.200000762939453,21.399999618530273,0.0]},"b":{"$v":[16.200000762939453,22.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[16.200000762939453,22.0,0.0]},"b":{"$v":[7.199999809265137,22.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.199999809265137,22.0,0.0]},"b":{"$v":[7.199999809265137,21.399999618530273,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[7.199999809265137,21.399999618530273,0.0]},{"$v":[16.200000762939453,21.399999618530273,0.0]},{"$v":[16.200000762939453,22.0,0.0]},{"$v":[7.199999809265137,22.0,0.0]}]}}}]},"counters":{"group":112,"curve":196},"sig":"a1cbc7462ec5a8af772493e6d88d6a9637b0aeb3f7d185bfda78958d519570c7"}
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_scale_group_command_along_its_axes_keeps_the_width-30b294b8",
+ "source": {"pytest": "tests/test_group_axes.py::test_scale_group_command_along_its_axes_keeps_the_width", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b6e5df7ff5181c4e.igz"},
+ "start_sig": "ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":30.0},"counters":{"group":74,"curve":113},"sig":"4323270941a96d2edea074a2723252e63e857c2f62c75e8969358208bba514ce"},
+  {"op":"scale_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"factor":{"$t":[3.0,1.0,1.0]},"axes":{"$t":[{"$v":[0.8660253882408142,0.5,0.0]},{"$v":[-0.5,0.8660253882408142,0.0]},{"$v":[0.0,-0.0,1.0]}]}},"counters":{"group":74,"curve":113},"sig":"9b8f796ac119d4e3fa47edcc987dfe3411a2f84d509829cd5ee4d0527ad29825"},
+  {"op":"undo","ok":true,"sig":"4323270941a96d2edea074a2723252e63e857c2f62c75e8969358208bba514ce"}
+ ]
+}

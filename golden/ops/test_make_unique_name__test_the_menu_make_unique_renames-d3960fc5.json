@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_the_menu_make_unique_renames-d3960fc5",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_the_menu_make_unique_renames", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/fe445a3f00c6ce87.igz"},
+ "start_sig": "8ca9085df88aca744ebb740452f2910ce442539d751a4fef85f1924d065bb59b",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[2]},"rename":true},"counters":{"group":91,"curve":163},"sig":"48d51b23bc489d8915122f007a72f784b46a42d61f57a0d80e0935239b921d61"}
+ ]
+}

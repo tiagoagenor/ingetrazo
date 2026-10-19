@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rectangle__test_from_the_centre_the_second_click_is_a_corner-1b2b3950",
+ "source": {"pytest": "tests/test_rectangle.py::test_from_the_centre_the_second_click_is_a_corner", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-1.0,0.0,0.0]},"b":{"$v":[3.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[3.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,2.0,0.0]},"b":{"$v":[-1.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-1.0,2.0,0.0]},"b":{"$v":[-1.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[-1.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,2.0,0.0]},{"$v":[-1.0,2.0,0.0]}]}}}]},"counters":{"group":106,"curve":171},"sig":"4ce21800637e781cccce98604dfa6000e741bce194dad2b24d1609589ebdfd32"}
+ ]
+}

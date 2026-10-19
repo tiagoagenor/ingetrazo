@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_components_from_another_file_arrive_kept_and_placea-0a13fef1",
+ "source": {"pytest": "tests/test_replace_component.py::test_components_from_another_file_arrive_kept_and_placeable", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7ac730f2b5c4bf5b.igz"},
+ "start_sig": "a24b3bfff2462191f995492ffff6d51eb59b11c78e7e312d0b7ab870614911b0",
+ "steps": [
+  {"op":"keep_component","args":{"instance":{"$group":[7]}},"counters":{"group":106,"curve":171},"sig":"a24b3bfff2462191f995492ffff6d51eb59b11c78e7e312d0b7ab870614911b0"}
+ ]
+}

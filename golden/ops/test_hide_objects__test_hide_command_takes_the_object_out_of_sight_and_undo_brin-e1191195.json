@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_hide_objects__test_hide_command_takes_the_object_out_of_sight_and_undo_brin-e1191195",
+ "source": {"pytest": "tests/test_hide_objects.py::test_hide_command_takes_the_object_out_of_sight_and_undo_brings_it_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/604adbc1a96899f2.igz"},
+ "start_sig": "4ca8b464585fa2570b6e618b5f80215a10addfc3282d7f2269e75b8efb5df71e",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$group":[0]}]},"counters":{"group":88,"curve":161},"sig":"ffc3732abd6f304a52f334bcc4d4f7c868c74ee4c98f885670128ab583088141"},
+  {"op":"undo","ok":true,"sig":"4ca8b464585fa2570b6e618b5f80215a10addfc3282d7f2269e75b8efb5df71e"},
+  {"op":"redo","ok":true,"sig":"ffc3732abd6f304a52f334bcc4d4f7c868c74ee4c98f885670128ab583088141"}
+ ]
+}

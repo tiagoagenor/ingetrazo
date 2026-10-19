@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_bench_0_4_9_followups__test_line_closing_a_wall_in_front_of_the_camera_show-f21f9730",
+ "source": {"pytest": "tests/test_bench_0_4_9_followups.py::test_line_closing_a_wall_in_front_of_the_camera_shows_its_front", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[0.0,0.0,2.0]}},"counters":{"group":1,"curve":3},"sig":"756ff016f33c127a5baeb7fcd32f6f4f64c1f0b3dfd18587ca145bcb06a27306"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,2.0]},"b":{"$v":[2.0,0.0,2.0]}},"counters":{"group":1,"curve":3},"sig":"cb4b1c16e2a39a0aece57b96184bd9effa13e35b54428242df28ec356ef762d5"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,0.0,2.0]},"b":{"$v":[2.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"e2cbd47037f4466e17c19ca2d947308d67e90d280e28e4d5ce80cb1a9e14059c"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[2.0,0.0,2.0]},{"$v":[0.0,0.0,2.0]},{"$v":[0.0,0.0,0.0]}]}}}]},"counters":{"group":1,"curve":3},"sig":"ba8b02ef21d9d3a44ea6d78cd3cd0f58c9120a455299484cf6c6a9736db6a719"}
+ ]
+}

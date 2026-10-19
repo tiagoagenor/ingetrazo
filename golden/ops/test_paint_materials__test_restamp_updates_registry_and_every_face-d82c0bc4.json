@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_restamp_updates_registry_and_every_face-d82c0bc4",
+ "source": {"pytest": "tests/test_paint_materials.py::test_restamp_updates_registry_and_every_face", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/c82df4ece7c41170.igz"},
+ "start_sig": "5cabe31d0d56b47f5c4bb444aa2beba2cf8751964ec17bfe68a51fb661aefa96",
+ "steps": [
+  {"op":"restamp_material","args":{"name":"Concreto visto","new_material":{"$obj":"core.materials.Material","data":{"name":"Concreto visto","color":[0.3,0.5,0.7]}}},"counters":{"group":100,"curve":163},"sig":"1232f70f6120cad68daa88daa0daed4c5e5048e19934d953650393b25363d4ec"},
+  {"op":"undo","ok":true,"sig":"5cabe31d0d56b47f5c4bb444aa2beba2cf8751964ec17bfe68a51fb661aefa96"}
+ ]
+}

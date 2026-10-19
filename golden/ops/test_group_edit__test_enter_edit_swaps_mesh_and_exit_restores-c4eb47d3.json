@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_edit__test_enter_edit_swaps_mesh_and_exit_restores-c4eb47d3",
+ "source": {"pytest": "tests/test_group_edit.py::test_enter_edit_swaps_mesh_and_exit_restores", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[4.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,4.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}]}}}]},"counters":{"group":75,"curve":113},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[4.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[4.0,0.0,0.0],[4.0,4.0,0.0]],"in":null}},{"$edge":{"ends":[[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}},{"$edge":{"ends":[[0.0,4.0,0.0],[0.0,0.0,0.0]],"in":null}}]},"counters":{"group":75,"curve":113},"sig":"d56a96c18227b4daf46efa22aec7086527afc5cf77820d7bd206e394c0a496ce"}
+ ]
+}

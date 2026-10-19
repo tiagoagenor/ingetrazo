@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_material__test_paint_clicked_on_a_group_from_outside_paints_the_group-22b5fcf6",
+ "source": {"pytest": "tests/test_group_material.py::test_paint_clicked_on_a_group_from_outside_paints_the_group", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/49c2f4c815273862.igz"},
+ "start_sig": "968cbb5c6d3edd840d500698c9ebba70c76d66fd2c754bb1baae8f94c540f631",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_material_tag","args":{"faces":[],"name":null,"material":null}}},{"$cmd":{"op":"set_group_material","args":{"group":{"$group":[0]},"material":{"color":[1.0,0.0,0.0]}}}}]},"counters":{"group":81,"curve":113},"sig":"b478d4f7f49fdf2d0c57588809c7f99f080d61671b3c2e61f9c149f459339b25"},
+  {"op":"undo","ok":true,"sig":"968cbb5c6d3edd840d500698c9ebba70c76d66fd2c754bb1baae8f94c540f631"}
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_hide_objects__test_hiding_a_container_hides_its_nested_placements_in_the_vi-45e72d09",
+ "source": {"pytest": "tests/test_hide_objects.py::test_hiding_a_container_hides_its_nested_placements_in_the_viewport", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e9289d8c2283d7a.igz"},
+ "start_sig": "210561193cc4c5cc38aa71427b620016c4a1f8d4cea1ff96ce0466c478369e6f",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$group":[1]}]},"counters":{"group":88,"curve":161},"sig":"41524873185e86c1777519c8bc2eab8d111f2e1bb9b45d623bb10c7620de4af7"},
+  {"op":"undo","ok":true,"sig":"210561193cc4c5cc38aa71427b620016c4a1f8d4cea1ff96ce0466c478369e6f"},
+  {"op":"hide","args":{"entities":[{"$group":[1,0]}]},"counters":{"group":88,"curve":161},"sig":"4f60c546a3967115bfe59af82428e8a500db8b7f5aca3895cae1b8b410087a1d"}
+ ]
+}

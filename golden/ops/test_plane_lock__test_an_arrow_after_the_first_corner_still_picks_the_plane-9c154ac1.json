@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_plane_lock__test_an_arrow_after_the_first_corner_still_picks_the_plane-9c154ac1",
+ "source": {"pytest": "tests/test_plane_lock.py::test_an_arrow_after_the_first_corner_still_picks_the_plane", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[0.0,0.0,0.7200000286102295]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.7200000286102295]},"b":{"$v":[0.4000000059604645,0.0,0.7200000286102295]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.4000000059604645,0.0,0.7200000286102295]},"b":{"$v":[0.4000000059604645,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.4000000059604645,0.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[0.0,0.0,0.7200000286102295]},{"$v":[0.4000000059604645,0.0,0.7200000286102295]},{"$v":[0.4000000059604645,0.0,0.0]}]}}}]},"counters":{"group":105,"curve":169},"sig":"e72bcc2c378744c2f89a98549b5e2d00fcaa24192e34aac63349532974910b4d"}
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_hide_edges__test_unhide_and_redo-93676a73",
+ "source": {"pytest": "tests/test_hide_edges.py::test_unhide_and_redo", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[0.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,2.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,2.0,0.0]},{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]}]}}}]},"counters":{"group":88,"curve":161},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"hide_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,0.0,0.0],[2.0,2.0,0.0]],"in":null}}],"hidden":true},"counters":{"group":88,"curve":161},"sig":"71421b71951ce2d39e16628cbaf0ebf4a3bcc9b1d61814eb48ca2a4336a386db"},
+  {"op":"hide_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,0.0,0.0],[2.0,2.0,0.0]],"in":null}}],"hidden":false},"counters":{"group":88,"curve":161},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"undo","ok":true,"sig":"71421b71951ce2d39e16628cbaf0ebf4a3bcc9b1d61814eb48ca2a4336a386db"},
+  {"op":"redo","ok":true,"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}

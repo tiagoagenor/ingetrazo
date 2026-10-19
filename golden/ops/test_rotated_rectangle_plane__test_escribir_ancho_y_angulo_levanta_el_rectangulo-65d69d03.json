@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotated_rectangle_plane__test_escribir_ancho_y_angulo_levanta_el_rectangulo-65d69d03",
+ "source": {"pytest": "tests/test_rotated_rectangle_plane.py::test_escribir_ancho_y_angulo_levanta_el_rectangulo", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[9.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,0.0,0.0]},"b":{"$v":[9.0,1.8369702788777518e-16,3.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,1.8369702788777518e-16,3.0]},"b":{"$v":[0.0,1.8369702788777518e-16,3.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,1.8369702788777518e-16,3.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[9.0,0.0,0.0]},{"$v":[9.0,1.8369702788777518e-16,3.0]},{"$v":[0.0,1.8369702788777518e-16,3.0]}]}}}]},"counters":{"group":112,"curve":196},"sig":"e2407f6b5ca8c5ad26572c56f8352b0e7a418690186196a252ca5ad9bc1e9785"}
+ ]
+}

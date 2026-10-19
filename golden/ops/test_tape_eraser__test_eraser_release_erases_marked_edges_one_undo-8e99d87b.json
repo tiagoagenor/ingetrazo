@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_tape_eraser__test_eraser_release_erases_marked_edges_one_undo-8e99d87b",
+ "source": {"pytest": "tests/test_tape_eraser.py::test_eraser_release_erases_marked_edges_one_undo#2", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9fcf61c6b3593efd.igz"},
+ "start_sig": "553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,0.0,0.0],[2.0,2.0,0.0]],"in":null}}],"faces":[]},"counters":{"group":119,"curve":205},"sig":"c097209f379fffbd957110abc6d96e6c80988a82538b5b4db947049b90f44765"},
+  {"op":"undo","ok":true,"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}

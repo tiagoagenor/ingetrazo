@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_an_endpoint_off_any_vertex_stays_static-d49b3156",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_an_endpoint_off_any_vertex_stays_static", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[0.0,0.0,0.0],"b":[2.0,0.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":13,"curve":39},"sig":"9c8d545bb011de07cd924a38b87703190405de0b58596bb9b25f9ab439882eee"},
+  {"op":"move_vertices","args":{"positions":[{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]}],"delta":{"$v":[2.0,0.0,0.0]}},"counters":{"group":13,"curve":39},"sig":"832e0900a0c190f1c7da3313023379f083a4e38bdd69f7dc60389299da0c4675"}
+ ]
+}

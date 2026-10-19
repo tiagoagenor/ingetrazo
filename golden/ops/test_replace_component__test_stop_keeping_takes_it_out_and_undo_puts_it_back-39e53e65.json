@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_stop_keeping_takes_it_out_and_undo_puts_it_back-39e53e65",
+ "source": {"pytest": "tests/test_replace_component.py::test_stop_keeping_takes_it_out_and_undo_puts_it_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/60a9fedf9cd02389.igz"},
+ "start_sig": "40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3",
+ "steps": [
+  {"op":"keep_component","args":{"instance":{"$group":[0]}},"counters":{"group":106,"curve":171},"sig":"40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3"},
+  {"op":"keep_component","args":{"instance":{"$group":[3]}},"counters":{"group":106,"curve":171},"sig":"40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3"},
+  {"op":"keep_component","args":{"instance":{"$kept":0},"keep":false},"counters":{"group":106,"curve":171},"sig":"40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3"},
+  {"op":"undo","ok":true,"sig":"40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3"}
+ ]
+}

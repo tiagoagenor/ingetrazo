@@ -1,0 +1,19 @@
+{
+ "schema": 1,
+ "id": "test_sections__test_place_activates_and_keeps_one_active-b48a0847",
+ "source": {"pytest": "tests/test_sections.py::test_place_activates_and_keeps_one_active", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"place_section_plane","args":{"plane":{"$obj":"core.section.SectionPlane","data":{"point":[0.0,0.0,1.0],"normal":[0.0,0.0,1.0],"uid":7}}},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"place_section_plane","args":{"plane":{"$obj":"core.section.SectionPlane","data":{"point":[0.0,0.0,2.0],"normal":[0.0,0.0,1.0],"uid":8}}},"counters":{"group":112,"curve":196},"sig":"a07a3b75acf889c5b1609cdc51faa0ffa381bdd5e49ef12c359a9ca2e9eb4aaf"},
+  {"op":"undo","ok":true,"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"set_active_section","args":{"plane":null},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"undo","ok":true,"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"reverse_section_plane","args":{"plane":{"$ref":["section_planes",0]}},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"move_section_planes","args":{"planes":[{"$ref":["section_planes",0]}],"delta":{"$v":[0.0,0.0,5.0]}},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"rotate_section_planes","args":{"planes":[{"$ref":["section_planes",0]}],"centre":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[1.0,0.0,0.0]},"deg":90},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"delete_section_planes","args":{"planes":[{"$ref":["section_planes",0]}]},"counters":{"group":112,"curve":196},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"}
+ ]
+}

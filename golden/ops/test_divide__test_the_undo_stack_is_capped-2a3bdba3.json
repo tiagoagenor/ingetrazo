@@ -1,0 +1,19 @@
+{
+ "schema": 1,
+ "id": "test_divide__test_the_undo_stack_is_capped-2a3bdba3",
+ "source": {"pytest": "tests/test_divide.py::test_the_undo_stack_is_capped", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"b164976d2829cab6b14a86eb7436444f32d2f754762d4fcbf050dab50a0402f6"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"fa726ea062a5feacb174e7c17a3d5c8289f0f0c880fa923f71e48feb10ea15be"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[3.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"5ffa4e0f7bc78ce8bf7c6aedc294d502e4ef01e792f485ec6ae6263972c03c78"},
+  {"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"3551b8df11308d997809a5d23153678267b896823128d8c59853f26aa0a255f4"},
+  {"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[5.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"b024c224f857ee82697d4a6b970fcfc21ae8d7205f43f8950d9aeb49c5d50026"},
+  {"op":"add_edge","args":{"a":{"$v":[5.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"a025dd4880293d8c07072bb466b0ac5073702b0fc17d0adeb942a8de9df80cc8"},
+  {"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[7.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"a2d7a93bbf8d1679c9a0a2b98a53cdfe6bee63e83a9095c575c53b948cd54a97"},
+  {"op":"add_edge","args":{"a":{"$v":[7.0,0.0,0.0]},"b":{"$v":[8.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"24509503338bbe3e83196de4034f7b68e89a4283734b74364ddaec7237eb0def"},
+  {"op":"add_edge","args":{"a":{"$v":[8.0,0.0,0.0]},"b":{"$v":[9.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"19dd1e16a3d18f9340c22dc809942a73a0d3fb5773733e1662c965f2310158f6"},
+  {"op":"add_edge","args":{"a":{"$v":[9.0,0.0,0.0]},"b":{"$v":[10.0,0.0,0.0]}},"counters":{"group":15,"curve":63},"sig":"798f6f0bd45078cbc404153e3e5474ffef01f9d7be3b1828b4b65aa183d687aa"}
+ ]
+}

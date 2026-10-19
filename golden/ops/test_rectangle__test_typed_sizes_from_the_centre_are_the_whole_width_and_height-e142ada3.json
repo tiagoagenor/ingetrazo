@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rectangle__test_typed_sizes_from_the_centre_are_the_whole_width_and_height-e142ada3",
+ "source": {"pytest": "tests/test_rectangle.py::test_typed_sizes_from_the_centre_are_the_whole_width_and_height", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-2.0,-1.0,0.0]},"b":{"$v":[2.0,-1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,-1.0,0.0]},"b":{"$v":[2.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,1.0,0.0]},"b":{"$v":[-2.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-2.0,1.0,0.0]},"b":{"$v":[-2.0,-1.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[-2.0,-1.0,0.0]},{"$v":[2.0,-1.0,0.0]},{"$v":[2.0,1.0,0.0]},{"$v":[-2.0,1.0,0.0]}]}}}]},"counters":{"group":106,"curve":171},"sig":"f2bb80703e8e4f12758bbee331168f7c89f45eed1ed2cb3a957eec234b40fcf6"}
+ ]
+}

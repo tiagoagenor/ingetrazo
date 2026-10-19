@@ -1,0 +1,2 @@
+# Start scenes are the bytes the app saved; keep them byte for byte.
+starts/*.igz -text

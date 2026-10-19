@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_groups__test_explode_merges_group_back_into_loose_mesh-fda8553d",
+ "source": {"pytest": "tests/test_groups.py::test_explode_merges_group_back_into_loose_mesh", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/de3ac84a52d27fa4.igz"},
+ "start_sig": "1d29fefad829be8cb55e3aa7bf41701cee1c28160dbab2e7549c6882ea307f8b",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":85,"curve":113},"sig":"02f80a146d23998fc72e208e5c06a2896825c81c8f4b0eef0e063dba0c7c3386"},
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":86,"curve":113},"sig":"1d29fefad829be8cb55e3aa7bf41701cee1c28160dbab2e7549c6882ea307f8b"},
+  {"op":"undo","ok":true,"sig":"02f80a146d23998fc72e208e5c06a2896825c81c8f4b0eef0e063dba0c7c3386"}
+ ]
+}

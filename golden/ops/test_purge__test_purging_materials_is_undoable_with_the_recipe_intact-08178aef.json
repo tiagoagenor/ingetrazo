@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_purge__test_purging_materials_is_undoable_with_the_recipe_intact-08178aef",
+ "source": {"pytest": "tests/test_purge.py::test_purging_materials_is_undoable_with_the_recipe_intact", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d41eb04f51919383.igz"},
+ "start_sig": "f93fd7d217732b01f6dd62370b27741721276d85d73b46819a9ee8727d6fe159",
+ "steps": [
+  {"op":"purge_unused","args":{"layers":false,"materials":true},"counters":{"group":105,"curve":171},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"undo","ok":true,"sig":"f93fd7d217732b01f6dd62370b27741721276d85d73b46819a9ee8727d6fe159"}
+ ]
+}

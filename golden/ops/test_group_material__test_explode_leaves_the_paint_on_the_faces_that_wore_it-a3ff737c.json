@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_material__test_explode_leaves_the_paint_on_the_faces_that_wore_it-a3ff737c",
+ "source": {"pytest": "tests/test_group_material.py::test_explode_leaves_the_paint_on_the_faces_that_wore_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3a059dcbf9efd018.igz"},
+ "start_sig": "b478d4f7f49fdf2d0c57588809c7f99f080d61671b3c2e61f9c149f459339b25",
+ "steps": [
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":81,"curve":113},"sig":"18bce2a827fe80ac9e64c12c5d9d7c80b24c01cde3c8d3ae0631e0cff7f5ad4d"},
+  {"op":"undo","ok":true,"sig":"b478d4f7f49fdf2d0c57588809c7f99f080d61671b3c2e61f9c149f459339b25"}
+ ]
+}

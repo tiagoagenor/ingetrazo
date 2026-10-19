@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_render_finish__test_the_material_menu_sets_the_finish-fbd212d9",
+ "source": {"pytest": "tests/test_render_finish.py::test_the_material_menu_sets_the_finish", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/8b04e56f57b9686a.igz"},
+ "start_sig": "3ad7d38c096e643ba16ac3fdba7f39ff4de4058499be8690d091ed35fb312418",
+ "steps": [
+  {"op":"set_material_finish","args":{"name":"Mármol travertino","finish":"water"},"counters":{"group":106,"curve":171},"sig":"c249a9f2ed2cc25cebf2e60abfc08a791ae7dfaa964be9d4ac878fa2ad992358"},
+  {"op":"undo","ok":true,"sig":"3ad7d38c096e643ba16ac3fdba7f39ff4de4058499be8690d091ed35fb312418"}
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_rotate_carries_the_axes_and_undo_brings_them_back-d32dc39e",
+ "source": {"pytest": "tests/test_group_axes.py::test_rotate_carries_the_axes_and_undo_brings_them_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e1fb85a84243f1d2.igz"},
+ "start_sig": "ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":30.0},"counters":{"group":74,"curve":113},"sig":"4323270941a96d2edea074a2723252e63e857c2f62c75e8969358208bba514ce"},
+  {"op":"undo","ok":true,"sig":"ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759"},
+  {"op":"redo","ok":true,"sig":"4323270941a96d2edea074a2723252e63e857c2f62c75e8969358208bba514ce"}
+ ]
+}

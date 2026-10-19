@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_the_eyedropper_button_arms_one_sample_and_pops_out-20bd6df3",
+ "source": {"pytest": "tests/test_paint_materials.py::test_the_eyedropper_button_arms_one_sample_and_pops_out", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b5167032a45e440f.igz"},
+ "start_sig": "03f51e77e620aca884292a1fbee9097f4798616a1b515577e6e7086bfc3fe996",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,3.0],[4.0,0.0,3.0],[4.0,4.0,3.0],[0.0,4.0,3.0]],"in":null}}],"color":{"$t":[0.2,0.4,0.6]}}}},{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,3.0],[4.0,0.0,3.0],[4.0,4.0,3.0],[0.0,4.0,3.0]],"in":null}}],"texture":null}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,3.0],[4.0,0.0,3.0],[4.0,4.0,3.0],[0.0,4.0,3.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,3.0],[4.0,0.0,3.0],[4.0,4.0,3.0],[0.0,4.0,3.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":100,"curve":163},"sig":"d0ba3f305f8db9c8125f5e8b83a5aac47e201de46f3ed7fd19f7d277f96d62ad"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_offset_keeps_paint__test_an_unpainted_face_still_offsets-c753e803",
+ "source": {"pytest": "tests/test_offset_keeps_paint.py::test_an_unpainted_face_still_offsets", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/592c04c1ba605892.igz"},
+ "start_sig": "92db96718a24b83677c2459fcde95cc2862fbaf8da6d02e194053f453d5610b3",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[10.0,0.0,0.0],[10.0,6.0,0.0],[0.0,6.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[10.0,0.0,0.0]},{"$v":[10.0,6.0,0.0]},{"$v":[0.0,6.0,0.0]}],"auto":false,"holes":[[{"$v":[1.0,1.0,0.0]},{"$v":[9.0,1.0,0.0]},{"$v":[9.0,5.0,0.0]},{"$v":[1.0,5.0,0.0]}]],"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[1.0,1.0,0.0]},{"$v":[9.0,1.0,0.0]},{"$v":[9.0,5.0,0.0]},{"$v":[1.0,5.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}}]},"counters":{"group":100,"curve":163},"sig":"d6ffda0d92d935871b49111d4641c834ba5931d6e51f6a9b18735ee6fc3f7639"}
+ ]
+}

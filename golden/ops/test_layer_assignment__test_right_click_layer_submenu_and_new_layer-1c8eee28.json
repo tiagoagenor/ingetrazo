@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_layer_assignment__test_right_click_layer_submenu_and_new_layer-1c8eee28",
+ "source": {"pytest": "tests/test_layer_assignment.py::test_right_click_layer_submenu_and_new_layer", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/40eac8382a3469da.igz"},
+ "start_sig": "ede6300728373b6a4c7b8b16c781dc455536186fa5d38ba75fc7de3e20e10265",
+ "steps": [
+  {"op":"assign_layer","args":{"entities":[{"$group":[1]}],"layer":"Muros"},"counters":{"group":91,"curve":163},"sig":"07cbf0e14aaa670e8657354f5ec44c8fb2bbdf84e5a16648f20fb4371f024893"},
+  {"op":"assign_layer","args":{"entities":[{"$group":[1]}],"layer":"Jardín"},"counters":{"group":91,"curve":163},"sig":"75a139e737cf795f041d14c0e8d5ca1a2ea4dc1dc74b24f1a3a5577d85957251"},
+  {"op":"undo","ok":true,"sig":"07cbf0e14aaa670e8657354f5ec44c8fb2bbdf84e5a16648f20fb4371f024893"}
+ ]
+}

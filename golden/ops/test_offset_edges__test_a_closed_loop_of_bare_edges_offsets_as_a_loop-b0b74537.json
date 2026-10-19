@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_offset_edges__test_a_closed_loop_of_bare_edges_offsets_as_a_loop-b0b74537",
+ "source": {"pytest": "tests/test_offset_edges.py::test_a_closed_loop_of_bare_edges_offsets_as_a_loop", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/5c5440847ca8d3a2.igz"},
+ "start_sig": "c280e5d45b4f410aea1b7673a441fc43c60421c5b338037f593d91b11f05d9e6",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.5,0.5,0.0]},"b":{"$v":[3.5,0.5,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.5,0.5,0.0]},"b":{"$v":[3.5,3.5,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.5,3.5,0.0]},"b":{"$v":[0.5,3.5,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.5,3.5,0.0]},"b":{"$v":[0.5,0.5,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.5,3.5,0.0]},{"$v":[0.5,0.5,0.0]},{"$v":[3.5,0.5,0.0]},{"$v":[3.5,3.5,0.0]}]}}}]},"counters":{"group":100,"curve":163},"sig":"f8d487fe6a5fd79bee4d610458114c291930da6dcc3384f0e24f267dd779083f"}
+ ]
+}

@@ -5,6 +5,8 @@ members = [
     "crates/ingetrazo-math",
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
+    "crates/ingetrazo-golden",
+    "crates/ingetrazo-cli",
     "crates/ingetrazo_py",
 ]
 

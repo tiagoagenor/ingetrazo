@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_join_guard__test_two_squares_side_by_side_share_the_edge-ebf1eafa",
+ "source": {"pytest": "tests/test_move_join_guard.py::test_two_squares_side_by_side_share_the_edge", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/2fcea179ceaaadda.igz"},
+ "start_sig": "f4ccc9e9bb9d5613f282d3ebcf5782be37f489dad5bb788ab8846ac3271f88c7",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[2.0,0.0,0.0]},{"$v":[2.0,1.0,0.0]}],"delta":{"$v":[-1.0,0.0,0.0]}},"counters":{"group":95,"curve":163},"sig":"3efe57b7d52940f5fd1d06e051972886426fcd6e05d68812a2e6f304b5e551f7"}
+ ]
+}

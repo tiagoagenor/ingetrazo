@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_tape_guide_from_group_edge__test_a_coincident_existing_guide_can_be_duplica-ff27d5b4",
+ "source": {"pytest": "tests/test_tape_guide_from_group_edge.py::test_a_coincident_existing_guide_can_be_duplicated", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/002579ebdaa33efc.igz"},
+ "start_sig": "e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d",
+ "steps": [
+  {"op":"add_guide","args":{"guide":{"$obj":"core.guide.Guide","data":{"point":[1.0,0.0,0.0],"direction":[1.0,0.0,0.0]}}},"counters":{"group":119,"curve":205},"sig":"85b216b57b45f846aa04da1388ba48bd02db5b6c68d457238a924a9287dfac10"}
+ ]
+}

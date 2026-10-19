@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_the_menu_offers_both_and_replace_swaps_the_selectio-4b91601f",
+ "source": {"pytest": "tests/test_replace_component.py::test_the_menu_offers_both_and_replace_swaps_the_selection", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/a49be8dd89e65581.igz"},
+ "start_sig": "4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[1]},{"$group":[3]},{"$group":[2]}],"source":{"$group":[4]}},"counters":{"group":106,"curve":171},"sig":"27a2f38f3f62bdda90aeb0974ca887c676f6e0c8f8473586974e45dd6e61e026"},
+  {"op":"undo","ok":true,"sig":"4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc"}
+ ]
+}

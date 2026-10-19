@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_geopath__test_delete_paths-97a8369c",
+ "source": {"pytest": "tests/test_geopath.py::test_delete_paths", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/311abc5f1d7c307e.igz"},
+ "start_sig": "3f2b9bb8c25307d48b852d5dbe8dc14e0b88b7bdae98106ff948a7f363accb8e",
+ "steps": [
+  {"op":"delete_geo_paths","args":{"paths":[{"$ref":["geo_paths",0]}]},"counters":{"group":72,"curve":113},"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"},
+  {"op":"undo","ok":true,"sig":"3f2b9bb8c25307d48b852d5dbe8dc14e0b88b7bdae98106ff948a7f363accb8e"}
+ ]
+}

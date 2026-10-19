@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_join_segments__test_the_preview_panel_paints_and_cancel_leaves_the_model_al-7170ebac",
+ "source": {"pytest": "tests/test_join_segments.py::test_the_preview_panel_paints_and_cancel_leaves_the_model_alone", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/ae5090aac27a51c6.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"4f8bbcf60c28f2028c4619500767a62b7b4d43835e06031c77e902355ab08c43"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"65912ce400c287cd40faa967cb17682850bbc881a62f3517968f7b5bf548e70b"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[3.0,0.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"773f437583ee5c99952157ca74b1960cf81875c9fa7603e82d74c220c27717e1"}
+ ]
+}

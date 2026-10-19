@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_two_copies_made_unique_one_after_the_other_differ-2885e6a1",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_two_copies_made_unique_one_after_the_other_differ", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/f3d266e5f3262c17.igz"},
+ "start_sig": "c7ad01fa212aca10b2eeef30dfdf4afc46b94a31e4e0b3d915602e2ff0ee5bc7",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[1]},"rename":true},"counters":{"group":91,"curve":163},"sig":"e0764e900d9fb78386d2a65e7cf503c341f7fc497c2f6ee9a444d542ceb15faf"},
+  {"op":"make_unique","args":{"group":{"$group":[2]},"rename":true},"counters":{"group":91,"curve":163},"sig":"747849f1469d5c02f97fc2c63fe230ece3a5762d117bc3107abd9214789d50fa"}
+ ]
+}

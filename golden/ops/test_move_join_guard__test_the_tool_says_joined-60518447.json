@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_join_guard__test_the_tool_says_joined-60518447",
+ "source": {"pytest": "tests/test_move_join_guard.py::test_the_tool_says_joined", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/171daf7b8552ba98.igz"},
+ "start_sig": "659a623b10dcfa6c8f1c10af792b590f14a314952e5a6de6638dfb4007d0575a",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[3.0,0.0,2.5999999046325684]},{"$v":[3.0,4.0,2.5999999046325684]}],"delta":{"$v":[0.0,0.0,-2.5999999046325684]}},"counters":{"group":96,"curve":163},"sig":"3d41c888b3d6df43949af6a7fc59adcc2aa4b581a31ed64b21bfcb30fa87d1b7"}
+ ]
+}

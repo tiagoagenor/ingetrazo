@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_a_free_dimension_moves_rigidly-b24ddf67",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_a_free_dimension_moves_rigidly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[1.0,1.0,0.0],"b":[3.0,1.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":15,"curve":39},"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"},
+  {"op":"move_dimensions","args":{"modes":{"$dict":[[{"$ref":["dimensions",0]},"rigid"]]},"delta":{"$v":[0.0,5.0,0.0]}},"counters":{"group":15,"curve":39},"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"},
+  {"op":"undo","ok":true,"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"}
+ ]
+}

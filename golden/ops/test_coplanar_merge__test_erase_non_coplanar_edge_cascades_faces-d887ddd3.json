@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_erase_non_coplanar_edge_cascades_faces-d887ddd3",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_erase_non_coplanar_edge_cascades_faces", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/a19e81de9b73f4c2.igz"},
+ "start_sig": "05d97d2f67584eeaa285f97738fd92d17183439bfb2b9025935c4106f21a820a",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}}]},"counters":{"group":13,"curve":10},"sig":"0d91999423a9cedaf37adda980c62d0fed972220d0adcf0f8605528166850ac1"},
+  {"op":"undo","ok":true,"sig":"05d97d2f67584eeaa285f97738fd92d17183439bfb2b9025935c4106f21a820a"}
+ ]
+}

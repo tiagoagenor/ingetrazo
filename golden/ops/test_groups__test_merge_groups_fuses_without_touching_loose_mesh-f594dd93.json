@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_groups__test_merge_groups_fuses_without_touching_loose_mesh-f594dd93",
+ "source": {"pytest": "tests/test_groups.py::test_merge_groups_fuses_without_touching_loose_mesh", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/028dd6d357724ea8.igz"},
+ "start_sig": "f232c3c56dc33ccaf25e61359988b05ecf8bf3130306b66d06c0fd5bda9cb201",
+ "steps": [
+  {"op":"merge_groups","args":{"groups":[{"$group":[0]},{"$group":[1]}]},"counters":{"group":88,"curve":161},"sig":"34dfedc1bdcb955646c2ef7db386317e6ffbb4b347864d5f703963a45ea73fd1"},
+  {"op":"undo","ok":true,"sig":"f232c3c56dc33ccaf25e61359988b05ecf8bf3130306b66d06c0fd5bda9cb201"},
+  {"op":"redo","ok":true,"sig":"34dfedc1bdcb955646c2ef7db386317e6ffbb4b347864d5f703963a45ea73fd1"}
+ ]
+}

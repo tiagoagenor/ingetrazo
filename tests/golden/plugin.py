@@ -3,7 +3,7 @@
 each script on a fresh scene, and report per command class what records
 and replays exactly (docs/rust-rewrite-plan.md, M0.4).
 ``--golden-harvest`` also writes each script that replays exactly into
-``golden/`` (M0.5): ``ops/<id>.json``, ``out/<id>/start.igz`` and a row of
+``golden/`` (M0.5): ``ops/<id>.json``, ``starts/<hash>.igz``, ``out/<id>/`` and a row of
 ``ledger.csv``.
 
     pytest --golden-check --golden-report=golden-check.json
@@ -94,7 +94,7 @@ def _golden_check(request):
             _report["replayed_ok"] += 1
             if harvest:
                 written += 1
-                _write_golden(nodeid, written, script)
+                _write_golden(nodeid, written, script, h.scene)
             for op in _ops(steps):
                 if op["op"] not in ("undo", "redo"):
                     _report["ops_ok"][op["op"]] += 1
@@ -119,21 +119,35 @@ def golden_id(nodeid: str, n: int = 1) -> str:
     return f"{slug}-{hashlib.sha1(key.encode('utf-8')).hexdigest()[:8]}"
 
 
-def _write_golden(nodeid: str, n: int, script: dict) -> None:
+def _write_golden(nodeid: str, n: int, script: dict, scene) -> None:
     import datetime
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[2] / "golden"
     gid = golden_id(nodeid, n)
-    out = root / "out" / gid
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "start.igz").write_bytes(script["start"])
+    import hashlib
+
+    from tests.golden.signature import scene_signature, signature_hash
+    # Start scenes are stored once by content (many tests start empty).
+    h = hashlib.sha1(script["start"]).hexdigest()[:16]
+    starts = root / "starts"
+    starts.mkdir(parents=True, exist_ok=True)
+    if not (starts / f"{h}.igz").exists():
+        (starts / f"{h}.igz").write_bytes(script["start"])
+        with open(starts / f"{h}.sig.json", "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(script["start_parts"], fh, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    final = scene_signature(scene)
+    if signature_hash(final) == script["steps"][-1]["sig"]:   # the test may go on after
+        out = root / "out" / gid
+        out.mkdir(parents=True, exist_ok=True)
+        with open(out / "final.sig.json", "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(final, fh, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     from core.version import __version__ as app_version
     doc = {"schema": 1, "id": gid,
            "source": {"pytest": nodeid if n == 1 else f"{nodeid}#{n}",
                       "app_version": app_version,
                       "harvested": datetime.date.today().isoformat()},
-           "start": {"file": "start.igz"},
+           "start": {"igz": f"golden/starts/{h}.igz"},
            "start_sig": script["start_sig"],
            "steps": script["steps"]}
     (root / "ops").mkdir(parents=True, exist_ok=True)

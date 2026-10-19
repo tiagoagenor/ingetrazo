@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_solid_tools__test_one_undo_step_puts_everything_back-1b167e96",
+ "source": {"pytest": "tests/test_solid_tools.py::test_one_undo_step_puts_everything_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b4b8c00bc6aee77e.igz"},
+ "start_sig": "86854780c450681c71758b35c4a8357d65c3190ddf2120aa12e8b5b32e90618e",
+ "steps": [
+  {"op":"solid_operation","args":{"op":"subtract","groups":[{"$group":[0]},{"$group":[1]}]},"counters":{"group":119,"curve":205},"sig":"98143126f8b161fe5ae5a6ba99b270f0022fa5bacd9476a603505a25bf7f864e"},
+  {"op":"undo","ok":true,"sig":"86854780c450681c71758b35c4a8357d65c3190ddf2120aa12e8b5b32e90618e"},
+  {"op":"redo","ok":true,"sig":"98143126f8b161fe5ae5a6ba99b270f0022fa5bacd9476a603505a25bf7f864e"}
+ ]
+}

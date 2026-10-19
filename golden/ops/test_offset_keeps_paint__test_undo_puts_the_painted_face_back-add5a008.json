@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_offset_keeps_paint__test_undo_puts_the_painted_face_back-add5a008",
+ "source": {"pytest": "tests/test_offset_keeps_paint.py::test_undo_puts_the_painted_face_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7bc8c60f99e0423c.igz"},
+ "start_sig": "046fd688578eb72e00e300fd1275dda41ac08228fe030b8583b29c8b6aae96ff",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[10.0,0.0,0.0],[10.0,6.0,0.0],[0.0,6.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[10.0,0.0,0.0]},{"$v":[10.0,6.0,0.0]},{"$v":[0.0,6.0,0.0]}],"auto":false,"holes":[[{"$v":[1.0,1.0,0.0]},{"$v":[9.0,1.0,0.0]},{"$v":[9.0,5.0,0.0]},{"$v":[1.0,5.0,0.0]}]],"attrs":{"color":{"$t":[0.5,0.5,0.5]}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[1.0,1.0,0.0]},{"$v":[9.0,1.0,0.0]},{"$v":[9.0,5.0,0.0]},{"$v":[1.0,5.0,0.0]}],"auto":false,"holes":null,"attrs":{"color":{"$t":[0.5,0.5,0.5]}}}}}]},"counters":{"group":100,"curve":163},"sig":"ba7346a88a2bd05f37040f9a9b3db631b2f030de27b79f1a175bbe47ad5d8ee0"},
+  {"op":"undo","ok":true,"sig":"046fd688578eb72e00e300fd1275dda41ac08228fe030b8583b29c8b6aae96ff"}
+ ]
+}

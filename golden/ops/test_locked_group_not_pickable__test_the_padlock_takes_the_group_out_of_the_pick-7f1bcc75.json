@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_locked_group_not_pickable__test_the_padlock_takes_the_group_out_of_the_pick-7f1bcc75",
+ "source": {"pytest": "tests/test_locked_group_not_pickable.py::test_the_padlock_takes_the_group_out_of_the_pick", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/0b5e1bf1948a3c5c.igz"},
+ "start_sig": "1b4c72891062ce1ae7eb4d998547aa9b227d5a6ceb190c87bb780930042fea3b",
+ "steps": [
+  {"op":"lock","args":{"groups":[{"$group":[0]}],"locked":true},"counters":{"group":91,"curve":163},"sig":"de643fa2d691dfee76c89ddb8eae503e393f4f4d1e7ee272a28f2efa3ae2e27f"},
+  {"op":"undo","ok":true,"sig":"1b4c72891062ce1ae7eb4d998547aa9b227d5a6ceb190c87bb780930042fea3b"}
+ ]
+}

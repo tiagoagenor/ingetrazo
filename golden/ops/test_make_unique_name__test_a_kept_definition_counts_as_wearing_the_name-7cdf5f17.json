@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_a_kept_definition_counts_as_wearing_the_name-7cdf5f17",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_a_kept_definition_counts_as_wearing_the_name", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/35b9e6e7071e547d.igz"},
+ "start_sig": "17d2d745461e0883f9fcab58a7216a3b0cb5116b26facf474bd951483f710bcf",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[0]},"rename":true},"counters":{"group":91,"curve":163},"sig":"8de2898916c7e6db0f9c1b7fc931bebaa961a418f1d270ed3c541882e543416e"}
+ ]
+}

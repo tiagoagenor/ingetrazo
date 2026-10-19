@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_layer_assignment__test_assign_layer_command_moves_a_mixed_selection_and_und-9a95d17e",
+ "source": {"pytest": "tests/test_layer_assignment.py::test_assign_layer_command_moves_a_mixed_selection_and_undoes_exactly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/739e5ccabd3532c4.igz"},
+ "start_sig": "802e248f7baca103e5db03d705964a6d3b4ee0f02a67f9372f28418a165fbee4",
+ "steps": [
+  {"op":"assign_layer","args":{"entities":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}},{"$edge":{"ends":[[0.0,0.0,0.0],[1.0,0.0,0.0]],"in":null}},{"$group":[0]}],"layer":"Mobiliario"},"counters":{"group":91,"curve":163},"sig":"00cf8649cddc3d747d6e74437babeb190bc5abf4485e0f25dde244979f64ec8f"},
+  {"op":"undo","ok":true,"sig":"802e248f7baca103e5db03d705964a6d3b4ee0f02a67f9372f28418a165fbee4"},
+  {"op":"redo","ok":true,"sig":"00cf8649cddc3d747d6e74437babeb190bc5abf4485e0f25dde244979f64ec8f"}
+ ]
+}

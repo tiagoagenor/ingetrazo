@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pick_index__test_selected_group_offers_its_box_corners_to_the_snap_engine-d99851bf",
+ "source": {"pytest": "tests/test_pick_index.py::test_selected_group_offers_its_box_corners_to_the_snap_engine", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7ceaba3e7c315b6a.igz"},
+ "start_sig": "a11623bdae805574fcd619da394ac5588edb6bf850f9a5eb46e2230a277ec670",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[-2.0,-2.0,0.0],[2.0,-2.0,0.0],[2.0,2.0,0.0],[-2.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":104,"curve":168},"sig":"ef2dc10e2767cb114082582407bc5eba98a045d3eb110e1c567549c2ddf4113e"}
+ ]
+}

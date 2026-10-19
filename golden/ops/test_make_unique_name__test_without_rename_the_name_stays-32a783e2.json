@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_without_rename_the_name_stays-32a783e2",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_without_rename_the_name_stays", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/91f764b7fb303963.igz"},
+ "start_sig": "74ade38e53ad5b53cc0861ad69d3810e70253f1c970c97e3df43cae9937aac22",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[1]}},"counters":{"group":91,"curve":163},"sig":"e7bb080642a74e6d12ef95e2444f25b38241890a0ddf6ffb0e706e87cde5ce7c"}
+ ]
+}

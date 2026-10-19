@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_group_vs_component__test_a_group_of_groups_is_a_group_and_can_become_a_comp-04d39838",
+ "source": {"pytest": "tests/test_group_vs_component.py::test_a_group_of_groups_is_a_group_and_can_become_a_component", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/995962567ff62972.igz"},
+ "start_sig": "8401fa6a0e49cee0ecd39092a53011bf6f3cef2212347a83d4cec008782dcdca",
+ "steps": [
+  {"op":"make_nested_group","args":{"faces":[],"edges":[],"groups":[{"$group":[0]},{"$group":[1]}],"name":"Banca"},"counters":{"group":83,"curve":113},"sig":"bf1f05d0723f5260e9e1cbbff8deae439b7f134521f99809a81bfe128331bfe6"},
+  {"op":"group_to_component","args":{"group":{"$group":[0]},"name":"Banca"},"counters":{"group":83,"curve":113},"sig":"7cd841c9864adc410cfa40a2a6fc0eb74b194035ddf1c6cb0da58f08ccd070da"},
+  {"op":"undo","ok":true,"sig":"bf1f05d0723f5260e9e1cbbff8deae439b7f134521f99809a81bfe128331bfe6"}
+ ]
+}

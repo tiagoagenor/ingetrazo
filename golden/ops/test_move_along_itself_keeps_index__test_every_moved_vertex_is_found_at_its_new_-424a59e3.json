@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_along_itself_keeps_index__test_every_moved_vertex_is_found_at_its_new_-424a59e3",
+ "source": {"pytest": "tests/test_move_along_itself_keeps_index.py::test_every_moved_vertex_is_found_at_its_new_spot", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/1ed0cd9df3025d1a.igz"},
+ "start_sig": "fa726ea062a5feacb174e7c17a3d5c8289f0f0c880fa923f71e48feb10ea15be",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[1.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]}],"delta":{"$v":[1.0,0.0,0.0]}},"counters":{"group":95,"curve":163},"sig":"5cd9634fe2ca3191d24a50e64ce74738c3e5d3ad8f68dd7a699fb169cb85bc9e"}
+ ]
+}

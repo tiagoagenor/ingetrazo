@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_eyedropper_carries_a_positioned_texture_only_within_i-09991b1d",
+ "source": {"pytest": "tests/test_paint_materials.py::test_eyedropper_carries_a_positioned_texture_only_within_its_plane", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7c60bd20f2d36bfb.igz"},
+ "start_sig": "881a26203d196722437fce1d952f8f51a98b1d09c7eb3e4193ca4db294963295",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,8.0,0.0],[2.0,8.0,0.0],[2.0,8.0,2.0],[0.0,8.0,2.0]],"in":null}}],"texture":{"path":"/tex/madera.png","sw":1.0,"sh":1.0}}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,8.0,0.0],[2.0,8.0,0.0],[2.0,8.0,2.0],[0.0,8.0,2.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,8.0,0.0],[2.0,8.0,0.0],[2.0,8.0,2.0],[0.0,8.0,2.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":100,"curve":163},"sig":"a64da07d42e14e9084dce29e02113e68bb20430596df0a8709c98ed7828fbf84"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"texture":{"path":"/tex/madera.png","sw":1.0,"sh":1.0,"rot":0.0,"uvw":[1,0,0,0,0,1,0,0]}}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":100,"curve":163},"sig":"3b67bb552d50f8c800c376ce5365d3c091085cac35848af6b129ea9953e54766"}
+ ]
+}

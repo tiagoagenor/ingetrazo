@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_el_cuentagotas_toma_el_sin_material_y_pintarlo_lo_quita-d43911d4",
+ "source": {"pytest": "tests/test_face_sides.py::test_el_cuentagotas_toma_el_sin_material_y_pintarlo_lo_quita", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/f20be7a96871fd62.igz"},
+ "start_sig": "1028b2dbca93a6cf4d2d656ee0861b6325b2a49f91bda9a260dcddbe89208625",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"color":null}}},{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"texture":null}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[10.0,0.0,0.0],[14.0,0.0,0.0],[14.0,4.0,0.0],[10.0,4.0,0.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":22,"curve":113},"sig":"adffa6b05e46e49bda293ea774cc8b208d706fb802d2f3cd297c2cd6d1135f88"},
+  {"op":"undo","ok":true,"sig":"1028b2dbca93a6cf4d2d656ee0861b6325b2a49f91bda9a260dcddbe89208625"}
+ ]
+}

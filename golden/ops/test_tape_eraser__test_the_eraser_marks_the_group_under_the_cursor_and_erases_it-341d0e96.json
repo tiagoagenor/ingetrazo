@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_tape_eraser__test_the_eraser_marks_the_group_under_the_cursor_and_erases_it-341d0e96",
+ "source": {"pytest": "tests/test_tape_eraser.py::test_the_eraser_marks_the_group_under_the_cursor_and_erases_it_whole", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/96bf02d2f62521ef.igz"},
+ "start_sig": "16b2dabbb3276886e83cd75d7af4c7bb46303746c64aba83b4918c91a0f5bbb2",
+ "steps": [
+  {"op":"delete_group","args":{"group":{"$group":[0]}},"counters":{"group":119,"curve":205},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"16b2dabbb3276886e83cd75d7af4c7bb46303746c64aba83b4918c91a0f5bbb2"}
+ ]
+}

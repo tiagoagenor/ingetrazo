@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_move_copy__test_count_and_spacing_in_one_entry_after_a_copy-586bde54",
+ "source": {"pytest": "tests/test_move_copy.py::test_count_and_spacing_in_one_entry_after_a_copy", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e6aaa4dbb44277b.igz"},
+ "start_sig": "48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[2.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}},"counters":{"group":95,"curve":163},"sig":"f4ccc9e9bb9d5613f282d3ebcf5782be37f489dad5bb788ab8846ac3271f88c7"},
+  {"op":"undo","ok":true,"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[10.0,0.0,0.0]},{"$v":[11.0,0.0,0.0]},{"$v":[11.0,1.0,0.0]},{"$v":[10.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[20.0,0.0,0.0]},{"$v":[21.0,0.0,0.0]},{"$v":[21.0,1.0,0.0]},{"$v":[20.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[30.0,0.0,0.0]},{"$v":[31.0,0.0,0.0]},{"$v":[31.0,1.0,0.0]},{"$v":[30.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}}]},"counters":{"group":95,"curve":163},"sig":"1e2d371067518215d1e10fed1a53df94001c5b2953433c842f0823dad3569f3a"},
+  {"op":"undo","ok":true,"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"}
+ ]
+}

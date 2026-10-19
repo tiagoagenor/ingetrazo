@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rectangle__test_typed_dimensions_build_exact_rectangle-b83efd1f",
+ "source": {"pytest": "tests/test_rectangle.py::test_typed_dimensions_build_exact_rectangle", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[3.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[3.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,2.0,0.0]},"b":{"$v":[0.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,2.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]}]}}}]},"counters":{"group":106,"curve":171},"sig":"971fef020a98dad2235dba5bc86a192874f12b889737a357d9a16c5330232809"}
+ ]
+}

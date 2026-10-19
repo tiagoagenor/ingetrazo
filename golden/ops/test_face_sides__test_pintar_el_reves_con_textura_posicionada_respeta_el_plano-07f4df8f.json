@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_pintar_el_reves_con_textura_posicionada_respeta_el_plano-07f4df8f",
+ "source": {"pytest": "tests/test_face_sides.py::test_pintar_el_reves_con_textura_posicionada_respeta_el_plano", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e9314550820c10a0.igz"},
+ "start_sig": "ed604ee4e46793551678556aa16b5eba054695d9fc994053b1e87f4475ab525c",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_material_tag","args":{"faces":[],"name":null,"material":null}}},{"$cmd":{"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"backs":[{"texture":{"path":"x.png","sw":1,"sh":1,"uvw":[1,0,0,0,0,1,0,0]}}]}}}]},"counters":{"group":21,"curve":113},"sig":"e3add5fd154962d25c4c1262e859bb339ab1d5af9662d90476eb277ea0463e9e"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,0.0,3.0],[0.0,0.0,3.0]],"in":null}}],"texture":{"path":"x.png","sw":1.0,"sh":1.0}}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,0.0,3.0],[0.0,0.0,3.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,0.0,3.0],[0.0,0.0,3.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":21,"curve":113},"sig":"2854e73897ce70848cf1117bcc2a8c7146221965428a08cda57798f05c1b768b"}
+ ]
+}

@@ -1,0 +1,51 @@
+{
+  "igz_format": 1,
+  "app_version": "0.5.8",
+  "scene": {
+    "edges": [],
+    "faces": [],
+    "dimension_style": {
+      "decimals": 2,
+      "units": "m",
+      "font_size": 9,
+      "color": [
+        45,
+        55,
+        75
+      ],
+      "norma": "iso",
+      "base_step_mm": 8.0,
+      "ends": "arrow"
+    },
+    "geo_paths": [
+      {
+        "points": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "points": [
+          [
+            2.0,
+            0.0,
+            0.0
+          ],
+          [
+            3.0,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    ]
+  }
+}

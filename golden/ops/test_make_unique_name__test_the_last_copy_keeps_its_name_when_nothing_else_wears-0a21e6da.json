@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_the_last_copy_keeps_its_name_when_nothing_else_wears-0a21e6da",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_the_last_copy_keeps_its_name_when_nothing_else_wears_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/f03e33f5a054db01.igz"},
+ "start_sig": "17d2d745461e0883f9fcab58a7216a3b0cb5116b26facf474bd951483f710bcf",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[0]},"rename":true},"counters":{"group":91,"curve":163},"sig":"17d2d745461e0883f9fcab58a7216a3b0cb5116b26facf474bd951483f710bcf"}
+ ]
+}

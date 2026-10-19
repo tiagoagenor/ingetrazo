@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_make_unique_with_subgroups_also_renames_and_keeps_th-a2ef76a8",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_make_unique_with_subgroups_also_renames_and_keeps_them", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9157e822f75ef368.igz"},
+ "start_sig": "86615ddd2e8e39b741971c452374b5ec8e73e0dc9e318ccf4d059af539bc705d",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[1]},"rename":true},"counters":{"group":91,"curve":163},"sig":"ea3f6fb260527c07c4fad8a121b1e80251f2dd90e8f2cd7ee6c89275fa7ac6a8"}
+ ]
+}

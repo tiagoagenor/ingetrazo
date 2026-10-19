@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_change_axes_on_a_component_keeps_every_copy_in_place-eb16330b",
+ "source": {"pytest": "tests/test_group_axes.py::test_change_axes_on_a_component_keeps_every_copy_in_place", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/f2b95e3cafd011f5.igz"},
+ "start_sig": "efbc12d3b4b894cfde8a78debe80b64c514784b7dabc114e6d8d792974316ed8",
+ "steps": [
+  {"op":"change_axes","args":{"group":{"$group":[0]},"frame":{"$m":[0.8660253882408142,0.5,0.0,0.0,-0.5,0.8660253882408142,0.0,0.0,0.0,0.0,1.0,0.0,1.0,0.5,0.0,1.0]}},"counters":{"group":74,"curve":113},"sig":"848e55f8c8ee10f571525fcf3264b773bf8831462f65d4d171a3dfb81cf249a1"},
+  {"op":"undo","ok":true,"sig":"a7df9e0a8a8ce4fbe1872ada19192d3197e781a1ce485b4de288383604887265"}
+ ]
+}

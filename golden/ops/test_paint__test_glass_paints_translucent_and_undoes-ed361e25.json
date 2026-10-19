@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_paint__test_glass_paints_translucent_and_undoes-ed361e25",
+ "source": {"pytest": "tests/test_paint.py::test_glass_paints_translucent_and_undoes", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e6aaa4dbb44277b.igz"},
+ "start_sig": "48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}}],"texture":{"path":"glass.png","sw":1,"sh":1}}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}}],"opacity":0.45}}}]},"counters":{"group":100,"curve":163},"sig":"c754b4ec6b032554a3188d57a1c054366704e3263160e1bb5bee005414b8dc7c"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}}],"color":{"$t":[1.0,0.0,0.0]}}}},{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}}],"texture":null}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0],[0.0,1.0,0.0]],"in":null}}],"opacity":null}}}]},"counters":{"group":100,"curve":163},"sig":"d6c41910a37ccdf1563b7601d3c9fadfabaf8b34a9a703982e5281aec4af7c4c"},
+  {"op":"undo","ok":true,"sig":"c754b4ec6b032554a3188d57a1c054366704e3263160e1bb5bee005414b8dc7c"},
+  {"op":"undo","ok":true,"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"}
+ ]
+}

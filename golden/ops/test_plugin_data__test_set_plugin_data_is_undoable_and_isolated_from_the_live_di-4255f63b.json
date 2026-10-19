@@ -1,0 +1,15 @@
+{
+ "schema": 1,
+ "id": "test_plugin_data__test_set_plugin_data_is_undoable_and_isolated_from_the_live_di-4255f63b",
+ "source": {"pytest": "tests/test_plugin_data.py::test_set_plugin_data_is_undoable_and_isolated_from_the_live_dict", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"set_plugin_data","args":{"key":"myext","value":{"n":1}},"counters":{"group":105,"curve":171},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"set_plugin_data","args":{"key":"myext","value":{"n":2}},"counters":{"group":105,"curve":171},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"}
+ ]
+}

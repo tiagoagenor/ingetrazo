@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_replace_swaps_the_definition_and_keeps_the_placemen-a9131179",
+ "source": {"pytest": "tests/test_replace_component.py::test_replace_swaps_the_definition_and_keeps_the_placement", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/0f6d6a026f65971f.igz"},
+ "start_sig": "40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[1]}],"source":{"$group":[3]}},"counters":{"group":106,"curve":171},"sig":"54147f004ea8f019601b5979ee1aa804798b31e14016522cff7d2e96218e62bf"}
+ ]
+}

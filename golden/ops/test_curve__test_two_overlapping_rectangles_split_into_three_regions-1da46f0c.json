@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_curve__test_two_overlapping_rectangles_split_into_three_regions-1da46f0c",
+ "source": {"pytest": "tests/test_curve.py::test_two_overlapping_rectangles_split_into_three_regions#2", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,4.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}]}}}]},"counters":{"group":13,"curve":27},"sig":"5cace0ab14fe57eb8b47d0a3308b7787a188e9a4197e4c4b9d07ba64978101f3"},
+  {"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[6.0,0.0,0.0],[6.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}},"counters":{"group":13,"curve":27},"sig":"379e589d5dd79fcf260aa20e708f8bb5708735afb3d3b8f2c86192cf114be31b"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[10.0,10.0,0.0]},"b":{"$v":[14.0,10.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[14.0,10.0,0.0]},"b":{"$v":[14.0,13.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[14.0,13.0,0.0]},"b":{"$v":[10.0,13.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[10.0,13.0,0.0]},"b":{"$v":[10.0,10.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[10.0,10.0,0.0]},{"$v":[14.0,10.0,0.0]},{"$v":[14.0,13.0,0.0]},{"$v":[10.0,13.0,0.0]}]}}}]},"counters":{"group":13,"curve":27},"sig":"5089465d07b16a6379107565208a090c685ceefa0d407fc4fd9652eee9cf478d"}
+ ]
+}

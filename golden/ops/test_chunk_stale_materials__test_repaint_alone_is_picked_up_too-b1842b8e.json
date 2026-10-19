@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_chunk_stale_materials__test_repaint_alone_is_picked_up_too-b1842b8e",
+ "source": {"pytest": "tests/test_chunk_stale_materials.py::test_repaint_alone_is_picked_up_too", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/af48890fe024b086.igz"},
+ "start_sig": "0c62b9d45257b86ea4c43198773619e94efc6a9fada419ce57dbc65d598874cf",
+ "steps": [
+  {"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":[0]}}],"texture":{"path":"C:\\Users\\Luan\\AppData\\Local\\Temp\\pytest-of-Luan\\pytest-133\\test_repaint_alone_is_picked_u0\\gray.png","sw":1.0,"sh":1.0}},"counters":{"group":13,"curve":10},"sig":"6ec25987bc243b938f03cd3e6a81c1e326f694b0266e1513fb736e8ba60f1ec7"}
+ ]
+}

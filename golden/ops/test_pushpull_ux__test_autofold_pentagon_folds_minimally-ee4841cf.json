@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pushpull_ux__test_autofold_pentagon_folds_minimally-ee4841cf",
+ "source": {"pytest": "tests/test_pushpull_ux.py::test_autofold_pentagon_folds_minimally", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/1b6c5083ba617d20.igz"},
+ "start_sig": "fd5e5970bc9423ded88d88046d6f95be2e8fe7101563411f6479e8cd46c7f584",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[2.0,6.0,0.0]}],"delta":{"$v":[0.0,0.0,1.5]}},"counters":{"group":105,"curve":171},"sig":"f7331ad2ec7403d1bdf59007604221e8c4ca72e3d9fa581af8020ec1f32cb53f"}
+ ]
+}

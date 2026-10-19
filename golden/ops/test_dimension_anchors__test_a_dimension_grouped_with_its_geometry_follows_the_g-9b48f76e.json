@@ -1,0 +1,15 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_a_dimension_grouped_with_its_geometry_follows_the_g-9b48f76e",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_a_dimension_grouped_with_its_geometry_follows_the_group", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,2.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,2.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,2.0,0.0]}]}}}]},"counters":{"group":14,"curve":39},"sig":"5564daeb4fd673bee0f64f143b63722d2e8dae5999ba2bf41fcfae0a2df41d5a"},
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[2.0,0.0,0.0],"b":[6.0,0.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":14,"curve":39},"sig":"c7809cabc3e63cc3b082ed48dafdab1076a2705588cc38cd65e6fa1b54988f57"},
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[2.0,2.0,0.0],[2.0,0.0,0.0],[6.0,0.0,0.0],[6.0,2.0,0.0]],"in":null}}],"edges":[{"$edge":{"ends":[[2.0,0.0,0.0],[6.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,0.0,0.0],[6.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,2.0,0.0],[2.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,2.0,0.0],[2.0,0.0,0.0]],"in":null}}]},"counters":{"group":14,"curve":39},"sig":"d24ffe0b7d61ec6c4e42a7d47225f4f203525165e064143958b5e10f2deca807"},
+  {"op":"scale_group","args":{"group":{"$group":[0]},"center":{"$v":[2.0,0.0,0.0]},"factor":{"$t":[1.5,1.5,1.0]},"axes":null},"counters":{"group":15,"curve":39},"sig":"134a3d62b5e7389870b6c0ffe4f024f15a5b8aeed3198a52d163e1b9ee727556"},
+  {"op":"undo","ok":true,"sig":"d24ffe0b7d61ec6c4e42a7d47225f4f203525165e064143958b5e10f2deca807"},
+  {"op":"undo","ok":true,"sig":"c7809cabc3e63cc3b082ed48dafdab1076a2705588cc38cd65e6fa1b54988f57"}
+ ]
+}

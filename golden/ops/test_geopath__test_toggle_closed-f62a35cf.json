@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_geopath__test_toggle_closed-f62a35cf",
+ "source": {"pytest": "tests/test_geopath.py::test_toggle_closed", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9fb0159d4c9c423d.igz"},
+ "start_sig": "34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c",
+ "steps": [
+  {"op":"toggle_geo_path_closed","args":{"paths":[{"$ref":["geo_paths",0]}]},"counters":{"group":72,"curve":113},"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"},
+  {"op":"undo","ok":true,"sig":"34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c"}
+ ]
+}

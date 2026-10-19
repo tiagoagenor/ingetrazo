@@ -1,0 +1,18 @@
+{
+ "schema": 1,
+ "id": "test_undo_clean__test_mixed_draw_erase_round_trips-233abe31",
+ "source": {"pytest": "tests/test_undo_clean.py::test_mixed_draw_erase_round_trips", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,6.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,6.0,0.0]},"b":{"$v":[0.0,6.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,6.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,6.0,0.0]},{"$v":[0.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,6.0,0.0]}]}}}]},"counters":{"group":123,"curve":205},"sig":"87fa15371b121924148eb9c59f67abd8c20048f00c8d3b6166c36777e9a08681"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[6.0,0.0,0.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[3.0,0.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[6.0,6.0,0.0],[0.0,6.0,0.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,6.0,0.0]},"b":{"$v":[3.0,6.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,6.0,0.0]},"b":{"$v":[0.0,6.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[3.0,6.0,0.0]}}}},{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,6.0,0.0],[0.0,0.0,0.0],[6.0,0.0,0.0],[6.0,6.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[3.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,6.0,0.0]},{"$v":[3.0,6.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[3.0,6.0,0.0]},{"$v":[0.0,6.0,0.0]},{"$v":[0.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,6.0,0.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":123,"curve":205},"sig":"4f8f81912810d55555e58f4c3fee502b80c508c0dad4888837a5f7b558280e1c"},
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[3.0,0.0,0.0],[3.0,6.0,0.0]],"in":null}}]},"counters":{"group":123,"curve":205},"sig":"ea4228524da4508caca43213da9445b7dfacddf09bc8973893327c4cc9da24f1"},
+  {"op":"undo","ok":true,"sig":"4f8f81912810d55555e58f4c3fee502b80c508c0dad4888837a5f7b558280e1c"},
+  {"op":"undo","ok":true,"sig":"87fa15371b121924148eb9c59f67abd8c20048f00c8d3b6166c36777e9a08681"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"87fa15371b121924148eb9c59f67abd8c20048f00c8d3b6166c36777e9a08681"},
+  {"op":"redo","ok":true,"sig":"4f8f81912810d55555e58f4c3fee502b80c508c0dad4888837a5f7b558280e1c"},
+  {"op":"redo","ok":true,"sig":"ea4228524da4508caca43213da9445b7dfacddf09bc8973893327c4cc9da24f1"}
+ ]
+}

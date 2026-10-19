@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_sections__test_rotate_grabs_a_section_plane_directly-8687b0fa",
+ "source": {"pytest": "tests/test_sections.py::test_rotate_grabs_a_section_plane_directly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/081e64841296475a.igz"},
+ "start_sig": "96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f",
+ "steps": [
+  {"op":"rotate_section_planes","args":{"planes":[{"$ref":["section_planes",0]}],"centre":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"deg":90.0},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"undo","ok":true,"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"}
+ ]
+}

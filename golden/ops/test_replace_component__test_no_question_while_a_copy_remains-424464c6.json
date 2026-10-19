@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_no_question_while_a_copy_remains-424464c6",
+ "source": {"pytest": "tests/test_replace_component.py::test_no_question_while_a_copy_remains", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e5f47a269a8c0bda.igz"},
+ "start_sig": "4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[2]},{"$group":[1]}],"source":{"$group":[4]}},"counters":{"group":106,"curve":171},"sig":"3629197d539c71f2204abc1231c5bce3a7c085d07756f0abf690f7d309c60791"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_pintar_el_frente_no_toca_el_reves-d2058e41",
+ "source": {"pytest": "tests/test_face_sides.py::test_pintar_el_frente_no_toca_el_reves", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"color":{"$t":[1.0,0.0,0.0]}}}},{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"texture":null}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":21,"curve":113},"sig":"e04a54f6554d0c7f9830730cfa02a5593c047872c1ac639852ba025ba4669470"}
+ ]
+}

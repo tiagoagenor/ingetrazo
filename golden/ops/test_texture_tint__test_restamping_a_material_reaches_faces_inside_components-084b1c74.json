@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_texture_tint__test_restamping_a_material_reaches_faces_inside_components-084b1c74",
+ "source": {"pytest": "tests/test_texture_tint.py::test_restamping_a_material_reaches_faces_inside_components", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/30a014cd02eda567.igz"},
+ "start_sig": "da49b8a40a4be3022b4e99e7f648cea1a39f95cf9549e66c65a6866547d8d699",
+ "steps": [
+  {"op":"restamp_material","args":{"name":"Piedra laja","new_material":{"$obj":"core.materials.Material","data":{"name":"Piedra laja","color":[0.9,0.2,0.1]}}},"counters":{"group":119,"curve":205},"sig":"5b5babe85b60b54211d0ae02addb3ed7aba3997780820a8f92cdbdd793608759"}
+ ]
+}

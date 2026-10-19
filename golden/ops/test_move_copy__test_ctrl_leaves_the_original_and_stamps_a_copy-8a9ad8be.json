@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_move_copy__test_ctrl_leaves_the_original_and_stamps_a_copy-8a9ad8be",
+ "source": {"pytest": "tests/test_move_copy.py::test_ctrl_leaves_the_original_and_stamps_a_copy", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e6aaa4dbb44277b.igz"},
+ "start_sig": "48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[3.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,1.0,0.0]},{"$v":[3.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}},"counters":{"group":95,"curve":163},"sig":"06eeeb45befcecfc5bc91907b987083a0c7b85df28e6e51f3120beb36fc0a8af"},
+  {"op":"undo","ok":true,"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"}
+ ]
+}

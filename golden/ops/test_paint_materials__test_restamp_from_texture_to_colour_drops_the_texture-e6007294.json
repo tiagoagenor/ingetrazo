@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_restamp_from_texture_to_colour_drops_the_texture-e6007294",
+ "source": {"pytest": "tests/test_paint_materials.py::test_restamp_from_texture_to_colour_drops_the_texture", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/c5dea659dcf6a353.igz"},
+ "start_sig": "17040f8ab35807af7f88ca0a31ca3cc2476c61ccfcbf5b5c790114995d3de7e4",
+ "steps": [
+  {"op":"restamp_material","args":{"name":"Piso","new_material":{"$obj":"core.materials.Material","data":{"name":"Piso","color":[0.5,0.5,0.5]}}},"counters":{"group":100,"curve":163},"sig":"7921e3880b2f967106cfb85b254c2db4d76b0761b229d2c59a8e68415842a663"},
+  {"op":"undo","ok":true,"sig":"17040f8ab35807af7f88ca0a31ca3cc2476c61ccfcbf5b5c790114995d3de7e4"}
+ ]
+}

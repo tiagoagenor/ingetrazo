@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_geopath__test_convert_closed_path_makes_face-37f711b8",
+ "source": {"pytest": "tests/test_geopath.py::test_convert_closed_path_makes_face", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/608b78b865f95514.igz"},
+ "start_sig": "34f43132a8198806ee02c705f83278531edf852326e60ea4f262e3b01ca5cf1c",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[10.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[10.0,0.0,0.0]},"b":{"$v":[10.0,10.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[10.0,10.0,0.0]},"b":{"$v":[0.0,10.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,10.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,10.0,0.0]},{"$v":[0.0,0.0,0.0]},{"$v":[10.0,0.0,0.0]},{"$v":[10.0,10.0,0.0]}]}}}]}}},{"$cmd":{"op":"delete_geo_paths","args":{"paths":[{"$ref":["geo_paths",0]}]}}}]},"counters":{"group":72,"curve":113},"sig":"c0c2204d921186b3a1ddfb5847f03583f476f1da9e0a5049df79e111194d6039"}
+ ]
+}

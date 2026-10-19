@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_solid_tools__test_the_tool_picks_one_then_two_and_the_first_cuts-195ac82d",
+ "source": {"pytest": "tests/test_solid_tools.py::test_the_tool_picks_one_then_two_and_the_first_cuts", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/581f71119eb5fe96.igz"},
+ "start_sig": "86854780c450681c71758b35c4a8357d65c3190ddf2120aa12e8b5b32e90618e",
+ "steps": [
+  {"op":"solid_operation","args":{"op":"subtract","groups":[{"$group":[0]},{"$group":[1]}]},"counters":{"group":119,"curve":205},"sig":"98143126f8b161fe5ae5a6ba99b270f0022fa5bacd9476a603505a25bf7f864e"}
+ ]
+}

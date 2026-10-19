@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_tape_eraser__test_shift_stroke_hides_the_group_instead-f218e676",
+ "source": {"pytest": "tests/test_tape_eraser.py::test_shift_stroke_hides_the_group_instead", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/78ba1c55c25773cd.igz"},
+ "start_sig": "16b2dabbb3276886e83cd75d7af4c7bb46303746c64aba83b4918c91a0f5bbb2",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$group":[0]}],"hidden":true},"counters":{"group":119,"curve":205},"sig":"8aa0cb330e0652806dc535969cd9d478cbec159e6a60eb8459582bf23a2d80ae"},
+  {"op":"undo","ok":true,"sig":"16b2dabbb3276886e83cd75d7af4c7bb46303746c64aba83b4918c91a0f5bbb2"}
+ ]
+}

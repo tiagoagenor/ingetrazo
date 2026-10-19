@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_paste__test_paste_keeps_face_attrs_and_reanchors_texture-808cb5bc",
+ "source": {"pytest": "tests/test_paste.py::test_paste_keeps_face_attrs_and_reanchors_texture", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/2f87d79bc2ec9855.igz"},
+ "start_sig": "39d00f91d621bd6c2ebe0776ca07b8cf343d44ad9b621b8eeed98645a8632b09",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"prune_on_undo","args":{}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[5.0,0.0,0.0]},"b":{"$v":[7.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.0,0.0,0.0]},"b":{"$v":[7.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[7.0,2.0,0.0]},"b":{"$v":[5.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[5.0,2.0,0.0]},"b":{"$v":[5.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[5.0,0.0,0.0]},{"$v":[7.0,0.0,0.0]},{"$v":[7.0,2.0,0.0]},{"$v":[5.0,2.0,0.0]}],"auto":false,"holes":null,"attrs":{"color":{"$t":[1.0,0.0,0.0,1.0]},"texture":{"path":"/tmp/tex.png","sw":1.0,"sh":1.0,"uvw":[1,0,0,-5.0,0,1,0,0.0]}}}}}]},"counters":{"group":101,"curve":168},"sig":"8c7e1b0fea5aaa8f0527fe4404f10915462478f7d9e14b5e323b09e764cf9539"}
+ ]
+}

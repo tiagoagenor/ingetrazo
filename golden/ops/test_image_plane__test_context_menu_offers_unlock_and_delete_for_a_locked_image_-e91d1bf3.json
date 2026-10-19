@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_image_plane__test_context_menu_offers_unlock_and_delete_for_a_locked_image_-e91d1bf3",
+ "source": {"pytest": "tests/test_image_plane.py::test_context_menu_offers_unlock_and_delete_for_a_locked_image_underneath", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/0a1f1afd9013d8ed.igz"},
+ "start_sig": "63bf36b337f8603ef744227d41c527077a283ed6697433832b8f78aa3c4c1a58",
+ "steps": [
+  {"op":"delete_image_planes","args":{"images":[{"$ref":["image_planes",0]}]},"counters":{"group":88,"curve":161},"sig":"50f742c5b828ef48f2b50c55a81df855618a38f9b6671920839fa73c34050377"},
+  {"op":"undo","ok":true,"sig":"63bf36b337f8603ef744227d41c527077a283ed6697433832b8f78aa3c4c1a58"}
+ ]
+}

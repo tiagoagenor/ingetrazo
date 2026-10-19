@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_sections__test_move_grabs_a_section_plane_directly-ce1b3e9c",
+ "source": {"pytest": "tests/test_sections.py::test_move_grabs_a_section_plane_directly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3577d05ded793038.igz"},
+ "start_sig": "96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f",
+ "steps": [
+  {"op":"move_section_planes","args":{"planes":[{"$ref":["section_planes",0]}],"delta":{"$v":[0.0,0.0,2.0]}},"counters":{"group":112,"curve":196},"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"},
+  {"op":"undo","ok":true,"sig":"96f4bf6b1fbb8c7b7a04c7284d3a257dc5839eb9d2a77045b09c87821a96858f"}
+ ]
+}

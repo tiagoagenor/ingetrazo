@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_hide_objects__test_ghost_pass_draws_and_unhide_selected_brings_them_back-f795a70b",
+ "source": {"pytest": "tests/test_hide_objects.py::test_ghost_pass_draws_and_unhide_selected_brings_them_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/2318b24fad2a65af.igz"},
+ "start_sig": "10f2504f00a507094b7f09e6a75411e34223ef6f6c5d6c9f4e333f0b625a7565",
+ "steps": [
+  {"op":"hide","args":{"entities":[{"$group":[1]},{"$face":{"loop":[[5.0,0.0,0.0],[5.0,1.0,0.0],[6.0,1.0,0.0],[6.0,0.0,0.0]],"in":null}}],"hidden":true},"counters":{"group":88,"curve":161},"sig":"1dfde830060bdc5f2602eb02ffe0a8fdfc4fc42faf7226d3d96155ba131a8453"}
+ ]
+}

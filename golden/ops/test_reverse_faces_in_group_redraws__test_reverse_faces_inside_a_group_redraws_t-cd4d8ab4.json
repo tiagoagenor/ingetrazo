@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_reverse_faces_in_group_redraws__test_reverse_faces_inside_a_group_redraws_t-cd4d8ab4",
+ "source": {"pytest": "tests/test_reverse_faces_in_group_redraws.py::test_reverse_faces_inside_a_group_redraws_the_group", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e2e1597b0bd9b579.igz"},
+ "start_sig": "5c4487678c2121852da9744ca0d7bea7ded41bc63be0e551f0098ca134d796ef",
+ "steps": [
+  {"op":"flip_faces","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":[0]}}]},"counters":{"group":106,"curve":171},"sig":"bf61cbd72513d99c687115cd1fb0cb72ae7e35d75bfa29d26bede4162206ab0d"},
+  {"op":"undo","ok":true,"sig":"5c4487678c2121852da9744ca0d7bea7ded41bc63be0e551f0098ca134d796ef"}
+ ]
+}

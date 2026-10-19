@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotate_precision__test_a_typed_angle_is_applied_exactly-a05a05a8",
+ "source": {"pytest": "tests/test_rotate_precision.py::test_a_typed_angle_is_applied_exactly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/19618be09664925d.igz"},
+ "start_sig": "1070adb92673d0e7bde1f647c6e957de4e0a0d9ca0f125277c3d9509399b7c20",
+ "steps": [
+  {"op":"rotate_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,0.10000000149011612,0.0]},{"$v":[0.0,0.10000000149011612,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":30.0},"counters":{"group":112,"curve":196},"sig":"e1ce6c55cb328e7f6af4150498f82ba8b1c6b52ee907ba9c7e40ac46556c00f6"}
+ ]
+}

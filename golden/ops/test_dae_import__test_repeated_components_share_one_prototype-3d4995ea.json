@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_dae_import__test_repeated_components_share_one_prototype-3d4995ea",
+ "source": {"pytest": "tests/test_dae_import.py::test_repeated_components_share_one_prototype", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/0e190696b9e183cf.igz"},
+ "start_sig": "d82cbe6caba229b26c8e6f938ddd6270f934015d1284158f14b7db2afcd953d0",
+ "steps": [
+  {"op":"move_group","args":{"group":{"$group":[0]},"delta":{"$v":[0.0,5.0,0.0]}},"counters":{"group":13,"curve":39},"sig":"c24358280d0032f8ef06fc37321431f6b779a9c3c8f308c3b971f21ece15406a"},
+  {"op":"undo","ok":true,"sig":"d82cbe6caba229b26c8e6f938ddd6270f934015d1284158f14b7db2afcd953d0"}
+ ]
+}

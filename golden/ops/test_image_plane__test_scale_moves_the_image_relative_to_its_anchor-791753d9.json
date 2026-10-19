@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_image_plane__test_scale_moves_the_image_relative_to_its_anchor-791753d9",
+ "source": {"pytest": "tests/test_image_plane.py::test_scale_moves_the_image_relative_to_its_anchor", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_image_plane","args":{"image":{"$obj":"core.image_plane.ImagePlane","data":{"texture":{"path":"s.png"},"origin":[2.0,0.0,0.0],"u":[4.0,0.0,0.0],"v":[0.0,3.0,0.0],"aspect":1.0}}},"counters":{"group":88,"curve":161},"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"},
+  {"op":"scale_image_planes","args":{"images":[{"$ref":["image_planes",0]}],"anchor":{"$v":[0.0,0.0,0.0]},"factor":2.0},"counters":{"group":88,"curve":161},"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"},
+  {"op":"undo","ok":true,"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_scale_grips__test_scaling_a_selection_with_an_image_carries_it_undistorted-006ebddd",
+ "source": {"pytest": "tests/test_scale_grips.py::test_scaling_a_selection_with_an_image_carries_it_undistorted", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b3da08ccdb49f0f3.igz"},
+ "start_sig": "c6840d3a708228023d79479663e05d6db993403230838c5cd9c97495e00c1cbe",
+ "steps": [
+  {"op":"scale_image_planes","args":{"images":[{"$ref":["image_planes",0]}],"anchor":{"$v":[4.0,3.0,0.0]},"factor":{"$t":[2.0,2.0,1.0]},"axes":null},"counters":{"group":112,"curve":196},"sig":"c6840d3a708228023d79479663e05d6db993403230838c5cd9c97495e00c1cbe"},
+  {"op":"undo","ok":true,"sig":"c6840d3a708228023d79479663e05d6db993403230838c5cd9c97495e00c1cbe"}
+ ]
+}

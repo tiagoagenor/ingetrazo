@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_automerge__test_undo_redo_roundtrip_for_real_add-38df1ade",
+ "source": {"pytest": "tests/test_automerge.py::test_undo_redo_roundtrip_for_real_add", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"b164976d2829cab6b14a86eb7436444f32d2f754762d4fcbf050dab50a0402f6"},
+  {"op":"undo","ok":true,"sig":"5f10dc0954a21ab3312cdb0e262395366e4af00fea6592041bee5f90efdbe9eb"},
+  {"op":"redo","ok":true,"sig":"b164976d2829cab6b14a86eb7436444f32d2f754762d4fcbf050dab50a0402f6"}
+ ]
+}

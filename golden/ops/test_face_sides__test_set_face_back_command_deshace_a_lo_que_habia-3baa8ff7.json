@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_set_face_back_command_deshace_a_lo_que_habia-3baa8ff7",
+ "source": {"pytest": "tests/test_face_sides.py::test_set_face_back_command_deshace_a_lo_que_habia", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/c2078068d35ffffd.igz"},
+ "start_sig": "b22cebc8ff813a79e28a56efa2988bbec8559c842803ec534597b1041a4215aa",
+ "steps": [
+  {"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"backs":{"color":[0.0,1.0,0.0]}},"counters":{"group":21,"curve":113},"sig":"b0c194b19ca021d392af56e7aeb1ec808a6472dea8c059d246f55825efb75d01"},
+  {"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"backs":null},"counters":{"group":21,"curve":113},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"undo","ok":true,"sig":"b0c194b19ca021d392af56e7aeb1ec808a6472dea8c059d246f55825efb75d01"},
+  {"op":"undo","ok":true,"sig":"b22cebc8ff813a79e28a56efa2988bbec8559c842803ec534597b1041a4215aa"}
+ ]
+}

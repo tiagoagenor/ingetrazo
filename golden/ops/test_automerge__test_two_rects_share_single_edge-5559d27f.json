@@ -1,0 +1,17 @@
+{
+ "schema": 1,
+ "id": "test_automerge__test_two_rects_share_single_edge-5559d27f",
+ "source": {"pytest": "tests/test_automerge.py::test_two_rects_share_single_edge", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"b164976d2829cab6b14a86eb7436444f32d2f754762d4fcbf050dab50a0402f6"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[1.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"08a341f3269cef34859700800f15403e9d322a8f1b9ff689c521c84ca5c810cd"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,1.0,0.0]},"b":{"$v":[0.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"d297bff4e194afa827c5fc80485615b751211ae2500e44ee879c4f437892b20d"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,1.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"c11a4fea450e7b884f7561b81b72b470857b8ed55b114bcc1e4cc7f9c67d49b2"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"ed87efd8beabf8e4f543d070c8b88d1923cdcd1b23ff3ddcd1fae746794ee7f0"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"bf08f1994967572419e3bc73e7c76f290598c47979af5b97393c8d0f8233084a"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,1.0,0.0]},"b":{"$v":[1.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"adcb63a357eea86875d64a2f5c0247eb4bbacc9448fe6ae7aea3f472db439c08"},
+  {"op":"add_edge","args":{"a":{"$v":[1.0,1.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"adcb63a357eea86875d64a2f5c0247eb4bbacc9448fe6ae7aea3f472db439c08"}
+ ]
+}

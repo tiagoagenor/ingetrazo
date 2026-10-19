@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_flip_nested_groups__test_flipping_a_group_of_groups_mirrors_it_in_place-501a1b29",
+ "source": {"pytest": "tests/test_flip_nested_groups.py::test_flipping_a_group_of_groups_mirrors_it_in_place", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/925e023cc448172c.igz"},
+ "start_sig": "e84cfc9f5f52bc07663d422fc5d36c61601a7e67cb1a0ffec65a011290ec24ea",
+ "steps": [
+  {"op":"flip_groups","args":{"groups":[{"$group":[0]}],"centre":{"$v":[3.0,0.0,1.0]},"axis":{"$v":[1.0,0.0,0.0]}},"counters":{"group":22,"curve":113},"sig":"40645898de79b7572b52e6f2f47e4df8b889267029ea9c4cd856fd887c0e0eae"},
+  {"op":"undo","ok":true,"sig":"e84cfc9f5f52bc07663d422fc5d36c61601a7e67cb1a0ffec65a011290ec24ea"}
+ ]
+}

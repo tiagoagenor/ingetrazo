@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_delete_edge_face__test_deleting_boundary_edge_removes_the_face-fc7194ec",
+ "source": {"pytest": "tests/test_delete_edge_face.py::test_deleting_boundary_edge_removes_the_face", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[0.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,2.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]}]}}}]},"counters":{"group":13,"curve":39},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}}]},"counters":{"group":13,"curve":39},"sig":"f267dbd97495feaf826c1f32bf8c838078d2bfbf9402d5c8704db65d3e83d618"}
+ ]
+}

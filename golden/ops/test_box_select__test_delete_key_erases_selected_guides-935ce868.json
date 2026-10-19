@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_box_select__test_delete_key_erases_selected_guides-935ce868",
+ "source": {"pytest": "tests/test_box_select.py::test_delete_key_erases_selected_guides", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/002579ebdaa33efc.igz"},
+ "start_sig": "e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d",
+ "steps": [
+  {"op":"delete_guides","args":{"guides":[{"$ref":["guides",0]}]},"counters":{"group":11,"curve":3},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d"}
+ ]
+}

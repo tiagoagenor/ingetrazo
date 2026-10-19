@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_rotate_center_arc__test_rotate_typed_angle_via_vcb-fa794ba9",
+ "source": {"pytest": "tests/test_rotate_center_arc.py::test_rotate_typed_angle_via_vcb", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,2.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,2.0,0.0]},{"$v":[2.0,2.0,0.0]}]}}}]},"counters":{"group":106,"curve":194},"sig":"5564daeb4fd673bee0f64f143b63722d2e8dae5999ba2bf41fcfae0a2df41d5a"},
+  {"op":"rotate_vertices","args":{"positions":[{"$v":[6.0,2.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":90.0},"counters":{"group":106,"curve":194},"sig":"095570d7cac7f048971c9ac6e310a4417930fe63fbf45b9f6ce2b41cb9beb71a"}
+ ]
+}

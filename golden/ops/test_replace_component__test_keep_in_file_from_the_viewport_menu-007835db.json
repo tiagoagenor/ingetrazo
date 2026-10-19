@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_keep_in_file_from_the_viewport_menu-007835db",
+ "source": {"pytest": "tests/test_replace_component.py::test_keep_in_file_from_the_viewport_menu", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b9e5b5b41ce40e6f.igz"},
+ "start_sig": "4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"keep_component","args":{"instance":{"$group":[5]},"keep":true}}},{"$cmd":{"op":"keep_component","args":{"instance":{"$group":[1]},"keep":true}}}]},"counters":{"group":106,"curve":171},"sig":"4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"keep_component","args":{"instance":{"$group":[5]},"keep":false}}},{"$cmd":{"op":"keep_component","args":{"instance":{"$group":[1]},"keep":false}}}]},"counters":{"group":106,"curve":171},"sig":"4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc"},
+  {"op":"undo","ok":true,"sig":"4ed6414eec720cb008b43180451dabf3973997fecbfa2ed1abdb9f22273738fc"}
+ ]
+}

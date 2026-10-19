@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_extension_api__test_levels_guides_turn_off_with_their_checkbox-66d1eca9",
+ "source": {"pytest": "tests/test_extension_api.py::test_levels_guides_turn_off_with_their_checkbox", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/715514142c3d8467.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"set_plugin_data","args":{"key":"niveles","value":{"levels":[{"name":"PA","z":2.6}],"guides":false}},"counters":{"group":21,"curve":113},"sig":"78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb"}
+ ]
+}

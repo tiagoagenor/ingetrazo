@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_face_attrs__test_flip_faces_command_reverses_winding_and_undoes-f0a6e7d3",
+ "source": {"pytest": "tests/test_face_attrs.py::test_flip_faces_command_reverses_winding_and_undoes", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/fbeba1a8d92d7576.igz"},
+ "start_sig": "57a89bbc1e1f2aff1184d3f8f4ff4234335fb73acbf1f0006191022392fc37f2",
+ "steps": [
+  {"op":"flip_faces","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[1.0,0.0,0.0],[1.0,1.0,0.0]],"in":null}}]},"counters":{"group":21,"curve":113},"sig":"e4bf6b43279f8c402c875b580cbedf8287b272a42669cfcbcde55b343788d578"},
+  {"op":"undo","ok":true,"sig":"57a89bbc1e1f2aff1184d3f8f4ff4234335fb73acbf1f0006191022392fc37f2"},
+  {"op":"redo","ok":true,"sig":"e4bf6b43279f8c402c875b580cbedf8287b272a42669cfcbcde55b343788d578"}
+ ]
+}

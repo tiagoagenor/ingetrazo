@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_parity_tools__test_make_unique_detaches_the_instance-7dbfd8d7",
+ "source": {"pytest": "tests/test_parity_tools.py::test_make_unique_detaches_the_instance", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/e0716873ddd648fb.igz"},
+ "start_sig": "633787ea3e4e887cd911d0bbc0cbfde720064f71505f45cc7d3278cd4fd0b645",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[0]}},"counters":{"group":100,"curve":166},"sig":"633787ea3e4e887cd911d0bbc0cbfde720064f71505f45cc7d3278cd4fd0b645"},
+  {"op":"undo","ok":true,"sig":"633787ea3e4e887cd911d0bbc0cbfde720064f71505f45cc7d3278cd4fd0b645"}
+ ]
+}

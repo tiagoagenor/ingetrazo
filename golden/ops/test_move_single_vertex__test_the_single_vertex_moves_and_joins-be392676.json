@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_single_vertex__test_the_single_vertex_moves_and_joins-be392676",
+ "source": {"pytest": "tests/test_move_single_vertex.py::test_the_single_vertex_moves_and_joins", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/171daf7b8552ba98.igz"},
+ "start_sig": "659a623b10dcfa6c8f1c10af792b590f14a314952e5a6de6638dfb4007d0575a",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[3.0,4.0,2.5999999046325684]}],"delta":{"$v":[-3.0,0.0,0.0]}},"counters":{"group":100,"curve":163},"sig":"391f2ac523159d6eab1d283f7b1681b6a99a163870ede57e9d6e64458a38a969"}
+ ]
+}

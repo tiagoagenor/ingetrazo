@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_move_carries_the_origin-c7342de5",
+ "source": {"pytest": "tests/test_group_axes.py::test_move_carries_the_origin", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/aed55ee1b72fc29c.igz"},
+ "start_sig": "ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":90.0},"counters":{"group":74,"curve":113},"sig":"eb359c630dbec460742523ca65d1b508e37648105f10129449a720be602a85db"},
+  {"op":"move_group","args":{"group":{"$group":[0]},"delta":{"$v":[5.0,0.0,1.0]}},"counters":{"group":74,"curve":113},"sig":"72852f311f6379026bac404f0ec70a77f4dded59658795e3623241663feca324"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pushpull_ux__test_ctrl_push_overrides_prism_translation-7bdf4ae3",
+ "source": {"pytest": "tests/test_pushpull_ux.py::test_ctrl_push_overrides_prism_translation", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[4.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,4.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}]}}}]},"counters":{"group":105,"curve":171},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"}
+ ]
+}

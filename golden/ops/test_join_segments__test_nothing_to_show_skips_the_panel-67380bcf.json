@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_join_segments__test_nothing_to_show_skips_the_panel-67380bcf",
+ "source": {"pytest": "tests/test_join_segments.py::test_nothing_to_show_skips_the_panel", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/66c7907f664e40cf.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"4f8bbcf60c28f2028c4619500767a62b7b4d43835e06031c77e902355ab08c43"}
+ ]
+}

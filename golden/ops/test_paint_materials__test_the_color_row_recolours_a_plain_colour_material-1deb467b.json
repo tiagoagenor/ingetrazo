@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_the_color_row_recolours_a_plain_colour_material-1deb467b",
+ "source": {"pytest": "tests/test_paint_materials.py::test_the_color_row_recolours_a_plain_colour_material", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/8b766e650ab54d88.igz"},
+ "start_sig": "8b6206f3dda1b14235a1b7be55916b18c9c74b869e561eb3bcde2bad46dd22ad",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_material_tag","args":{"faces":[],"name":"Azul","material":{"$obj":"core.materials.Material","data":{"name":"Azul","color":[0.1,0.4,0.9]}}}}},{"$cmd":{"op":"set_group_material","args":{"group":{"$group":[1]},"material":{"color":[0.1,0.4,0.9],"mat":"Azul"}}}}]},"counters":{"group":100,"curve":163},"sig":"2191f199080dea267c0623ccea8fd63a2ab92f345dbec3e172efe0c30424e89d"},
+  {"op":"restamp_material","args":{"name":"Azul","new_material":{"$obj":"core.materials.Material","data":{"name":"Azul","color":[0.0,1.0,0.0]}}},"counters":{"group":100,"curve":163},"sig":"de61dad21eaa1fba388d8a1420328ef5e8e19aad223d0f17f4e397917d5e9075"},
+  {"op":"undo","ok":true,"sig":"2191f199080dea267c0623ccea8fd63a2ab92f345dbec3e172efe0c30424e89d"}
+ ]
+}

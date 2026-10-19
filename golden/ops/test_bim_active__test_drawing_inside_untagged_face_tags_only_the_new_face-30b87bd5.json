@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_bim_active__test_drawing_inside_untagged_face_tags_only_the_new_face-30b87bd5",
+ "source": {"pytest": "tests/test_bim_active.py::test_drawing_inside_untagged_face_tags_only_the_new_face", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d0edb880f4f742e3.igz"},
+ "start_sig": "87fa15371b121924148eb9c59f67abd8c20048f00c8d3b6166c36777e9a08681",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,2.0,0.0]},{"$v":[3.0,2.0,0.0]},{"$v":[3.0,3.0,0.0]},{"$v":[2.0,3.0,0.0]}]},"rid":0}},{"$cmd":{"op":"auto_tag_drawn_faces","args":{"face_commands":[{"$ran":0}],"tag":{"class":"IfcWall","name":"Muros N1"}}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,0.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":1,"curve":3},"sig":"b362588fbc92812e3624cdd75149f0587134c70560f3a7e15669071ec0640be5"}
+ ]
+}

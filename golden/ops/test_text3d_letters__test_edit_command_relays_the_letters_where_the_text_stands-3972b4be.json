@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_text3d_letters__test_edit_command_relays_the_letters_where_the_text_stands-3972b4be",
+ "source": {"pytest": "tests/test_text3d_letters.py::test_edit_command_relays_the_letters_where_the_text_stands", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/341d96d58c54917a.igz"},
+ "start_sig": "eb204e0fb6d6ab264c5a3c79ac4988b526c3d9ffc43089ce788952d602c2975d",
+ "steps": [
+  {"op":"edit_text3_d","args":{"group":{"$group":[0]},"params":{"text":"Hola","font":"Sans","bold":true,"italic":false,"height":0.25,"thickness":0.05}},"counters":{"group":119,"curve":205},"sig":"7c5dc42a1e47b6129d971a752f1509ee9feb2c33a47252642ae1bd4a5d64428b"},
+  {"op":"undo","ok":true,"sig":"eb204e0fb6d6ab264c5a3c79ac4988b526c3d9ffc43089ce788952d602c2975d"},
+  {"op":"redo","ok":true,"sig":"7c5dc42a1e47b6129d971a752f1509ee9feb2c33a47252642ae1bd4a5d64428b"}
+ ]
+}

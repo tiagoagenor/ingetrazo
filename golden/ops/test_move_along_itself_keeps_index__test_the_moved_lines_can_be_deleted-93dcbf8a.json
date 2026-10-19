@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_move_along_itself_keeps_index__test_the_moved_lines_can_be_deleted-93dcbf8a",
+ "source": {"pytest": "tests/test_move_along_itself_keeps_index.py::test_the_moved_lines_can_be_deleted", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/1ed0cd9df3025d1a.igz"},
+ "start_sig": "fa726ea062a5feacb174e7c17a3d5c8289f0f0c880fa923f71e48feb10ea15be",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[1.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]}],"delta":{"$v":[1.0,0.0,0.0]}},"counters":{"group":95,"curve":163},"sig":"5cd9634fe2ca3191d24a50e64ce74738c3e5d3ad8f68dd7a699fb169cb85bc9e"},
+  {"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[1.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,0.0,0.0],[3.0,0.0,0.0]],"in":null}}]},"counters":{"group":95,"curve":163},"sig":"4bd5021cbb6a0bffd4d7f066381efaf357c9dd7312d3616f59e0239556d4e2d5"}
+ ]
+}

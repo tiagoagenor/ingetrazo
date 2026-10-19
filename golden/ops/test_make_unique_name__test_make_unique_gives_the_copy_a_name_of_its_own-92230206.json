@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_name__test_make_unique_gives_the_copy_a_name_of_its_own-92230206",
+ "source": {"pytest": "tests/test_make_unique_name.py::test_make_unique_gives_the_copy_a_name_of_its_own", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/0b74653a8e3c1068.igz"},
+ "start_sig": "74ade38e53ad5b53cc0861ad69d3810e70253f1c970c97e3df43cae9937aac22",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[1]},"rename":true},"counters":{"group":91,"curve":163},"sig":"9d123cf1db4b51beefcb0187c5e96b554a04f98cc01ec00ecb1e16c58ba77493"},
+  {"op":"undo","ok":true,"sig":"74ade38e53ad5b53cc0861ad69d3810e70253f1c970c97e3df43cae9937aac22"},
+  {"op":"redo","ok":true,"sig":"9d123cf1db4b51beefcb0187c5e96b554a04f98cc01ec00ecb1e16c58ba77493"}
+ ]
+}

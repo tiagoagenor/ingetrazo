@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_move_copy_splits_faces__test_copying_a_face_with_its_edges_does_not_double_-8f1aef08",
+ "source": {"pytest": "tests/test_move_copy_splits_faces.py::test_copying_a_face_with_its_edges_does_not_double_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.0]},"b":{"$v":[1.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,1.0,0.0]},"b":{"$v":[0.0,1.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,1.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[1.0,0.0,0.0]},{"$v":[1.0,1.0,0.0]},{"$v":[0.0,1.0,0.0]}]}}}]},"counters":{"group":95,"curve":163},"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[5.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,1.0,0.0]},{"$v":[5.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}},{"$cmd":{"op":"planned_when_run","args":{"segments":[{"$t":[{"$v":[5.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]}]},{"$t":[{"$v":[6.0,0.0,0.0]},{"$v":[6.0,1.0,0.0]}]},{"$t":[{"$v":[5.0,1.0,0.0]},{"$v":[5.0,0.0,0.0]}]},{"$t":[{"$v":[6.0,1.0,0.0]},{"$v":[5.0,1.0,0.0]}]}]}}}]},"counters":{"group":95,"curve":163},"sig":"f79b1da690c2e1668ea27f4f6eaea28b1a0bc5d338193eefc8d669d4a86dd99f"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_rotation_grips__test_a_plain_move_still_moves-00af1de8",
+ "source": {"pytest": "tests/test_move_rotation_grips.py::test_a_plain_move_still_moves", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/aa60287142656d3c.igz"},
+ "start_sig": "925340f497d2e0c76bb3503640f49ad1eb81ca6e7738b3d8369766a02b2138e5",
+ "steps": [
+  {"op":"move_group","args":{"group":{"$group":[0]},"delta":{"$v":[0.0,2.0,0.0]}},"counters":{"group":100,"curve":163},"sig":"81493113cfa0c6d2b7b2f7df8c54007235882c7671217a73b7f6e385934b862d"}
+ ]
+}

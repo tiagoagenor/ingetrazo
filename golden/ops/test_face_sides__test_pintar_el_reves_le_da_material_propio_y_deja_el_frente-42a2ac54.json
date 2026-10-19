@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_pintar_el_reves_le_da_material_propio_y_deja_el_frente-42a2ac54",
+ "source": {"pytest": "tests/test_face_sides.py::test_pintar_el_reves_le_da_material_propio_y_deja_el_frente", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/27da95df2941bc79.igz"},
+ "start_sig": "e04a54f6554d0c7f9830730cfa02a5593c047872c1ac639852ba025ba4669470",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_material_tag","args":{"faces":[],"name":"Azul","material":{"$obj":"core.materials.Material","data":{"name":"Azul","color":[0.0,0.0,1.0]}}}}},{"$cmd":{"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"backs":[{"color":[0.0,0.0,1.0],"mat":"Azul"}]}}}]},"counters":{"group":21,"curve":113},"sig":"b9de820a6b0db371e63b87cf401aa580c59ec688933ea8029be5423b3faefc48"},
+  {"op":"undo","ok":true,"sig":"e04a54f6554d0c7f9830730cfa02a5593c047872c1ac639852ba025ba4669470"}
+ ]
+}

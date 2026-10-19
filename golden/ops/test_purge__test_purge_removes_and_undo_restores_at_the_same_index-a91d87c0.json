@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_purge__test_purge_removes_and_undo_restores_at_the_same_index-a91d87c0",
+ "source": {"pytest": "tests/test_purge.py::test_purge_removes_and_undo_restores_at_the_same_index", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9f08df40ec296171.igz"},
+ "start_sig": "8cde89cce1e485f39d6c1a5b1a6dd120769c48404a020d3b18d97c5891b7049d",
+ "steps": [
+  {"op":"purge_unused","args":{"layers":true,"materials":false},"counters":{"group":105,"curve":171},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"undo","ok":true,"sig":"8cde89cce1e485f39d6c1a5b1a6dd120769c48404a020d3b18d97c5891b7049d"},
+  {"op":"redo","ok":true,"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}

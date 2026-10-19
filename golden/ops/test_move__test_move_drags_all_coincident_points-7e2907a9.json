@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move__test_move_drags_all_coincident_points-7e2907a9",
+ "source": {"pytest": "tests/test_move.py::test_move_drags_all_coincident_points", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3908341348d8a48e.igz"},
+ "start_sig": "93c960160a732dd8001c4e7a21ecc71e0831412f2da0fba7f13958e3cdbae013",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[1.0,0.0,0.0]},{"$v":[1.0,1.0,0.0]}],"delta":{"$v":[0.0,0.0,1.0]}},"counters":{"group":100,"curve":163},"sig":"e32ad59fbaf07f9c74294b67b06990c61c33cf372d00cca5a20d9b0a8cfc3a29"}
+ ]
+}

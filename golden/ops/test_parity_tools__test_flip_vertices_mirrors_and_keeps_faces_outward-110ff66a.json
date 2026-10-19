@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_parity_tools__test_flip_vertices_mirrors_and_keeps_faces_outward-110ff66a",
+ "source": {"pytest": "tests/test_parity_tools.py::test_flip_vertices_mirrors_and_keeps_faces_outward", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b63f66895dc093f2.igz"},
+ "start_sig": "410e1dee09307c8097e2f663dd6812640af2656c7716c7b8df0e1c405c73ab07",
+ "steps": [
+  {"op":"flip_vertices","args":{"positions":[{"$v":[1.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,2.0,0.0]},{"$v":[1.0,2.0,0.0]}],"centre":{"$v":[2.0,1.0,0.0]},"axis":{"$v":[1.0,0.0,0.0]},"faces":[{"$face":{"loop":[[1.0,0.0,0.0],[3.0,0.0,0.0],[3.0,2.0,0.0],[1.0,2.0,0.0]],"in":null}}]},"counters":{"group":100,"curve":166},"sig":"410e1dee09307c8097e2f663dd6812640af2656c7716c7b8df0e1c405c73ab07"},
+  {"op":"undo","ok":true,"sig":"410e1dee09307c8097e2f663dd6812640af2656c7716c7b8df0e1c405c73ab07"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_layer_assignment__test_layers_panel_assign_button_speaks_and_undoes-dc665165",
+ "source": {"pytest": "tests/test_layer_assignment.py::test_layers_panel_assign_button_speaks_and_undoes", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/40dbe9fab5507444.igz"},
+ "start_sig": "ede6300728373b6a4c7b8b16c781dc455536186fa5d38ba75fc7de3e20e10265",
+ "steps": [
+  {"op":"assign_layer","args":{"entities":[{"$group":[1]}],"layer":"Muros"},"counters":{"group":91,"curve":163},"sig":"07cbf0e14aaa670e8657354f5ec44c8fb2bbdf84e5a16648f20fb4371f024893"},
+  {"op":"undo","ok":true,"sig":"ede6300728373b6a4c7b8b16c781dc455536186fa5d38ba75fc7de3e20e10265"}
+ ]
+}

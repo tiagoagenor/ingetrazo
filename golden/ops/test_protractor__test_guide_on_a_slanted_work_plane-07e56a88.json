@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_protractor__test_guide_on_a_slanted_work_plane-07e56a88",
+ "source": {"pytest": "tests/test_protractor.py::test_guide_on_a_slanted_work_plane", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_guide","args":{"guide":{"$obj":"core.guide.Guide","data":{"point":[0.0,0.0,0.0],"direction":[6.123234262925839e-17,0.0,1.0]}}},"counters":{"group":105,"curve":171},"sig":"e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d"}
+ ]
+}

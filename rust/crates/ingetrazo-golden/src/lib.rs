@@ -1,0 +1,112 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
+//! The golden corpus, Rust side (golden/SCHEMA.md): read the op scripts
+//! Python harvested and replay them as far as the Rust engine goes,
+//! reporting the first point where it parts from Python.
+//!
+//! Today that is the start: the start document is read and its L2
+//! signature compared, part by part, with the one Python recorded; the
+//! steps then stop at the first op the Rust engine does not run yet. Each
+//! milestone that lands an op (M2 the model, M3 the operations) moves the
+//! first divergence further on.
+
+pub mod sig;
+
+use std::path::{Path, PathBuf};
+
+use ingetrazo_formats::igz::{self, Zip};
+use ingetrazo_formats::pyjson::{self, Value};
+
+/// One script of the corpus.
+pub struct Script {
+    pub id: String,
+    pub doc: Value,
+    pub start: Vec<u8>,
+    pub start_sig: Option<Value>,
+}
+
+/// Where a replay stopped.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Outcome {
+    /// Every step ran and matched.
+    Ok,
+    /// The start document's signature differs; the parts that differ.
+    Start(Vec<String>),
+    /// Step `at` is an op the Rust engine does not run yet.
+    Unsupported { at: usize, op: String },
+    /// The script could not be read.
+    Broken(String),
+}
+
+pub fn ids(root: &Path) -> Vec<String> {
+    let mut out: Vec<String> = std::fs::read_dir(root.join("ops"))
+        .map(|d| {
+            d.filter_map(|e| e.ok())
+                .filter_map(|e| e.path().file_stem().map(|s| s.to_string_lossy().into_owned()))
+                .collect()
+        })
+        .unwrap_or_default();
+    out.sort();
+    out
+}
+
+pub fn load(root: &Path, id: &str) -> Result<Script, String> {
+    let text = std::fs::read_to_string(root.join("ops").join(format!("{id}.json"))).map_err(|e| e.to_string())?;
+    let doc = pyjson::loads(&text).map_err(|e| e.to_string())?;
+    if doc.get("schema").and_then(Value::as_i64) != Some(1) {
+        return Err("not schema 1".into());
+    }
+    let file = match doc.get("start").and_then(|s| s.get("igz")) {
+        Some(Value::Str(f)) => f.clone(),
+        _ => return Err("start is not an .igz of the repository".into()),
+    };
+    // Paths are relative to the repository, which holds golden/.
+    let repo: PathBuf = root.join("..");
+    let start = std::fs::read(repo.join(&file)).map_err(|e| format!("{file}: {e}"))?;
+    let sig_file = repo.join(file.trim_end_matches(".igz").to_string() + ".sig.json");
+    let start_sig = std::fs::read_to_string(sig_file).ok().and_then(|t| pyjson::loads(&t).ok());
+    Ok(Script { id: id.to_string(), doc, start, start_sig })
+}
+
+/// The L2 signature of an .igz file's document.
+pub fn file_signature(raw: &[u8]) -> Result<Value, String> {
+    let doc = igz::read_document(raw).map_err(|e| e.to_string())?;
+    let zip = if igz::is_container(raw) { Some(Zip::open(raw).map_err(|e| e.to_string())?) } else { None };
+    sig::scene_signature(&doc, &sig::Files { zip: zip.as_ref() })
+}
+
+/// Replay `script` as far as the Rust engine goes.
+pub fn replay(script: &Script) -> Outcome {
+    let got = match file_signature(&script.start) {
+        Ok(s) => s,
+        Err(e) => return Outcome::Broken(format!("start.igz: {e}")),
+    };
+    let want_hash = match script.doc.get("start_sig") {
+        Some(Value::Str(h)) => h.clone(),
+        _ => return Outcome::Broken("no start_sig".into()),
+    };
+    if sig::signature_hash(&got) != want_hash {
+        let parts = match (&got, &script.start_sig) {
+            (Value::Object(g), Some(w)) => g
+                .iter()
+                .filter(|(k, v)| w.get(k).map(sig::canon_dumps) != Some(sig::canon_dumps(v)))
+                .map(|(k, _)| k.clone())
+                .collect(),
+            _ => vec!["(no start.sig.json to compare parts)".to_string()],
+        };
+        return Outcome::Start(parts);
+    }
+    match script.doc.get("steps") {
+        Some(Value::Array(steps)) => match steps.first() {
+            None => Outcome::Ok,
+            Some(step) => Outcome::Unsupported {
+                at: 0,
+                op: match step.get("op") {
+                    Some(Value::Str(op)) => op.clone(),
+                    _ => "?".into(),
+                },
+            },
+        },
+        _ => Outcome::Broken("no steps".into()),
+    }
+}

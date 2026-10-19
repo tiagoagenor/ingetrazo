@@ -1,0 +1,16 @@
+{
+ "schema": 1,
+ "id": "test_undo_clean__test_redo_reproduces_the_split_exactly-5996dc78",
+ "source": {"pytest": "tests/test_undo_clean.py::test_redo_reproduces_the_split_exactly", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[4.0,0.0,0.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"delete_edges","args":{"edges":[{"$edge":{"ends":[[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"cascade_faces":false}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[4.0,4.0,0.0]},"b":{"$v":[2.0,4.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,4.0,0.0]},"b":{"$v":[0.0,4.0,0.0]},"soft":null,"curve":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,4.0,0.0]}}}},{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[2.0,4.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]},{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]}],"attrs":null}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,0.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":123,"curve":205},"sig":"5c90658754be2c4432de9a865b70336601083532bba448162ea9067a0d2ffe77"},
+  {"op":"undo","ok":true,"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"redo","ok":true,"sig":"5c90658754be2c4432de9a865b70336601083532bba448162ea9067a0d2ffe77"},
+  {"op":"undo","ok":true,"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"redo","ok":true,"sig":"5c90658754be2c4432de9a865b70336601083532bba448162ea9067a0d2ffe77"},
+  {"op":"undo","ok":true,"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"redo","ok":true,"sig":"5c90658754be2c4432de9a865b70336601083532bba448162ea9067a0d2ffe77"}
+ ]
+}

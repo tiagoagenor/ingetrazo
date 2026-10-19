@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_replaced_copies_share_the_sources_subgroups-0d544a77",
+ "source": {"pytest": "tests/test_replace_component.py::test_replaced_copies_share_the_sources_subgroups", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/43c19753431e0dee.igz"},
+ "start_sig": "b87b1838f261675107d761fd5e4585c07b9abdea307c99399eea855451baa479",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[1]}],"source":{"$group":[0]}},"counters":{"group":106,"curve":171},"sig":"ca64ffe1950ef296f8a63eeafd1747bfc9b9a0d69ae4ce6fa2d276d219d89c56"},
+  {"op":"undo","ok":true,"sig":"b87b1838f261675107d761fd5e4585c07b9abdea307c99399eea855451baa479"}
+ ]
+}

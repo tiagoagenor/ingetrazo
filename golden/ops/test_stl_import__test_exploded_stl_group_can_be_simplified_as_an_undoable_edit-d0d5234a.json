@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_stl_import__test_exploded_stl_group_can_be_simplified_as_an_undoable_edit-d0d5234a",
+ "source": {"pytest": "tests/test_stl_import.py::test_exploded_stl_group_can_be_simplified_as_an_undoable_edit", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/c6734c2ab9dfa7a4.igz"},
+ "start_sig": "8d9b725215c54cd269e3ff10117330d71d6c74b3de09bb2f7a1feb599b0452a4",
+ "steps": [
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":119,"curve":205},"sig":"7f81fe766f28782b924ed5ad5c35822fba19326b5b96975f73cde7221fb0abc5"},
+  {"op":"simplify_mesh","args":{},"counters":{"group":119,"curve":205},"sig":"32a05438dfdbbe2acc22315b0fd327cdfb9611ca34d55f9cf3cf84c90c68a497"},
+  {"op":"undo","ok":true,"sig":"7f81fe766f28782b924ed5ad5c35822fba19326b5b96975f73cde7221fb0abc5"},
+  {"op":"redo","ok":true,"sig":"32a05438dfdbbe2acc22315b0fd327cdfb9611ca34d55f9cf3cf84c90c68a497"}
+ ]
+}

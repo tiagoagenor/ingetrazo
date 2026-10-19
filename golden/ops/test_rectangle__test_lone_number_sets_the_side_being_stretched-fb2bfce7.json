@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rectangle__test_lone_number_sets_the_side_being_stretched-fb2bfce7",
+ "source": {"pytest": "tests/test_rectangle.py::test_lone_number_sets_the_side_being_stretched", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,5.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,5.0,0.0]},"b":{"$v":[0.0,5.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,5.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,5.0,0.0]},{"$v":[0.0,5.0,0.0]}]}}}]},"counters":{"group":106,"curve":171},"sig":"ee2dc92fb032a794a612e02665e4dc2167e5ee88fe0159c5571040b023a51ba9"}
+ ]
+}

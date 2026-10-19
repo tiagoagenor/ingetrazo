@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_face_subdivide__test_subdivide_face_that_already_has_a_hole-16fe45f2",
+ "source": {"pytest": "tests/test_face_subdivide.py::test_subdivide_face_that_already_has_a_hole", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,3.0,0.0]},{"$v":[0.0,3.0,0.0]}]},"counters":{"group":22,"curve":113},"sig":"1d8e77f6a512509098f18074f9c21cff577f2a746eb0f7f27b30daebc8aa90f2"},
+  {"op":"add_face","args":{"vertices":[{"$v":[2.5,1.5,0.0]},{"$v":[3.5,1.5,0.0]},{"$v":[3.5,2.5,0.0]},{"$v":[2.5,2.5,0.0]}]},"counters":{"group":22,"curve":113},"sig":"34f8672ff37c515b02f3558655d259a6d90f50e5018dc6b2b487038fe033da1b"},
+  {"op":"add_face","args":{"vertices":[{"$v":[1.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[1.0,2.0,0.0]}]},"counters":{"group":22,"curve":113},"sig":"c1f1e5822bdb1694b22ec9f165a36f5e45b0e6b70c666eedf0eb0db9866ba08f"},
+  {"op":"undo","ok":true,"sig":"4753372fc51864d9a761544378b388a1ac9c79f75dda1f97870279a22731c404"}
+ ]
+}

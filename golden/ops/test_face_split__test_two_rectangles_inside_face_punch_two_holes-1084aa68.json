@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_face_split__test_two_rectangles_inside_face_punch_two_holes-1084aa68",
+ "source": {"pytest": "tests/test_face_split.py::test_two_rectangles_inside_face_punch_two_holes", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[10.0,0.0,0.0]},{"$v":[10.0,5.0,0.0]},{"$v":[0.0,5.0,0.0]}]},"counters":{"group":22,"curve":113},"sig":"5a0fb1d1dcdc09ea0edb0cf942d5cd66467238ff66580ff83aa42189954ff1a5"},
+  {"op":"add_face","args":{"vertices":[{"$v":[1.0,1.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[3.0,3.0,0.0]},{"$v":[1.0,3.0,0.0]}]},"counters":{"group":22,"curve":113},"sig":"a7b5945df5f5285a63849fc9131fb33a745467ae563e757908d7fabb7f4d1eff"},
+  {"op":"add_face","args":{"vertices":[{"$v":[5.0,1.0,0.0]},{"$v":[7.0,1.0,0.0]},{"$v":[7.0,3.0,0.0]},{"$v":[5.0,3.0,0.0]}]},"counters":{"group":22,"curve":113},"sig":"e9eee52e1b8b3bf9e19a319419f42b02b51f3ac8a9856821b9b2e56c55b6aa9a"}
+ ]
+}

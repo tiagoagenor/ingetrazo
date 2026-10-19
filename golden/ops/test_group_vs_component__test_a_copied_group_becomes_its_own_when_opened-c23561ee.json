@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_group_vs_component__test_a_copied_group_becomes_its_own_when_opened-c23561ee",
+ "source": {"pytest": "tests/test_group_vs_component.py::test_a_copied_group_becomes_its_own_when_opened", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/2145d9f3b12829b5.igz"},
+ "start_sig": "b594f6a1c5f632501c4463721b65be12ddc34fb3cfe3ce1b6c1368c760bc3362",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[2]}},"counters":{"group":83,"curve":113},"sig":"dbbc174a6d17221f7e6a8b83d161c1397369962b66f91feb5e395bf8161b1cd5"}
+ ]
+}

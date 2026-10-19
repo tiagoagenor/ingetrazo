@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_drawing_keeps_holes_open__test_redrawing_the_whole_top_fills_the_hole_as_in-cdd01b49",
+ "source": {"pytest": "tests/test_drawing_keeps_holes_open.py::test_redrawing_the_whole_top_fills_the_hole_as_in_538", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/8ddd24c46fe54680.igz"},
+ "start_sig": "e075d794e787ccdfa9f84bd479576e3dcae31a26382417892d958a558f3903e1",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.5]},"b":{"$v":[1.0,0.0,0.5]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,0.0,0.5]},"b":{"$v":[1.0,1.0,0.5]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.0,1.0,0.5]},"b":{"$v":[0.0,1.0,0.5]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,1.0,0.5]},"b":{"$v":[0.0,0.0,0.5]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.5]},{"$v":[1.0,0.0,0.5]},{"$v":[1.0,1.0,0.5]},{"$v":[0.0,1.0,0.5]}]}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,0.5]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":15,"curve":89},"sig":"470e713f1815d586d5b9480ca81fc8ab0cce4dd1a693e6b52169218f6eb1ee60"}
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_rotate_center_arc__test_scale_group_as_unit-27d90ece",
+ "source": {"pytest": "tests/test_rotate_center_arc.py::test_scale_group_as_unit", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,2.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,2.0,0.0]},{"$v":[2.0,2.0,0.0]}]}}}]},"counters":{"group":107,"curve":196},"sig":"5564daeb4fd673bee0f64f143b63722d2e8dae5999ba2bf41fcfae0a2df41d5a"},
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[2.0,0.0,0.0],[6.0,0.0,0.0],[6.0,2.0,0.0],[2.0,2.0,0.0]],"in":null}}],"edges":[{"$edge":{"ends":[[2.0,0.0,0.0],[6.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,0.0,0.0],[6.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,2.0,0.0],[2.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,2.0,0.0],[2.0,0.0,0.0]],"in":null}}]},"counters":{"group":107,"curve":196},"sig":"007fa769fc4a405c0d713829dfb36e85703155014cb7ebe55bbc09122ba666ad"},
+  {"op":"scale_group","args":{"group":{"$group":[0]},"center":{"$v":[2.0,0.0,0.0]},"factor":{"$t":[1.5,1.5,1.0]},"axes":null},"counters":{"group":108,"curve":196},"sig":"d45763c9570de82f5ee044b6cca23055d0f8ee35611fc952e6f757ce95b241a1"},
+  {"op":"undo","ok":true,"sig":"007fa769fc4a405c0d713829dfb36e85703155014cb7ebe55bbc09122ba666ad"}
+ ]
+}

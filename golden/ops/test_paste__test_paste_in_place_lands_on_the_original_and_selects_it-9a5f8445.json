@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paste__test_paste_in_place_lands_on_the_original_and_selects_it-9a5f8445",
+ "source": {"pytest": "tests/test_paste.py::test_paste_in_place_lands_on_the_original_and_selects_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"prune_on_undo","args":{}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[0.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,2.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]}],"auto":false,"holes":null,"attrs":null}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[5.0,5.0,0.0]},"b":{"$v":[6.0,5.0,0.0]},"soft":null,"curve":null}}}]},"counters":{"group":101,"curve":168},"sig":"7e322a391182748e80c76c8d466e1a062c7a1e2eccfa26aa001ea151a78f12c5"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_sections__test_tool_aligns_to_hovered_face_and_places_active-fd5e1a2a",
+ "source": {"pytest": "tests/test_sections.py::test_tool_aligns_to_hovered_face_and_places_active", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/73281b7a401a8c95.igz"},
+ "start_sig": "ba8b02ef21d9d3a44ea6d78cd3cd0f58c9120a455299484cf6c6a9736db6a719",
+ "steps": [
+  {"op":"place_section_plane","args":{"plane":{"$obj":"core.section.SectionPlane","data":{"point":[1.0,0.0,1.0],"normal":[0.0,-1.0,0.0],"uid":9,"name":"Section 1","symbol":"A"}}},"counters":{"group":112,"curve":196},"sig":"2d2ad0303759e662cb6eab2b53e45b20fe90957dfa71c3f72b4385c41bdc11c7"},
+  {"op":"undo","ok":true,"sig":"ba8b02ef21d9d3a44ea6d78cd3cd0f58c9120a455299484cf6c6a9736db6a719"}
+ ]
+}

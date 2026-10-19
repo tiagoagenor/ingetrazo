@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_geopoints__test_command_sets_datum_and_undo_restores-4f4b609f",
+ "source": {"pytest": "tests/test_geopoints.py::test_command_sets_datum_and_undo_restores", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_geo_points","args":{"points":[{"$obj":"georef.points.GeoPoint","data":{"position":[6.908195791766047e-05,-3.612600266933441e-05,0.0],"name":"E1","desc":"ESTACION"}},{"$obj":"georef.points.GeoPoint","data":{"position":[8.250068664550781,12.499963760375977,0.8999999761581421],"name":"V1","desc":"VERTICE LOTE"}},{"$obj":"georef.points.GeoPoint","data":{"position":[-4.9999308586120605,19.999963760375977,-0.3499999940395355],"name":"V2","desc":"VERTICE LOTE"}}],"datum":{"$obj":"georef.datum.SceneDatum","data":{"lat":-13.523528937614,"lon":-71.98373898556535,"alt":3335.2}}},"counters":{"group":72,"curve":113},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"delete_geo_points","args":{"points":[{"$ref":["geo_points",0]},{"$ref":["geo_points",1]},{"$ref":["geo_points",2]}]},"counters":{"group":72,"curve":113},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"}
+ ]
+}

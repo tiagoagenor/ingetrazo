@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_vs_component__test_the_panel_says_group_for_a_group_of_groups-ef48eb6c",
+ "source": {"pytest": "tests/test_group_vs_component.py::test_the_panel_says_group_for_a_group_of_groups", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/219129b0ff74ee6e.igz"},
+ "start_sig": "77334b8641eaf16b3d20b5a162acd824555d3a691e6744f8a7e60658df2d903f",
+ "steps": [
+  {"op":"make_nested_group","args":{"faces":[],"edges":[],"groups":[{"$group":[1]},{"$group":[2]}],"name":"Banca"},"counters":{"group":83,"curve":113},"sig":"472011eed4315e7fc0e7c8ee2305ded555f299510ceb008d23e2e3b5c1677a3b"},
+  {"op":"group_to_component","args":{"group":{"$group":[1]},"name":"Banca"},"counters":{"group":83,"curve":113},"sig":"ffa10a9aa357dc0e6c35d248a00dbc10029dcd683e9a95af4e817b80d9f10701"}
+ ]
+}

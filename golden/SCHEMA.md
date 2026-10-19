@@ -44,7 +44,7 @@ A hand-written script uses a name of its own starting with `hand-`.
   "id": "test_faces__test_draw_and_flip-3f9a01c2",
   "source": {"pytest": "tests/test_faces.py::test_draw_and_flip",
              "app_version": "0.5.8", "harvested": "2026-10-19"},
-  "start": {"file": "start.igz"},
+  "start": {"igz": "golden/starts/5c1d0e9a7b3f2e41.igz"},
   "steps": [
     {"op": "add_face",
      "args": {"vertices": [{"$v": [0,0,0]}, {"$v": [2,0,0]}, {"$v": [2,1,0]}, {"$v": [0,1,0]}]},
@@ -63,8 +63,7 @@ A hand-written script uses a name of its own starting with `hand-`.
 | Form | Meaning |
 |---|---|
 | `{"empty": true}` | a new scene |
-| `{"igz": "<path>"}` | a file in the repository (`examples/…`, `tests/data/…`), opened |
-| `{"file": "start.igz"}` | the .igz in this script's `out/<id>/` folder: the test's own setup, saved by the app when the first command ran |
+| `{"igz": "<path>"}` | an .igz of the repository, opened: `examples/…`, or `golden/starts/<hash>.igz` — the test's own setup, saved by the app when its first command ran, stored once by content (first 16 hex digits of its SHA-1) beside `<hash>.sig.json`, its full L2 signature |
 
 ### Steps
 
@@ -148,16 +147,14 @@ of a shared component mesh); `null` is the loose mesh.
 
 | File | Contents |
 |---|---|
-| `start.igz` | the start scene, saved by the app (`"start": {"file": "start.igz"}`); each step's L2 hash is in the script itself (`sig`) |
-| `start.sig.json` | the full L2 signature before the first step |
-| `final.sig.json` | the full L2 signature after the last step |
+| `final.sig.json` | the full L2 signature after the last step (absent when the test changed the scene after its last command) |
 | `save-<i>.document.json` | L1: the exact `document.json` bytes a `save` step produced |
 | `save-<i>.members.json` | L1: every other ZIP member: `{"name": "<sha256>"}`, in archive order |
 | `save-<i>.igz` | L1: the whole file, only when the format is 1 or the test asks for byte identity of the container |
 | `export-<i>.<fmt>` | L1: the exported file (COLLADA's `<created>`/`<modified>` replaced by `MASKED`) |
 
 After the last step the runner also undoes everything and checks the result
-against `start.sig.json`: undo-all must restore the start exactly.
+against the start's signature: undo-all must restore the start exactly.
 
 ### L1 — bytes
 
@@ -199,9 +196,10 @@ A **mesh signature**:
 
 A **group signature**: `{"name", "kind" ("group" | "component"), "m" (the
 transform, 16 float32 hex, or null), "material", "layer", "locked",
-"hidden", "rest" (the first 16 hex digits of the SHA-256 of every other
-group field — `ifc`, `billboard`, `axes`, `text3d`, `ext`… — written with
-sorted keys; not `uid`), "mesh" (a plain group: its mesh signature) or "def"
+"hidden", "rest" (the first 16 hex digits of the SHA-256 of the group's
+other fields as the .igz writes them — `axes` (16 floats), `ifc`, `text3d`,
+`exploded`, `billboard`, `ext`, `explode_offset`, each only when set —
+with sorted keys), "mesh" (a plain group: its mesh signature) or "def"
 (a component instance: the first 16 hex digits of the SHA-256 of its
 prototype's mesh signature, which is written once under `defs`), "children"
 (sorted group signatures)}`. `shares` groups the instances (by the first 16

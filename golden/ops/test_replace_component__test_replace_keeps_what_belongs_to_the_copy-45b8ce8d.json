@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_replace_keeps_what_belongs_to_the_copy-45b8ce8d",
+ "source": {"pytest": "tests/test_replace_component.py::test_replace_keeps_what_belongs_to_the_copy", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/39cccd36c70bff9a.igz"},
+ "start_sig": "2ed2b980b437ba19ce722794859f871436c24644cd5487f0c76e45db43f795ca",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[0]}],"source":{"$group":[3]}},"counters":{"group":106,"curve":171},"sig":"9fd7ff57792bad61260ee0ab30304446577157da4d7db4fcf4d13b3388306025"}
+ ]
+}

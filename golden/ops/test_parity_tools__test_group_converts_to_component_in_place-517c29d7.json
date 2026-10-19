@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_parity_tools__test_group_converts_to_component_in_place-517c29d7",
+ "source": {"pytest": "tests/test_parity_tools.py::test_group_converts_to_component_in_place", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/25b53c38a71e7120.igz"},
+ "start_sig": "ea6b368328b89ebc96c07590081149198e3a4b1178383f232ddacd76c5e4aee7",
+ "steps": [
+  {"op":"group_to_component","args":{"group":{"$group":[0]},"name":"Arbusto"},"counters":{"group":101,"curve":168},"sig":"ab16079332173937904a8970187f45e2d41e862793f077fe2febbd8ac4794005"},
+  {"op":"undo","ok":true,"sig":"ea6b368328b89ebc96c07590081149198e3a4b1178383f232ddacd76c5e4aee7"}
+ ]
+}

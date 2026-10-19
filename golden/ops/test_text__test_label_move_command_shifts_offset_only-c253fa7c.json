@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_text__test_label_move_command_shifts_offset_only-c253fa7c",
+ "source": {"pytest": "tests/test_text.py::test_label_move_command_shifts_offset_only", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d83d74812ac02b0c.igz"},
+ "start_sig": "992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c",
+ "steps": [
+  {"op":"move_text_labels","args":{"labels":[{"$ref":["text_labels",0]}],"delta":{"$v":[1.0,0.0,2.0]}},"counters":{"group":119,"curve":205},"sig":"992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c"},
+  {"op":"undo","ok":true,"sig":"992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c"}
+ ]
+}

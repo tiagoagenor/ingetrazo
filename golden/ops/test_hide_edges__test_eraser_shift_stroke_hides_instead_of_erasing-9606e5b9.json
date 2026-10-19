@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_hide_edges__test_eraser_shift_stroke_hides_instead_of_erasing-9606e5b9",
+ "source": {"pytest": "tests/test_hide_edges.py::test_eraser_shift_stroke_hides_instead_of_erasing#2", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9fcf61c6b3593efd.igz"},
+ "start_sig": "553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87",
+ "steps": [
+  {"op":"hide_edges","args":{"edges":[{"$edge":{"ends":[[2.0,0.0,0.0],[2.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}}],"hidden":true},"counters":{"group":88,"curve":161},"sig":"71421b71951ce2d39e16628cbaf0ebf4a3bcc9b1d61814eb48ca2a4336a386db"},
+  {"op":"undo","ok":true,"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}

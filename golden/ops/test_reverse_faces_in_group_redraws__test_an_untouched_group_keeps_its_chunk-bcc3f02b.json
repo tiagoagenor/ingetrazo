@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_reverse_faces_in_group_redraws__test_an_untouched_group_keeps_its_chunk-bcc3f02b",
+ "source": {"pytest": "tests/test_reverse_faces_in_group_redraws.py::test_an_untouched_group_keeps_its_chunk", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/19b7bfa611a73e50.igz"},
+ "start_sig": "3ecf5e61471dff6e918924ffcd89f50ecc8c9d6b616f3c1a9e26dd0caff90fba",
+ "steps": [
+  {"op":"flip_faces","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":[0]}}]},"counters":{"group":106,"curve":171},"sig":"5ba42d83ccf257eb0e73989dfb49c1bce59e1e71eafce4686670a42f4b820750"}
+ ]
+}

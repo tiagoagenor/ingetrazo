@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_image_plane__test_add_undo_keeps_a_layer_the_document_already_had-7606a039",
+ "source": {"pytest": "tests/test_image_plane.py::test_add_undo_keeps_a_layer_the_document_already_had", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/230451652318fc8f.igz"},
+ "start_sig": "63791b572df9616c66d6789f51a1b6f74c7193e5f07e411ba67947f5e5fc08b7",
+ "steps": [
+  {"op":"add_image_plane","args":{"image":{"$obj":"core.image_plane.ImagePlane","data":{"texture":{"path":"scan.png"},"origin":[0.0,0.0,0.0],"u":[4.0,0.0,0.0],"v":[0.0,3.0,0.0],"aspect":0.75}}},"counters":{"group":88,"curve":161},"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"},
+  {"op":"undo","ok":true,"sig":"63791b572df9616c66d6789f51a1b6f74c7193e5f07e411ba67947f5e5fc08b7"}
+ ]
+}

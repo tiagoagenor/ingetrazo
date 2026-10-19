@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pick_index__test_group_chunk_fingerprint_invalidation-e23c30ed",
+ "source": {"pytest": "tests/test_pick_index.py::test_group_chunk_fingerprint_invalidation", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7ceaba3e7c315b6a.igz"},
+ "start_sig": "a11623bdae805574fcd619da394ac5588edb6bf850f9a5eb46e2230a277ec670",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[-2.0,-2.0,0.0],[2.0,-2.0,0.0],[2.0,2.0,0.0],[-2.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":102,"curve":168},"sig":"fd2d72165d1f065cf1fa5a57d9da920012dbdde5339d6d5b52fbff28db7ba9a3"}
+ ]
+}

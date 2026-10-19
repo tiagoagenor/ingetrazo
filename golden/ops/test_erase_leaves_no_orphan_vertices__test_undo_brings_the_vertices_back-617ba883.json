@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_erase_leaves_no_orphan_vertices__test_undo_brings_the_vertices_back-617ba883",
+ "source": {"pytest": "tests/test_erase_leaves_no_orphan_vertices.py::test_undo_brings_the_vertices_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/dbfe5e99d0f83735.igz"},
+ "start_sig": "582bcf9a39986b9a7fae90d33ff43c4a1581ec628569d37fbffa335998649499",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[3.0,0.0,0.0]],"in":null}}]},"counters":{"group":18,"curve":109},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"582bcf9a39986b9a7fae90d33ff43c4a1581ec628569d37fbffa335998649499"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_orient_keeps_paint_by_side__test_reverse_faces_keeps_its_classic_meaning-bf8551b8",
+ "source": {"pytest": "tests/test_orient_keeps_paint_by_side.py::test_reverse_faces_keeps_its_classic_meaning", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/d23f94530e2aaa62.igz"},
+ "start_sig": "3809d3dbb7c4b12041e30e66d52f2ed18271b531ac99b08d6a58e06ace01e52e",
+ "steps": [
+  {"op":"flip_faces","args":{"faces":[{"$face":{"loop":[[0.0,0.0,1.0],[1.0,0.0,1.0],[1.0,0.0,0.0],[0.0,0.0,0.0]],"in":null}}]},"counters":{"group":100,"curve":163},"sig":"138a0eac434cff0fe6d71522ec92091a87c6296f115df30616f0e3982d924337"}
+ ]
+}

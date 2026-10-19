@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_moving_the_geometry_with_the_dimension_selected_mov-4408bcea",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_moving_the_geometry_with_the_dimension_selected_moves_it_once", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[0.0,0.0,0.0],"b":[4.0,0.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":15,"curve":39},"sig":"9c8d545bb011de07cd924a38b87703190405de0b58596bb9b25f9ab439882eee"},
+  {"op":"move_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}],"delta":{"$v":[0.0,10.0,0.0]}},"counters":{"group":15,"curve":39},"sig":"f460a01f3da8b8e6903b4e88d97e232313a8a283c8a7ce6495cb1d63ca522ba0"}
+ ]
+}

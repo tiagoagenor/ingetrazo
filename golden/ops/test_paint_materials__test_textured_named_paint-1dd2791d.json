@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_textured_named_paint-1dd2791d",
+ "source": {"pytest": "tests/test_paint_materials.py::test_textured_named_paint", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"texture":{"path":"/tex/ladrillo.png","sw":1.0,"sh":1.0,"rot":0.0}}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"name":"Ladrillo visto","material":{"$obj":"core.materials.Material","data":{"name":"Ladrillo visto","texture":{"path":"/tex/ladrillo.png","sw":1.0,"sh":1.0,"rot":0.0}}}}}}]},"counters":{"group":100,"curve":163},"sig":"b9e373e62b2fdabda0adab7af27de46311f8a03d69a8f50cd7e110efc9dbef78"}
+ ]
+}

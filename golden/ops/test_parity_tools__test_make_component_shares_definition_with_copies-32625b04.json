@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_parity_tools__test_make_component_shares_definition_with_copies-32625b04",
+ "source": {"pytest": "tests/test_parity_tools.py::test_make_component_shares_definition_with_copies", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/2966a1375b7cb4c7.igz"},
+ "start_sig": "196c5932f09f4549c65a4e738243df56682bd3f89eb342737c373424068c622f",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[2.0,3.0,0.0],[4.0,3.0,0.0],[4.0,5.0,0.0],[2.0,5.0,0.0]],"in":null}}],"edges":[],"component":true,"name":"Columna"},"counters":{"group":100,"curve":166},"sig":"9f0b95e5db8b51278e136ce6f0bd57cac6be7613dda4a6715cd2da3ea318ae3d"},
+  {"op":"undo","ok":true,"sig":"196c5932f09f4549c65a4e738243df56682bd3f89eb342737c373424068c622f"}
+ ]
+}

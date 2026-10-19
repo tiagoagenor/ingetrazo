@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_erase_coplanar_divider_merges_faces-5bf9c12e",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_erase_coplanar_divider_merges_faces", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b8200bfd9ea4e3a2.igz"},
+ "start_sig": "e6047c4903dbdab7d1813f0d9035044eac17c143a146c5a971f29c9aae698b0a",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[2.0,2.0,0.0],[0.0,0.0,0.0]],"in":null}}]},"counters":{"group":13,"curve":10},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"},
+  {"op":"undo","ok":true,"sig":"e6047c4903dbdab7d1813f0d9035044eac17c143a146c5a971f29c9aae698b0a"}
+ ]
+}

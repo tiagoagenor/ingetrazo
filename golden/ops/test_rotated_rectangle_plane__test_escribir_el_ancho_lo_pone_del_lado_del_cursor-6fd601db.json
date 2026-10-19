@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotated_rectangle_plane__test_escribir_el_ancho_lo_pone_del_lado_del_cursor-6fd601db",
+ "source": {"pytest": "tests/test_rotated_rectangle_plane.py::test_escribir_el_ancho_lo_pone_del_lado_del_cursor", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[9.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,0.0,0.0]},"b":{"$v":[9.0,-2.0,2.4492937051703357e-16]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[9.0,-2.0,2.4492937051703357e-16]},"b":{"$v":[0.0,-2.0,2.4492937051703357e-16]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,-2.0,2.4492937051703357e-16]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[9.0,0.0,0.0]},{"$v":[9.0,-2.0,2.4492937051703357e-16]},{"$v":[0.0,-2.0,2.4492937051703357e-16]}]}}}]},"counters":{"group":112,"curve":196},"sig":"ba912c1af160ef38fa43a05c31fd588976e9b44b5a28673d32fef1c97680f21f"}
+ ]
+}

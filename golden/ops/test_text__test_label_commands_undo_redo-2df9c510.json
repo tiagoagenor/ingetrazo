@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_text__test_label_commands_undo_redo-2df9c510",
+ "source": {"pytest": "tests/test_text.py::test_label_commands_undo_redo", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_text_label","args":{"label":{"$obj":"core.textlabel.TextLabel","data":{"anchor":[1.0,2.0,0.0],"offset":[0.5,0.0,1.0],"text":"Muro eje A"}}},"counters":{"group":119,"curve":205},"sig":"992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c"},
+  {"op":"undo","ok":true,"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"redo","ok":true,"sig":"992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c"},
+  {"op":"delete_text_labels","args":{"labels":[{"$ref":["text_labels",0]}]},"counters":{"group":119,"curve":205},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"},
+  {"op":"undo","ok":true,"sig":"992b43325d3a54b6c1c410aaeca348544672a26e2a21dcd50e1b2cfa0fe1094c"}
+ ]
+}

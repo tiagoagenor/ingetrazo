@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rectangle_on_a_ring__test_a_rectangle_inside_the_hole_only_fills_that_part-8b142fa6",
+ "source": {"pytest": "tests/test_rectangle_on_a_ring.py::test_a_rectangle_inside_the_hole_only_fills_that_part", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/02533c518618689c.igz"},
+ "start_sig": "ef35aa84e34bcae6a1bc76d4536579c235604a03abafb73a2e74d639fcc3d0b3",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.5,0.5,1.0]},"b":{"$v":[1.5,0.5,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.5,0.5,1.0]},"b":{"$v":[1.5,1.5,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.5,1.5,1.0]},"b":{"$v":[0.5,1.5,1.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.5,1.5,1.0]},"b":{"$v":[0.5,0.5,1.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.5,0.5,1.0]},{"$v":[1.5,0.5,1.0]},{"$v":[1.5,1.5,1.0]},{"$v":[0.5,1.5,1.0]}]}}},{"$cmd":{"op":"rebuild_plane_faces","args":{"origin":{"$v":[0.0,0.0,1.0]},"normal":{"$v":[0.0,0.0,1.0]}}}}]},"counters":{"group":106,"curve":171},"sig":"17dd87cd4c6d7ffaef0eafc54955d64397eafdb8bd51c0bbdb2ea03f57b8e040"}
+ ]
+}

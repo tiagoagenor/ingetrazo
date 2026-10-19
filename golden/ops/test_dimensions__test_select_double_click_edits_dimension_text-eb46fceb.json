@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_dimensions__test_select_double_click_edits_dimension_text-eb46fceb",
+ "source": {"pytest": "tests/test_dimensions.py::test_select_double_click_edits_dimension_text", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/6ef37b521b74601e.igz"},
+ "start_sig": "db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113",
+ "steps": [
+  {"op":"edit_dimension_text","args":{"dim":{"$ref":["dimensions",0]},"text":"H = <>"},"counters":{"group":15,"curve":39},"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"},
+  {"op":"undo","ok":true,"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"},
+  {"op":"redo","ok":true,"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"},
+  {"op":"edit_dimension_text","args":{"dim":{"$ref":["dimensions",0]},"text":null},"counters":{"group":15,"curve":39},"sig":"db1f13e08428224d6c2b169a8d3f0baa7bf3b30f4cb5a3e7b14b2ce8a8f44113"}
+ ]
+}

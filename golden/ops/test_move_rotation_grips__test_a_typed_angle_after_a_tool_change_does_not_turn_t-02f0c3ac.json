@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_rotation_grips__test_a_typed_angle_after_a_tool_change_does_not_turn_t-02f0c3ac",
+ "source": {"pytest": "tests/test_move_rotation_grips.py::test_a_typed_angle_after_a_tool_change_does_not_turn_the_last_group", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/1a552a05ef22c063.igz"},
+ "start_sig": "925340f497d2e0c76bb3503640f49ad1eb81ca6e7738b3d8369766a02b2138e5",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[2.0,0.5,1.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":90.0},"counters":{"group":100,"curve":163},"sig":"b64c960a866bed95554529cbb05473830546240956ce0bc0bb14b70bd29db454"}
+ ]
+}

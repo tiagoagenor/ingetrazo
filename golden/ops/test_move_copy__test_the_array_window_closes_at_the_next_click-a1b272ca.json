@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_move_copy__test_the_array_window_closes_at_the_next_click-a1b272ca",
+ "source": {"pytest": "tests/test_move_copy.py::test_the_array_window_closes_at_the_next_click", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e6aaa4dbb44277b.igz"},
+ "start_sig": "48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[2.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}},"counters":{"group":95,"curve":163},"sig":"f4ccc9e9bb9d5613f282d3ebcf5782be37f489dad5bb788ab8846ac3271f88c7"},
+  {"op":"undo","ok":true,"sig":"48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426"},
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,0.0,0.0]},{"$v":[3.0,0.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[2.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[4.0,0.0,0.0]},{"$v":[5.0,0.0,0.0]},{"$v":[5.0,1.0,0.0]},{"$v":[4.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[6.0,0.0,0.0]},{"$v":[7.0,0.0,0.0]},{"$v":[7.0,1.0,0.0]},{"$v":[6.0,1.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}}]},"counters":{"group":95,"curve":163},"sig":"21c8a9d3dfb2261664f6ba39ad5ff1d18b2dd3384f718fe9fec49177555c18ea"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_explode_lifts_a_child_with_its_axes_composed-726a2932",
+ "source": {"pytest": "tests/test_group_axes.py::test_explode_lifts_a_child_with_its_axes_composed", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/eb8de7577b5f60ba.igz"},
+ "start_sig": "c34576c1a4333fbf8913ea91b8893a49ff0ebb96bf9c72dc012b6272b9bb9e46",
+ "steps": [
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":74,"curve":113},"sig":"60b871fa87e218a3de22ff6cf86b0b10341aaf0bd0ce7b8173f8bd62e17d8731"},
+  {"op":"undo","ok":true,"sig":"c34576c1a4333fbf8913ea91b8893a49ff0ebb96bf9c72dc012b6272b9bb9e46"}
+ ]
+}

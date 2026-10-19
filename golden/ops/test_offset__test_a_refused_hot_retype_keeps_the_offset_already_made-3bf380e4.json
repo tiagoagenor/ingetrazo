@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_offset__test_a_refused_hot_retype_keeps_the_offset_already_made-3bf380e4",
+ "source": {"pytest": "tests/test_offset.py::test_a_refused_hot_retype_keeps_the_offset_already_made", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9009df0b08284331.igz"},
+ "start_sig": "33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}],"auto":false,"holes":[[{"$v":[1.0,1.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[3.0,3.0,0.0]},{"$v":[1.0,3.0,0.0]}]],"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[1.0,1.0,0.0]},{"$v":[3.0,1.0,0.0]},{"$v":[3.0,3.0,0.0]},{"$v":[1.0,3.0,0.0]}],"auto":false,"holes":null,"attrs":{}}}}]},"counters":{"group":100,"curve":163},"sig":"4017705df92f3c86ddae7ca13789cf75c61f5d6418456b87c68598d13b8ab088"},
+  {"op":"undo","ok":true,"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"redo","ok":true,"sig":"4017705df92f3c86ddae7ca13789cf75c61f5d6418456b87c68598d13b8ab088"},
+  {"op":"undo","ok":true,"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"delete_face","args":{"face":{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}],"auto":false,"holes":[[{"$v":[0.5,0.5,0.0]},{"$v":[3.5,0.5,0.0]},{"$v":[3.5,3.5,0.0]},{"$v":[0.5,3.5,0.0]}]],"attrs":{}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[0.5,0.5,0.0]},{"$v":[3.5,0.5,0.0]},{"$v":[3.5,3.5,0.0]},{"$v":[0.5,3.5,0.0]}],"auto":false,"holes":null,"attrs":{}}}}]},"counters":{"group":100,"curve":163},"sig":"3b32bcbabdd28819a1755c1f178929155ea663f13268ccc3d898acd22ea94c45"}
+ ]
+}

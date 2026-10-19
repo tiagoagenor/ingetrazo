@@ -42,16 +42,19 @@ def _fallback(obj):
 
 
 _FILE_HASHES: dict = {}
+#: Keys whose value is a file path: a texture's image and its untinted base.
+_FILE_KEYS = ("path", "base")
 
 
 def canonical(obj):
-    """``obj`` with every file path (a ``"path"`` value naming a file, as a
-    texture's) replaced by the SHA-256 of the file's bytes: a texture
-    embedded in an .igz reopens from another folder, and is the same."""
+    """``obj`` with every file path (a ``"path"`` or ``"base"`` naming a
+    file, as a texture's) replaced by the SHA-256 of the file's bytes: a
+    texture embedded in an .igz reopens from another folder, and is the
+    same."""
     if isinstance(obj, dict):
         out = {}
         for k, v in obj.items():
-            if k == "path" and isinstance(v, str):
+            if k in _FILE_KEYS and isinstance(v, str):
                 out[k] = _file_hash(v)
             else:
                 out[k] = canonical(v)
@@ -77,11 +80,6 @@ def _file_hash(path: str) -> str:
 
 def sha(text: str, n: int = 64) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:n]
-
-
-def _fallback_or(v):
-    """Plain JSON for ``canonical`` to walk."""
-    return json.loads(_dumps(v))
 
 
 def _rotated(keys: list) -> list:
@@ -125,8 +123,26 @@ def mesh_signature(mesh) -> dict:
     return {"v": verts, "e": edges, "f": faces}
 
 
-_GROUP_SKIP = {"mesh", "children", "uid", "owner", "context", "name",
-               "component", "xform", "material", "layer", "locked", "hidden"}
+def _rest(g) -> dict:
+    """The group fields the signature does not list one by one, as the
+    .igz writes them (formats/igz.py ``_entry``): only when set, matrices
+    as their 16 ``data()`` floats. Rust reads the same keys back."""
+    out = {}
+    axes = getattr(g, "axes", None)
+    if axes is not None:
+        out["axes"] = [float(x) for x in axes.data()]
+    for key in ("ifc", "text3d", "exploded"):
+        v = getattr(g, key, None)
+        if v:
+            out[key] = dict(v)
+    if getattr(g, "billboard", False):
+        out["billboard"] = g.billboard
+    if getattr(g, "ext", None):
+        out["ext"] = json.loads(json.dumps(g.ext, default=str))
+    if getattr(g, "explode_offset", None):
+        out["explode_offset"] = list(g.explode_offset)
+    return out
+
 
 
 def _group_signature(g, defs: dict, shares: dict) -> dict:
@@ -140,9 +156,7 @@ def _group_signature(g, defs: dict, shares: dict) -> dict:
         "layer": g.layer,
         "locked": bool(getattr(g, "locked", False)),
         "hidden": bool(getattr(g, "hidden", False)),
-        "rest": sha(_dumps(canonical({k: _fallback_or(getattr(g, k, None))
-                                      for k in type(g).__slots__
-                                      if k not in _GROUP_SKIP})), 16),
+        "rest": sha(_dumps(canonical(_rest(g))), 16),
     }
     if is_comp:
         # A definition is named by its content; which instances share one

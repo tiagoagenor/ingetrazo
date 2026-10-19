@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_dae_import__test_instance_edit_flows_make_unique-26bc2266",
+ "source": {"pytest": "tests/test_dae_import.py::test_instance_edit_flows_make_unique", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/26d9e75b35ba1c0f.igz"},
+ "start_sig": "b0c977fb46841de3f608d098faaa89a161fc43a1e7d7332c489f5290e07332e7",
+ "steps": [
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":13,"curve":39},"sig":"c98b09e953f0857f2c0770b0dacd0a6c29ecc7910e53d9a7f80688edc7fd8a10"},
+  {"op":"undo","ok":true,"sig":"b0c977fb46841de3f608d098faaa89a161fc43a1e7d7332c489f5290e07332e7"}
+ ]
+}

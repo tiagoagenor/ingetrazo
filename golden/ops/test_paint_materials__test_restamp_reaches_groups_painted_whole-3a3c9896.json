@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_restamp_reaches_groups_painted_whole-3a3c9896",
+ "source": {"pytest": "tests/test_paint_materials.py::test_restamp_reaches_groups_painted_whole", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/90fcf735d1a5f3b4.igz"},
+ "start_sig": "66ff63770cee94691da01c0db39de87031c071f0d1311dc235f6493a8a78d820",
+ "steps": [
+  {"op":"set_group_material","args":{"group":{"$group":[0]},"material":{"mat":"Azul","color":{"$t":[0.1,0.6,0.9]}}},"counters":{"group":100,"curve":163},"sig":"affa38826fe4c0d5382a4ebe5a394e1e5af568bb27df50705ac699bf793009a0"},
+  {"op":"set_group_material","args":{"group":{"$group":[1]},"material":{"color":{"$t":[0.2,0.2,0.2]}}},"counters":{"group":100,"curve":163},"sig":"256db9a1d3474f09d4b2c607615c155a2baa243f47e2e969912081d9dd463804"},
+  {"op":"set_group_material","args":{"group":{"$group":[0,0]},"material":{"mat":"Azul","color":{"$t":[0.1,0.6,0.9]}}},"counters":{"group":100,"curve":163},"sig":"c2480353f4ffe5153ba59fd54a54b5fe3fb66f92db381d0a6209ff03d475327f"},
+  {"op":"restamp_material","args":{"name":"Azul","new_material":{"$obj":"core.materials.Material","data":{"name":"Azul","color":[0.6,1.0,0.4]}}},"counters":{"group":100,"curve":163},"sig":"dc593f872e758db1062c679bc8eab5b84e5a69de5148ae72c024d3ed9ce7fd9b"},
+  {"op":"undo","ok":true,"sig":"c2480353f4ffe5153ba59fd54a54b5fe3fb66f92db381d0a6209ff03d475327f"}
+ ]
+}

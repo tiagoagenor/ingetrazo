@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_erase_leaves_no_orphan_vertices__test_erasing_a_face_takes_its_corners-d3e49c34",
+ "source": {"pytest": "tests/test_erase_leaves_no_orphan_vertices.py::test_erasing_a_face_takes_its_corners", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/964e08259af26275.igz"},
+ "start_sig": "553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[0.0,0.0,0.0],[2.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,0.0,0.0],[2.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[0.0,2.0,0.0],[0.0,0.0,0.0]],"in":null}}],"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}]},"counters":{"group":18,"curve":109},"sig":"047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986"}
+ ]
+}

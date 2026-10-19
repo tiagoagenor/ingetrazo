@@ -68,8 +68,34 @@ def _all_commands():
     return out
 
 
+_imported = False
+
+
+def _import_commands() -> None:
+    """Import every module that may define a Command (once), so a script
+    read from disk finds classes its test never imported."""
+    global _imported
+    if _imported:
+        return
+    import importlib
+    import pkgutil
+
+    for pkg in ("core", "tools", "plugins"):
+        try:
+            mod = importlib.import_module(pkg)
+        except Exception:  # noqa: BLE001 — a package that cannot load defines nothing
+            continue
+        for info in pkgutil.walk_packages(mod.__path__, pkg + "."):
+            try:
+                importlib.import_module(info.name)
+            except Exception:  # noqa: BLE001
+                pass
+    _imported = True
+
+
 def registry() -> dict:
     """op name → class (an ambiguous name maps to None)."""
+    _import_commands()
     reg: dict = {}
     for cls in _all_commands():
         n = op_name(cls)

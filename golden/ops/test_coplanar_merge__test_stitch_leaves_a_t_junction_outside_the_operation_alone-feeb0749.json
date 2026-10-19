@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_stitch_leaves_a_t_junction_outside_the_operation_alone-feeb0749",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_stitch_leaves_a_t_junction_outside_the_operation_alone", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b7c12269dac59966.igz"},
+ "start_sig": "03a1172c586ef797c56430556ffa8cfe1f0f4edb84353b3329c8cda843f46ff5",
+ "steps": [
+  {"op":"stitch_solid","args":{"seed_positions":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,2.0,0.0]},{"$v":[0.0,2.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,1.0,0.0]},{"$v":[2.0,1.0,0.0]},{"$v":[4.0,2.0,0.0]}]},"counters":{"group":13,"curve":10},"sig":"9ffabba80792a535a49218639574b048e1093d8c7325f8f881b588951c2b894c"}
+ ]
+}

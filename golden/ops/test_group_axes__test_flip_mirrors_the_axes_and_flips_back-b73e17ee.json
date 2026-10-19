@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_flip_mirrors_the_axes_and_flips_back-b73e17ee",
+ "source": {"pytest": "tests/test_group_axes.py::test_flip_mirrors_the_axes_and_flips_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/01e3e36bd55bfcec.igz"},
+ "start_sig": "ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759",
+ "steps": [
+  {"op":"flip_groups","args":{"groups":[{"$group":[0]}],"centre":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[1.0,0.0,0.0]}},"counters":{"group":74,"curve":113},"sig":"76a3cc518753b326bcd64a63df3f5fa90ab80a1365a017668fdac2e32b7df3aa"},
+  {"op":"undo","ok":true,"sig":"b6f555712de1d510f0d316b814b8e5d06e913cfd46d77c39f6a0512402f792b7"}
+ ]
+}

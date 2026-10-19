@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_face_sides__test_sin_material_en_el_reves_lo_devuelve_al_por_defecto-7163e14c",
+ "source": {"pytest": "tests/test_face_sides.py::test_sin_material_en_el_reves_lo_devuelve_al_por_defecto", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9fe563443d76fc37.igz"},
+ "start_sig": "6ffee60147d982324d0497d92679c29f1429425e19e1918ba167b1ab8943b18f",
+ "steps": [
+  {"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"backs":null},"counters":{"group":22,"curve":113},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"}
+ ]
+}

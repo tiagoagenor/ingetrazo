@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_purge__test_flags_scope_the_sweep-9e0c60ac",
+ "source": {"pytest": "tests/test_purge.py::test_flags_scope_the_sweep", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/56f8cbde644b3b9c.igz"},
+ "start_sig": "6d182757c92bc1a393660d378cf8464f0d813962f5697ee27ef26c29bb5ea56b",
+ "steps": [
+  {"op":"purge_unused","args":{"layers":true,"materials":false},"counters":{"group":105,"curve":171},"sig":"da64306cb5225320f78ffafe9541ab93895b17d39f7c9bff916d0416b66f5a6f"}
+ ]
+}

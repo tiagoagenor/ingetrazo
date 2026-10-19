@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_replacement_survives_the_igz-4123820c",
+ "source": {"pytest": "tests/test_replace_component.py::test_replacement_survives_the_igz", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/72443d831b89f7f3.igz"},
+ "start_sig": "40a9ae7c2b390c7a23e65bd665b3e3bde9e96b4e3cc18e46c842d72d779193d3",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[0]},{"$group":[1]},{"$group":[2]}],"source":{"$group":[3]}},"counters":{"group":106,"curve":171},"sig":"bd0d53a489f288419401eb5135bd19dff13df8a3d1678059e01411785b6be8ae"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_sliver_wildcard_plane__test_a_rebuild_with_no_plane_is_a_no_op_not_a_wipe-94bec68f",
+ "source": {"pytest": "tests/test_sliver_wildcard_plane.py::test_a_rebuild_with_no_plane_is_a_no_op_not_a_wipe", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/19938b845c5d3607.igz"},
+ "start_sig": "038976013b531283234b4f4015ff80d1f93ec72ad97284900ea410e2bc160be4",
+ "steps": [
+  {"op":"rebuild_plane_faces","args":{"origin":{"$v":[1.0,1.0,0.0]},"normal":{"$v":[0.0,0.0,0.0]}},"counters":{"group":119,"curve":198},"sig":"038976013b531283234b4f4015ff80d1f93ec72ad97284900ea410e2bc160be4"}
+ ]
+}

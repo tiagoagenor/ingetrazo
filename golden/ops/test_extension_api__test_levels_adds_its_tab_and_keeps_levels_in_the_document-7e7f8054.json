@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_extension_api__test_levels_adds_its_tab_and_keeps_levels_in_the_document-7e7f8054",
+ "source": {"pytest": "tests/test_extension_api.py::test_levels_adds_its_tab_and_keeps_levels_in_the_document", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/08428e4623ed0c55.igz"},
+ "start_sig": "78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb",
+ "steps": [
+  {"op":"set_plugin_data","args":{"key":"niveles","value":{"levels":[{"name":"PB","z":0.0},{"name":"PA","z":2.6}],"guides":true}},"counters":{"group":21,"curve":113},"sig":"78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb"},
+  {"op":"undo","ok":true,"sig":"78d475f1a2582662447ceb2a3f63f8719b1aeff79469530328f7e5b875ea10cb"}
+ ]
+}

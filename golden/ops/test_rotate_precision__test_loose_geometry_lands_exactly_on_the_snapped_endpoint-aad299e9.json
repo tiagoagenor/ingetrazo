@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotate_precision__test_loose_geometry_lands_exactly_on_the_snapped_endpoint-aad299e9",
+ "source": {"pytest": "tests/test_rotate_precision.py::test_loose_geometry_lands_exactly_on_the_snapped_endpoint", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/19618be09664925d.igz"},
+ "start_sig": "1070adb92673d0e7bde1f647c6e957de4e0a0d9ca0f125277c3d9509399b7c20",
+ "steps": [
+  {"op":"rotate_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[2.0,0.10000000149011612,0.0]},{"$v":[0.0,0.10000000149011612,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":-70.27889983966138},"counters":{"group":112,"curve":196},"sig":"a3ebd61486ca78cdec1586ed44c842a9501b111868ba46f0be5c0ae29728178c"}
+ ]
+}

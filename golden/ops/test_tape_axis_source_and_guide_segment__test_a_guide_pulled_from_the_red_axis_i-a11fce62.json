@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_tape_axis_source_and_guide_segment__test_a_guide_pulled_from_the_red_axis_i-a11fce62",
+ "source": {"pytest": "tests/test_tape_axis_source_and_guide_segment.py::test_a_guide_pulled_from_the_red_axis_is_parallel_at_the_typed_distance", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_guide","args":{"guide":{"$obj":"core.guide.Guide","data":{"point":[3.0,5.0,0.0],"direction":[1.0,0.0,0.0]}}},"counters":{"group":119,"curve":205},"sig":"e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d"}
+ ]
+}

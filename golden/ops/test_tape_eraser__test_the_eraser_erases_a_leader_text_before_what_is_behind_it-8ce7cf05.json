@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_tape_eraser__test_the_eraser_erases_a_leader_text_before_what_is_behind_it-8ce7cf05",
+ "source": {"pytest": "tests/test_tape_eraser.py::test_the_eraser_erases_a_leader_text_before_what_is_behind_it", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/310fd70738910001.igz"},
+ "start_sig": "15505c51a52c5d3b3cdaa00837790060157fa69bdd8dc75038d031efb4cd2c57",
+ "steps": [
+  {"op":"delete_text_labels","args":{"labels":[{"$ref":["text_labels",0]}]},"counters":{"group":119,"curve":205},"sig":"16b2dabbb3276886e83cd75d7af4c7bb46303746c64aba83b4918c91a0f5bbb2"},
+  {"op":"undo","ok":true,"sig":"15505c51a52c5d3b3cdaa00837790060157fa69bdd8dc75038d031efb4cd2c57"}
+ ]
+}

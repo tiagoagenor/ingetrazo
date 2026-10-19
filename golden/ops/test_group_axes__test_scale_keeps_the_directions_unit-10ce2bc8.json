@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_axes__test_scale_keeps_the_directions_unit-10ce2bc8",
+ "source": {"pytest": "tests/test_group_axes.py::test_scale_keeps_the_directions_unit", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/01116cb2e81bfeda.igz"},
+ "start_sig": "ba51844db5cdadf51b0682c1755fc86fa726d7c89dddfcaa4cd0dfdb7936a759",
+ "steps": [
+  {"op":"rotate_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":45.0},"counters":{"group":74,"curve":113},"sig":"5c4025167f265c36fa55160ef06f2166d7517085f881d5bbc8ae95a314135f69"},
+  {"op":"scale_group","args":{"group":{"$group":[0]},"center":{"$v":[0.0,0.0,0.0]},"factor":{"$t":[3.0,1.0,1.0]}},"counters":{"group":74,"curve":113},"sig":"d6058800131f04b633830d388491a7a81a7893cfaf7e7947e4dd40f78aa56e0e"}
+ ]
+}

@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_image_plane__test_move_shifts_the_corner_and_nothing_else-cf5ec445",
+ "source": {"pytest": "tests/test_image_plane.py::test_move_shifts_the_corner_and_nothing_else", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_image_plane","args":{"image":{"$obj":"core.image_plane.ImagePlane","data":{"texture":{"path":"scan.png"},"origin":[0.0,0.0,0.0],"u":[4.0,0.0,0.0],"v":[0.0,3.0,0.0],"aspect":0.75}}},"counters":{"group":88,"curve":161},"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"},
+  {"op":"move_image_planes","args":{"images":[{"$ref":["image_planes",0]}],"delta":{"$v":[5.0,5.0,2.0]}},"counters":{"group":88,"curve":161},"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"},
+  {"op":"undo","ok":true,"sig":"cb6f2a7dc05d197e5701f71788b6561eb267f2186e5a5348302b4b622435892b"}
+ ]
+}

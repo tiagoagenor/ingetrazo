@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_rotate_array__test_array_pending_says_when_x5_would_fan_the_copy-93f3e3fb",
+ "source": {"pytest": "tests/test_rotate_array.py::test_array_pending_says_when_x5_would_fan_the_copy#2", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/09924e8170c102d9.igz"},
+ "start_sig": "67eb5294a37ef51920cdf041689612259c1015ccd0817b1d9b55c4a7eb76f21f",
+ "steps": [
+  {"op":"rotate_vertices","args":{"positions":[{"$v":[1.899999976158142,-0.10000000149011612,0.0]},{"$v":[2.0999999046325684,-0.10000000149011612,0.0]},{"$v":[2.0999999046325684,0.10000000149011612,0.0]},{"$v":[1.899999976158142,0.10000000149011612,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"axis":{"$v":[0.0,0.0,1.0]},"degrees":90.0},"counters":{"group":106,"curve":194},"sig":"eb4d916756911c249ffa76f3e32a06651f4327d816f596a5a7334bf21d97143a"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_solid_tools__test_union_runs_at_once_on_a_preselection-f033e863",
+ "source": {"pytest": "tests/test_solid_tools.py::test_union_runs_at_once_on_a_preselection", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b4aabc427b57047a.igz"},
+ "start_sig": "86854780c450681c71758b35c4a8357d65c3190ddf2120aa12e8b5b32e90618e",
+ "steps": [
+  {"op":"solid_operation","args":{"op":"union","groups":[{"$group":[0]},{"$group":[1]}]},"counters":{"group":119,"curve":205},"sig":"9097f14d25b2c879e21fbc94934533f411d3e2a880a91eca2cb12164b3786405"}
+ ]
+}

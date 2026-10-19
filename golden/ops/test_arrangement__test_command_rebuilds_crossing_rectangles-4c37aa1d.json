@@ -1,0 +1,18 @@
+{
+ "schema": 1,
+ "id": "test_arrangement__test_command_rebuilds_crossing_rectangles-4c37aa1d",
+ "source": {"pytest": "tests/test_arrangement.py::test_command_rebuilds_crossing_rectangles", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[4.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"faedc761824856de3bb5df30d08735d92fccc162e497e4e1eda9cb416ed3631d"},
+  {"op":"add_edge","args":{"a":{"$v":[4.0,0.0,0.0]},"b":{"$v":[4.0,3.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"4b4b7b0176aad7eb9945a12d059810f6c0ed91474b87c13785371e9b841ca37f"},
+  {"op":"add_edge","args":{"a":{"$v":[4.0,3.0,0.0]},"b":{"$v":[0.0,3.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"3a16d83c0d29466dad6c05d86d87e6dedbb8617dab6161fee84441aadc738439"},
+  {"op":"add_edge","args":{"a":{"$v":[0.0,3.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"3e3e62fad207d680d3a5998c40cd0c7495478bb5ee10c24bba1d75a66f4ab79f"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,1.0,0.0]},"b":{"$v":[6.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"575786c9ac8257e1433dc092d6f6a34645cf7f8fe0a83ddac7870db8198ea818"},
+  {"op":"add_edge","args":{"a":{"$v":[6.0,1.0,0.0]},"b":{"$v":[6.0,5.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"da15c3ea2a519359741dfddfc9b9ffbdb493536f1a137e1d8b3ef77869f8ee34"},
+  {"op":"add_edge","args":{"a":{"$v":[6.0,5.0,0.0]},"b":{"$v":[2.0,5.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"98f9c9a210ef374c60451ce8540b94e31064c1e2ff8ecfd027da7f78b0a5a4e4"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,5.0,0.0]},"b":{"$v":[2.0,1.0,0.0]}},"counters":{"group":1,"curve":3},"sig":"c7b9b2392fde63480203fef7106cf031654b9c44139259713eb93cd70cbdbcf1"},
+  {"op":"rebuild_planar_faces","args":{},"counters":{"group":1,"curve":3},"sig":"6d028eae537b2077a5e2f9b689e874554173f0115128802366244653ab5c4457"}
+ ]
+}

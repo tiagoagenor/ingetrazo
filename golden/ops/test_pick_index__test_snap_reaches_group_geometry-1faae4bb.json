@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_pick_index__test_snap_reaches_group_geometry-1faae4bb",
+ "source": {"pytest": "tests/test_pick_index.py::test_snap_reaches_group_geometry", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/7ceaba3e7c315b6a.igz"},
+ "start_sig": "a11623bdae805574fcd619da394ac5588edb6bf850f9a5eb46e2230a277ec670",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[-2.0,-2.0,0.0],[2.0,-2.0,0.0],[2.0,2.0,0.0],[-2.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":103,"curve":168},"sig":"f083411bb32ffca93625cee8dbce403acb4d13bd779b52535d8492cfc8392ef2"}
+ ]
+}

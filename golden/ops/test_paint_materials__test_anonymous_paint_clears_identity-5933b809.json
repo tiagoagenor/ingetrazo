@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_paint_materials__test_anonymous_paint_clears_identity-5933b809",
+ "source": {"pytest": "tests/test_paint_materials.py::test_anonymous_paint_clears_identity", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/451d0c3a60454df6.igz"},
+ "start_sig": "1d276845cd52b948d606c1c6b6bce0bc2b9851081ac4f724165355d7e2214d63",
+ "steps": [
+  {"op":"compound","args":{"commands":[{"$cmd":{"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"color":{"$t":[0.8,0.1,0.1]}}}},{"$cmd":{"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"texture":null}}},{"$cmd":{"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"opacity":null}}},{"$cmd":{"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[4.0,0.0,0.0],[4.0,4.0,0.0],[0.0,4.0,0.0]],"in":null}}],"name":null,"material":null}}}]},"counters":{"group":100,"curve":163},"sig":"33f679b81d2344f9505739a561087b39a87fd21d4e3b4c47a6cfc74d993fd864"},
+  {"op":"undo","ok":true,"sig":"1d276845cd52b948d606c1c6b6bce0bc2b9851081ac4f724165355d7e2214d63"}
+ ]
+}

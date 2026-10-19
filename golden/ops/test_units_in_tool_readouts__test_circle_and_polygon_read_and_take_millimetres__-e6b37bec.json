@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_units_in_tool_readouts__test_circle_and_polygon_read_and_take_millimetres__-e6b37bec",
+ "source": {"pytest": "tests/test_units_in_tool_readouts.py::test_circle_and_polygon_read_and_take_millimetres[PolygonTool-6]", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/ac501487ec7a3091.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.5,0.0,0.0]},"b":{"$v":[0.25,0.4330126941204071,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.25,0.4330126941204071,0.0]},"b":{"$v":[-0.25,0.4330126941204071,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-0.25,0.4330126941204071,0.0]},"b":{"$v":[-0.5,6.123234262925839e-17,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-0.5,6.123234262925839e-17,0.0]},"b":{"$v":[-0.25,-0.4330126941204071,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[-0.25,-0.4330126941204071,0.0]},"b":{"$v":[0.25,-0.4330126941204071,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.25,-0.4330126941204071,0.0]},"b":{"$v":[0.5,0.0,0.0]}}}},{"$cmd":{"op":"tag_curve","args":{"loop_points":[{"$v":[0.5,0.0,0.0]},{"$v":[0.25,0.4330126941204071,0.0]},{"$v":[-0.25,0.4330126941204071,0.0]},{"$v":[-0.5,6.123234262925839e-17,0.0]},{"$v":[-0.25,-0.4330126941204071,0.0]},{"$v":[0.25,-0.4330126941204071,0.0]}],"closed":true}}},{"$cmd":{"op":"rebuild_planar_faces","args":{}}}]},"counters":{"group":123,"curve":206},"sig":"6e7e5c46efadddbe427c46776d69013fc9b23d889a08e7a7aab56640efea3f13"}
+ ]
+}

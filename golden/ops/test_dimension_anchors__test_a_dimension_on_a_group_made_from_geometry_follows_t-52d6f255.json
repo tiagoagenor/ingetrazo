@@ -1,0 +1,14 @@
+{
+ "schema": 1,
+ "id": "test_dimension_anchors__test_a_dimension_on_a_group_made_from_geometry_follows_t-52d6f255",
+ "source": {"pytest": "tests/test_dimension_anchors.py::test_a_dimension_on_a_group_made_from_geometry_follows_the_scale_tool", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[6.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,0.0,0.0]},"b":{"$v":[6.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[6.0,2.0,0.0]},"b":{"$v":[2.0,2.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[2.0,2.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[2.0,2.0,0.0]},{"$v":[2.0,0.0,0.0]},{"$v":[6.0,0.0,0.0]},{"$v":[6.0,2.0,0.0]}]}}}]},"counters":{"group":13,"curve":39},"sig":"5564daeb4fd673bee0f64f143b63722d2e8dae5999ba2bf41fcfae0a2df41d5a"},
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[2.0,2.0,0.0],[2.0,0.0,0.0],[6.0,0.0,0.0],[6.0,2.0,0.0]],"in":null}}],"edges":[{"$edge":{"ends":[[2.0,0.0,0.0],[6.0,0.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,0.0,0.0],[6.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[6.0,2.0,0.0],[2.0,2.0,0.0]],"in":null}},{"$edge":{"ends":[[2.0,2.0,0.0],[2.0,0.0,0.0]],"in":null}}]},"counters":{"group":13,"curve":39},"sig":"8d3ae0cc8610bf9d1d34763d75c6184fa35b9c82ff19e4c482198643968bf8e8"},
+  {"op":"add_dimension","args":{"dimension":{"$obj":"Dimension","data":{"a":[2.0,0.0,0.0],"b":[6.0,0.0,0.0],"offset":[0.0,-1.0,0.0],"layer":null,"text":null,"axis":null}}},"counters":{"group":14,"curve":39},"sig":"e019b20f73ae4736a7757781382a387899f1916cdf87591822b20a62eaec1d34"},
+  {"op":"scale_group","args":{"group":{"$group":[0]},"center":{"$v":[2.0,0.0,0.0]},"factor":{"$t":[1.5,1.5,1.0]},"axes":null},"counters":{"group":14,"curve":39},"sig":"b0ad40b72db242cc2f3e531bcbbef3831c905f31e1aaf17d93c5b5603d3ba847"},
+  {"op":"undo","ok":true,"sig":"e019b20f73ae4736a7757781382a387899f1916cdf87591822b20a62eaec1d34"}
+ ]
+}

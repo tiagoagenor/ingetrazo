@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_undo_takes_back_new_edges__test_lines_drawn_first_stay_when_their_face_is_u-0f21e256",
+ "source": {"pytest": "tests/test_undo_takes_back_new_edges.py::test_lines_drawn_first_stay_when_their_face_is_undone", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/5c5440847ca8d3a2.igz"},
+ "start_sig": "c280e5d45b4f410aea1b7673a441fc43c60421c5b338037f593d91b11f05d9e6",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,4.0,0.0]},{"$v":[0.0,4.0,0.0]}],"auto":false},"counters":{"group":123,"curve":205},"sig":"33000210cb0f312f97232e3a9cf292f2d95e3e7690bc2b015e6d952f63084de0"},
+  {"op":"undo","ok":true,"sig":"c280e5d45b4f410aea1b7673a441fc43c60421c5b338037f593d91b11f05d9e6"}
+ ]
+}

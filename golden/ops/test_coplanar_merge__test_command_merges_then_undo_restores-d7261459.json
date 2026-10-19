@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_coplanar_merge__test_command_merges_then_undo_restores-d7261459",
+ "source": {"pytest": "tests/test_coplanar_merge.py::test_command_merges_then_undo_restores", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3908341348d8a48e.igz"},
+ "start_sig": "93c960160a732dd8001c4e7a21ecc71e0831412f2da0fba7f13958e3cdbae013",
+ "steps": [
+  {"op":"coplanar_merge","args":{"seed_positions":[{"$v":[1.0,0.0,0.0]},{"$v":[1.0,1.0,0.0]}]},"counters":{"group":13,"curve":10},"sig":"2060b5551a42f7a64cc6bec784ed27727c5624b20c9f77d2cf9f5598c09f6f91"},
+  {"op":"undo","ok":true,"sig":"93c960160a732dd8001c4e7a21ecc71e0831412f2da0fba7f13958e3cdbae013"}
+ ]
+}

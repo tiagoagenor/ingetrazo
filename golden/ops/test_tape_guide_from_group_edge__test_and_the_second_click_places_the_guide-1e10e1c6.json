@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_tape_guide_from_group_edge__test_and_the_second_click_places_the_guide-1e10e1c6",
+ "source": {"pytest": "tests/test_tape_guide_from_group_edge.py::test_and_the_second_click_places_the_guide", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_guide","args":{"guide":{"$obj":"core.guide.Guide","data":{"point":[1.0,2.0,0.0],"direction":[1.0,0.0,0.0]}}},"counters":{"group":119,"curve":205},"sig":"e579a40d4045893d2ae603ac8d608a9bda5f13df96045bb6dbf4a1f4e5e59f2d"}
+ ]
+}

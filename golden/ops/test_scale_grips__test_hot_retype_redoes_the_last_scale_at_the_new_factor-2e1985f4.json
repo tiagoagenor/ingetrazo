@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_scale_grips__test_hot_retype_redoes_the_last_scale_at_the_new_factor-2e1985f4",
+ "source": {"pytest": "tests/test_scale_grips.py::test_hot_retype_redoes_the_last_scale_at_the_new_factor", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9486c9228182fc34.igz"},
+ "start_sig": "9a4ab9596a6134518cf558b69d2a93663bcad9d00bda841ee2a4efd31327f771",
+ "steps": [
+  {"op":"scale_vertices","args":{"positions":[{"$v":[0.0,0.0,2.0]},{"$v":[4.0,0.0,2.0]},{"$v":[4.0,3.0,2.0]},{"$v":[0.0,3.0,2.0]},{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,3.0,0.0]},{"$v":[0.0,3.0,0.0]}],"center":{"$v":[0.0,1.5,1.0]},"factor":{"$t":[2.0,1.0,1.0]},"axes":null},"counters":{"group":112,"curve":196},"sig":"98d6ce924c2b168439a75be1bb6bcf203cab7d033c4c98da904532ee93524eff"},
+  {"op":"undo","ok":true,"sig":"9a4ab9596a6134518cf558b69d2a93663bcad9d00bda841ee2a4efd31327f771"},
+  {"op":"scale_vertices","args":{"positions":[{"$v":[0.0,0.0,2.0]},{"$v":[4.0,0.0,2.0]},{"$v":[4.0,3.0,2.0]},{"$v":[0.0,3.0,2.0]},{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,3.0,0.0]},{"$v":[0.0,3.0,0.0]}],"center":{"$v":[0.0,1.5,1.0]},"factor":{"$t":[3.0,1.0,1.0]},"axes":null},"counters":{"group":112,"curve":196},"sig":"b4f2cdc67ebb92eeba0d4a5de4f39a212a817e85c84c5765a043221183c4def6"}
+ ]
+}

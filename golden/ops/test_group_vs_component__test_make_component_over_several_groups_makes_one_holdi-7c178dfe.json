@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_group_vs_component__test_make_component_over_several_groups_makes_one_holdi-7c178dfe",
+ "source": {"pytest": "tests/test_group_vs_component.py::test_make_component_over_several_groups_makes_one_holding_them", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/ef0e5c3afe3bb192.igz"},
+ "start_sig": "8401fa6a0e49cee0ecd39092a53011bf6f3cef2212347a83d4cec008782dcdca",
+ "steps": [
+  {"op":"make_component_of","args":{"faces":[],"edges":[],"groups":[{"$group":[0]},{"$group":[1]}],"name":"Banca"},"counters":{"group":83,"curve":113},"sig":"7cd841c9864adc410cfa40a2a6fc0eb74b194035ddf1c6cb0da58f08ccd070da"},
+  {"op":"undo","ok":true,"sig":"8401fa6a0e49cee0ecd39092a53011bf6f3cef2212347a83d4cec008782dcdca"}
+ ]
+}

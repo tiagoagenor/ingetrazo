@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_transactional_history__test_successful_command_clears_last_error-9289b91a",
+ "source": {"pytest": "tests/test_transactional_history.py::test_successful_command_clears_last_error", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[1.0,1.0,0.0]}},"counters":{"group":123,"curve":205},"sig":"88074eb587f4cd8b1eabb8d27cfb2f335ced1eb33ebe4f87584d351cb9375bc4"}
+ ]
+}

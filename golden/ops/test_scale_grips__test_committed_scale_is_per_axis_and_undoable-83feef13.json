@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_scale_grips__test_committed_scale_is_per_axis_and_undoable-83feef13",
+ "source": {"pytest": "tests/test_scale_grips.py::test_committed_scale_is_per_axis_and_undoable", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/706112a71eda8a3d.igz"},
+ "start_sig": "1d8e77f6a512509098f18074f9c21cff577f2a746eb0f7f27b30daebc8aa90f2",
+ "steps": [
+  {"op":"scale_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[4.0,0.0,0.0]},{"$v":[4.0,3.0,0.0]},{"$v":[0.0,3.0,0.0]}],"center":{"$v":[0.0,0.0,0.0]},"factor":{"$t":[2.0,0.5,1.0]}},"counters":{"group":112,"curve":196},"sig":"d307b681c6057324a503df1bdac31d7c41be3dcb7943ebe1955859db5600afc9"},
+  {"op":"undo","ok":true,"sig":"1d8e77f6a512509098f18074f9c21cff577f2a746eb0f7f27b30daebc8aa90f2"}
+ ]
+}

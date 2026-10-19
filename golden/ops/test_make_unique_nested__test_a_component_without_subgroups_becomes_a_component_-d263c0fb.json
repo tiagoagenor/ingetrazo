@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_make_unique_nested__test_a_component_without_subgroups_becomes_a_component_-d263c0fb",
+ "source": {"pytest": "tests/test_make_unique_nested.py::test_a_component_without_subgroups_becomes_a_component_of_its_own", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/842faac10843b5d1.igz"},
+ "start_sig": "c8ac20d3ca05f3d228d1bac86c0585a0b14816c057b0ed66cda0f46e4763c090",
+ "steps": [
+  {"op":"make_unique","args":{"group":{"$group":[0]}},"counters":{"group":95,"curve":163},"sig":"10a7f2046d19a5a36a3e50a8ca7853aedd2481076cc2f21ae7d7cb5e8743da51"}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_replace_component__test_replace_follows_the_targets_turn_and_scale-225c5f0a",
+ "source": {"pytest": "tests/test_replace_component.py::test_replace_follows_the_targets_turn_and_scale", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/635a149a35c0dd3f.igz"},
+ "start_sig": "998b91e4c92430605e05a58bb99976c61b22d75517f839951b15234ef678990f",
+ "steps": [
+  {"op":"replace_component","args":{"targets":[{"$group":[0]}],"source":{"$group":[1]}},"counters":{"group":106,"curve":171},"sig":"a206fc57a73fa4ba09c9fcc387a1d9d9358d7a67e9ceb9f807fcbddf1a63f6f1"}
+ ]
+}

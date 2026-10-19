@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_copy__test_a_plain_move_offers_no_array-4ecbe2da",
+ "source": {"pytest": "tests/test_move_copy.py::test_a_plain_move_offers_no_array", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3e6aaa4dbb44277b.igz"},
+ "start_sig": "48eff616ecd7a0fe50d08879bab8c7c2f7c7f8fd734f9d8cfdca961e64d3b426",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[0.0,0.0,0.0]},{"$v":[1.0,0.0,0.0]},{"$v":[1.0,1.0,0.0]},{"$v":[0.0,1.0,0.0]}],"delta":{"$v":[2.0,0.0,0.0]}},"counters":{"group":95,"curve":163},"sig":"2425c7dd866241f01d23b057a24d4404af90bd3c182b5191c6fb458046cdb271"}
+ ]
+}

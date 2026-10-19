@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_groups__test_moving_a_group_does_not_drag_loose_geometry-1014abae",
+ "source": {"pytest": "tests/test_groups.py::test_moving_a_group_does_not_drag_loose_geometry", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/de3ac84a52d27fa4.igz"},
+ "start_sig": "1d29fefad829be8cb55e3aa7bf41701cee1c28160dbab2e7549c6882ea307f8b",
+ "steps": [
+  {"op":"make_group","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}],"edges":[]},"counters":{"group":84,"curve":113},"sig":"8b8c2e871b7ddeb269fb7817250526b98bd7d7431d9708aef1d2469be98549c5"},
+  {"op":"move_group","args":{"group":{"$group":[0]},"delta":{"$v":[10.0,0.0,0.0]}},"counters":{"group":85,"curve":113},"sig":"7de11c2795b4ccf3805048b618e617c1307a1d1b1a5d63552ac27fe378a3c30e"},
+  {"op":"undo","ok":true,"sig":"2036c19423ff1d7d9948e5172714435b86129687805242031112814e592881aa"}
+ ]
+}

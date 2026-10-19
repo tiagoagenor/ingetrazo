@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_line_undo_mid_chain__test_undo_steps_the_chain_back_to_the_previous_vertex-ce6a8928",
+ "source": {"pytest": "tests/test_line_undo_mid_chain.py::test_undo_steps_the_chain_back_to_the_previous_vertex", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[2.0,0.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"df8023f7104c9954ab4857f4698800b25fb63608389bce65fdf138f1e17c28f6"},
+  {"op":"add_edge","args":{"a":{"$v":[2.0,0.0,0.0]},"b":{"$v":[2.0,3.0,0.0]}},"counters":{"group":91,"curve":163},"sig":"993b4ceb987bcfff271654ee698b7e42d3da73949dd2c731eaf6502d74b241dc"},
+  {"op":"undo","ok":true,"sig":"70f7e3a50166d8bf15143e47bc1264fc6d0687aac77db38401e2488116bf0c46"},
+  {"op":"undo","ok":true,"sig":"0b772b6d8b723bd9692ecd42af7130f3fb332cff4bbfc7721c6db134e8532f99"}
+ ]
+}

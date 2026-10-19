@@ -1,0 +1,12 @@
+{
+ "schema": 1,
+ "id": "test_nested_instances__test_explode_removes_one_level-6dde0489",
+ "source": {"pytest": "tests/test_nested_instances.py::test_explode_removes_one_level", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/a08a87209e87aa72.igz"},
+ "start_sig": "94622bd81f7a08d66aa5ae163758195f0ab4fbb437558997f16c7ff9806612b0",
+ "steps": [
+  {"op":"explode_group","args":{"group":{"$group":[0]}},"counters":{"group":100,"curve":163},"sig":"79872603e64601e4d6c6df613b1633fa3656126100f7590dc57bd834ca727b29"},
+  {"op":"undo","ok":true,"sig":"94622bd81f7a08d66aa5ae163758195f0ab4fbb437558997f16c7ff9806612b0"},
+  {"op":"redo","ok":true,"sig":"79872603e64601e4d6c6df613b1633fa3656126100f7590dc57bd834ca727b29"}
+ ]
+}

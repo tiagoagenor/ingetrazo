@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_rotate_array__test_array_pending_says_when_x5_would_fan_the_copy-c712f7f7",
+ "source": {"pytest": "tests/test_rotate_array.py::test_array_pending_says_when_x5_would_fan_the_copy", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/09924e8170c102d9.igz"},
+ "start_sig": "67eb5294a37ef51920cdf041689612259c1015ccd0817b1d9b55c4a7eb76f21f",
+ "steps": [
+  {"op":"add_face","args":{"vertices":[{"$v":[1.6954481601715088,0.863397479057312,0.0]},{"$v":[1.8686531782150269,0.9633973836898804,0.0]},{"$v":[1.7686532735824585,1.136602520942688,0.0]},{"$v":[1.5954482555389404,1.03660249710083,0.0]}],"auto":false,"holes":null,"attrs":{}},"counters":{"group":106,"curve":194},"sig":"211d4106463062d01c832098241458af49aa0e56fca7ff37ec85c1bf2d96fee7"},
+  {"op":"undo","ok":true,"sig":"67eb5294a37ef51920cdf041689612259c1015ccd0817b1d9b55c4a7eb76f21f"}
+ ]
+}

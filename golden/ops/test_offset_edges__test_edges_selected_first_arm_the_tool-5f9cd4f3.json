@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_offset_edges__test_edges_selected_first_arm_the_tool-5f9cd4f3",
+ "source": {"pytest": "tests/test_offset_edges.py::test_edges_selected_first_arm_the_tool", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/018eb524ec6d0736.igz"},
+ "start_sig": "2ee0786c8b00b6958b6b38b6a90b83b2218d245fc993090e1f8306a49102af2b",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.25,0.0]},"b":{"$v":[1.75,0.25,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[1.75,0.25,0.0]},"b":{"$v":[1.75,2.0,0.0]}}}}]},"counters":{"group":100,"curve":163},"sig":"abb917f8061755ff8055278e1e0f47cfc5a995e6d6599037b5102687bdbb19a5"}
+ ]
+}

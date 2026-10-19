@@ -269,6 +269,16 @@ follow [SemVer](https://semver.org).
   da 1 ulp distinto en un modelo recién dibujado y en uno reabierto (las
   banderas de tipo de `QMatrix4x4`). `--golden-harvest` escribe los guiones
   exactos en `golden/`.
+- **Corpus de gabaritos y su repetición en Rust** (M0.5, M0.6): 621 guiones
+  cosechados de la suite rápida (`golden/ops`, con las escenas de partida
+  guardadas una vez por contenido en `golden/starts` y `golden/ledger.csv`).
+  `tests/test_golden_corpus.py` los repite desde los archivos en 20 s.
+  `ingetrazo-cli golden replay` (crates `ingetrazo-golden` e `ingetrazo-cli`)
+  calcula en Rust la firma L2 de cada escena de partida a partir del `.igz`
+  y coincide con la de Python en los 621; luego dice qué operación le falta
+  al motor Rust y a cuántos guiones bloquea (la lista de trabajo de M2–M3).
+  `cargo test` lo exige en el CI. La firma trata texturas y su base por
+  contenido (`embed` en el archivo, `path` al reabrir).
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

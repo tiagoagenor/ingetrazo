@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_move_join_guard__test_old_damage_elsewhere_does_not_block_a_join-bf5e999d",
+ "source": {"pytest": "tests/test_move_join_guard.py::test_old_damage_elsewhere_does_not_block_a_join", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/4df234326f0b23b0.igz"},
+ "start_sig": "6982c9da38016fffec28f0d5bc12198386957c58bb0c41b5ee5e99b996dbfc52",
+ "steps": [
+  {"op":"move_vertices","args":{"positions":[{"$v":[3.0,0.0,2.5999999046325684]},{"$v":[3.0,4.0,2.5999999046325684]}],"delta":{"$v":[0.0,0.0,-2.5999999046325684]}},"counters":{"group":96,"curve":163},"sig":"4e2cc51fe1934922bfb5b15fc9982d6273854daddbfcb20b748d9948d2ed4aa8"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "test_render_finish__test_choosing_a_finish_is_undoable_and_saved-6ff011b4",
+ "source": {"pytest": "tests/test_render_finish.py::test_choosing_a_finish_is_undoable_and_saved", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/f5abaeaf23ca7261.igz"},
+ "start_sig": "d13427b1bbc39ee6202acd2f741705f0715d330c09622540407ba0e4117ada7e",
+ "steps": [
+  {"op":"set_material_finish","args":{"name":"Porcelanato","finish":"metal"},"counters":{"group":106,"curve":171},"sig":"ce18fd654cfdd191e3e8ad790509f197f2e80c740726a4ee9bd81eee300562fe"},
+  {"op":"undo","ok":true,"sig":"d13427b1bbc39ee6202acd2f741705f0715d330c09622540407ba0e4117ada7e"}
+ ]
+}

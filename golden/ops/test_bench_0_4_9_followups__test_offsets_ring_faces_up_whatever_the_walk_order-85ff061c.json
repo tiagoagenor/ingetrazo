@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_bench_0_4_9_followups__test_offsets_ring_faces_up_whatever_the_walk_order-85ff061c",
+ "source": {"pytest": "tests/test_bench_0_4_9_followups.py::test_offsets_ring_faces_up_whatever_the_walk_order", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9d90afc405effa3b.igz"},
+ "start_sig": "047fa3a7c9ccdd0e843d202111abead837e6830c7ae0231ac709dd0a59528986",
+ "steps": [
+  {"op":"snapshot_compound","args":{"inner":[{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,0.0,0.0]},"b":{"$v":[0.0,3.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[0.0,3.0,0.0]},"b":{"$v":[3.0,3.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,3.0,0.0]},"b":{"$v":[3.0,0.0,0.0]}}}},{"$cmd":{"op":"add_edge","args":{"a":{"$v":[3.0,0.0,0.0]},"b":{"$v":[0.0,0.0,0.0]}}}},{"$cmd":{"op":"add_face","args":{"vertices":[{"$v":[3.0,0.0,0.0]},{"$v":[3.0,3.0,0.0]},{"$v":[0.0,3.0,0.0]},{"$v":[0.0,0.0,0.0]}]}}}]},"counters":{"group":1,"curve":3},"sig":"293f4ec06a0d664430038ff1874e1945d4e7038a5b9d74e23eea8ced723c0983"}
+ ]
+}

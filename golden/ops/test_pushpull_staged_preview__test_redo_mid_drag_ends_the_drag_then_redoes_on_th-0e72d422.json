@@ -1,0 +1,13 @@
+{
+ "schema": 1,
+ "id": "test_pushpull_staged_preview__test_redo_mid_drag_ends_the_drag_then_redoes_on_th-0e72d422",
+ "source": {"pytest": "tests/test_pushpull_staged_preview.py::test_redo_mid_drag_ends_the_drag_then_redoes_on_the_clean_model", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/5ddd974fd10db342.igz"},
+ "start_sig": "5b0434b26e98e5ce27a92e0d1f7e33ca8e8c523a1a39f97a32354845eb14ebc1",
+ "steps": [
+  {"op":"add_edge","args":{"a":{"$v":[10.0,10.0,0.0]},"b":{"$v":[11.0,10.0,0.0]}},"counters":{"group":105,"curve":171},"sig":"63e80b837aba5c4681eb37fbf1c4db86b7b00855e165199bbd7a4d04bd3d4322"},
+  {"op":"undo","ok":true,"sig":"c6cf2d7bbfb774ed1ebb5922f7415a0b488628452457f90259af832e23725efc"},
+  {"op":"redo","ok":true,"sig":"63e80b837aba5c4681eb37fbf1c4db86b7b00855e165199bbd7a4d04bd3d4322"},
+  {"op":"undo","ok":true,"sig":"c6cf2d7bbfb774ed1ebb5922f7415a0b488628452457f90259af832e23725efc"}
+ ]
+}

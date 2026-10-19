@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "id": "test_erase_leaves_no_orphan_vertices__test_a_vertex_still_used_by_a_face_survive-407125ad",
+ "source": {"pytest": "tests/test_erase_leaves_no_orphan_vertices.py::test_a_vertex_still_used_by_a_face_survives", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/b4fe2f8abf5a6f3e.igz"},
+ "start_sig": "b72e7613cbfcee6610da579d8e9bf9c9fb439172bf8cb63a77fea0209db947fa",
+ "steps": [
+  {"op":"erase_selection","args":{"edges":[{"$edge":{"ends":[[5.0,5.0,0.0],[7.0,5.0,0.0]],"in":null}}]},"counters":{"group":18,"curve":109},"sig":"553b26504f078caf8c2f2e40874ad5b1bf069588c919c70712a20d8b23befb87"}
+ ]
+}
