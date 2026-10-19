@@ -179,6 +179,10 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
     points), as :class:`Plan`. ``sequential``: built by the per-entity
     walk (vertices in the order each one's point comes)."""
     vpos, inverse = weld(pos, sequential)
+    hit = _plan_native(vpos, inverse, edges, flags, curves, layers,
+                       layer_names, rings, sizes, counts)
+    if hit is not None:
+        return hit
     u = len(vpos)
     ia = inverse[edges[:, 0]] if len(edges) else np.empty(0, np.int64)
     ib = inverse[edges[:, 1]] if len(edges) else np.empty(0, np.int64)
@@ -271,6 +275,38 @@ def plan(pos, edges, flags, curves, layers, layer_names, rings, sizes,
                   out=ef_start[1:])
     return Plan(vpos, all_edges, soft, hidden, curve, layer, corners,
                 sizes, counts, ef_start, ef_face)
+
+
+def _plan_native(vpos, inverse, edges, flags, curves, layers, layer_names,
+                 rings, sizes, counts) -> Plan | None:
+    """:func:`plan` after the weld in the Rust engine, or ``None`` (no
+    engine, an older one, or input the kernel leaves to the Python: an empty
+    ring or face, which NumPy's reduceat counts its own way)."""
+    import core._native as _native
+    nat = _native.native
+    if nat is None or not hasattr(nat, "plan_topology"):
+        return None
+    sizes = np.asarray(sizes, dtype=np.int64)
+    counts = np.asarray(counts, dtype=np.int64)
+    rings = np.ascontiguousarray(rings, dtype=np.int64).reshape(-1)
+    if ((len(sizes) and sizes.min() <= 0) or (len(counts) and counts.min() <= 0)
+            or int(sizes.sum()) != len(rings)
+            or int(counts.sum()) != len(sizes)):
+        return None
+
+    def col(a):
+        return None if a is None else np.ascontiguousarray(a, dtype=np.int64)
+    has = flags is not None
+    e, soft, hidden, curve, layer, corners, ef_start, ef_face = \
+        nat.plan_topology(
+            np.ascontiguousarray(inverse, dtype=np.int64),
+            np.ascontiguousarray(edges, dtype=np.int64).reshape(-1, 2),
+            col(flags), col(curves) if has else None,
+            col(layers) if has else None, rings, sizes, counts)
+    curve = [None if c < 0 else c for c in curve.tolist()]
+    layer = [None if i < 0 else layer_names[i] for i in layer.tolist()]
+    return Plan(vpos, e, soft, hidden, curve, layer, corners, sizes, counts,
+                ef_start, ef_face)
 
 
 def plan_of(mesh) -> Plan | None:

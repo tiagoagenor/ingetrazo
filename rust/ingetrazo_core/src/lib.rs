@@ -17,6 +17,7 @@ mod hlr;
 mod instances;
 mod occlusion;
 mod parity;
+mod plan;
 mod weld;
 
 #[pymodule]
@@ -29,6 +30,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(face_geometry, m)?)?;
     m.add_function(wrap_pyfunction!(qt_vector_probe, m)?)?;
     m.add_function(wrap_pyfunction!(weld_points, m)?)?;
+    m.add_function(wrap_pyfunction!(plan_topology, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -358,6 +360,53 @@ fn weld_points<'py>(
     Ok((arr, PyArray1::from_vec(py, ids), PyArray1::from_vec(py, origin)))
 }
 
+/// core.lazy_mesh.plan after the weld (add_edges_welded + add_faces_welded
+/// on an empty mesh): ``inverse`` (N,) point → vertex, ``edges`` (E,2)
+/// point pairs, ``flags``/``curves``/``layers`` (E,) or None, ``rings``
+/// every ring corner (point index), ``sizes`` corners per ring, ``counts``
+/// rings per face — every size and count > 0, ``sum(sizes) == len(rings)``.
+/// Returns ``(edges (E',2), soft, hidden, curve (-1 = None), layer
+/// (-1 = None), corners, ef_start (E'+1,), ef_face)``.
+#[pyfunction]
+#[pyo3(signature = (inverse, edges, flags, curves, layers, rings, sizes, counts))]
+#[allow(clippy::too_many_arguments, clippy::type_complexity)]
+fn plan_topology<'py>(
+    py: Python<'py>,
+    inverse: PyReadonlyArray1<'_, i64>,
+    edges: PyReadonlyArray2<'_, i64>,
+    flags: Option<PyReadonlyArray1<'_, i64>>,
+    curves: Option<PyReadonlyArray1<'_, i64>>,
+    layers: Option<PyReadonlyArray1<'_, i64>>,
+    rings: PyReadonlyArray1<'_, i64>,
+    sizes: PyReadonlyArray1<'_, i64>,
+    counts: PyReadonlyArray1<'_, i64>,
+) -> PyResult<(Bound<'py, PyArray2<i64>>, Bound<'py, PyArray1<bool>>, Bound<'py, PyArray1<bool>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>,
+               Bound<'py, PyArray1<i64>>, Bound<'py, PyArray1<i64>>)> {
+    let inverse = inverse.as_slice()?;
+    let e = edges.as_array();
+    let pairs: Vec<[i64; 2]> = (0..e.shape()[0]).map(|i| [e[[i, 0]], e[[i, 1]]]).collect();
+    let flags = flags.as_ref().map(|a| a.as_slice()).transpose()?;
+    let curves = curves.as_ref().map(|a| a.as_slice()).transpose()?;
+    let layers = layers.as_ref().map(|a| a.as_slice()).transpose()?;
+    let (rings, sizes, counts) = (rings.as_slice()?, sizes.as_slice()?, counts.as_slice()?);
+    let n = inverse.len() as i64;
+    if pairs.iter().flatten().chain(rings).any(|&p| p < 0 || p >= n)
+        || sizes.iter().chain(counts).any(|&s| s <= 0)
+        || sizes.iter().sum::<i64>() != rings.len() as i64
+        || counts.iter().sum::<i64>() != sizes.len() as i64
+        || [flags, curves, layers].iter().flatten().any(|a| a.len() != pairs.len())
+    {
+        return Err(pyo3::exceptions::PyValueError::new_err("plan_topology: inconsistent input"));
+    }
+    let t = py.detach(|| plan::topology(inverse, &pairs, flags, curves, layers, rings, sizes, counts));
+    let rows: Vec<Vec<i64>> = t.edges.iter().map(|v| v.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 2], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((arr, PyArray1::from_vec(py, t.soft), PyArray1::from_vec(py, t.hidden),
+        PyArray1::from_vec(py, t.curve), PyArray1::from_vec(py, t.layer),
+        PyArray1::from_vec(py, t.corners), PyArray1::from_vec(py, t.ef_start),
+        PyArray1::from_vec(py, t.ef_face)))
+}
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the
 /// eleven entry points in opcode order (glDrawArraysInstanced,
