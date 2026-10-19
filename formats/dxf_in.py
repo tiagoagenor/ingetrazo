@@ -307,6 +307,21 @@ def _build_mesh(bucket: _Bucket, scale: float, offset) -> "Mesh":
         vobjs, ids = mesh.bulk_weld(np.array(pts, dtype=np.float64))
         mesh.add_edges_welded(vobjs, np.asarray(ids)[ia],
                               np.asarray(ids)[ib], flags=flags)
+    from formats.dae import _MAX_FUSE_LOOPS
+    if len(bucket.faces) > _MAX_FUSE_LOOPS:
+        # A big layer of 3DFACEs: run_stitch's coplanar merge is O(F²)-ish
+        # (20 000 faces of one plane took 17 s, 5 000 took 1.7 s) — the
+        # other importers cap it at _MAX_FUSE_LOOPS and fuse instead, in
+        # one near-linear pass (formats.fuse; the Rust engine's
+        # fuse_regions when it is on).
+        from formats.dae import _add_fused
+        from formats.fuse import fuse_coplanar_loops
+        loops = [([QVector3D(p.x * scale - offset[0], p.y * scale - offset[1],
+                             p.z * scale - offset[2]) for p in loop], None)
+                 for loop in bucket.faces]
+        for item in fuse_coplanar_loops(loops):
+            _add_fused(mesh, [item])
+        return mesh
     if bucket.faces:
         from core.history import run_stitch
         from core.topology import _key
