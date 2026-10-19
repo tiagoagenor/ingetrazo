@@ -10,6 +10,7 @@
 use numpy::{PyArray1, PyArray2, PyReadonlyArray2, PyReadonlyArray3, PyReadonlyArray1};
 use pyo3::prelude::*;
 
+mod arrange;
 mod boxes;
 mod facegeom;
 mod gltape;
@@ -33,6 +34,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(weld_points, m)?)?;
     m.add_function(wrap_pyfunction!(plan_topology, m)?)?;
     m.add_function(wrap_pyfunction!(signed_volume, m)?)?;
+    m.add_function(wrap_pyfunction!(arrangement_splits, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -429,6 +431,27 @@ fn signed_volume(py: Python<'_>, pos: PyReadonlyArray2<'_, f32>, tris: PyReadonl
     }
     let pts: Vec<[f32; 3]> = (0..p.nrows()).map(|i| [p[[i, 0]], p[[i, 1]], p[[i, 2]]]).collect();
     Ok(py.detach(|| volume::signed_volume(&pts, &tri)))
+}
+/// core.arrangement._build_graph's split points: ``segs`` (n,2,2) float64
+/// 2D segments. Returns ``(start (n+1,), points (m,2))`` — segment i's
+/// sorted split points (its endpoints and every hit, in Python's order)
+/// are ``points[start[i]:start[i+1]]``.
+#[pyfunction]
+fn arrangement_splits<'py>(
+    py: Python<'py>,
+    segs: PyReadonlyArray3<'_, f64>,
+) -> PyResult<(Bound<'py, PyArray1<i64>>, Bound<'py, PyArray2<f64>>)> {
+    let s = segs.as_array();
+    if s.shape()[1] != 2 || s.shape()[2] != 2 {
+        return Err(pyo3::exceptions::PyValueError::new_err("arrangement_splits: (n,2,2)"));
+    }
+    let v: Vec<[[f64; 2]; 2]> = (0..s.shape()[0])
+        .map(|i| [[s[[i, 0, 0]], s[[i, 0, 1]]], [s[[i, 1, 0]], s[[i, 1, 1]]]])
+        .collect();
+    let (start, pts) = py.detach(|| arrange::splits(&v));
+    let rows: Vec<Vec<f64>> = pts.iter().map(|p| p.to_vec()).collect();
+    let arr = if rows.is_empty() { PyArray2::zeros(py, [0, 2], false) } else { PyArray2::from_vec2(py, &rows)? };
+    Ok((PyArray1::from_vec(py, start), arr))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the

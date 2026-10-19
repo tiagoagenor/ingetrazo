@@ -138,10 +138,22 @@ def _point_in_polygon(p, poly: list) -> bool:
 
 # ---- Arrangement -----------------------------------------------------------
 
-def _build_graph(segments_2d):
-    """Split all segments at intersections and return ``(coords, adjacency)``:
-    ``coords`` maps a vertex key to its (x, y); ``adjacency`` maps a key to the
-    set of neighbour keys (undirected, deduplicated, no self-loops)."""
+def _split_points(segments_2d) -> list:
+    """Each segment's split points, sorted along it: its two ends and every
+    point where another segment meets it (all pairs). The Rust engine's
+    ``arrangement_splits`` when it is on — the same points in the same
+    order (tests/test_arrangement_native.py): this pair loop was the whole
+    cost of a dense plane's rebuild (184 ms for 300 segments)."""
+    import core._native as _native
+    nat = _native.native
+    if nat is not None and hasattr(nat, "arrangement_splits") and segments_2d:
+        import numpy as np
+        segs = np.asarray([((a[0], a[1]), (b[0], b[1]))
+                           for a, b in segments_2d], dtype=np.float64)
+        start, pts = nat.arrangement_splits(segs)
+        rows = [tuple(p) for p in pts.tolist()]
+        st = start.tolist()
+        return [rows[st[i]:st[i + 1]] for i in range(len(segments_2d))]
     n = len(segments_2d)
     split_pts = [list(seg) for seg in segments_2d]  # seed with endpoints
     for i in range(n):
@@ -153,6 +165,18 @@ def _build_graph(segments_2d):
             for p in _intersections(a, b, c, d):
                 if _on_seg(p, a, b) is not None:
                     split_pts[i].append(p)
+    for i in range(n):
+        a, b = segments_2d[i]
+        split_pts[i].sort(key=lambda p, a=a, b=b: _on_seg(p, a, b) or 0.0)
+    return split_pts
+
+
+def _build_graph(segments_2d):
+    """Split all segments at intersections and return ``(coords, adjacency)``:
+    ``coords`` maps a vertex key to its (x, y); ``adjacency`` maps a key to the
+    set of neighbour keys (undirected, deduplicated, no self-loops)."""
+    n = len(segments_2d)
+    split_pts = _split_points(segments_2d)
 
     coords: dict = {}
     adj: dict = {}
@@ -165,9 +189,7 @@ def _build_graph(segments_2d):
         return k
 
     for i in range(n):
-        a, b = segments_2d[i]
         pts = split_pts[i]
-        pts.sort(key=lambda p: _on_seg(p, a, b) or 0.0)
         for k in range(len(pts) - 1):
             ka, kb = vert(pts[k]), vert(pts[k + 1])
             if ka != kb:
