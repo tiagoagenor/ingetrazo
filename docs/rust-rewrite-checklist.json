@@ -32,16 +32,16 @@
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Gravador do histórico e to_op() em todos os comandos",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.3889,
-   "concluido_em": ""
+   "concluido_em": "2026-10-19"
   },
   {
    "id": "M0.5",
    "marco": "M0",
    "marco_nome": "Base e gabarito",
    "item": "Coleta automática dos testes: primeiros 500 gabaritos",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.3889,
    "concluido_em": ""
   },
