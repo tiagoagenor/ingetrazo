@@ -12,3 +12,6 @@ rayon.workspace = true
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+ingetrazo-formats.workspace = true

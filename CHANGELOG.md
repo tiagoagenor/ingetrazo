@@ -287,6 +287,19 @@ follow [SemVer](https://semver.org).
   `determinant`, `optimize`, `lookAt`, `ortho` y `perspective`. Comparado con
   3000 cadenas de operaciones y 2000 casos de vectores que calculó Qt
   (`scripts/golden/make_qt_math_fixtures.py`): todo idéntico.
+- **Geometría de «Sígueme» y de la simplificación en Rust** (`ingetrazo-geom`,
+  M1.6 y M1.9): `sweep` calcula sin malla lo que `core.sweep` hace con el
+  perfil y el camino —ordenar las aristas, los planos de inglete, los anillos
+  de cada estación, el torno (perfil girado alrededor del eje de un camino
+  circular, con su recorte a medio perfil), las caras que `sweep_profile`
+  entrega a `Mesh.add_face`, el trazado a mano y `orient_closed_path`— y
+  `simplify` repite `simplify_mesh` sobre vectores (fusión de coplanarias,
+  soldadura por `_key`, aristas, colapso de vértices colineales y suavizado
+  de aristas). Quedan para M3 el apilado (`run_stitch`), la orientación y
+  aplicar el resultado a la malla viva. Comparado bit a bit con 600 barridos,
+  1650 casos sueltos (`math.hypot` de CPython incluido) y 313 mallas
+  simplificadas que calculó Python
+  (`scripts/golden/make_sweep_fixtures.py`).
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
