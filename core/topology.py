@@ -1270,6 +1270,26 @@ def _maximal_holes(holes: list) -> list:
         return abs(a) / 2.0
 
     areas = [area(h) for h in holes]
+    # Every pair of holes was tested in full — a projection of the bigger
+    # one and, failing its centroid, a triangulation of the smaller: a
+    # façade of 2 000 windows ran 4 M of them on every open and save. Both
+    # points _loop_inside_loop tries lie in the smaller hole's box, and the
+    # holes of one face share its plane, so a bigger hole whose box misses
+    # that one (by more than a float32 plane's wobble) cannot hold it: those
+    # pairs are skipped, the rest tested in the same order — the same
+    # answer, any() having nothing else to do.
+    import numpy as np
+    boxes = []
+    for h in holes:
+        xs = [p.x() for p in h]
+        ys = [p.y() for p in h]
+        zs = [p.z() for p in h]
+        boxes.append((min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))
+                     if xs else (0.0,) * 6)
+    box = np.asarray(boxes, dtype=np.float64).reshape(-1, 6)
+    span = float(np.abs(box).max()) if len(box) else 0.0
+    margin = 1e-4 * (1.0 + span)
+    area_arr = np.asarray(areas, dtype=np.float64)
     keep = []
     for i, h in enumerate(holes):
         # The plane normal from the hole itself (any 3 non-collinear points).
@@ -1278,10 +1298,15 @@ def _maximal_holes(holes: list) -> list:
             keep.append(h)
             continue
         nrm = nrm.normalized()
+        b = box[i]
+        cand = np.flatnonzero(
+            (area_arr > areas[i] + 1e-6)
+            & (box[:, 3] >= b[0] - margin) & (box[:, 0] <= b[3] + margin)
+            & (box[:, 4] >= b[1] - margin) & (box[:, 1] <= b[4] + margin)
+            & (box[:, 5] >= b[2] - margin) & (box[:, 2] <= b[5] + margin))
         nested = any(
-            j != i and areas[j] > areas[i] + 1e-6
-            and _loop_inside_loop(h, holes[j], nrm)
-            for j in range(len(holes))
+            j != i and _loop_inside_loop(h, holes[j], nrm)
+            for j in cand.tolist()
         )
         if not nested:
             keep.append(h)
