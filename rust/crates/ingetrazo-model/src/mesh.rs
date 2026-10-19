@@ -93,8 +93,43 @@ pub struct State {
     fdata: Vec<(FaceId, Face)>,
 }
 
+/// One open journal transaction: the lists, registry and displaced queue
+/// as they were when it began, and each entity's value before its first
+/// change in it (entities created inside it have none).
+#[derive(Clone, Debug, Default)]
+struct Txn {
+    lists: (Vec<VertexId>, Vec<EdgeId>, Vec<FaceId>),
+    registry: HashMap<Key, VertexId>,
+    displaced: HashMap<Key, Vec<VertexId>>,
+    arena: (usize, usize, usize),
+    vold: HashMap<VertexId, Vertex>,
+    eold: HashMap<EdgeId, Edge>,
+    fold: HashMap<FaceId, Face>,
+}
+
+/// A committed change to a mesh (one command): enough to undo it and redo
+/// it with the same ids, list order and weld state — Python's undo
+/// "relinks the very objects", and so does this.
+#[derive(Clone, Debug)]
+pub struct Entry {
+    lists: [(Vec<VertexId>, Vec<EdgeId>, Vec<FaceId>); 2],
+    registry: [HashMap<Key, VertexId>; 2],
+    displaced: [HashMap<Key, Vec<VertexId>>; 2],
+    verts: Vec<(VertexId, Option<Vertex>, Vertex)>,
+    edges: Vec<(EdgeId, Option<Edge>, Edge)>,
+    faces: Vec<(FaceId, Option<Face>, Face)>,
+}
+
+impl Entry {
+    /// How many entities the change touched (vertices, edges, faces).
+    pub fn touched(&self) -> (usize, usize, usize) {
+        (self.verts.len(), self.edges.len(), self.faces.len())
+    }
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct Mesh {
+    txn: Option<Box<Txn>>,
     vs: Vec<Vertex>,
     es: Vec<Edge>,
     fs: Vec<Face>,
@@ -124,6 +159,107 @@ impl Mesh {
         Mesh::default()
     }
 
+    // ---- journal -------------------------------------------------------------
+
+    fn vm(&mut self, v: VertexId) -> &mut Vertex {
+        if let Some(t) = self.txn.as_deref_mut() {
+            if (v.0 as usize) < t.arena.0 && !t.vold.contains_key(&v) {
+                t.vold.insert(v, self.vs[v.0 as usize].clone());
+            }
+        }
+        &mut self.vs[v.0 as usize]
+    }
+
+    fn em(&mut self, e: EdgeId) -> &mut Edge {
+        if let Some(t) = self.txn.as_deref_mut() {
+            if (e.0 as usize) < t.arena.1 && !t.eold.contains_key(&e) {
+                t.eold.insert(e, self.es[e.0 as usize].clone());
+            }
+        }
+        &mut self.es[e.0 as usize]
+    }
+
+    fn fm(&mut self, f: FaceId) -> &mut Face {
+        if let Some(t) = self.txn.as_deref_mut() {
+            if (f.0 as usize) < t.arena.2 && !t.fold.contains_key(&f) {
+                t.fold.insert(f, self.fs[f.0 as usize].clone());
+            }
+        }
+        &mut self.fs[f.0 as usize]
+    }
+
+    /// Start recording every change, for one undoable step.
+    pub fn begin(&mut self) {
+        assert!(self.txn.is_none(), "a journal transaction is already open");
+        self.txn = Some(Box::new(Txn {
+            lists: (self.vertices.clone(), self.edges.clone(), self.faces.clone()),
+            registry: self.registry.clone(),
+            displaced: self.displaced.clone(),
+            arena: (self.vs.len(), self.es.len(), self.fs.len()),
+            ..Txn::default()
+        }));
+    }
+
+    /// Close the transaction: the entry that undoes and redoes it.
+    pub fn commit(&mut self) -> Entry {
+        let t = *self.txn.take().expect("no journal transaction open");
+        let mut verts: Vec<(VertexId, Option<Vertex>, Vertex)> =
+            t.vold.into_iter().map(|(v, old)| (v, Some(old), self.vs[v.0 as usize].clone())).collect();
+        verts.extend((t.arena.0..self.vs.len()).map(|i| (VertexId(i as u32), None, self.vs[i].clone())));
+        let mut edges: Vec<(EdgeId, Option<Edge>, Edge)> =
+            t.eold.into_iter().map(|(e, old)| (e, Some(old), self.es[e.0 as usize].clone())).collect();
+        edges.extend((t.arena.1..self.es.len()).map(|i| (EdgeId(i as u32), None, self.es[i].clone())));
+        let mut faces: Vec<(FaceId, Option<Face>, Face)> =
+            t.fold.into_iter().map(|(f, old)| (f, Some(old), self.fs[f.0 as usize].clone())).collect();
+        faces.extend((t.arena.2..self.fs.len()).map(|i| (FaceId(i as u32), None, self.fs[i].clone())));
+        Entry {
+            lists: [t.lists, (self.vertices.clone(), self.edges.clone(), self.faces.clone())],
+            registry: [t.registry, self.registry.clone()],
+            displaced: [t.displaced, self.displaced.clone()],
+            verts,
+            edges,
+            faces,
+        }
+    }
+
+    /// Put the mesh back as it was before `entry` (its ids and order too).
+    /// Entities the entry created stay in the arena, out of every list.
+    pub fn undo(&mut self, entry: &Entry) {
+        assert!(self.txn.is_none(), "undo inside an open transaction");
+        self.apply(entry, 0);
+    }
+
+    /// Re-apply `entry` after an undo: the same ids, order and values.
+    pub fn redo(&mut self, entry: &Entry) {
+        assert!(self.txn.is_none(), "redo inside an open transaction");
+        self.apply(entry, 1);
+    }
+
+    fn apply(&mut self, entry: &Entry, side: usize) {
+        self.touch();
+        let (v, e, f) = &entry.lists[side];
+        self.vertices = v.clone();
+        self.edges = e.clone();
+        self.faces = f.clone();
+        self.registry = entry.registry[side].clone();
+        self.displaced = entry.displaced[side].clone();
+        for (id, old, new) in &entry.verts {
+            if let Some(x) = if side == 0 { old.as_ref() } else { Some(new) } {
+                self.vs[id.0 as usize] = x.clone();
+            }
+        }
+        for (id, old, new) in &entry.edges {
+            if let Some(x) = if side == 0 { old.as_ref() } else { Some(new) } {
+                self.es[id.0 as usize] = x.clone();
+            }
+        }
+        for (id, old, new) in &entry.faces {
+            if let Some(x) = if side == 0 { old.as_ref() } else { Some(new) } {
+                self.fs[id.0 as usize] = x.clone();
+            }
+        }
+    }
+
     // ---- arenas --------------------------------------------------------------
 
     pub fn vertex_ref(&self, v: VertexId) -> &Vertex {
@@ -133,13 +269,13 @@ impl Mesh {
         &self.es[e.0 as usize]
     }
     pub fn edge_mut(&mut self, e: EdgeId) -> &mut Edge {
-        &mut self.es[e.0 as usize]
+        self.em(e)
     }
     pub fn face(&self, f: FaceId) -> &Face {
         &self.fs[f.0 as usize]
     }
     pub fn face_mut(&mut self, f: FaceId) -> &mut Face {
-        &mut self.fs[f.0 as usize]
+        self.fm(f)
     }
     pub fn position(&self, v: VertexId) -> V3 {
         self.vs[v.0 as usize].position
@@ -222,9 +358,9 @@ impl Mesh {
         }
         let e = EdgeId(self.es.len() as u32);
         self.es.push(Edge { v0: a, v1: b, faces: Vec::new(), soft: false, hidden: false, layer: None, curve: None });
-        self.vs[a.0 as usize].edges.push(e);
+        self.vm(a).edges.push(e);
         if b != a {
-            self.vs[b.0 as usize].edges.push(e);
+            self.vm(b).edges.push(e);
         }
         self.edges.push(e);
         e
@@ -244,8 +380,8 @@ impl Mesh {
     pub fn remove_edge(&mut self, e: EdgeId) {
         self.touch();
         let (v0, v1) = (self.edge(e).v0, self.edge(e).v1);
-        remove_first(&mut self.vs[v0.0 as usize].edges, &e);
-        remove_first(&mut self.vs[v1.0 as usize].edges, &e);
+        remove_first(&mut self.vm(v0).edges, &e);
+        remove_first(&mut self.vm(v1).edges, &e);
         remove_first(&mut self.edges, &e);
     }
 
@@ -256,7 +392,7 @@ impl Mesh {
         }
         let (v0, v1) = (self.edge(e).v0, self.edge(e).v1);
         for v in [v0, v1] {
-            let es = &mut self.vs[v.0 as usize].edges;
+            let es = &mut self.vm(v).edges;
             if !es.contains(&e) {
                 es.push(e);
             }
@@ -293,7 +429,7 @@ impl Mesh {
             let n = l.len();
             for i in 0..n {
                 let e = self.link_edge(l[i], l[(i + 1) % n]);
-                self.es[e.0 as usize].faces.push(f);
+                self.em(e).faces.push(f);
             }
         }
         self.faces.push(f);
@@ -308,7 +444,7 @@ impl Mesh {
             let n = l.len();
             for i in 0..n {
                 if let Some(e) = self.find_edge(l[i], l[(i + 1) % n]) {
-                    remove_first(&mut self.es[e.0 as usize].faces, &f);
+                    remove_first(&mut self.em(e).faces, &f);
                 }
             }
         }
@@ -325,7 +461,7 @@ impl Mesh {
             let n = l.len();
             for i in 0..n {
                 let e = self.link_edge(l[i], l[(i + 1) % n]);
-                let fs = &mut self.es[e.0 as usize].faces;
+                let fs = &mut self.em(e).faces;
                 if !fs.contains(&f) {
                     fs.push(f);
                 }
@@ -337,11 +473,11 @@ impl Mesh {
     /// `add_hole`: punch a hole loop into a face; returns the vertex loop.
     pub fn add_hole(&mut self, f: FaceId, loop_positions: &[V3]) -> Vec<VertexId> {
         let l: Vec<VertexId> = loop_positions.iter().map(|&p| self.vertex(p)).collect();
-        self.fs[f.0 as usize].holes.push(l.clone());
+        self.fm(f).holes.push(l.clone());
         let n = l.len();
         for i in 0..n {
             let e = self.link_edge(l[i], l[(i + 1) % n]);
-            let fs = &mut self.es[e.0 as usize].faces;
+            let fs = &mut self.em(e).faces;
             if !fs.contains(&f) {
                 fs.push(f);
             }
@@ -351,14 +487,14 @@ impl Mesh {
 
     /// `remove_hole`.
     pub fn remove_hole(&mut self, f: FaceId, l: &[VertexId]) {
-        let holes = &mut self.fs[f.0 as usize].holes;
+        let holes = &mut self.fm(f).holes;
         if let Some(i) = holes.iter().position(|h| h.as_slice() == l) {
             holes.remove(i);
         }
         let n = l.len();
         for i in 0..n {
             if let Some(e) = self.find_edge(l[i], l[(i + 1) % n]) {
-                remove_first(&mut self.es[e.0 as usize].faces, &f);
+                remove_first(&mut self.em(e).faces, &f);
             }
         }
     }
@@ -435,7 +571,7 @@ impl Mesh {
     fn set_position(&mut self, v: VertexId, p: V3) {
         self.touch();
         let old = key(self.position(v));
-        self.vs[v.0 as usize].position = p;
+        self.vm(v).position = p;
         let new = key(p);
         if old == new {
             return;
@@ -494,7 +630,7 @@ impl Mesh {
         for f in incident {
             self.insert_into_face_loops(f, v0, v1, mid);
             for half in [e0, e1] {
-                let fs = &mut self.es[half.0 as usize].faces;
+                let fs = &mut self.em(half).faces;
                 if !fs.contains(&f) {
                     fs.push(f);
                 }
@@ -504,7 +640,7 @@ impl Mesh {
     }
 
     fn insert_into_face_loops(&mut self, f: FaceId, v0: VertexId, v1: VertexId, mid: VertexId) {
-        let face = &mut self.fs[f.0 as usize];
+        let face = self.fm(f);
         for l in std::iter::once(&mut face.outer).chain(face.holes.iter_mut()) {
             let n = l.len();
             for i in 0..n {
@@ -628,9 +764,9 @@ impl Mesh {
     fn new_edge(&mut self, v0: VertexId, v1: VertexId) -> EdgeId {
         let e = EdgeId(self.es.len() as u32);
         self.es.push(Edge { v0, v1, faces: Vec::new(), soft: false, hidden: false, layer: None, curve: None });
-        self.vs[v0.0 as usize].edges.push(e);
+        self.vm(v0).edges.push(e);
         if v1 != v0 {
-            self.vs[v1.0 as usize].edges.push(e);
+            self.vm(v1).edges.push(e);
         }
         self.edges.push(e);
         e
@@ -666,7 +802,7 @@ impl Mesh {
             };
             if let Some(fl) = flags {
                 let f = &fl[i];
-                let ed = &mut self.es[e.0 as usize];
+                let ed = self.em(e);
                 if f.soft {
                     ed.soft = true;
                 }
@@ -780,7 +916,7 @@ impl Mesh {
             ri += nr;
         }
         for s in 0..total {
-            self.es[seg_edge[s].0 as usize].faces.push(seg_face[s]);
+            self.em(seg_edge[s]).faces.push(seg_face[s]);
         }
         faces_out
     }
@@ -817,12 +953,12 @@ impl Mesh {
         self.registry = s.registry.clone();
         self.displaced.clear();
         for (v, p, es) in &s.vpos {
-            let vx = &mut self.vs[v.0 as usize];
+            let vx = self.vm(*v);
             vx.position = *p;
             vx.edges = es.clone();
         }
         for (e, fs, soft, hidden, layer, curve) in &s.edata {
-            let ed = &mut self.es[e.0 as usize];
+            let ed = self.em(*e);
             ed.faces = fs.clone();
             ed.soft = *soft;
             ed.hidden = *hidden;
@@ -830,7 +966,7 @@ impl Mesh {
             ed.curve = *curve;
         }
         for (f, face) in &s.fdata {
-            self.fs[f.0 as usize] = face.clone();
+            *self.fm(*f) = face.clone();
         }
     }
 

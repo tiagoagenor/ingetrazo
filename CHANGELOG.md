@@ -313,6 +313,12 @@ follow [SemVer](https://semver.org).
   presente), y el lector Rust de mallas usa el mismo umbral
   (`_bulk_sized`) que `_load_mesh_json`. 24 cargas grandes con esquinas en
   los bordes de celda dejan las listas en el mismo orden que Python.
+- **Deshacer por diario en la malla Rust** (M2.6): `Mesh::begin` /
+  `commit` registran un paso; `undo` y `redo` devuelven los mismos
+  identificadores, el orden de las listas, el registro de soldadura y la
+  cola de desplazados, guardando solo lo que el paso tocó (Python copia la
+  malla entera en cada orden). Deshacer y rehacer las 160 secuencias de
+  primitivas recorre exactamente los estados que registró Python.
 - **Lectura del `.igz` en los tres formatos** (M2.7,
   `rust/crates/ingetrazo-formats/src/igz_geom.rs`): Rust lee también los
   bloques binarios de geometría del formato 3 (`float32`, `int32`, `int64`,

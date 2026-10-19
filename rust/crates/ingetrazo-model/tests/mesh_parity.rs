@@ -213,3 +213,103 @@ fn bulk_load_matches_load_mesh_json() {
     }
     assert!(fails.is_empty(), "{} of {n} bulk loads differ:\n{}", fails.len(), fails.iter().take(4).cloned().collect::<Vec<_>>().join("\n"));
 }
+
+/// Apply one fixture op (no checks of its return values).
+fn run_op(m: &mut Mesh, op: &[Value], snaps: &mut Vec<State>) {
+    let name = match &op[0] {
+        Value::Str(s) => s.as_str(),
+        _ => unreachable!(),
+    };
+    match name {
+        "add_face" => {
+            let outer: Vec<V3> = arr(&op[1]).iter().map(p).collect();
+            let holes: Vec<Vec<V3>> = arr(&op[2]).iter().map(|h| arr(h).iter().map(p).collect()).collect();
+            m.add_face(&outer, &holes);
+        }
+        "add_edge" => {
+            let _ = m.add_edge(p(&op[1]), p(&op[2]));
+        }
+        "remove_face" => m.remove_face(FaceId(n(&op[1]) as u32)),
+        "remove_edge" => m.remove_edge(EdgeId(n(&op[1]) as u32)),
+        "relink_face" => m.relink_face(FaceId(n(&op[1]) as u32)),
+        "relink_edge" => m.relink_edge(EdgeId(n(&op[1]) as u32)),
+        "split_edge" => {
+            m.split_edge(EdgeId(n(&op[1]) as u32), p(&op[2]));
+        }
+        "move_vertex" => m.move_vertex(VertexId(n(&op[1]) as u32), p(&op[2])),
+        "place_vertex" => m.place_vertex(VertexId(n(&op[1]) as u32), p(&op[2])),
+        "add_hole" => {
+            let h: Vec<V3> = arr(&op[2]).iter().map(p).collect();
+            m.add_hole(FaceId(n(&op[1]) as u32), &h);
+        }
+        "remove_hole" => {
+            let f = FaceId(n(&op[1]) as u32);
+            let l = m.face(f).holes[n(&op[2]) as usize].clone();
+            m.remove_hole(f, &l);
+        }
+        "prune_orphan_vertices" => {
+            m.prune_orphan_vertices();
+        }
+        "drop_orphan_vertices" => {
+            let vs: Vec<VertexId> = arr(&op[1]).iter().map(|x| VertexId(n(x) as u32)).collect();
+            m.drop_orphan_vertices(&vs);
+        }
+        "capture" => snaps.push(m.capture_state()),
+        "restore" => {
+            let s = snaps[n(&op[1]) as usize].clone();
+            m.restore_state(&s);
+        }
+        other => panic!("op {other}"),
+    }
+}
+
+/// The journal: every step a transaction; undoing them all walks back
+/// through Python's recorded states exactly, and redoing walks forward.
+#[test]
+fn journal_undo_redo_walks_the_recorded_states() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/mesh_ops.jsonl");
+    let text = std::fs::read_to_string(path).unwrap();
+    let mut fails = Vec::new();
+    let mut checked = 0usize;
+    for (si, line) in text.lines().enumerate() {
+        let seq = loads(line).unwrap();
+        let steps = arr(&seq);
+        let mut m = Mesh::new();
+        let mut snaps = Vec::new();
+        let mut entries = Vec::new();
+        let mut states = vec![state(&m)];
+        for step in steps {
+            m.begin();
+            run_op(&mut m, arr(step.get("op").unwrap()), &mut snaps);
+            entries.push(m.commit());
+            states.push(canon(step.get("state").unwrap()));
+        }
+        if state(&m) != *states.last().unwrap() {
+            fails.push(format!("seq {si}: forward state differs"));
+            continue;
+        }
+        let mut ok = true;
+        for i in (0..entries.len()).rev() {
+            m.undo(&entries[i]);
+            checked += 1;
+            if state(&m) != states[i] {
+                fails.push(format!("seq {si}: undo of step {i} does not give the state before it"));
+                ok = false;
+                break;
+            }
+        }
+        if !ok {
+            continue;
+        }
+        for (i, e) in entries.iter().enumerate() {
+            m.redo(e);
+            checked += 1;
+            if state(&m) != states[i + 1] {
+                fails.push(format!("seq {si}: redo of step {i} does not give the state after it"));
+                break;
+            }
+        }
+    }
+    assert!(fails.is_empty(), "{} sequences fail ({checked} undo/redo steps checked):\n{}", fails.len(), fails.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
+    assert!(checked > 5000, "only {checked} steps");
+}
