@@ -1696,6 +1696,28 @@ def face_count(mesh) -> int:
     return len(mesh.faces)
 
 
+def vertex_count(mesh) -> int:
+    """``len(mesh.vertices)``, without building a deferred mesh to learn it
+    (its plan knows: core.lazy_mesh)."""
+    if type(mesh) is DeferredMesh:
+        from core import lazy_mesh
+        return len(lazy_mesh.plan_of(mesh).pos)
+    return len(mesh.vertices)
+
+
+def vertex_positions(mesh):
+    """Every vertex position, in ``mesh.vertices`` order, as an ``(N, 3)``
+    float64 array — a deferred mesh's from its plan, nothing built (the
+    same float32 values: test_lazy_mesh_plan). Read-only: a deferred
+    mesh's array is its plan's own."""
+    import numpy as np
+    if type(mesh) is DeferredMesh:
+        from core import lazy_mesh
+        return lazy_mesh.plan_of(mesh).pos
+    return np.array([[v.position.x(), v.position.y(), v.position.z()]
+                     for v in mesh.vertices], dtype=np.float64).reshape(-1, 3)
+
+
 def face_attrs(mesh):
     """Each face's own attrs, in face order — for a deferred mesh only the
     first face of each distinct set (what a first-wins tally of materials

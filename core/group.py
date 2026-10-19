@@ -788,15 +788,15 @@ def placement_points(group, cache=None):
     out: list = []
     if cache is None:
         cache = {}
+    from core.mesh import vertex_positions
     for g, m in iter_placements(group):
-        verts = g.mesh.vertices
-        if not verts:
-            continue
         arr = cache.get(id(g.mesh))
         if arr is None:
-            arr = cache[id(g.mesh)] = np.array(
-                [[v.position.x(), v.position.y(), v.position.z()]
-                 for v in verts], dtype=np.float64)
+            # A lazy mesh's from its plan: selecting a group no longer
+            # builds it to measure its box.
+            arr = cache[id(g.mesh)] = vertex_positions(g.mesh)
+        if not len(arr):
+            continue
         if m is not None:
             d = m.data()                      # column-major
             rot = np.array([[d[0], d[4], d[8]],
@@ -826,11 +826,10 @@ def oriented_bounds(mesh, frame=None, points=None) -> tuple:
             return frame, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)
         pos = points
     else:
-        verts = mesh.vertices
-        if not verts:
+        from core.mesh import vertex_positions
+        pos = vertex_positions(mesh)
+        if not len(pos):
             return frame, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)
-        pos = np.array([[v.position.x(), v.position.y(), v.position.z()]
-                        for v in verts], dtype=np.float64)
     axes = np.array([[a.x(), a.y(), a.z()] for a in frame], dtype=np.float64)
     proj = pos @ axes.T
     return frame, tuple(proj.min(axis=0)), tuple(proj.max(axis=0))

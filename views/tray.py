@@ -55,7 +55,7 @@ from views.color_dialog import get_color
 from core.i18n import tr
 from views.theme import style as theme_style
 from views.filedialogs import file_dialogs
-from core.mesh import Edge, Face
+from core.mesh import Edge, Face, face_count
 from core.group import Group
 from core.dimension import Dimension
 from core.textlabel import TextLabel
@@ -3529,11 +3529,11 @@ class EntityInfoPanel(QWidget):
                     title = (tr("Solid Component") if vol is not None
                              else tr("Component"))
                     return (f"<b>{title}</b><br>"
-                            f"{tr('Faces')}: {len(e.mesh.faces)}<br>"
+                            f"{tr('Faces')}: {face_count(e.mesh)}<br>"
                             f"{tr('In model')}: {kin}{solid}")
                 title = tr("Solid Group") if vol is not None else tr("Group")
                 return (f"<b>{title}</b><br>"
-                        f"{tr('Faces')}: {len(e.mesh.faces)}{solid}")
+                        f"{tr('Faces')}: {face_count(e.mesh)}{solid}")
             return f"<b>{tr('1 entity')}</b>"
         counts = {"faces": 0, "edges": 0, "dimensions": 0, "groups": 0}
         for e in sel:
