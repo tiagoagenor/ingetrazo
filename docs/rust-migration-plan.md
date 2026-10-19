@@ -1,6 +1,7 @@
 # Rust migration plan: from Python kernels to a Rust core
 
-> Status: **in progress**, Phase 0 started (branch `rust-migration`).
+> Status: **in progress** (branch `rust-migration`): Phase 0 done, Phase 1
+> under way.
 > Written in English per the repo convention (code/docs/comments in English).
 
 ## Goal
@@ -46,7 +47,8 @@ Rust becomes mandatory only once all of these hold:
 1. the pull-request CI builds the crate and runs the parity tests (today
    `ci.yml` never builds it, so every native test is skipped);
 2. the Flatpak ships the engine (needs vendored offline cargo sources);
-3. `qt_hypot()` matches Qt on Linux, Windows and macOS (today libstdc++ only);
+3. `qt_hypot()` matches Qt on Linux, Windows and macOS (Linux and Windows
+   proven; macOS's libc++ formula awaits a macOS run);
 4. one release has shipped with the engine **on by default** and no
    `rust-engine` regressions.
 
@@ -55,7 +57,7 @@ paths last.
 
 ## Phases
 
-### Phase 0: safety net and one door for Qt math
+### Phase 0: safety net and one door for Qt math ✅
 
 - **0.A CI builds the crate.** `ci.yml` installs a Rust toolchain, builds the
   wheel with maturin, asserts `core._native.native is not None` with
@@ -74,24 +76,40 @@ paths last.
 Done when: the fast suite gives the same result as before; CI shows the
 native tests passing instead of skipped.
 
-### Phase 1: the mesh resident in Rust
+### Phase 1: lazy meshes read without being built
 
-1. **`Hypot` for every platform.** Port MSVC STL's and libc++'s 3-argument
-   `std::hypot` into `facegeom`, add them to `_HYPOTS`; `_probe_hypot`
-   proves each against Qt. Done when `qt_hypot()` is non-`None` on Windows
-   and macOS.
-2. **`MeshStore` pyclass.** `pos` f32 (V,3), `edges` u32 (E,2) + soft/hidden
-   flags, face rings as CSR, edge→face CSR. Built from `lazy_mesh.Plan`;
-   parity against the eager mesh (`test_lazy_mesh_plan`).
-3. **The rest of `lazy_mesh.plan` in Rust** (edge dedup, rings, incidence),
-   producing a `MeshStore` directly. Measured with `bench_startup.py`.
-4. **`DeferredMesh` reads from the store**: normals, centroids, bbox, face
-   count, edge lengths, pick/snap candidate arrays.
-5. **Read-only `core/topology.py` queries over store indices** (connected
-   components, coplanar regions, loops), picked by profiler.
-6. **Batch vertex moves (Move drag) and snapshot capture/restore** for
-   deferred meshes.
-7. **Gate review** against the criteria above.
+**`Plan` is the store** (decided after the first kernels): no `MeshStore`
+pyclass. Contiguous NumPy arrays already cross into Rust without a copy,
+`Plan` and the face geometry are memoised on the mesh, six readers index
+`Plan` directly, and the mutable meshes are the eager ones — a resident
+store would need syncing on every edit. New work is stateless kernels over
+`Plan` plus Python readers that stop building lazy meshes.
+
+- ✅ **`Hypot` for every platform.** MSVC STL and libc++ formulas beside
+  libstdc++; the start-up probe picks `msvc` on Windows
+  (`test_hypot_native`). Lazy meshes are drawn from their arrays on
+  Windows: opening the synthetic city to its first frame went from 4.3 to
+  0.7 s (city-M) and 16.3 to 1.6 s (city-L).
+- ✅ **`lazy_mesh.plan`'s topology in Rust** (`plan_topology`: edge dedup,
+  rings, `edge.faces`), 407 → 187 ms on a 90 000-face block.
+- ✅ **C0** `core.mesh.DEFERRED_BUILDS`, reported per gesture by
+  `bench_interaction.py` — the metric for the reads below.
+- ✅ **C1** Select hover/click: the owner under the cursor without building
+  (`PickEntities.owner_at`).
+- ✅ **C2** Drawing tools' hover: the face plane from a stand-alone copy
+  (`Viewport._face_under`, `PickEntities.peek`).
+- ✅ **C3** Selecting a group: box and counts from the plan
+  (`vertex_positions`, `vertex_count`, `face_count` in Entity Info).
+- **C4** `Plan.pos32` cached; `curve`/`layer` as int arrays with lazy list
+  views (drops the per-edge Python loop of `_plan_native`).
+- **C5** `signed_volume` kernel for Entity Info's solid volume of a lazy
+  group (`core/bim.py` `face_set_volume`'s sum, f32 Qt order, f64 total),
+  closedness from `ef_start` alone.
+- **Postponed:** read-only topology queries (they run on meshes being
+  edited, which are eager) move to Phase 2; batch vertex moves and
+  snapshots on lazy meshes wait for the gate (weld order, viewport cache,
+  undo identity and textures would all break).
+- **Gate review** against the criteria above.
 
 `core/geometry.py` is left alone (`docs/halfedge-migration-plan.md`, M3).
 
