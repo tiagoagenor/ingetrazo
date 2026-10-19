@@ -41,6 +41,7 @@ fn ingetrazo_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(section_loops, m)?)?;
     m.add_class::<PolySet>()?;
     m.add_function(wrap_pyfunction!(conform_t_junctions, m)?)?;
+    m.add_function(wrap_pyfunction!(shell_roots, m)?)?;
     m.add_class::<GlReplay>()?;
     m.add_class::<InstanceProto>()?;
     m.add_class::<InstanceSet>()?;
@@ -639,6 +640,44 @@ fn conform_t_junctions<'py>(
     let vr: Vec<Vec<f64>> = o.verts.iter().map(|p| p.to_vec()).collect();
     let tr: Vec<Vec<u32>> = o.tris.iter().map(|p| p.to_vec()).collect();
     Ok((PyArray2::from_vec2(py, &vr)?, PyArray2::from_vec2(py, &tr)?, PyArray1::from_vec(py, o.fids)))
+}
+/// core.solids._outer_shell_mask's union-find: ``t`` (T,3) int64 over
+/// ``nv`` vertices, merged triangle by triangle as the Python does (path
+/// halving, b's root then c's under a's). Returns each triangle's root
+/// (of its first corner), (T,) int64.
+#[pyfunction]
+fn shell_roots<'py>(py: Python<'py>, t: PyReadonlyArray2<'_, i64>, nv: usize) -> PyResult<Bound<'py, PyArray1<i64>>> {
+    let ta = t.as_array();
+    if ta.ncols() != 3 {
+        return Err(pyo3::exceptions::PyValueError::new_err("shell_roots: (T,3)"));
+    }
+    let tris: Vec<[usize; 3]> = (0..ta.nrows())
+        .map(|i| [ta[[i, 0]], ta[[i, 1]], ta[[i, 2]]])
+        .map(|r| r.map(|k| if k >= 0 { k as usize } else { usize::MAX }))
+        .collect();
+    if tris.iter().flatten().any(|&k| k >= nv) {
+        return Err(pyo3::exceptions::PyValueError::new_err("shell_roots: index out of range"));
+    }
+    let roots = py.detach(|| {
+        let mut parent: Vec<usize> = (0..nv).collect();
+        fn find(parent: &mut [usize], mut x: usize) -> usize {
+            while parent[x] != x {
+                parent[x] = parent[parent[x]];
+                x = parent[x];
+            }
+            x
+        }
+        for &[a, b, c] in &tris {
+            let ra = find(&mut parent, a);
+            let rb = find(&mut parent, b);
+            let rc = find(&mut parent, c);
+            parent[rb] = ra;
+            let r = find(&mut parent, rc);
+            parent[r] = ra;
+        }
+        tris.iter().map(|t| find(&mut parent, t[0]) as i64).collect::<Vec<i64>>()
+    });
+    Ok(PyArray1::from_vec(py, roots))
 }
 /// A recorded run of OpenGL calls, replayed through the current context's
 /// entry points (views.viewport._GlTape): ``GlReplay(addrs)`` with the

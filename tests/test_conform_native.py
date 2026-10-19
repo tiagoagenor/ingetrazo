@@ -99,3 +99,53 @@ def test_ties_that_decide(monkeypatch):
     v = np.vstack([v, mid])
     py, rs = _both(monkeypatch, v, np.array([(0, 1, 2)]), np.array([0]))
     assert rs == py and len(py[0]) == 5
+
+
+@pytest.mark.parametrize("seed", range(10))
+def test_outer_shell_roots_and_mask(monkeypatch, seed):
+    """_outer_shell_mask's union-find in Rust: the same root per triangle
+    and the same kept shells — boxes, voids (inverted boxes inside),
+    vertex indices shuffled so the merges run in a scrambled order."""
+    rng = random.Random(seed)
+    quads = ((0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5),
+             (2, 3, 7, 6), (3, 0, 4, 7))
+    v, t = [], []
+    for k in range(rng.randrange(1, 6)):
+        o = [rng.uniform(-9, 9) for _ in range(3)]
+        s = rng.uniform(0.5, 3)
+        void = k and rng.random() < 0.4
+        base = len(v)
+        v += [(o[0] + x * s, o[1] + y * s, o[2] + z * s)
+              for x, y, z in ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+                              (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1))]
+        for q in quads:
+            for tri in ((q[0], q[1], q[2]), (q[0], q[2], q[3])):
+                tri = tuple(base + i for i in tri)
+                t.append(tri[::-1] if void else tri)
+    perm = list(range(len(v)))
+    rng.shuffle(perm)
+    v = np.array([v[perm.index(i)] for i in range(len(v))])
+    t = np.array([[perm[i] for i in tri] for tri in t])
+    rng.shuffle(t)
+    out = []
+    for mod in (None, nat):
+        monkeypatch.setattr(_native, "native", mod)
+        out.append(solids._outer_shell_mask(v, t).tolist())
+    assert out[0] == out[1]
+    assert nat.shell_roots(t.astype(np.int64), len(v)).tolist() == \
+        _python_roots(v, t)
+
+
+def _python_roots(v, t):
+    parent = list(range(len(v)))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b, c in t.tolist():
+        ra, rb, rc = find(a), find(b), find(c)
+        parent[rb] = ra
+        parent[find(rc)] = ra
+    return [find(a) for a in t[:, 0].tolist()]

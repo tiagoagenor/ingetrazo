@@ -304,19 +304,27 @@ def _outer_shell_mask(v, t):
     """Keep the triangles of the shells that bound volume from outside:
     an inner void is a connected shell of negative signed volume."""
     n = len(t)
-    parent = list(range(len(v)))
+    import core._native as _native
+    nat = _native.native
+    if nat is not None and hasattr(nat, "shell_roots") and n:
+        # The same union-find, merged in the same order (tests/
+        # test_conform_native.py) — a Python loop per triangle otherwise.
+        roots = nat.shell_roots(np.ascontiguousarray(t, dtype=np.int64)
+                                .reshape(-1, 3), len(v))
+    else:
+        parent = list(range(len(v)))
 
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
 
-    for a, b, c in t.tolist():
-        ra, rb, rc = find(a), find(b), find(c)
-        parent[rb] = ra
-        parent[find(rc)] = ra
-    roots = np.array([find(a) for a in t[:, 0].tolist()])
+        for a, b, c in t.tolist():
+            ra, rb, rc = find(a), find(b), find(c)
+            parent[rb] = ra
+            parent[find(rc)] = ra
+        roots = np.array([find(a) for a in t[:, 0].tolist()])
     a, b, c = v[t[:, 0]], v[t[:, 1]], v[t[:, 2]]
     vol = np.einsum("ij,ij->i", a, np.cross(b, c))
     keep = np.ones(n, dtype=bool)
