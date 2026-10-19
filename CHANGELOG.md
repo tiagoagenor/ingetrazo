@@ -306,6 +306,17 @@ follow [SemVer](https://semver.org).
   hijos es instancia) como `_load_into_inner`. Las 201 escenas de partida
   distintas del corpus abren en Rust con la misma firma L2 que la escena
   viva de Python (`ingetrazo-golden`, `model_signature`).
+- **Lectura del `.igz` en los tres formatos** (M2.7,
+  `rust/crates/ingetrazo-formats/src/igz_geom.rs`): Rust lee también los
+  bloques binarios de geometría del formato 3 (`float32`, `int32`, `int64`,
+  `uint8`; cualquier otro tipo se rechaza, igual que en Python) y los
+  expande al mismo `edges`/`faces` que escribe `_mesh_json`, de modo que la
+  firma L2 de un formato 3 es idéntica a la de Python.
+  `scripts/golden/make_igz_format_fixtures.py` genera escenas con la
+  aplicación real (curvas, aristas suaves y ocultas, capas, caras con
+  huecos y atributos, textura embebida, componentes que comparten
+  prototipo, hijos anidados) en formato 1, 2 y 3, con la firma que Python
+  calcula al reabrirlas; `cargo test` las compara.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la

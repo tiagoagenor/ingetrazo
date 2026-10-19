@@ -7,6 +7,7 @@
 //! the signature Python saw, the two apps agree on what the file holds.
 
 use ingetrazo_formats::igz::Zip;
+use ingetrazo_formats::igz_geom::expand_mesh;
 use ingetrazo_formats::pyjson::{dumps, Options, Value};
 use sha2::{Digest, Sha256};
 
@@ -132,7 +133,9 @@ fn list_of_str(v: Vec<String>) -> Value {
 /// `signature.mesh_signature` of a mesh block (`edges` + `faces`).
 pub fn mesh_signature(mesh: &Value, files: &Files) -> Result<Value, String> {
     if mesh.get("geom").is_some() {
-        return Err("format-3 geometry block (not read yet)".into());
+        // Format 3: the binary block, spelled out as the JSON form would be.
+        let plain = expand_mesh(mesh, files.zip).map_err(|e| e.to_string())?;
+        return mesh_signature(&plain, files);
     }
     let empty = Vec::new();
     let edges = match mesh.get("edges") {
