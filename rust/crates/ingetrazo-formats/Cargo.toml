@@ -1,0 +1,13 @@
+[package]
+name = "ingetrazo-formats"
+description = "IngeTrazo's file formats: .igz first, Python's json byte for byte"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+flate2 = "1.1"
+
+[lints]
+workspace = true

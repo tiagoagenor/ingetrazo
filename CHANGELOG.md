@@ -250,6 +250,13 @@ follow [SemVer](https://semver.org).
   rueda se llama ahora `ingetrazo_py-*.whl`. `cargo test` corre por fin las
   pruebas Rust, que el crate cdylib no podía ejecutar; el CI las corre, con
   `clippy -D warnings`, en Linux, Windows y macOS.
+- **`.igz` desde Rust** (`rust/crates/ingetrazo-formats`, M0.7): lee el
+  documento de los tres formatos y escribe el formato 1 con los mismos bytes
+  que Python. `pyjson` reproduce `json.dumps` (el `repr` de cada float, con
+  el desempate al dígito par que Rust no hace por sí solo; `ensure_ascii`,
+  sangría, orden de claves) y `json.loads`. Gabaritos escritos por Python en
+  `tests/data` (`scripts/golden/make_pyjson_fixtures.py`) y los 12 `.igz` del
+  repositorio vuelven idénticos.
 - **Plan de migración a Rust** (`docs/rust-migration-plan.md`): el núcleo
   pasa a `rust/ingetrazo_core` módulo a módulo, con el código Python como
   respaldo y pruebas de paridad exacta. Primer paso: `core/vecmath.py` es la
