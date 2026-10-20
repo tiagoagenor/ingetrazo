@@ -5,7 +5,14 @@
 //! `georef/tiles.py` that the DEM sampler needs).
 //!
 //! * [`datum`]: UTM forward/inverse and [`datum::SceneDatum`].
-//! * [`tiles`]: `deg2num` and `tiles_covering`.
+//! * [`tiles`]: slippy math, tile sources and URL templating, `TileLayer`,
+//!   the disk LRU `TileCache`; [`tile_fetcher`]: the request queue as pure
+//!   data plus the `HttpGet` trait the app implements.
+//! * [`terrain`] / [`surface`]: DEM relief grid and terrain-surface fills as
+//!   plain arrays; [`geopath`] / [`points`]: traced paths and survey points;
+//!   [`profile`]: the elevation profile; [`geocode`]: Nominatim / ipapi
+//!   request building and response parsing; [`geoimport`]: KML/KMZ/GeoJSON.
+//! * [`pyconv`]: Python's `float()`/`str()`/truthiness on JSON values.
 //! * [`dem`]: terrarium/mapbox decode, bilinear sampling, [`dem::DemSampler`].
 //! * [`geotiff`]: TIFF/BigTIFF header, GeoKeys, strip/tile decoding to RGBA.
 //!
@@ -43,4 +50,13 @@
 pub mod datum;
 pub mod dem;
 pub mod geotiff;
+pub mod geocode;
+pub mod geoimport;
+pub mod geopath;
+pub mod points;
+pub mod profile;
+pub mod pyconv;
+pub mod surface;
+pub mod terrain;
+pub mod tile_fetcher;
 pub mod tiles;

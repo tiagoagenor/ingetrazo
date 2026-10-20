@@ -420,6 +420,23 @@ follow [SemVer](https://semver.org).
   `scripts/golden/make_georef_fixtures.py` (datum, MDT) y 98 TIFF
   generados por Python vuelven idénticos al bit. Falta el JPEG dentro de
   TIFF, que Python delega en Qt.
+- **Mosaicos de mapa, terreno, trazados y perfil en Rust**
+  (`rust/crates/ingetrazo-georef`, M7.2, M7.3 y M7.5): `georef/tiles.py`
+  (`num2deg`, `tile_bbox`, fuentes y plantillas de URL, `TileLayer` con su
+  `to_dict`/`from_dict`, los mosaicos que cubren cada parche, `cap_detail`,
+  `quad_local`, y la caché LRU en disco), la planificación de
+  `georef/tile_fetcher.py` como datos puros (límite de 8 descargas, cola,
+  coalescencia; el HTTP es el trait `HttpGet` que pondrá la aplicación),
+  `terrain.py` y `surface.py` (rejilla del relieve con UV, plano de ajuste
+  por mínimos cuadrados, superficie «draped» con subdivisión y la clave
+  `round(., 3)`, como matrices de puntos y caras; el pegado del mosaico
+  queda en un plan de posiciones), `geocode.py` (URL de Nominatim y análisis
+  de las respuestas JSON, también en UTF-16/32), `geopath.py`, `points.py`
+  (con el lector de CSV de topografía), `profile.py` (con el CSV y su
+  formato `%.3f`) y `geoimport.py` (KML con un lector XML propio, KMZ y
+  GeoJSON). Los muestreadores entran por el trait `ElevationSampler`. 3 735
+  registros de `scripts/golden/make_georef2_fixtures.py`, calculados por las
+  funciones reales de Python sin red, vuelven idénticos al bit.
 - **Materiales, capas, etiquetas BIM y datos de textura en Rust** (crate
   `ingetrazo-model`, M2.4): `Material` y su registro (`register`, el
   repintado de contenedores, `material_sig`), `Layer` y el bloque `layers`

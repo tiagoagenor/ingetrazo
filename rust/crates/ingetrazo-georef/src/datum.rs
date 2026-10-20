@@ -163,6 +163,16 @@ impl SceneDatum {
         }
     }
 
+    /// The "freeze the zone" step of `points.datum_for_rows`: force `zone`
+    /// and hemisphere and recompute the anchor's UTM offsets in that zone.
+    pub fn freeze_zone(&mut self, zone: i64, northern: bool) {
+        self.zone = zone;
+        self.northern = northern;
+        let (e0, n0) = utm_forward(self.lat, self.lon, zone);
+        self.east0 = e0;
+        self.north0 = n0;
+    }
+
     /// UTM coordinates of the anchor.
     pub fn anchor_utm(&self) -> (f64, f64) {
         (self.east0, self.north0)
