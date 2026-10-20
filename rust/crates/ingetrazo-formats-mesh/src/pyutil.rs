@@ -25,6 +25,14 @@ pub fn round4(x: f64) -> f64 {
     format!("{x:.4}").parse().unwrap_or(x)
 }
 
+/// `round(x, 3)`.
+pub fn round3(x: f64) -> f64 {
+    if !x.is_finite() {
+        return x;
+    }
+    format!("{x:.3}").parse().unwrap_or(x)
+}
+
 /// `text.splitlines()`: `\n`, `\r`, `\r\n`, `\v`, `\f`, FS/GS/RS, NEL, LS and
 /// PS end a line; a final terminator does not start an empty one.
 pub fn splitlines(text: &str) -> Vec<&str> {

@@ -1628,6 +1628,7 @@ dependencies = [
  "ingetrazo-golden",
  "ingetrazo-math",
  "ingetrazo-model",
+ "png",
 ]
 
 [[package]]

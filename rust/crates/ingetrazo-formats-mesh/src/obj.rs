@@ -60,12 +60,12 @@ struct Mat {
 }
 
 /// A float as a dict key: `-0.0 == 0.0`.
-fn fkey(x: f64) -> u64 {
+pub(crate) fn fkey(x: f64) -> u64 {
     (x + 0.0).to_bits()
 }
 
 /// A rounded coordinate as `round(x, 6)` keys a dict.
-fn round_key(x: f64) -> (bool, i64) {
+pub(crate) fn round_key(x: f64) -> (bool, i64) {
     // A float32 times 1e6 is exact in double, so ties-to-even of the product
     // is `round(x, 6)`; anything wider goes through the decimal string.
     if x.abs() < 1e9 {
