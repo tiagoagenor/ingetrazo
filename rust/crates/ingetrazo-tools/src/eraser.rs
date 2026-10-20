@@ -315,20 +315,7 @@ impl ModifyTool for EraserTool {
         // it holds sits where the earlier deletions left it.
         let mut done: Vec<Path> = Vec::new();
         for p in &groups {
-            let mut now = p.clone();
-            let mut gone = false;
-            for d in &done {
-                let k = d.len() - 1;
-                if now.len() > k && now[..k] == d[..k] {
-                    if now[k] == d[k] {
-                        gone = true;
-                    } else if now[k] > d[k] {
-                        now[k] -= 1;
-                    }
-                }
-            }
-            // A group inside one already deleted is not in the scene any more.
-            let path = if gone { vec![usize::MAX] } else { now };
+            let path = remap_group_path(p, &done).unwrap_or_else(|| vec![usize::MAX]);
             cmds.push(Box::new(DeleteGroup::new(&path)));
             done.push(p.clone());
         }
