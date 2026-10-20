@@ -145,7 +145,7 @@ fn run_from_edges(m: &Mesh, edges: &[EdgeId]) -> Option<Run> {
         return None;
     }
     let ends: Vec<VertexId> = nbrs.iter().filter(|(_, es)| es.len() == 1).map(|(v, _)| *v).collect();
-    if ends.len() != 0 && ends.len() != 2 {
+    if !ends.is_empty() && ends.len() != 2 {
         return None;
     }
     let closed = ends.is_empty();
