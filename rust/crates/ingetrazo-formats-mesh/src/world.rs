@@ -133,7 +133,7 @@ fn translation(m: &M4) -> [f64; 3] {
 }
 
 /// `transformed_attrs(attrs, m)`.
-fn transformed_attrs(attrs: &[(String, Value)], m: &M4) -> Vec<(String, Value)> {
+pub fn transformed_attrs(attrs: &[(String, Value)], m: &M4) -> Vec<(String, Value)> {
     let (inv, ok) = m.inverted();
     if !ok {
         return attrs.to_vec();
@@ -142,14 +142,14 @@ fn transformed_attrs(attrs: &[(String, Value)], m: &M4) -> Vec<(String, Value)> 
 }
 
 /// `np_affine(m)`: `(rot, trans)` as doubles, from the column-major data.
-fn np_affine(m: &M4) -> ([[f64; 3]; 3], [f64; 3]) {
+pub fn np_affine(m: &M4) -> ([[f64; 3]; 3], [f64; 3]) {
     let d = m.data().map(|x| x as f64);
     ([[d[0], d[4], d[8]], [d[1], d[5], d[9]], [d[2], d[6], d[10]]], [d[12], d[13], d[14]])
 }
 
 /// `pts @ rot.T + trans` for one point, as NumPy's float64 matmul computes a
 /// row: three products summed in order, then the translation added.
-fn affine_point(rot: &[[f64; 3]; 3], trans: &[f64; 3], p: V3) -> V3 {
+pub fn affine_point(rot: &[[f64; 3]; 3], trans: &[f64; 3], p: V3) -> V3 {
     let (x, y, z) = (p.0 as f64, p.1 as f64, p.2 as f64);
     let row = |i: usize| x * rot[i][0] + y * rot[i][1] + z * rot[i][2] + trans[i];
     V3(row(0) as f32, row(1) as f32, row(2) as f32)

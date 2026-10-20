@@ -241,6 +241,25 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
+  M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
+  Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila
+  Manifold 3.5.4 —la versión de la rueda `manifold3d` de Python— de forma
+  estática con `cmake`, a partir de un tarball fijado por SHA-256 (más el
+  commit de Clipper2 que usa su CMake), guardado en `OUT_DIR` o en
+  `MANIFOLD_SYS_CACHE`; con `MANIFOLD_SRC_DIR` y `CLIPPER2_SRC_DIR` se
+  construye sin red. Enlaza la API C (`manifoldc`) más una función propia
+  (`face_id` del `MeshGL64`, que esa API no expone). `ingetrazo-ops` arma la
+  malla de Manifold desde la malla del mundo (`world_mesh` con la matriz del
+  componente, soldadura masiva incluida), repite el paso de uniones en T
+  (`conform`), reconstruye las caras con `fuse`, quita las esquinas colineales
+  y deja suaves las costuras de las superficies curvas. La función `apply`
+  deshace y rehace como `SolidOperationCommand`. El `fixture`
+  (`scripts/golden/make_solids_fixtures.py`, 197 casos: cajas que se
+  solapan, se tocan, coinciden o están separadas, componentes girados,
+  cilindros, un sólido dentro de otro, huecos, túneles, prismas cóncavos,
+  texturas, uniones en T) coincide bit a bit con Python: mismas caras,
+  mismo orden, mismos atributos y mismos bordes suaves.
 - **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
   todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
   base de cámara, el recorte por plano de sección, la tapa del corte (el
