@@ -1,0 +1,22 @@
+[package]
+name = "manifold-sys"
+description = "Manifold (the mesh boolean kernel) built statically from a pinned source release, with bindings to its C API"
+version.workspace = true
+edition.workspace = true
+license = "Apache-2.0"
+publish.workspace = true
+links = "manifoldc"
+build = "build.rs"
+
+[dependencies]
+
+[build-dependencies]
+cmake = "0.1"
+cc = "1"
+ureq = "2"
+sha2 = "0.10"
+flate2 = "1"
+tar = "0.4"
+
+[lints]
+workspace = true
