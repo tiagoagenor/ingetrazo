@@ -12,6 +12,8 @@ ingetrazo-geom.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
+# The CPU picker: placements, owners and what the cursor may touch (M3.12).
+ingetrazo-snap = { path = "../ingetrazo-snap" }
 # Pinned to the version eframe/egui-wgpu 0.36.2 build against (Cargo.lock).
 wgpu = "=30.0.1"
 bytemuck = { version = "=1.25.2", features = ["derive"] }

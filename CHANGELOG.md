@@ -241,6 +241,32 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Selección por buffer de identificadores, en Rust** (`ingetrazo-render`,
+  `pick`, M4.2): `IdPicker` dibuja la escena una segunda vez, no en colores
+  sino en enteros (`Rg32Uint`: cada píxel dice qué colocación y qué cara,
+  arista o vértice lo cubre), y un clic es leer un píxel de la tarjeta
+  gráfica en vez de lanzar un rayo contra el modelo: el coste ya no crece con
+  los triángulos. `prepare(escena, cámara, tamaño, opciones)` es perezoso (si
+  no cambió ni la escena ni la cámara, solo calcula un resumen y no toca la
+  GPU); `pick_layers`, `pick_pixel`, `pick_face` y `pick_group` leen un
+  píxel; `pick_rect` lee solo el rectángulo y devuelve lo visible dentro, en
+  modo ventana o cruce. Cinco capas: caras, aristas (banda de 8 px, la más
+  cercana gana, ocultas fuera), vértices, grupos y aristas de grupo (el
+  recurso de `pick_group` para grupos de solo líneas). Respeta lo oculto, lo
+  bloqueado, las capas, el corte de sección activo, el grupo abierto y los
+  estilos transparentes, igual que el índice de la CPU. La prioridad de
+  Python (vértice > arista > cara…) y los umbrales en píxeles siguen siendo
+  del selector de CPU (`ingetrazo-snap`): el buffer es la fuente rápida de
+  candidatos, y la documentación del módulo dice cómo combinarlos.
+  `tests/id_pick.rs` repite las 94 vistas de `pick_parity.rs` y compara con
+  el selector de CPU píxel a píxel: caras 100 % (5.132 píxeles, sin contar
+  los que están a 1 px de un cambio del buffer), grupos 99,5 %, aristas
+  92 % (los empates entre aristas colineales no tienen respuesta correcta).
+  En la escena de estrés (1.028.700 triángulos, 2.025 colocaciones, GPU de
+  sobremesa) leer un píxel tarda 0,15 ms y un rectángulo de 200×150 px unos
+  0,7 ms; rehacer el buffer tras mover la cámara, 60 ms con todas las capas
+  y 16 ms solo con caras (`PickOptions::layers`), y `prepare` sin cambios
+  180 µs. `examples/bench.rs --pick` lo mide.
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un

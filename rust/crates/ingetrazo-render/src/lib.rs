@@ -11,6 +11,8 @@
 //!   [`frame::FramePlan`] (testable data), then encoded.
 //! * [`offscreen`]: headless rendering to an image (tests, PNG export).
 //! * [`blit`]: copying the result into a host's pass (egui paint callbacks).
+//! * [`pick`]: GPU picking (M4.2), the ID buffer: face, edge and vertex under a
+//!   pixel or a rectangle.
 //!
 //! The crate does not depend on any UI toolkit.
 
@@ -26,6 +28,7 @@ pub mod frame;
 pub mod offscreen;
 pub mod options;
 pub mod overlay;
+pub mod pick;
 pub mod plan;
 pub mod renderer;
 pub mod section;
