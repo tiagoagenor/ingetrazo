@@ -293,9 +293,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Empurrar/Puxar",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.5",
@@ -365,9 +365,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Seleção por raio (picking)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.13",
@@ -392,9 +392,9 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Renderizador wgpu: faces, arestas, estilos",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.2",
@@ -473,18 +473,18 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "OBJ (importar e exportar)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.2",
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "STL (importar e exportar)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.3",
@@ -518,16 +518,16 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "Ponte DWG (dwg2dxf)",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.7",
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "Leitor de SKP portado do openskp",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
