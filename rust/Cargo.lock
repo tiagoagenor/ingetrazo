@@ -1673,8 +1673,10 @@ dependencies = [
  "ingetrazo-geom",
  "ingetrazo-math",
  "ingetrazo-model",
+ "ingetrazo-ops",
  "ingetrazo-render",
  "ingetrazo-snap",
+ "ingetrazo-tools",
  "rfd",
 ]
 
