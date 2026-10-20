@@ -101,7 +101,7 @@
     ],
     "component": true,
     "name": "container",
-    "uid": "7bbdcee6d78642ac",
+    "uid": "0000000000000003",
     "children": [
      {
       "proto": 1,
@@ -125,7 +125,7 @@
       ],
       "component": true,
       "name": "kid1",
-      "uid": "f9835780511f4435"
+      "uid": "0000000000000001"
      },
      {
       "proto": 1,
@@ -149,7 +149,7 @@
       ],
       "component": true,
       "name": "kid2",
-      "uid": "36096ab33a2f412a"
+      "uid": "0000000000000002"
      }
     ]
    }

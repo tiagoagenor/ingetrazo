@@ -53,6 +53,10 @@ def build_tool(name: str) -> None:
     (out / ".gitattributes").write_text("* -text\n", encoding="utf-8", newline="\n")
     paths = {}
     for sname, build in mod.SCENES.items():
+        # Group identities are random; the committed scenes must not change on
+        # a rerun.
+        import core.group as core_group
+        core_group.new_uid = H.UidSource()
         scene = build()
         path = out / f"{sname}.igz.json"
         H.save_scene_json(scene, path)
