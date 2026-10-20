@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset><coverage><geographic_location><longitude>3</longitude></geographic_location></coverage><unit name="meter" meter="1"/><up_axis>Z_UP</up_axis></asset>
+<library_geometries><geometry id="T" name="T"><mesh><source id="T-pos"><float_array id="T-pos-arr" count="9">0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0</float_array><technique_common><accessor source="#T-pos-arr" count="3" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source><vertices id="T-v"><input semantic="POSITION" source="#T-pos"/></vertices><triangles count="1"><input semantic="VERTEX" source="#T-v" offset="0"/><p>0 1 2</p></triangles></mesh></geometry></library_geometries><library_visual_scenes><visual_scene id="scene"><node id="n" name="n"><instance_geometry url="#T"/></node></visual_scene></library_visual_scenes><scene><instance_visual_scene url="#scene"/></scene>
+</COLLADA>

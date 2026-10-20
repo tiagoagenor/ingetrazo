@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+<asset>
+<contributor><authoring_tool>IngeTrazo</authoring_tool></contributor>
+<created>2026-10-20T00:51:56+00:00</created><modified>2026-10-20T00:51:56+00:00</modified>
+<unit name="meter" meter="1"/>
+<up_axis>Z_UP</up_axis>
+</asset>
+<library_effects>
+</library_effects>
+<library_materials>
+</library_materials>
+<library_geometries>
+<geometry id="geom0" name="IngeTrazo"><mesh>
+<source id="geom0-pos"><float_array id="geom0-pos-array" count="0"></float_array><technique_common><accessor source="#geom0-pos-array" count="0" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-nrm"><float_array id="geom0-nrm-array" count="0"></float_array><technique_common><accessor source="#geom0-nrm-array" count="0" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<vertices id="geom0-vertices"><input semantic="POSITION" source="#geom0-pos"/></vertices>
+</mesh></geometry>
+</library_geometries>
+<library_visual_scenes>
+<visual_scene id="scene"><node id="model" name="IngeTrazo model">
+<instance_geometry url="#geom0"><bind_material><technique_common>
+</technique_common></bind_material></instance_geometry>
+</node></visual_scene></library_visual_scenes>
+<scene><instance_visual_scene url="#scene"/></scene>
+</COLLADA>

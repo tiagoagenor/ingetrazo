@@ -292,14 +292,25 @@ fn world_mesh_faces(scene: &Scene, g: &Group) -> Vec<WFace> {
 
 /// `_faces(scene)`: every renderable face in world space, loose mesh first.
 pub fn world_faces(scene: &Scene) -> Vec<WFace> {
+    faces_in_world(scene, false)
+}
+
+/// `formats.meshexport.world_faces(scene)` (glTF and COLLADA): `_faces`, but
+/// a group that owns placements also counts as placed.
+pub fn world_faces_meshexport(scene: &Scene) -> Vec<WFace> {
+    faces_in_world(scene, true)
+}
+
+fn faces_in_world(scene: &Scene, children_place: bool) -> Vec<WFace> {
     let mut out: Vec<WFace> = mesh_faces(scene.loose()).into_iter().filter(|f| face_visible(scene, f)).collect();
     // Without a placed group `render_faces` reads each group's own mesh
     // (nested placements cannot exist: owning one makes a group an instance).
+    let placed = scene.groups.iter().any(|x| x.xform.is_some() || (children_place && !x.children.is_empty()));
     for g in &scene.groups {
         if !group_visible(scene, g) || billboard(g) {
             continue;
         }
-        if scene.groups.iter().any(|x| x.xform.is_some()) {
+        if placed {
             out.extend(world_mesh_faces(scene, g));
         } else {
             out.extend(mesh_faces(scene.mesh(g.mesh)));
