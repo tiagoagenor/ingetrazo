@@ -241,6 +241,21 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Sigue-me aplicado a la malla, en Rust** (`ingetrazo-ops`, M3.6):
+  `sweep_profile` de `core/sweep.py` (consumir la cara del perfil, añadir
+  paredes y tapas, limpiar las aristas sueltas del perfil, `run_stitch`
+  sin fusión coplanar, suavizar las costuras de un barrido curvo y
+  orientar hacia fuera) como `SweepProfileCommand` —deshacer y rehacer
+  restauran las instantáneas, como `SnapshotMutation`—, con la confirmación
+  de la herramienta (`commit_follow_me`: un barrido rechazado se deshace y
+  vacía el rehacer) y la lectura del camino preseleccionado (aristas o una
+  cara) con su orientación hacia el perfil. 83 casos de la herramienta real
+  de Python (rectos, con codos, perfil en mitad de la arista, lazos
+  cerrados, tornos y esferas, perfiles con agujeros, casi colineales,
+  retroceso rechazado, arcos suavizados, protuberancias y túneles sobre
+  geometría existente, dentro de un grupo y aleatorios) dan el mismo
+  estado completo de la malla, bit a bit, tras confirmar, deshacer,
+  rehacer y deshacer.
 - **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
   los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
   Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,

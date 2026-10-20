@@ -9,6 +9,7 @@ pub mod arrangement;
 pub mod command;
 pub mod describe;
 pub mod draw;
+pub mod followme;
 pub mod edit_cmds;
 pub mod edits;
 pub mod group;

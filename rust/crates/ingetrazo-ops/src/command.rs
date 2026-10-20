@@ -186,6 +186,11 @@ impl History {
         true
     }
 
+    /// `history.redo_stack.clear()`.
+    pub fn clear_redo(&mut self) {
+        self.redo_stack.clear();
+    }
+
     pub fn clear(&mut self) {
         self.undo_stack.clear();
         self.redo_stack.clear();
