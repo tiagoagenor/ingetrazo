@@ -15,6 +15,7 @@ pub mod fillet;
 pub mod fuse;
 pub mod gltape;
 pub mod hlr;
+pub mod hlr_draw;
 pub mod instances;
 pub mod intersect;
 pub mod meshface;
