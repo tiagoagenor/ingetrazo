@@ -12,6 +12,7 @@ ingetrazo-geom.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
+ingetrazo-snap = { path = "../ingetrazo-snap" }
 
 [dev-dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
