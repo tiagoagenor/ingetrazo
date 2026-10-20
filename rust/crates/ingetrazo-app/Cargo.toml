@@ -25,5 +25,9 @@ ingetrazo-render = { path = "../ingetrazo-render" }
 eframe = { version = "=0.36.2", features = ["accesskit", "wgpu"] }
 rfd = "0.17"
 
+[target.'cfg(windows)'.build-dependencies]
+# Embeds the icon and the version metadata in ingetrazo.exe (M9.1).
+winresource = "0.1"
+
 [lints]
 workspace = true

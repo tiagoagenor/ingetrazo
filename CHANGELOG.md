@@ -241,6 +241,22 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Instalador de Windows de la app en Rust y auditoría «sin Python»**
+  (M9.1, M9.4): `packaging/windows/build.ps1` compila `ingetrazo-app` en
+  release, prepara la carpeta del paquete (`ingetrazo.exe`, `resources/`, el
+  puente DWG de LibreDWG con su hash fijado, licencia e iconos de documento),
+  la audita y construye con Inno Setup `ingetrazo-setup-vX.Y.Z-rust.exe`.
+  Mismo AppId, carpeta, accesos directos, asociaciones `.igz`/`.dae`/`.skp`,
+  idiomas y desinstalador que el instalador de Python (`installer/`, que
+  sigue intacto hasta M10), así que instalarlo encima es una actualización
+  limpia. `ingetrazo.exe` lleva icono y versión incrustados (`build.rs`,
+  `winresource`) y en release no abre consola. La firma es opcional
+  (`-Sign`, `INGETRAZO_SIGN_PFX`/`INGETRAZO_SIGN_PASSWORD`). El flujo
+  `build-windows-rust.yml` lo construye en tags y a mano y sube el artefacto.
+  `packaging/audit_no_python.ps1` (PowerShell, no necesita Python) falla si
+  el paquete, o el instalador ya instalado en una carpeta temporal, trae un
+  `python*.dll`, `*.pyd`, `*.pyc`, `*.py`, PySide6, Qt6, `base_library.zip`,
+  `_internal` o un ejecutable que enlace con un intérprete.
 - **Selección por buffer de identificadores, en Rust** (`ingetrazo-render`,
   `pick`, M4.2): `IdPicker` dibuja la escena una segunda vez, no en colores
   sino en enteros (`Rg32Uint`: cada píxel dice qué colocación y qué cara,
