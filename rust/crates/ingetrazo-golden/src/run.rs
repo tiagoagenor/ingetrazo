@@ -16,12 +16,12 @@ use ingetrazo_ops::command::{Command, Cx, History};
 
 use crate::decode::Res;
 use crate::sig::{signature_hash, Files};
-use crate::{model_sig, ops_transform, Outcome, Script};
+use crate::{model_sig, ops_groups, ops_transform, Outcome, Script};
 
 /// The Command `op` builds from `args` against `scene`: `None` when no
 /// module of the engine knows the op yet.
 pub fn build_command(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Command>>> {
-    ops_transform::build(op, args, scene)
+    ops_transform::build(op, args, scene).or_else(|| ops_groups::build(op, args, scene))
 }
 
 fn text<'a>(step: &'a Value, key: &str) -> &'a str {

@@ -5,8 +5,10 @@
 //! and the solid booleans (`core/solids.py`) through Manifold.
 
 pub mod command;
+pub mod edit_cmds;
 pub mod group;
 pub mod group_cmds;
+pub mod grouping;
 pub mod solids;
 pub mod transform;
 pub mod world;

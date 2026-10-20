@@ -275,7 +275,7 @@ pub fn np_affine(m: &M4) -> ([[f64; 3]; 3], [f64; 3]) {
 
 /// `np.array(pts) @ rot.T + trans` over float64 rows (see the module notes
 /// for the BLAS order).
-fn affine_rows(pts: &[[f64; 3]], rot: &[[f64; 3]; 3], trans: &[f64; 3]) -> Vec<[f64; 3]> {
+pub fn affine_rows(pts: &[[f64; 3]], rot: &[[f64; 3]; 3], trans: &[f64; 3]) -> Vec<[f64; 3]> {
     let single = pts.len() == 1;
     pts.iter()
         .map(|a| {
@@ -524,7 +524,7 @@ pub fn world_mesh<'a>(meshes: &'a [Mesh], group: &mut Group, curve: &mut i64) ->
     Cow::Owned(merged_placements(meshes, group, curve))
 }
 
-fn push_mesh(meshes: &mut Vec<Mesh>, mesh: Mesh) -> MeshId {
+pub fn push_mesh(meshes: &mut Vec<Mesh>, mesh: Mesh) -> MeshId {
     meshes.push(mesh);
     MeshId(meshes.len() as u32 - 1)
 }
@@ -572,7 +572,7 @@ pub fn make_unique(meshes: &mut Vec<Mesh>, group: &mut Group, counters: &mut Cou
     old
 }
 
-fn truthy_dict(v: &Option<Value>) -> Option<Value> {
+pub fn truthy_dict(v: &Option<Value>) -> Option<Value> {
     match v {
         Some(Value::Object(o)) if !o.is_empty() => v.clone(),
         _ => None,

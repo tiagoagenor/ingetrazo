@@ -1,0 +1,33 @@
+{
+ "schema": 1,
+ "id": "test_group_commands_parity__test_paint_commands_on_loose_and_grouped_faces-424dbe1f",
+ "source": {"pytest": "tests/test_group_commands_parity.py::test_paint_commands_on_loose_and_grouped_faces", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/9e5ea76c99e3156d.igz"},
+ "start_sig": "33aeda05d497a9acae930fe024b8b9a6732e1d05e12b2d6cb9a10afb87c4e023",
+ "steps": [
+  {"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}},{"$face":{"loop":[[5.0,5.0,0.0],[7.0,5.0,0.0],[7.0,7.0,0.0],[5.0,7.0,0.0]],"in":[0]}}],"color":{"$t":[0.2,0.4,0.6]}},"counters":{"group":3,"curve":1},"sig":"6db7a0b36d6ec13cb1d48d72694fb8ce373df13bf3dc47dafcdca0bba4c7b9d9"},
+  {"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}},{"$face":{"loop":[[5.0,5.0,0.0],[7.0,5.0,0.0],[7.0,7.0,0.0],[5.0,7.0,0.0]],"in":[0]}}],"opacity":0.5},"counters":{"group":3,"curve":1},"sig":"1e68dc6bf2107726bb8f6b2aa05ee82fa83c672651d22ba67492be4c4b380463"},
+  {"op":"set_face_material_tag","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}],"name":"Azul","material":{"$obj":"core.materials.Material","data":{"name":"Azul","color":[0.2,0.4,0.6]}}},"counters":{"group":3,"curve":1},"sig":"1c7c3495f61a0fa81bf50e05482881dc29c5f92494e87f118f3baaa744ddc8ad"},
+  {"op":"set_face_texture","args":{"faces":[{"$face":{"loop":[[5.0,5.0,0.0],[7.0,5.0,0.0],[7.0,7.0,0.0],[5.0,7.0,0.0]],"in":[0]}}],"texture":{"path":"x.png","sw":1.0,"sh":1.0}},"counters":{"group":3,"curve":1},"sig":"151425a837b144a9e28b711d9a1456a5b91e3ff9be5f130cde856101a4a3bd57"},
+  {"op":"set_face_back","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}},{"$face":{"loop":[[5.0,5.0,0.0],[7.0,5.0,0.0],[7.0,7.0,0.0],[5.0,7.0,0.0]],"in":[0]}}],"backs":{"color":{"$t":[0.0,1.0,0.0]},"mat":"Verde"}},"counters":{"group":3,"curve":1},"sig":"e29b29423c5909961e3c5c0f689992f3738599b37aeb12c668e60759f4ae79fb"},
+  {"op":"set_face_color","args":{"faces":[{"$face":{"loop":[[0.0,0.0,0.0],[2.0,0.0,0.0],[2.0,2.0,0.0],[0.0,2.0,0.0]],"in":null}}],"color":null},"counters":{"group":3,"curve":1},"sig":"1a332240a7996bd8286b82b15d0e43a064d29420ff7922dfe6bf447f24c0856f"},
+  {"op":"set_face_opacity","args":{"faces":[{"$face":{"loop":[[5.0,5.0,0.0],[7.0,5.0,0.0],[7.0,7.0,0.0],[5.0,7.0,0.0]],"in":[0]}}],"opacity":null},"counters":{"group":3,"curve":1},"sig":"c3bcb72ae8d23365e8c1629f3826e4a739ee9aee9382d0e5da0daa26cd7cf82e"},
+  {"op":"rename_group","args":{"group":{"$group":[0]},"name":"Cajón"},"counters":{"group":3,"curve":1},"sig":"a6fe10480d62ddd380ddb3109ae8e8167bbbb1e7a77302816a1ee44841121ccd"},
+  {"op":"undo","ok":true,"sig":"c3bcb72ae8d23365e8c1629f3826e4a739ee9aee9382d0e5da0daa26cd7cf82e"},
+  {"op":"undo","ok":true,"sig":"1a332240a7996bd8286b82b15d0e43a064d29420ff7922dfe6bf447f24c0856f"},
+  {"op":"undo","ok":true,"sig":"e29b29423c5909961e3c5c0f689992f3738599b37aeb12c668e60759f4ae79fb"},
+  {"op":"undo","ok":true,"sig":"151425a837b144a9e28b711d9a1456a5b91e3ff9be5f130cde856101a4a3bd57"},
+  {"op":"undo","ok":true,"sig":"1c7c3495f61a0fa81bf50e05482881dc29c5f92494e87f118f3baaa744ddc8ad"},
+  {"op":"undo","ok":true,"sig":"1e68dc6bf2107726bb8f6b2aa05ee82fa83c672651d22ba67492be4c4b380463"},
+  {"op":"undo","ok":true,"sig":"6db7a0b36d6ec13cb1d48d72694fb8ce373df13bf3dc47dafcdca0bba4c7b9d9"},
+  {"op":"undo","ok":true,"sig":"33aeda05d497a9acae930fe024b8b9a6732e1d05e12b2d6cb9a10afb87c4e023"},
+  {"op":"redo","ok":true,"sig":"6db7a0b36d6ec13cb1d48d72694fb8ce373df13bf3dc47dafcdca0bba4c7b9d9"},
+  {"op":"redo","ok":true,"sig":"1e68dc6bf2107726bb8f6b2aa05ee82fa83c672651d22ba67492be4c4b380463"},
+  {"op":"redo","ok":true,"sig":"1c7c3495f61a0fa81bf50e05482881dc29c5f92494e87f118f3baaa744ddc8ad"},
+  {"op":"redo","ok":true,"sig":"151425a837b144a9e28b711d9a1456a5b91e3ff9be5f130cde856101a4a3bd57"},
+  {"op":"redo","ok":true,"sig":"e29b29423c5909961e3c5c0f689992f3738599b37aeb12c668e60759f4ae79fb"},
+  {"op":"redo","ok":true,"sig":"1a332240a7996bd8286b82b15d0e43a064d29420ff7922dfe6bf447f24c0856f"},
+  {"op":"redo","ok":true,"sig":"c3bcb72ae8d23365e8c1629f3826e4a739ee9aee9382d0e5da0daa26cd7cf82e"},
+  {"op":"redo","ok":true,"sig":"a6fe10480d62ddd380ddb3109ae8e8167bbbb1e7a77302816a1ee44841121ccd"}
+ ]
+}

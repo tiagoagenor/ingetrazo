@@ -1,0 +1,18 @@
+{
+ "schema": 1,
+ "id": "test_group_commands_parity__test_reparent_keeps_the_world_place-a9628577",
+ "source": {"pytest": "tests/test_group_commands_parity.py::test_reparent_keeps_the_world_place", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/fe32cbc93c223bdb.igz"},
+ "start_sig": "2c31a574d4adcbda9342486d37c03bdf4358a181f2a65c13a78b42d7efd6e893",
+ "steps": [
+  {"op":"reparent_groups","args":{"groups":[{"$group":[0]},{"$group":[1]}],"target":{"$group":[2]}},"counters":{"group":1,"curve":1},"sig":"bdfe527d59976aeb6cef2d7fd6ab9f4b290f8ee9a35106eb53ac6c0cc8e303e7"},
+  {"op":"reparent_groups","args":{"groups":[{"$group":[0,1]}],"target":null},"counters":{"group":1,"curve":1},"sig":"08fc3c4bbae7338e0037115c3580b6f4cf339c019dade72c943d3e20c712516c"},
+  {"op":"reparent_groups","args":{"groups":[{"$group":[0,0]}],"target":{"$group":[1]}},"counters":{"group":1,"curve":1},"sig":"33ec80dcac662ec5eb8e33ff24077a93b5b97c15ff7a674e57f301b244438d87"},
+  {"op":"undo","ok":true,"sig":"08fc3c4bbae7338e0037115c3580b6f4cf339c019dade72c943d3e20c712516c"},
+  {"op":"undo","ok":true,"sig":"bdfe527d59976aeb6cef2d7fd6ab9f4b290f8ee9a35106eb53ac6c0cc8e303e7"},
+  {"op":"undo","ok":true,"sig":"2c31a574d4adcbda9342486d37c03bdf4358a181f2a65c13a78b42d7efd6e893"},
+  {"op":"redo","ok":true,"sig":"bdfe527d59976aeb6cef2d7fd6ab9f4b290f8ee9a35106eb53ac6c0cc8e303e7"},
+  {"op":"redo","ok":true,"sig":"08fc3c4bbae7338e0037115c3580b6f4cf339c019dade72c943d3e20c712516c"},
+  {"op":"redo","ok":true,"sig":"33ec80dcac662ec5eb8e33ff24077a93b5b97c15ff7a674e57f301b244438d87"}
+ ]
+}

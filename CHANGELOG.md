@@ -241,6 +241,23 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
+  los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
+  Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,
+  Vista explosionada, Dividir en piezas, Insertar, Eliminar, Renombrar,
+  Bloquear, Pintar grupo, Reemplazar componente, Conservar en archivo,
+  Recompartir— y los de atributos —Ocultar, Asignar capa, pintar caras
+  (color, opacidad, textura, reverso, etiqueta de material), acabado y
+  reestampado de material, Purgar sin usar, Explotar curvas y datos de
+  extensión—, más `core/explode.py`, `core/parts.py`, `core/purge.py` y
+  `core/kept_components.py`. Se replican las lecturas `m(r, c)` que marcan
+  General una matriz que sigue viva (`part_points`, el `transformed_mesh` de
+  Explotar) y el orden de las listas (Python guarda los grupos por
+  referencia; aquí un comando que saca un grupo del árbol lo guarda y lo
+  devuelve al deshacer). El replay dorado pasa de 63 a 143 guiones hasta el
+  final, con 4 guiones nuevos (`tests/test_group_commands_parity.py`: vista
+  explosionada, reubicar, agrupar en contexto y pintura de caras) y una
+  entrada más en `golden/undo_all_drift.json`.
 - **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
   M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
   Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila
