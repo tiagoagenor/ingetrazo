@@ -17,6 +17,7 @@ pub mod texture;
 pub mod annotations;
 pub mod dimension;
 pub mod guide;
+pub mod igz_write;
 pub mod image_plane;
 pub mod pyconv;
 pub mod saved_views;

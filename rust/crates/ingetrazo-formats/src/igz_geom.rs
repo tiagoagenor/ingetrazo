@@ -332,6 +332,7 @@ pub fn expand_document(doc: &Value, zip: Option<&Zip>) -> Result<Value, IgzError
         let v = match (k.as_str(), v) {
             ("protos", Value::Array(ps)) => Value::Array(ps.iter().map(|p| expand_mesh(p, zip)).collect::<Result<_, _>>()?),
             ("groups", Value::Array(gs)) => Value::Array(gs.iter().map(|g| group(g, zip)).collect::<Result<_, _>>()?),
+            ("kept_components", Value::Array(gs)) => Value::Array(gs.iter().map(|g| group(g, zip)).collect::<Result<_, _>>()?),
             (_, v) => v,
         };
         new_scene.push((k, v));

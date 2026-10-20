@@ -91,6 +91,82 @@ pub struct Scene {
     pub section_planes: Vec<Value>,
     pub image_planes: Vec<Value>,
     pub geo_paths: Vec<Value>,
+    /// Blocks the .igz writer needs and the model does not edit yet, kept as
+    /// the JSON the document brought (`igz_write::save_scene` writes them).
+    pub extra: SceneExtra,
+}
+
+/// The rest of a document's blocks, as stored JSON (see [`Scene::extra`]).
+/// `None` / empty = the block is absent from the file; Python's loader
+/// resets the same fields to their defaults.
+#[derive(Clone, Debug)]
+pub struct SceneExtra {
+    pub saved_views: Vec<Value>,
+    pub compositions: Vec<Value>,
+    pub geo_points: Vec<Value>,
+    /// `scene.dimension_style` (always present in Python: a default dict).
+    pub dimension_style: Value,
+    pub camera: Option<Value>,
+    /// `scene.units`; `None` = the metre default.
+    pub units: Option<Value>,
+    pub plugin_data: Option<Value>,
+    pub custom_scales: Vec<f64>,
+    pub back_face_color: Option<Value>,
+    /// `not scene.show_section_planes` / `not scene.show_section_cuts`.
+    pub planes_hidden: bool,
+    pub cuts_hidden: bool,
+    pub show_hidden_objects: bool,
+    pub show_hidden_geometry: bool,
+    /// `scene.display_style.to_dict()`, `None` while it is the default
+    /// style (the writer leaves the default out).
+    pub display_style: Option<Value>,
+    /// `scene.shadows.to_dict()`, `None` while default.
+    pub shadows: Option<Value>,
+    /// `georef.datum` (`SceneDatum.to_dict()`).
+    pub georef_datum: Option<Value>,
+    pub tile_layer: Option<Value>,
+    /// `photo_mesh`: its JSON block and the blobs `pack_mesh` made (stored
+    /// members). Written, never read here.
+    pub photo_mesh: Option<(Value, Vec<(String, Vec<u8>)>)>,
+}
+
+/// `Scene.dimension_style`'s default factory.
+pub fn default_dimension_style() -> Value {
+    let i = Value::int;
+    Value::Object(vec![
+        ("decimals".into(), i(2)),
+        ("units".into(), s("m")),
+        ("font_size".into(), i(9)),
+        ("color".into(), Value::Array(vec![i(45), i(55), i(75)])),
+        ("norma".into(), s("iso")),
+        ("base_step_mm".into(), Value::Float(8.0)),
+        ("ends".into(), s("arrow")),
+    ])
+}
+
+impl Default for SceneExtra {
+    fn default() -> Self {
+        SceneExtra {
+            saved_views: Vec::new(),
+            compositions: Vec::new(),
+            geo_points: Vec::new(),
+            dimension_style: default_dimension_style(),
+            camera: None,
+            units: None,
+            plugin_data: None,
+            custom_scales: Vec::new(),
+            back_face_color: None,
+            planes_hidden: false,
+            cuts_hidden: false,
+            show_hidden_objects: false,
+            show_hidden_geometry: false,
+            display_style: None,
+            shadows: None,
+            georef_datum: None,
+            tile_layer: None,
+            photo_mesh: None,
+        }
+    }
 }
 
 pub const DEFAULT_LAYER: &str = "Layer 0";
@@ -461,7 +537,70 @@ impl Scene {
         sc.section_planes = list("section_planes");
         sc.image_planes = list("image_planes");
         sc.geo_paths = list("geo_paths");
+        sc.load_extra(payload);
         Ok(sc)
+    }
+
+    /// The blocks of `_load_into_inner` that only the writer reads yet.
+    fn load_extra(&mut self, payload: &Value) {
+        let list = |k: &str| match payload.get(k) {
+            Some(Value::Array(a)) => a.clone(),
+            _ => Vec::new(),
+        };
+        let object = |k: &str| match payload.get(k) {
+            Some(v @ Value::Object(_)) => Some(v.clone()),
+            _ => None,
+        };
+        let x = &mut self.extra;
+        x.saved_views = list("saved_views");
+        x.compositions = list("compositions");
+        x.geo_points = list("geo_points");
+        // scene.dimension_style.update({"ends": "tick", **style}): merged
+        // over the default dict, keeping the default's key order.
+        if let Value::Object(items) = &mut x.dimension_style {
+            let mut merged: Vec<(String, Value)> = vec![("ends".into(), s("tick"))];
+            if let Some(Value::Object(st)) = payload.get("dimension_style") {
+                for (k, v) in st {
+                    match merged.iter_mut().find(|(n, _)| n == k) {
+                        Some(slot) => slot.1 = v.clone(),
+                        None => merged.push((k.clone(), v.clone())),
+                    }
+                }
+            }
+            for (k, v) in merged {
+                match items.iter_mut().find(|(n, _)| *n == k) {
+                    Some(slot) => slot.1 = v,
+                    None => items.push((k, v)),
+                }
+            }
+        }
+        x.camera = object("camera");
+        x.units = object("units");
+        x.plugin_data = object("plugin_data");
+        if let Some(Value::Array(ns)) = payload.get("custom_scales") {
+            x.custom_scales = ns.iter().filter_map(num).filter(|n| *n > 0.0).collect();
+        }
+        if let Some(Value::Array(c)) = payload.get("back_face_color") {
+            if c.len() == 3 && c.iter().all(|v| num(v).is_some()) {
+                x.back_face_color = Some(Value::Array(c.iter().map(|v| Value::Float(num(v).unwrap_or(0.0))).collect()));
+            }
+        }
+        if let Some(v @ Value::Object(_)) = payload.get("section_view") {
+            x.planes_hidden = truthy(v.get("planes_hidden"));
+            x.cuts_hidden = truthy(v.get("cuts_hidden"));
+        }
+        if let Some(v @ Value::Object(_)) = payload.get("hidden_view") {
+            x.show_hidden_objects = truthy(v.get("objects"));
+            x.show_hidden_geometry = truthy(v.get("geometry"));
+        }
+        x.display_style = object("display_style");
+        x.shadows = object("shadows");
+        if let Some(g @ Value::Object(_)) = payload.get("georef") {
+            if let Some(d @ Value::Object(_)) = g.get("datum") {
+                x.georef_datum = Some(d.clone());
+            }
+        }
+        x.tile_layer = payload.get("tile_layer").filter(|v| truthy(Some(v))).cloned();
     }
 
     /// `_group_from`.

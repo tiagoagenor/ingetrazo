@@ -5,4 +5,5 @@
 
 pub mod igz;
 pub mod igz_geom;
+pub mod igz_zip;
 pub mod pyjson;
