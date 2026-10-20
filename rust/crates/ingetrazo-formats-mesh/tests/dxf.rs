@@ -192,6 +192,9 @@ fn run_import_cases(dir: &Path) -> Tally {
         let file = text(case.get("file")).unwrap().to_string();
         let scale = num(case.get("scale").unwrap());
         let label = format!("{file} (scale {scale})");
+        if std::env::var_os("INGETRAZO_DXF_TRACE").is_some() {
+            eprintln!("{label}");
+        }
         let bytes = std::fs::read(dir.join(&file)).unwrap();
         let doc = read_dxf(&bytes);
         if case.get("open_error").is_some() {
@@ -265,10 +268,10 @@ fn run_import_cases(dir: &Path) -> Tally {
 fn imports_give_the_signature_python_had() {
     let t = run_import_cases(&data().join("import"));
     assert!(t.failures.is_empty(), "{}", t.failures.join("\n"));
-    assert_eq!(t.compared, 249, "signatures compared");
-    assert_eq!(t.errors, 18, "errors compared");
-    assert_eq!(t.opened, 261, "files opened");
-    assert_eq!(t.pending, 3, "cases waiting for a port");
+    assert_eq!(t.compared, 278, "signatures compared");
+    assert_eq!(t.errors, 19, "errors compared");
+    assert_eq!(t.opened, 288, "files opened");
+    assert_eq!(t.pending, 1, "cases waiting for a port");
 }
 
 /// A directory of random documents and Python's signatures for them (the

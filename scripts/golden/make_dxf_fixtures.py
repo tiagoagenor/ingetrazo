@@ -358,11 +358,11 @@ def build_docs(dst: Path) -> list:
     msp.add_open_spline([(0, 30), (2, 33), (4, 30), (6, 33)], degree=3)
     save(doc, "splines.dxf")
 
-    # Splines the importer leans on ezdxf's approximation for (not ported).
+    # Splines ezdxf approximates by cubic Beziers: periodic, other degrees,
+    # rational.
     doc = new_doc()
     msp = doc.modelspace()
     msp.add_line((0, 0), (1, 0))
-    msp.add_spline(fit_points=[(0, 5), (2, 7), (4, 5), (6, 8)])
     from ezdxf.math import closed_uniform_bspline
     msp.add_spline().apply_construction_tool(
         closed_uniform_bspline([(0, 20), (4, 24), (8, 20), (4, 16)], order=4))
@@ -370,7 +370,17 @@ def build_docs(dst: Path) -> list:
                         degree=2)
     msp.add_rational_spline([(0, 50), (2, 53), (4, 50), (6, 53)],
                             weights=[1, 2, 1, 2], degree=3)
-    save(doc, "splines_unported.dxf", pending="SPLINE approximation")
+    msp.add_open_spline([(0, 60), (2, 63), (5, 60), (7, 64), (9, 60),
+                         (12, 66), (14, 61)], degree=5)
+    save(doc, "splines_approx.dxf")
+
+    # A spline that only has fit points (not ported: ezdxf solves a system
+    # through NumPy for its control points).
+    doc = new_doc()
+    msp = doc.modelspace()
+    msp.add_line((0, 0), (1, 0))
+    msp.add_spline(fit_points=[(0, 5), (2, 7), (4, 5), (6, 8)])
+    save(doc, "splines_fit.dxf", pending="SPLINE from fit points")
 
     # -- faces ----------------------------------------------------------------------
     doc = new_doc()
@@ -651,6 +661,7 @@ NESTED_STYLES = {
     "neg": {"xscale": -1.5, "yscale": 1.5, "zscale": 1.5},
     "nonuni": {"xscale": 2, "yscale": 0.5, "zscale": 1.2},
     "nonuni_rot": {"xscale": 2, "yscale": 0.5, "zscale": 1.2, "rotation": 50},
+    "flip": {"xscale": 0.3, "yscale": 3.0, "zscale": 1.0, "rotation": 25},
     "ext": {"extrusion": (0.2, -0.3, 0.9), "rotation": 20},
     "extneg": {"extrusion": (0, 0, -1), "xscale": 1.3, "yscale": 1.3, "zscale": 1.3},
 }
@@ -664,7 +675,7 @@ def nested_docs(dst: Path) -> list:
     matrix and flattens it afterwards."""
     made = []
     for en, ef in NESTED_ENTS.items():
-        for sn in ("id", "uni", "neg", "nonuni_rot", "ext"):
+        for sn in ("id", "uni", "neg", "nonuni_rot", "ext", "flip"):
             style = NESTED_STYLES[sn]
             doc = ezdxf.new("R2018", setup=False)
             leaf = doc.blocks.new("LEAF", base_point=(0.4, -0.2, 0.1))
@@ -1027,12 +1038,29 @@ def quirk_files() -> dict:
         files[k + ".dxf"] = v
 
 
+    # strict reading fails on a number, ezdxf's recover reader takes over
+    files["r_float.dxf"] = header() + ents(
+        T((0, "LINE"), (8, "0"), (10, "1d3"), (20, "47.11xyz"), (11, "1.#INF"), (21, " 2 5 ")) +
+        T((0, "LINE"), (8, "0"), (10, "0"), (20, "0"), (11, "3"), (21, "4"))) + EOF
+    files["r_int.dxf"] = header("AC1015") + ents(
+        T((0, "LINE"), (8, "0"), (10, "0"), (20, "0"), (11, "3"), (21, "4"), (62, "5.0")) +
+        T((0, "LWPOLYLINE"), (100, "AcDbEntity"), (8, "0"), (100, "AcDbPolyline"), (90, "3x"), (70, "1"), (10, 0), (20, 0), (10, 4), (20, 0), (10, 4), (20, 3))) + EOF
+    files["r_upper.dxf"] = header() + ents(
+        T((0, " line "), (8, "A\\U+00E9"), (10, 0), (20, 0), (11, 3), (21, 4), (62, "x1")) +
+        T((0, "Circle"), (8, "0"), (10, 0), (20, 0), (40, 2))) + EOF
+    files["r_unicode_strict.dxf"] = header() + ents(
+        T((0, "LINE"), (8, "A\\U+00E9"), (10, 0), (20, 0), (11, 3), (21, 4))) + EOF
+    files["r_unicode_recover.dxf"] = header() + ents(
+        T((0, "LINE"), (8, "A\\U+00E9"), (10, 0), (20, 0), (11, 3), (21, "4z"))) + EOF
+    files["r_nonsense.dxf"] = header() + ents(
+        T((0, "LINE"), (8, "0"), (10, "abc"), (20, 0), (11, 3), (21, 4))) + EOF
+    files["r_blocks.dxf"] = header() + blocks(block("b", T((0, "LINE"), (8, "0"), (10, 0), (20, 0), (11, "1x"), (21, 1)))) + ents(
+        T((0, "INSERT"), (8, "0"), (2, "B"), (10, 5), (20, 5), (41, "2.5x"))) + EOF
     return files
 
 
-#: Quirk files whose splines ezdxf approximates (rational, other degrees,
-#: periodic knots, fit points): the port does not follow those yet.
-PENDING = {"q_spline_bad.dxf", "q_spline_unported.dxf"}
+#: Quirk files the port does not follow yet.
+PENDING = set()
 
 HAND = {
     # R12 without a HEADER: ezdxf assumes AC1009 and reads $INSUNITS as unset.
@@ -1255,7 +1283,7 @@ def write_imports() -> None:
         data = text.encode("cp1252" if name == "q_layers_cp1252.dxf" else "utf-8")
         (imp / name).write_bytes(data)
         # Files that stand for what Python cannot import yet say so.
-        extra = {"pending": "SPLINE approximation"} if name in PENDING else {}
+        extra = {"pending": "not ported"} if name in PENDING else {}
         made.append((name, 1.0, extra))
     made += nested_docs(imp)
     made += random_docs(imp, range(1, 61))

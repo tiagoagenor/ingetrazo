@@ -442,6 +442,11 @@ impl Flat<'_> {
 
 /// `Bezier4P(curve).flattening(distance, segments)`.
 pub fn flatten_bezier4(curve: &Curve, distance: f64, segments: i64) -> R<Vec<P>> {
+    // NaN or infinite control points never satisfy the flatness test and
+    // ezdxf's recursion would run for ever; refuse them as it ends up doing.
+    if curve.iter().any(|p| !(p.x.is_finite() && p.y.is_finite() && p.z.is_finite())) {
+        return Err(Raised);
+    }
     let fast = Fast::new(curve);
     let dt = 1.0 / segments as f64;
     let mut t0 = 0.0;

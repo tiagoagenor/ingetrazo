@@ -170,6 +170,148 @@ fn tags_of(text: &str) -> Result<Vec<Tag>, String> {
     Ok(tags)
 }
 
+#[derive(PartialEq)]
+enum Num {
+    Float,
+    Int,
+}
+
+/// `TYPE_TABLE` of `ezdxf.lldxf.types`: the numeric group codes.
+fn numeric(code: i32) -> Option<Num> {
+    match code {
+        10..=59 | 110..=149 | 210..=239 | 460..=469 | 1010..=1059 => Some(Num::Float),
+        60..=79 | 90..=99 | 160..=179 | 270..=299 | 370..=389 | 400..=409 | 420..=429 | 440..=459 | 1060..=1071 => Some(Num::Int),
+        _ => None,
+    }
+}
+
+/// `_search_float`: the first `[+-]?\d+(:?\.\d*)?(:?[eE][+-]?\d+)?` of the
+/// text, as `float()` reads it (the odd `:?` of the pattern included).
+fn search_float(s: &str) -> Option<f64> {
+    let b: Vec<char> = s.chars().collect();
+    let digit = |i: usize| b.get(i).is_some_and(|c| c.is_ascii_digit());
+    for start in 0..b.len() {
+        let mut j = start;
+        if matches!(b[j], '+' | '-') {
+            j += 1;
+        }
+        if !digit(j) {
+            continue;
+        }
+        while digit(j) {
+            j += 1;
+        }
+        let mut m = j;
+        let colon = usize::from(b.get(m) == Some(&':'));
+        if b.get(m + colon) == Some(&'.') {
+            m += colon + 1;
+            while digit(m) {
+                m += 1;
+            }
+        }
+        let mut e = m;
+        let colon = usize::from(b.get(e) == Some(&':'));
+        if matches!(b.get(e + colon), Some('e' | 'E')) {
+            let mut k = e + colon + 1;
+            if matches!(b.get(k), Some('+' | '-')) {
+                k += 1;
+            }
+            if digit(k) {
+                while digit(k) {
+                    k += 1;
+                }
+                e = k;
+            }
+        }
+        let text: String = b[start..e].iter().collect();
+        return pyutil::float(&text);
+    }
+    pyutil::float(s)
+}
+
+/// `_search_int`: the first `[+-]?\d+`.
+fn search_int(s: &str) -> Option<i64> {
+    let b: Vec<char> = s.chars().collect();
+    for start in 0..b.len() {
+        let mut j = start;
+        if matches!(b[j], '+' | '-') {
+            j += 1;
+        }
+        let from = j;
+        while b.get(j).is_some_and(|c| c.is_ascii_digit()) {
+            j += 1;
+        }
+        if j > from {
+            let text: String = b[start..j].iter().collect();
+            return text.parse().ok();
+        }
+    }
+    s.trim().parse().ok()
+}
+
+/// `decode_dxf_unicode`: `\U+xxxx` to the character.
+fn decode_dxf_unicode(s: &str) -> String {
+    let b: Vec<char> = s.chars().collect();
+    let mut out = String::new();
+    let mut i = 0;
+    while i < b.len() {
+        if b[i] == '\\' && b.get(i + 1) == Some(&'U') && b.get(i + 2) == Some(&'+') && i + 7 <= b.len() {
+            let hex: String = b[i + 3..i + 7].iter().collect();
+            if let Some(c) = u32::from_str_radix(&hex, 16).ok().and_then(char::from_u32) {
+                out.push(c);
+                i += 7;
+                continue;
+            }
+        }
+        out.push(b[i]);
+        i += 1;
+    }
+    out
+}
+
+/// ezdxf reads a file in two goes: strictly, and, when a number does not
+/// parse, with its `recover` tag compiler, which also upper-cases structure
+/// names and decodes `\U+xxxx` in strings. This is that second reading.
+fn recover(tags: Vec<Tag>) -> Result<Vec<Tag>, String> {
+    let mut out = Vec::with_capacity(tags.len());
+    for t in tags {
+        let value = if t.code == 0 {
+            t.value.trim().to_uppercase()
+        } else {
+            match numeric(t.code) {
+                Some(Num::Float) => match pyutil::float(&t.value) {
+                    Some(_) => t.value,
+                    None => {
+                        let stripped: String = t.value.chars().filter(|c| !c.is_whitespace()).collect();
+                        let v = search_float(&stripped).ok_or_else(|| format!("Invalid tag (code={}, value=\"{}\").", t.code, t.value))?;
+                        format!("{v:?}")
+                    }
+                },
+                Some(Num::Int) => match t.value.trim().parse::<i64>() {
+                    Ok(_) => t.value,
+                    Err(_) => {
+                        let v = search_int(&t.value).ok_or_else(|| format!("Invalid tag (code={}, value=\"{}\").", t.code, t.value))?;
+                        v.to_string()
+                    }
+                },
+                None if (310..=319).contains(&t.code) || t.code == 1004 => t.value,
+                None => decode_dxf_unicode(&t.value),
+            }
+        };
+        out.push(Tag { code: t.code, value });
+    }
+    Ok(out)
+}
+
+/// Whether the strict reading would stop at a number.
+fn has_invalid_number(tags: &[Tag]) -> bool {
+    tags.iter().any(|t| match numeric(t.code) {
+        Some(Num::Float) => pyutil::float(&t.value).is_none(),
+        Some(Num::Int) => t.value.trim().parse::<i64>().is_err(),
+        None => false,
+    })
+}
+
 /// Splits a section's tags into entities and links VERTEX / ATTRIB records
 /// to their POLYLINE / INSERT, as ezdxf's `entity_linker` does: the records
 /// after a POLYLINE (or an INSERT with `attribs_follow`) must be its
@@ -217,7 +359,10 @@ pub fn read_dxf(data: &[u8]) -> Result<Doc, String> {
     if data.starts_with(b"AutoCAD Binary DXF") {
         return Err("binary DXF is not supported".to_string());
     }
-    let tags = tags_of(&decode(data))?;
+    let mut tags = tags_of(&decode(data))?;
+    if has_invalid_number(&tags) {
+        tags = recover(tags)?;
+    }
     if !(tags.first().is_some_and(|t| t.code == 0 && t.value.trim() == "SECTION")) {
         return Err("is not a DXF file".to_string());
     }
