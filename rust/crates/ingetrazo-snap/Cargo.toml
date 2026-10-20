@@ -13,6 +13,7 @@ ingetrazo-formats.workspace = true
 ingetrazo-i18n.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
+rayon.workspace = true
 
 [lints]
 workspace = true

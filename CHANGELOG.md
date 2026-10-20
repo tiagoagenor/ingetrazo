@@ -241,6 +241,7 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+<<<<<<< HEAD
 - **Consola de scripts y asistente de IA sobre Rhai** (M8.2, M8.4):
   `ingetrazo_script::console::Console` es la consola de Python sin ventana:
   `submit` ejecuta el texto como UN paso de deshacer (un error lo revierte
@@ -274,6 +275,40 @@ follow [SemVer](https://semver.org).
   `hypot` de MSVC. En Python, el texto 3D pide a Qt métricas sin hinting, así
   que la letra suelta y el texto de una pieza coinciden también con el hinting
   por defecto de Windows.
+=======
+- **Alfa de la app en Rust: city-L a más de 60 fotogramas por segundo**
+  (M4.9): `ingetrazo --bench-orbit <s> modelo.igz` corre el bucle real de la
+  app (ventana, egui, renderer, GPU) con entradas sintéticas —órbita
+  continua, pasar el puntero con Selección y tres ediciones (línea,
+  rectángulo, mover un edificio)— e imprime percentiles de fotograma, el
+  tiempo de editar a verlo en pantalla y la memoria (`docs/alpha.md`).
+  En city-L (RTX 3060, release) la órbita da p50 2,7 ms / p95 2,9 ms
+  (≈ 365 fps), pasar con Selección 8 ms por fotograma (antes 77), con Línea
+  9 ms (antes ≈ 400–560 ms por movimiento) y una
+  edición se ve en 25–35 ms (antes 640–770). Qué cambió: la escena ya no se
+  clona al renderer en cada edición (el fotograma se dibuja desde la
+  `&Scene` de la sesión y solo se rehornean las mallas cuyo `serial`
+  cambió); el mundo de inferencias y el índice de picking guardan por malla
+  lo que no depende de dónde esté colocada (`WorldCache`, `ChunkCache`), se
+  construyen en paralelo (rayon) y una edición solo rehace las mallas que
+  tocó; los rayos contra millones de triángulos se podan con cajas por
+  tramo (`TriGrid`, solo desde 4096 triángulos: los modelos de las pruebas
+  de paridad siguen con el barrido de siempre y dan los mismos bits;
+  `tests/perf_equivalence.rs` lo comprueba); la proyección de las aristas de
+  los grupos se guarda por cámara y se agrupan en una rejilla de pantalla:
+  solo se miran las que están junto al cursor. El mundo y el índice se calientan tras abrir el
+  modelo, no en el primer movimiento del puntero. El selector por buffer de
+  IDs de la GPU (`ingetrazo_render::pick`) no hizo falta para city-L y sigue
+  disponible para modelos mayores.
+- **Raíz de recursos y `app id` de la app en Rust** (M4.9): `paths::app_root()`
+  es la única respuesta a «dónde están `resources/`, `materials/` y
+  `vendor/`»: junto al ejecutable (Windows, `lib/ingetrazo/` de Linux,
+  AppImage, Snap, Flatpak), `../Resources` dentro de `IngeTrazo.app`,
+  `../lib/ingetrazo` desde el envoltorio `bin/`, o la raíz del repositorio
+  subiendo desde `target/` con `cargo run`; `INGETRAZO_HOME` lo fuerza. Las
+  texturas de la biblioteca que un documento nombra por ruta se leen de ahí.
+  La ventana se registra como `IngeTrazo` (`StartupWMClass` de los `.desktop`).
+>>>>>>> worktree-agent-acfe91b961f5e7222
 - **Paquetes de macOS y Linux de la app en Rust** (M9.2, M9.3):
   `packaging/macos/build.sh` arma `IngeTrazo.app` (binario universal
   aarch64 + x86_64 con `lipo`, Info.plist con el id `com.ingetrazo.IngeTrazo`,

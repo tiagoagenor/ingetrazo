@@ -35,9 +35,9 @@ fn an_example_renders_through_the_app_viewport() {
 
     let format = wgpu_format();
     let mut view = ingetrazo_app::viewport::GpuView::new(&dev.device, &dev.queue, format);
-    view.set_scene(doc.scene.clone(), textures);
+    view.open(textures);
     let mut encoder = dev.device.create_command_encoder(&Default::default());
-    view.prepare(&dev.device, &mut encoder, &cam, (w, h));
+    view.prepare(&dev.device, &mut encoder, &doc.scene, &cam, (w, h));
     assert!(view.stats.triangles > 0, "the frame drew nothing: {:?}", view.stats);
 
     // The host's pass: clear to black, then the callback's paint.

@@ -5,7 +5,6 @@
 //! after redo. Skipped when the machine has no wgpu adapter
 //! (INGETRAZO_RENDER_FALLBACK=1 asks for the software one).
 
-use std::sync::Arc;
 
 use ingetrazo_app::nav;
 use ingetrazo_app::session::{Btn, Input, Session};
@@ -29,12 +28,10 @@ fn click(s: &mut Session, p: V3) {
 }
 
 fn triangles(dev: &Offscreen, view: &mut GpuView, s: &mut Session) -> u32 {
-    if s.take_scene_changed() {
-        view.update_scene(Arc::new(s.scene().clone()));
-    }
+    s.take_scene_changed();
     let (w, h) = (320u32, 200u32);
     let mut encoder = dev.device.create_command_encoder(&Default::default());
-    view.prepare(&dev.device, &mut encoder, &s.cam, (w, h));
+    view.prepare(&dev.device, &mut encoder, s.scene(), &s.cam, (w, h));
     view.stats.triangles as u32
 }
 

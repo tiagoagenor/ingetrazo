@@ -154,19 +154,22 @@ impl Picker<'_> {
             let mut best: Option<(f64, Path)> = None;
             let mut loose_t = f64::INFINITY;
             if !idx.ents.is_empty() {
-                if let Some(face_t) = self.hover_face_t(origin, direction) {
-                    loose_t = (0..face_t.len()).filter(|&i| idx.loose[i]).map(|i| face_t[i]).fold(f64::INFINITY, py_min);
-                    let masked: Vec<f64> = (0..face_t.len()).map(|i| if idx.loose[i] { f64::INFINITY } else { face_t[i] }).collect();
-                    // np.argmin: the first smallest.
-                    let mut i = 0;
-                    for k in 1..masked.len() {
-                        if masked[k] < masked[i] {
-                            i = k;
+                if let Some((face_t, touched)) = self.hover_face_t_touched(origin, direction) {
+                    // Only the entities the ray hit count: the nearest loose
+                    // one, and the nearest of the placed ones (np.argmin:
+                    // the first of the smallest).
+                    let mut nearest: Option<usize> = None;
+                    for &i in &touched {
+                        let t = face_t[i];
+                        if idx.loose[i] {
+                            loose_t = py_min(loose_t, t);
+                        } else if nearest.is_none_or(|b| t < face_t[b] || (t == face_t[b] && i < b)) {
+                            nearest = Some(i);
                         }
                     }
-                    if !masked.is_empty() && masked[i].is_finite() {
+                    if let Some(i) = nearest.filter(|&i| face_t[i].is_finite()) {
                         if let EntRef::Placed { place, .. } = idx.ents[i] {
-                            best = Some((masked[i], idx.places[place].owner.clone()));
+                            best = Some((face_t[i], idx.places[place].owner.clone()));
                         }
                     }
                 }
@@ -184,31 +187,41 @@ impl Picker<'_> {
         let mut best_g = None;
         let best_d = self.threshold;
         if !idx.gedge_a.is_empty() {
-            let (ax, ay, oka) = self.view.project_px(&idx.gedge_a);
-            let (bx, by, okb) = self.view.project_px(&idx.gedge_b);
+            let gs = idx.gscreen.get(idx, &self.view);
+            let (ax, ay, bx, by, oka, okb) = (&gs.ax, &gs.ay, &gs.bx, &gs.by, &gs.oka, &gs.okb);
             let n = ax.len();
-            let ok: Vec<bool> = (0..n).map(|i| oka[i] && okb[i]).collect();
-            if ok.iter().any(|&b| b) {
-                let mut d = vec![f64::INFINITY; n];
-                let mut tt = vec![0.0; n];
-                for i in 0..n {
+            if (0..n).any(|i| oka[i] && okb[i]) {
+                // The edges within the threshold, with where along each the
+                // cursor's nearest point is. An edge whose screen box is
+                // farther than the threshold is out without the arithmetic.
+                let lim = best_d + 1e-6;
+                let mut near: Vec<usize> = Vec::new();
+                let mut dn: Vec<f64> = Vec::new();
+                let mut tt: Vec<f64> = Vec::new();
+                gs.for_each_near(x, y, best_d, |i| {
+                    if !(oka[i] && okb[i] && idx.gedge_sel[i]) {
+                        return;
+                    }
+                    if ax[i].min(bx[i]) - lim > x || ax[i].max(bx[i]) + lim < x || ay[i].min(by[i]) - lim > y || ay[i].max(by[i]) + lim < y {
+                        return;
+                    }
                     let dx = bx[i] - ax[i];
                     let dy = by[i] - ay[i];
                     let l2 = dx * dx + dy * dy;
                     let safe = if l2 > 1e-12 { l2 } else { 1.0 };
                     let t = py_max_np(((x - ax[i]) * dx + (y - ay[i]) * dy) / safe);
-                    tt[i] = t;
-                    if ok[i] && idx.gedge_sel[i] {
-                        d[i] = np_hypot(ax[i] + t * dx - x, ay[i] + t * dy - y);
+                    let d = np_hypot(ax[i] + t * dx - x, ay[i] + t * dy - y);
+                    if d < best_d {
+                        near.push(i);
+                        dn.push(d);
+                        tt.push(t);
                     }
-                }
-                let near: Vec<usize> = (0..n).filter(|&i| d[i] < best_d).collect();
-                let dn: Vec<f64> = near.iter().map(|&i| d[i]).collect();
+                });
                 for k in argsort(&dn) {
                     let i = near[k];
                     let a = v3(idx.gedge_a[i]);
                     let b = v3(idx.gedge_b[i]);
-                    let p = a.add(b.sub(a).mul(tt[i] as f32));
+                    let p = a.add(b.sub(a).mul(tt[k] as f32));
                     if !self.is_occluded(p) {
                         best_g = Some(idx.gedge_groups[idx.gedge_gi[i]].clone());
                         break;
@@ -328,13 +341,12 @@ impl Picker<'_> {
         }
         let m = idx.gedge_a.len();
         if m > 0 {
-            let (ax, ay, oka) = self.view.project_px(&idx.gedge_a);
-            let (bx, by, okb) = self.view.project_px(&idx.gedge_b);
-            let ok: Vec<bool> = (0..m).map(|i| oka[i] && okb[i]).collect();
-            xs.extend(&ax);
-            xs.extend(&bx);
-            ys.extend(&ay);
-            ys.extend(&by);
+            let gs = idx.gscreen.get(idx, &self.view);
+            let ok: Vec<bool> = (0..m).map(|i| gs.oka[i] && gs.okb[i]).collect();
+            xs.extend(&gs.ax);
+            xs.extend(&gs.bx);
+            ys.extend(&gs.ay);
+            ys.extend(&gs.by);
             oks.extend(&ok);
             oks.extend(&ok);
         }

@@ -95,6 +95,8 @@ pub struct Core {
     center_src: Option<CenterSrc>,
     center_version: u64,
     world: Option<World>,
+    /// What the snap world keeps between its rebuilds (see `WorldCache`).
+    world_cache: ingetrazo_snap::world_cache::WorldCache,
 }
 
 /// Where a circle's centre was found: a curve edge, or a face's boundary run.
@@ -121,7 +123,7 @@ impl Core {
     /// The snap world, built on demand and dropped when the model changes.
     pub fn world(&mut self) -> &World {
         if self.world.is_none() {
-            self.world = Some(World::build(&self.scene, self.view.h));
+            self.world = Some(World::build_cached(&self.scene, self.view.h, &mut self.world_cache));
         }
         self.world.as_ref().unwrap()
     }
@@ -350,6 +352,7 @@ impl Host {
                 center_src: None,
                 center_version: 0,
                 world: None,
+                world_cache: Default::default(),
             },
             tool: None,
             alt_tap: false,

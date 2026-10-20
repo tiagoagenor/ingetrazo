@@ -326,6 +326,9 @@ pub struct PickIndex {
     pub gedge_groups: Vec<Path>,
     /// `_context_placements()`: the placements the context lets you touch.
     pub context: Vec<Place>,
+    /// The hard edges of the placements on the screen of the last view
+    /// asked (a hover asks more than once with the same camera).
+    pub gscreen: GScreenCache,
 }
 
 impl PickIndex {
@@ -334,6 +337,12 @@ impl PickIndex {
     }
 
     pub fn build(st: &State) -> PickIndex {
+        PickIndex::build_cached(st, &mut ChunkCache::default())
+    }
+
+    /// [`PickIndex::build`] over a cache of the prototype chunks: a mesh the
+    /// scene did not change since the last build is not triangulated again.
+    pub fn build_cached(st: &State, cache: &mut ChunkCache) -> PickIndex {
         let h = st.h;
         let scene = st.scene;
         let mut idx = PickIndex::default();
@@ -382,9 +391,12 @@ impl PickIndex {
         } else {
             all.iter().filter(|g| !g.is_ctx && ctx != Some(g.owner.as_slice())).collect()
         };
-        let tocable = |g: &Place| context.iter().any(|c| c.path == g.path);
+        // With nothing open every placement is in the context (it is `all`).
+        let context_paths: Option<std::collections::HashSet<&Path>> = ctx.map(|_| context.iter().map(|c| &c.path).collect());
+        let tocable = |g: &Place| context_paths.as_ref().is_none_or(|s| s.contains(&g.path));
 
-        let mut bases: std::collections::HashMap<MeshId, Chunk> = std::collections::HashMap::new();
+        // The placements that enter, in index order, with their flags.
+        let mut entering: Vec<(&Place, bool, bool, bool)> = Vec::new();
         for g in candidates {
             if g.billboard {
                 continue;
@@ -395,18 +407,51 @@ impl PickIndex {
             if !(gvis || gsnap) {
                 continue;
             }
-            let base = bases.entry(g.mesh).or_insert_with(|| base_chunk(scene.mesh(g.mesh), h));
-            let chunk_owned;
-            let chunk: &Chunk = match &g.xform {
-                None => base,
-                Some(m) => {
-                    chunk_owned = instance_chunk(base, m);
-                    &chunk_owned
-                }
-            };
-            if chunk.faces.is_empty() && chunk.edges.is_empty() {
+            entering.push((g, gvis, gsnap, gsel));
+        }
+        // The prototypes the cache does not hold (or holds stale) are made
+        // first, all at once; then each placement's moved chunk is made in
+        // parallel, a batch at a time, and appended in index order.
+        let wanted: Vec<MeshId> = entering.iter().map(|e| e.0.mesh).collect();
+        cache.prebuild(scene, &wanted, h);
+        struct Entry<'a> {
+            g: &'a Place,
+            gvis: bool,
+            gsnap: bool,
+            gsel: bool,
+            base: std::sync::Arc<Chunk>,
+        }
+        let mut entries: Vec<Entry> = Vec::with_capacity(entering.len());
+        for (g, gvis, gsnap, gsel) in entering {
+            let base = cache.base(scene, g.mesh, h);
+            if base.faces.is_empty() && base.edges.is_empty() {
                 continue;
             }
+            entries.push(Entry { g, gvis, gsnap, gsel, base });
+        }
+        // Room for everything first: the arrays are big.
+        let (nf, nt, ne) = entries.iter().fold((0, 0, 0), |a, e| (a.0 + e.base.faces.len(), a.1 + e.base.v0.len(), a.2 + e.base.edges.len()));
+        idx.ents.reserve(nf);
+        idx.area.reserve(nf);
+        idx.vis.reserve(nf);
+        idx.sel.reserve(nf);
+        idx.loose.reserve(nf);
+        idx.place_of.reserve(nf);
+        idx.v0.reserve(nt);
+        idx.e1.reserve(nt);
+        idx.e2.reserve(nt);
+        idx.tri_ent.reserve(nt);
+        idx.gedge_a.reserve(ne);
+        idx.gedge_b.reserve(ne);
+        idx.gedge_gi.reserve(ne);
+        idx.gedge_sel.reserve(ne);
+        for batch in entries.chunks(PLACEMENT_BATCH) {
+            use rayon::prelude::*;
+            let moved: Vec<Option<Chunk>> = batch.par_iter().map(|e| e.g.xform.as_ref().map(|m| instance_chunk(&e.base, m))).collect();
+            for (e, mv) in batch.iter().zip(moved) {
+            let g: &Place = e.g;
+            let (gvis, gsnap, gsel) = (e.gvis, e.gsnap, e.gsel);
+            let chunk: &Chunk = mv.as_ref().unwrap_or(&e.base);
             let pi = idx.places.len();
             idx.places.push(g.clone());
             let off = idx.ents.len();
@@ -436,6 +481,7 @@ impl PickIndex {
                 }
                 idx.gedge_groups.push(g.owner.clone());
             }
+            }
         }
 
         // The loose edges.
@@ -451,6 +497,117 @@ impl PickIndex {
         }
         idx.context = context;
         idx
+    }
+}
+
+/// How many placements are moved to the world at once (in parallel) before
+/// they are appended to the index.
+const PLACEMENT_BATCH: usize = 256;
+
+/// Both ends of every placement hard edge on the screen.
+pub struct GScreen {
+    pub ax: Vec<f64>,
+    pub ay: Vec<f64>,
+    pub oka: Vec<bool>,
+    pub bx: Vec<f64>,
+    pub by: Vec<f64>,
+    pub okb: Vec<bool>,
+    grid: crate::screen_grid::ScreenGrid,
+}
+
+impl GScreen {
+    /// Call `f` with the index of every edge that may come within `lim`
+    /// pixels of `(x, y)`, in index order (every edge when the pixel is off
+    /// the grid): the others are farther than `lim`.
+    pub fn for_each_near(&self, x: f64, y: f64, lim: f64, mut f: impl FnMut(usize)) {
+        match self.grid.candidates(x, y, lim + 1e-6) {
+            Some(c) => c.into_iter().for_each(|i| f(i as usize)),
+            None => (0..self.ax.len()).for_each(f),
+        }
+    }
+}
+
+type GScreenKey = ([u64; 16], i32, i32);
+
+/// The last [`GScreen`] and the view it is for.
+#[derive(Default)]
+pub struct GScreenCache(std::sync::Mutex<Option<(GScreenKey, std::sync::Arc<GScreen>)>>);
+
+impl GScreenCache {
+    /// The projection of the hard edges of `idx` in `view`, kept while the
+    /// view stands.
+    pub fn get(&self, idx: &PickIndex, view: &super::camera::View) -> std::sync::Arc<GScreen> {
+        let key = view.key();
+        let mut slot = self.0.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some((k, g)) = slot.as_ref() {
+            if *k == key {
+                return g.clone();
+            }
+        }
+        let (ax, ay, oka) = view.project_px(&idx.gedge_a);
+        let (bx, by, okb) = view.project_px(&idx.gedge_b);
+        let grid = crate::screen_grid::ScreenGrid::build(ax.len(), view.w as f64, view.h as f64, |i| {
+            (oka[i] && okb[i]).then(|| [ax[i].min(bx[i]), ay[i].min(by[i]), ax[i].max(bx[i]), ay[i].max(by[i])])
+        });
+        let g = std::sync::Arc::new(GScreen { ax, ay, oka, bx, by, okb, grid });
+        *slot = Some((key, g.clone()));
+        g
+    }
+}
+
+/// The prototype chunks of a model by mesh, each valid while its mesh's
+/// serial and arena sizes stand (every mutation bumps the serial): an edit
+/// rebuilds only the meshes it touched. Drop it with [`ChunkCache::clear`]
+/// when the scene object is replaced (serials restart from zero).
+#[derive(Default)]
+pub struct ChunkCache {
+    chunks: std::collections::HashMap<u32, ((u64, (usize, usize, usize)), std::sync::Arc<Chunk>)>,
+}
+
+impl ChunkCache {
+    pub fn clear(&mut self) {
+        self.chunks.clear();
+    }
+
+    /// Make, in parallel, the chunks of `ids` the cache does not hold fresh.
+    fn prebuild(&mut self, scene: &ingetrazo_model::scene::Scene, ids: &[MeshId], h: Hypot) {
+        use rayon::prelude::*;
+        let mut todo: Vec<MeshId> = Vec::new();
+        let mut seen = std::collections::HashSet::new();
+        for &id in ids {
+            let m = scene.mesh(id);
+            let stamp = (m.serial, m.arena_sizes());
+            let fresh = self.chunks.get(&id.0).is_some_and(|(s, _)| *s == stamp);
+            if !fresh && seen.insert(id.0) {
+                todo.push(id);
+            }
+        }
+        if todo.len() < 2 {
+            return;
+        }
+        let built: Vec<(MeshId, (u64, (usize, usize, usize)), Chunk)> = todo
+            .par_iter()
+            .map(|&id| {
+                let m = scene.mesh(id);
+                (id, (m.serial, m.arena_sizes()), base_chunk(m, h))
+            })
+            .collect();
+        for (id, stamp, c) in built {
+            self.chunks.insert(id.0, (stamp, std::sync::Arc::new(c)));
+        }
+    }
+
+    fn base(&mut self, scene: &ingetrazo_model::scene::Scene, id: MeshId, h: Hypot) -> std::sync::Arc<Chunk> {
+        let mesh = scene.mesh(id);
+        let stamp = (mesh.serial, mesh.arena_sizes());
+        if let Some((s, c)) = self.chunks.get(&id.0) {
+            if *s == stamp {
+                return c.clone();
+            }
+        }
+        let c = std::sync::Arc::new(base_chunk(mesh, h));
+        self.chunks.insert(id.0, (stamp, c.clone()));
+        c
     }
 }
 

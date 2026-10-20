@@ -17,7 +17,6 @@
 
 use std::collections::VecDeque;
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use eframe::egui::{self, Color32, CursorIcon, Key, Pos2, Rect, Stroke};
@@ -26,6 +25,7 @@ use ingetrazo_math::V3;
 use ingetrazo_snap::{SnapKind, SnapResult};
 
 
+use crate::bench::{Bench, Frame};
 use crate::input::Translator;
 use crate::nav::{self, NavMode};
 use crate::session::Session;
@@ -59,11 +59,22 @@ pub struct App {
     last_frame: Option<Instant>,
     dts: VecDeque<f32>,
     continuous: bool,
+    bench: Option<Bench>,
+    last_ui_ms: f32,
+    /// Frames to wait before [`Session::warm`] after a document is opened.
+    warm_delay: u8,
 }
 
 impl App {
     /// `path`: the document to open, or `None` for an empty scene.
     pub fn new(cc: &eframe::CreationContext<'_>, path: Option<PathBuf>) -> App {
+        App::with_bench(cc, path, None)
+    }
+
+    /// Like [`App::new`]; with `bench_orbit` the window runs the alpha
+    /// benchmark (`--bench-orbit`, see [`crate::bench`]) and quits.
+    pub fn with_bench(cc: &eframe::CreationContext<'_>, path: Option<PathBuf>, bench_orbit: Option<f64>) -> App {
+        let mut open_ms = 0.0;
         let rs = cc.wgpu_render_state.clone().expect("the wgpu backend gives a render state");
         let info = rs.adapter.get_info();
         let backend = format!("{:?}: {}", info.backend, info.name);
@@ -82,9 +93,20 @@ impl App {
             last_frame: None,
             dts: VecDeque::new(),
             continuous: false,
+            bench: None,
+            last_ui_ms: 0.0,
+            warm_delay: 2,
         };
         if let Some(p) = path {
+            let t = Instant::now();
             app.open(p);
+            open_ms = t.elapsed().as_secs_f64() * 1000.0;
+        }
+        if let Some(secs) = bench_orbit {
+            let mut b = Bench::new(secs);
+            b.open_ms = open_ms;
+            app.bench = Some(b);
+            app.continuous = true;
         }
         app
     }
@@ -99,9 +121,9 @@ impl App {
     pub fn open(&mut self, path: PathBuf) {
         match self.sess.open(&path) {
             Ok(textures) => {
-                let scene = Arc::new(self.sess.scene().clone());
-                self.gpu(|v| v.set_scene(scene, textures));
+                self.gpu(|v| v.open(textures));
                 self.sess.take_scene_changed();
+                self.warm_delay = 2;
                 self.error = None;
             }
             Err(e) => self.error = Some(e),
@@ -117,8 +139,7 @@ impl App {
 
     fn new_document(&mut self) {
         self.sess.new_document();
-        let scene = Arc::new(self.sess.scene().clone());
-        self.gpu(|v| v.set_scene(scene, Box::new(ingetrazo_render::NoTextures)));
+        self.gpu(|v| v.open(Box::new(crate::paths::InstallTextures(ingetrazo_render::NoTextures))));
         self.sess.take_scene_changed();
         self.error = None;
     }
@@ -402,15 +423,20 @@ impl App {
         }
 
         // The model and the highlights for the renderer.
-        let changed = self.sess.take_scene_changed();
+        self.sess.take_scene_changed();
         let (sel, hover) = self.sess.render_cues();
-        let scene = changed.then(|| Arc::new(self.sess.scene().clone()));
-        self.gpu(|v| {
-            if let Some(s) = scene {
-                v.update_scene(s);
+        // Draw the frame now, from the session's own scene (nothing is
+        // copied: the renderer rebakes the meshes whose serial moved); the
+        // paint callback below only blits it.
+        let ppp = ui.ctx().pixels_per_point();
+        let px = ((rect.width() * ppp).round() as u32, (rect.height() * ppp).round() as u32);
+        {
+            let (device, queue, scene, cam) = (&self.rs.device, &self.rs.queue, self.sess.scene(), self.sess.cam);
+            if let Some(v) = self.rs.renderer.write().callback_resources.get_mut::<GpuView>() {
+                v.set_cues(sel, hover);
+                v.render_now(device, queue, scene, &cam, px);
             }
-            v.set_cues(sel, hover);
-        });
+        }
 
         if resp.hovered() {
             ui.ctx().set_cursor_icon(match (self.sess.nav.nav_mode, self.sess.tool) {
@@ -422,12 +448,19 @@ impl App {
             });
         }
 
-        let ppp = ui.ctx().pixels_per_point();
-        ui.painter().add(egui_wgpu::Callback::new_paint_callback(
-            rect,
-            ViewCallback { camera: self.sess.cam, px: ((rect.width() * ppp).round() as u32, (rect.height() * ppp).round() as u32) },
-        ));
+        ui.painter().add(egui_wgpu::Callback::new_paint_callback(rect, ViewCallback));
         self.paint_overlay(&ui.painter_at(rect), rect);
+
+        // A model just opened: once it has been on the screen for a couple of
+        // frames, build what the first pointer move would (see `Session::warm`).
+        if self.sess.warm_pending && !self.sess.fit_pending {
+            if self.warm_delay == 0 {
+                self.sess.warm();
+            } else {
+                self.warm_delay -= 1;
+                ui.ctx().request_repaint();
+            }
+        }
     }
 
     /// What the tool previews over the picture: the rubber band, the guide,
@@ -662,6 +695,20 @@ impl eframe::App for App {
             }
         }
         self.last_frame = Some(now);
+        if let Some(mut b) = self.bench.take() {
+            b.on_frame_start(now);
+            let frame = Frame { dt: self.dts.back().copied().unwrap_or(0.0), ui: self.last_ui_ms, prepare: self.gpu(|v| v.prepare_ms).unwrap_or(0.0) };
+            b.step(&mut self.sess, now, frame);
+            if b.done {
+                let stats = self.gpu(|v| v.stats).unwrap_or_default();
+                let faces: usize = self.sess.scene().meshes.iter().map(|m| m.faces.len()).sum();
+                print!("{}", b.report(&format!("faces {faces} triangles {} draw_calls {} backend \"{}\"", stats.triangles, stats.draw_calls, self.backend)));
+                self.allow_close = true;
+                ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            } else {
+                self.bench = Some(b);
+            }
+        }
         if self.continuous {
             ctx.request_repaint();
         }
@@ -692,5 +739,6 @@ impl eframe::App for App {
             ctx.send_viewport_cmd(egui::ViewportCommand::Title(title.clone()));
             self.sent_title = title;
         }
+        self.last_ui_ms = now.elapsed().as_secs_f32() * 1000.0;
     }
 }

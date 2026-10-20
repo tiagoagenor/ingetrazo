@@ -18,9 +18,11 @@
 
 pub mod adapters;
 pub mod app;
+pub mod bench;
 pub mod document;
 pub mod input;
 pub mod nav;
+pub mod paths;
 pub mod probe;
 pub mod quat;
 pub mod session;

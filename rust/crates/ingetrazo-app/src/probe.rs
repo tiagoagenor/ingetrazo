@@ -11,7 +11,7 @@ use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_render::Camera;
 use ingetrazo_snap::picking::numeric::p3;
 use ingetrazo_snap::picking::ray::Hits;
-use ingetrazo_snap::picking::{Camera as PickCamera, FaceMode, PickIndex, Picker, State, View, PICK_THRESHOLD_PX};
+use ingetrazo_snap::picking::{Camera as PickCamera, ChunkCache, FaceMode, PickIndex, Picker, State, View, PICK_THRESHOLD_PX};
 
 use crate::nav::{pixel_to_ray, Probe};
 
@@ -20,11 +20,19 @@ use crate::nav::{pixel_to_ray, Probe};
 #[derive(Default)]
 pub struct PickCache {
     idx: Option<PickIndex>,
+    chunks: ChunkCache,
     /// Bumped by [`PickCache::invalidate`]; `scene.version`.
     pub version: u64,
 }
 
 impl PickCache {
+    /// The scene object was replaced (a document was opened): serials restart,
+    /// so the prototypes go too.
+    pub fn reset(&mut self) {
+        self.chunks.clear();
+        self.invalidate();
+    }
+
     /// The scene changed: drop the index and start a new version.
     pub fn invalidate(&mut self) {
         self.idx = None;
@@ -48,7 +56,10 @@ impl<'a> ScenePick<'a> {
     fn with_picker<R>(&mut self, f: impl FnOnce(&Picker) -> R) -> R {
         let scene = self.scene;
         let st = State::new(scene, MeshId(0), MeshId(0), None, false, FaceMode::of_scene(scene), self.hypot);
-        let idx = self.cache.idx.take().unwrap_or_else(|| PickIndex::build(&st));
+        let idx = match self.cache.idx.take() {
+            Some(i) => i,
+            None => PickIndex::build_cached(&st, &mut self.cache.chunks),
+        };
         // The view is for the picks that need a camera; the gestures bring
         // their own (the renderer's), two-point included.
         let orbit = PickOrbit { target: V3(0.0, 0.0, 0.0), distance: 20.0, yaw: 0.0, pitch: 0.0, up: V3(0.0, 0.0, 1.0) };

@@ -39,9 +39,11 @@ pub mod engine;
 pub mod hover;
 pub mod pick;
 pub mod picking;
+pub mod screen_grid;
 pub mod types;
 pub mod workplane;
 pub mod world;
+pub mod world_cache;
 
 pub use camera::{OrbitCamera, View};
 pub use compute::{compute_snap, LinearMode, RefMode, SnapParams};

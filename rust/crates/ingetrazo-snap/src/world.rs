@@ -25,6 +25,8 @@
 //! components, reference-image borders, survey points, face-me figures and
 //! the rest-of-model mode of an open group.
 
+use std::sync::Arc;
+
 use ingetrazo_geom::meshface;
 use ingetrazo_geom::triangulate::triangulate;
 use ingetrazo_math::{Hypot, M4, V3};
@@ -35,6 +37,11 @@ use ingetrazo_model::scene::{Group, MeshId, Scene};
 use ingetrazo_ops::group::np_affine;
 
 use crate::types::{Context, SnapEdge};
+use crate::world_cache::WorldCache;
+
+/// How many placements are flattened at once (in parallel) before they are
+/// appended to the world.
+const PLACEMENT_BATCH: usize = 256;
 
 /// A float64 triangle as the pick index holds it.
 #[derive(Clone, Copy, Debug)]
@@ -121,9 +128,15 @@ pub struct World {
     pub guides: Vec<Guide>,
     /// `scene.bounds()`.
     pub bounds: Option<(V3, V3)>,
+    /// The boxes the ray queries cull with, built on the first query of a
+    /// big world (see `pick::TriGrid`).
+    pub grid: std::sync::OnceLock<crate::pick::TriGrid>,
+    /// The group hard edges on the screen of the last view asked (a hover
+    /// asks four times with the same camera).
+    pub gproj: GEdgeScreen,
     pub show_hidden_geometry: bool,
     /// Every mesh of the scene (the faces and edges the entities name).
-    pub meshes: Vec<Mesh>,
+    pub meshes: Vec<Arc<Mesh>>,
     /// The mesh that is `scene.mesh`: the loose one, or the open group's.
     pub loose_id: u32,
     /// `loose_edges[i]`'s edge in that mesh.
@@ -161,24 +174,24 @@ pub fn affine_rows(pts: &[[f64; 3]], rot: &[[f64; 3]; 3], trans: Option<&[f64; 3
         .collect()
 }
 
-fn pos(mesh: &Mesh, v: ingetrazo_model::VertexId) -> V3 {
+pub(crate) fn pos(mesh: &Mesh, v: ingetrazo_model::VertexId) -> V3 {
     mesh.position(v)
 }
 
-fn loop_positions(mesh: &Mesh, l: &[ingetrazo_model::VertexId]) -> Vec<V3> {
+pub(crate) fn loop_positions(mesh: &Mesh, l: &[ingetrazo_model::VertexId]) -> Vec<V3> {
     l.iter().map(|&v| pos(mesh, v)).collect()
 }
 
-fn f64v(p: V3) -> [f64; 3] {
+pub(crate) fn f64v(p: V3) -> [f64; 3] {
     [p.0 as f64, p.1 as f64, p.2 as f64]
 }
 
-fn face_hidden(mesh: &Mesh, f: FaceId) -> bool {
+pub(crate) fn face_hidden(mesh: &Mesh, f: FaceId) -> bool {
     mesh.face(f).attrs.iter().any(|(k, v)| k == "hidden" && truthy(v))
 }
 
 /// The triangles of a face, `(v0, e1, e2)` in float64 from float32 corners.
-fn tri_rows(tris: &[[V3; 3]]) -> Vec<([f64; 3], [f64; 3], [f64; 3])> {
+pub(crate) fn tri_rows(tris: &[[V3; 3]]) -> Vec<([f64; 3], [f64; 3], [f64; 3])> {
     tris.iter()
         .map(|t| {
             let (a, b, c) = (f64v(t[0]), f64v(t[1]), f64v(t[2]));
@@ -255,10 +268,95 @@ pub fn face_plane_world(mesh: &Mesh, f: FaceId, xform: Option<&M4>, h: Hypot) ->
     (c, normal.normalized(h))
 }
 
+/// The group hard edges of a world on the screen of one view: the projection
+/// of both ends of every edge (`2 * i` and `2 * i + 1` for `gedges[i]`) and a
+/// grid that says which of them are near a pixel.
+#[derive(Debug)]
+pub struct GEdgeView {
+    pub proj: Vec<(f64, f64, bool)>,
+    /// Whether any end is in front of the camera.
+    pub any_ok: bool,
+    n: usize,
+    grid: crate::screen_grid::ScreenGrid,
+}
+
+impl GEdgeView {
+    /// Call `f` with the index of every edge that may come within `lim`
+    /// pixels of `(x, y)`, in index order (every edge when the pixel is off
+    /// the grid). The edges left out are farther than `lim`.
+    pub fn for_each_near(&self, x: f64, y: f64, lim: f64, mut f: impl FnMut(usize)) {
+        match self.grid.candidates(x, y, lim + 1e-6) {
+            Some(c) => c.into_iter().for_each(|i| f(i as usize)),
+            None => (0..self.n).for_each(f),
+        }
+    }
+}
+
+/// What [`World::gedge_view`] remembers: the view's matrix and size, and the
+/// [`GEdgeView`] made for it.
+#[derive(Default, Debug)]
+pub struct GEdgeScreen(std::sync::Mutex<Option<([u32; 16], i32, i32, Arc<GEdgeView>)>>);
+
+impl Clone for GEdgeScreen {
+    fn clone(&self) -> Self {
+        GEdgeScreen::default()
+    }
+}
+
 impl World {
+    /// The group hard edges on the screen of `view`, kept while the view
+    /// stands: the picks of one hover all ask for the same projection of a
+    /// model that can have hundreds of thousands of edges.
+    pub(crate) fn gedge_view(&self, view: &crate::View) -> Arc<GEdgeView> {
+        let key = view.mvp().data().map(f32::to_bits);
+        let mut slot = self.gproj.0.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some((k, w, h, p)) = slot.as_ref() {
+            if *k == key && *w == view.width && *h == view.height {
+                return p.clone();
+            }
+        }
+        let pts: Vec<[f64; 3]> = self.gedges.iter().flat_map(|g| [f64v(g.a), f64v(g.b)]).collect();
+        let proj = crate::engine::project_px(view, &pts);
+        let n = self.gedges.len();
+        let any_ok = proj.iter().any(|p| p.2);
+        let grid = crate::screen_grid::ScreenGrid::build(n, view.width as f64, view.height as f64, |i| {
+            let (a, b) = (proj[2 * i], proj[2 * i + 1]);
+            (a.2 && b.2).then(|| [a.0.min(b.0), a.1.min(b.1), a.0.max(b.0), a.1.max(b.1)])
+        });
+        let v = Arc::new(GEdgeView { proj, any_ok, n, grid });
+        *slot = Some((key, view.width, view.height, v.clone()));
+        v
+    }
+
+    /// For the tests: whether the edges [`GEdgeView::for_each_near`] reaches
+    /// include every group hard edge within `lim` pixels of `(x, y)` (the
+    /// count of those is returned beside it).
+    #[doc(hidden)]
+    pub fn near_edges_are_covered(&self, view: &crate::View, x: f64, y: f64, lim: f64) -> (bool, usize) {
+        let gv = self.gedge_view(view);
+        let mut reached = vec![false; self.gedges.len()];
+        gv.for_each_near(x, y, lim, |i| reached[i] = true);
+        let mut within = 0;
+        for i in 0..self.gedges.len() {
+            if crate::engine::segment_distance(gv.proj[2 * i], gv.proj[2 * i + 1], x, y) < lim {
+                within += 1;
+                if !reached[i] {
+                    return (false, within);
+                }
+            }
+        }
+        (true, within)
+    }
+
     /// Gather `scene` as the viewport does with nothing open for editing.
     pub fn build(scene: &Scene, h: Hypot) -> World {
-        World::build_ctx(scene, h, None)
+        World::build_ctx(scene, h, None, &mut WorldCache::default())
+    }
+
+    /// [`World::build`] over a cache: what the meshes the scene did not
+    /// change since the last build gave is reused (same world, bit for bit).
+    pub fn build_cached(scene: &Scene, h: Hypot, cache: &mut WorldCache) -> World {
+        World::build_ctx(scene, h, None, cache)
     }
 
     /// Gather `scene` with the top-level group `gi` open for editing (one
@@ -280,10 +378,10 @@ impl World {
                 sc.groups[gi].xform = None;
             }
         }
-        World::build_ctx(&sc, h, Some(gi))
+        World::build_ctx(&sc, h, Some(gi), &mut WorldCache::default())
     }
 
-    fn build_ctx(scene: &Scene, h: Hypot, editing: Option<usize>) -> World {
+    fn build_ctx(scene: &Scene, h: Hypot, editing: Option<usize>, cache: &mut WorldCache) -> World {
         let mut w = World { show_hidden_geometry: scene.extra.show_hidden_geometry, ..Default::default() };
         // What `scene.mesh` is: the loose mesh, or the open group's.
         let loose_id = match editing {
@@ -291,7 +389,7 @@ impl World {
             None => MeshId(0),
         };
         let loose = scene.mesh(loose_id);
-        w.meshes = scene.meshes.clone();
+        w.meshes = cache.mesh_copies(scene);
         w.loose_id = loose_id.0;
 
         // ---- loose faces: entities, triangles
@@ -339,13 +437,19 @@ impl World {
         let all = placements(scene);
         let mut all_pts: Vec<(f64, f64, f64, f64, f64, f64)> = Vec::new();
         w.arc_mids = crate::circle::mesh_arc_midpoints(loose, h);
+        // The prototype of each placement's mesh (shared between placements
+        // of one mesh, and between builds while the mesh stands).
+        let wanted: Vec<MeshId> = all.iter().filter(|p| !p.group.billboard.as_ref().map(truthy).unwrap_or(false)).map(|p| p.group.mesh).collect();
+        cache.prebuild(scene, &wanted, h);
+        let mut protos: Vec<Option<Arc<crate::world_cache::Proto>>> = Vec::with_capacity(all.len());
         for p in &all {
             let g = p.group;
             if g.billboard.as_ref().map(truthy).unwrap_or(false) {
+                protos.push(None);
                 continue;
             }
-            let mesh = scene.mesh(g.mesh);
-            for m in crate::circle::mesh_arc_midpoints(mesh, h) {
+            let proto = cache.proto(scene, g.mesh, h);
+            for &m in &proto.arc_mids {
                 w.arc_mids.push(match &p.xform {
                     Some(x) => x.map(m),
                     None => m,
@@ -356,34 +460,44 @@ impl World {
                 w.origins.push(xf.map(V3(0.0, 0.0, 0.0)));
             }
             // bounds (vectorised over the mesh's vertices)
-            if !mesh.vertices.is_empty() {
-                let mut lo = [f64::INFINITY; 3];
-                let mut hi = [f64::NEG_INFINITY; 3];
-                let pts: Vec<[f64; 3]> = mesh.vertices.iter().map(|&v| f64v(pos(mesh, v))).collect();
-                let mapped = match &p.xform {
+            if !proto.verts.is_empty() {
+                let (lo, hi) = match &p.xform {
                     Some(m) => {
+                        let mut lo = [f64::INFINITY; 3];
+                        let mut hi = [f64::NEG_INFINITY; 3];
                         let (rot, trans) = np_affine(m);
-                        affine_rows(&pts, &rot, Some(&trans))
+                        for q in &affine_rows(&proto.verts, &rot, Some(&trans)) {
+                            for k in 0..3 {
+                                lo[k] = lo[k].min(q[k]);
+                                hi[k] = hi[k].max(q[k]);
+                            }
+                        }
+                        (lo, hi)
                     }
-                    None => pts,
+                    None => proto.verts_box.unwrap(),
                 };
-                for q in &mapped {
-                    for k in 0..3 {
-                        lo[k] = lo[k].min(q[k]);
-                        hi[k] = hi[k].max(q[k]);
-                    }
-                }
                 all_pts.push((lo[0], lo[1], lo[2], hi[0], hi[1], hi[2]));
             }
+            protos.push(Some(proto));
         }
         // The visible check of `placements()` is the group's `hidden`; ours
         // has no layers, so every placement counts.
 
-        for p in &all {
+        // The placements that enter, in order, with where their entities start.
+        struct Entry<'a> {
+            p: &'a PlacementRef<'a>,
+            proto: &'a crate::world_cache::Proto,
+            gvis: bool,
+            gsnap: bool,
+            gsel: bool,
+            place_ix: usize,
+            base_ent: u32,
+        }
+        let mut entries: Vec<Entry> = Vec::new();
+        let mut next_ent = w.ents.len() as u32;
+        for (pi, p) in all.iter().enumerate() {
             let g = p.group;
-            if g.billboard.as_ref().map(truthy).unwrap_or(false) {
-                continue;
-            }
+            let Some(proto) = protos[pi].as_deref() else { continue };
             // The open group (and what it owns) is the loose part, not a
             // placement of the index.
             if editing == Some(p.top) {
@@ -398,19 +512,8 @@ impl World {
             if !(gvis || gsnap) {
                 continue;
             }
-            let mesh = scene.mesh(g.mesh);
             // faces the chunk keeps (hidden ones are out of it entirely)
-            let faces: Vec<FaceId> = mesh.faces.iter().copied().filter(|&f| !face_hidden(mesh, f)).collect();
-            let hard: Vec<_> = mesh
-                .edges
-                .iter()
-                .copied()
-                .filter(|&e| {
-                    let ed = mesh.edge(e);
-                    !ed.hidden && !ed.soft
-                })
-                .collect();
-            if faces.is_empty() && hard.is_empty() {
+            if proto.faces.is_empty() && proto.hard.is_empty() {
                 continue;
             }
             let place_ix = w.places.len();
@@ -422,76 +525,91 @@ impl World {
                 owner_mesh: p.owner.mesh,
                 top_level: std::ptr::eq(p.group, p.owner),
             });
-            // local triangles of this prototype
-            let mut local: Vec<([f64; 3], [f64; 3], [f64; 3], u32)> = Vec::new();
-            let base_ent = w.ents.len() as u32;
-            for (k, &f) in faces.iter().enumerate() {
-                let outer = loop_positions(mesh, &mesh.face(f).outer);
-                let area;
-                if outer.len() < 3 {
-                    area = 0.0;
-                } else {
-                    let n_raw = meshface::newell(&outer);
-                    let ln = n_raw.length(h);
-                    let normal = if (ln as f64) > 1e-9 { n_raw.div(ln) } else { V3(0.0, 0.0, 1.0) };
-                    area = 0.5 * (ln as f64);
-                    let holes: Vec<Vec<V3>> = mesh.face(f).holes.iter().map(|hl| loop_positions(mesh, hl)).collect();
-                    for (v0, e1, e2) in tri_rows(&triangulate(&outer, &holes, Some(normal), h)) {
-                        local.push((v0, e1, e2, base_ent + k as u32));
-                    }
-                }
-                w.ents.push(Entity {
-                    plane_place: face_plane_world(mesh, f, p.xform.as_ref(), h),
-                    plane_owner: face_plane_world(mesh, f, p.owner.xform.as_ref(), h),
-                    face: FaceRef::Placed { mesh: g.mesh, face: f, place: place_ix },
-                    area: if p.xform.is_some() { area * abs_det_pow(&p.xform) } else { area },
-                    vis: gvis,
-                    sel: gsel,
+            entries.push(Entry { p, proto, gvis, gsnap, gsel, place_ix, base_ent: next_ent });
+            next_ent += proto.faces.len() as u32;
+        }
+        // Room for everything first: the arrays are big.
+        let (nf, nt, ne) = entries.iter().fold((0, 0, 0), |a, e| (a.0 + e.proto.faces.len(), a.1 + e.proto.v0s.len(), a.2 + if e.gsnap { e.proto.hard.len() } else { 0 }));
+        w.ents.reserve(nf);
+        w.tris.reserve(nt);
+        w.gedges.reserve(ne);
+        // Each placement's entities, triangles and edges are made in
+        // parallel, a batch at a time, and appended in order.
+        let place_out = |e: &Entry| -> (Vec<Entity>, Vec<Tri>, Vec<GEdge>) {
+            let (p, proto) = (e.p, e.proto);
+            let g = p.group;
+            let det_scale = if p.xform.is_some() { abs_det_pow(&p.xform) } else { 1.0 };
+            let mesh = scene.mesh(g.mesh);
+            let mut ents = Vec::with_capacity(proto.faces.len());
+            for (k, &f) in proto.faces.iter().enumerate() {
+                let area = proto.area[k];
+                // An unmoved placement's planes are the prototype's own.
+                let plane_place = match &p.xform {
+                    None => proto.plane_local[k],
+                    Some(_) => face_plane_world(mesh, f, p.xform.as_ref(), h),
+                };
+                let plane_owner = match (&p.owner.xform, &p.xform) {
+                    (None, None) => proto.plane_local[k],
+                    (Some(a), Some(b)) if a == b => plane_place,
+                    (o, _) => face_plane_world(mesh, f, o.as_ref(), h),
+                };
+                ents.push(Entity {
+                    plane_place,
+                    plane_owner,
+                    face: FaceRef::Placed { mesh: g.mesh, face: f, place: e.place_ix },
+                    area: if p.xform.is_some() { area * det_scale } else { area },
+                    vis: e.gvis,
+                    sel: e.gsel,
                     loose: false,
                 });
             }
             // map them into the world
+            let mut tris = Vec::with_capacity(proto.v0s.len());
             match &p.xform {
                 None => {
-                    for (v0, e1, e2, ent) in local {
-                        w.tris.push(Tri { v0, e1, e2, ent });
+                    for i in 0..proto.v0s.len() {
+                        tris.push(Tri { v0: proto.v0s[i], e1: proto.e1s[i], e2: proto.e2s[i], ent: e.base_ent + proto.tri_k[i] });
                     }
                 }
                 Some(m) => {
                     let (rot, trans) = np_affine(m);
-                    let v0s: Vec<[f64; 3]> = local.iter().map(|t| t.0).collect();
-                    let e1s: Vec<[f64; 3]> = local.iter().map(|t| t.1).collect();
-                    let e2s: Vec<[f64; 3]> = local.iter().map(|t| t.2).collect();
-                    let v0w = affine_rows(&v0s, &rot, Some(&trans));
-                    let e1w = affine_rows(&e1s, &rot, None);
-                    let e2w = affine_rows(&e2s, &rot, None);
-                    for (i, t) in local.iter().enumerate() {
-                        w.tris.push(Tri { v0: v0w[i], e1: e1w[i], e2: e2w[i], ent: t.3 });
+                    let v0w = affine_rows(&proto.v0s, &rot, Some(&trans));
+                    let e1w = affine_rows(&proto.e1s, &rot, None);
+                    let e2w = affine_rows(&proto.e2s, &rot, None);
+                    for i in 0..v0w.len() {
+                        tris.push(Tri { v0: v0w[i], e1: e1w[i], e2: e2w[i], ent: e.base_ent + proto.tri_k[i] });
                     }
                 }
             }
             // hard edges
-            if gsnap && !hard.is_empty() {
+            let mut gedges = Vec::new();
+            if e.gsnap && !proto.hard.is_empty() {
                 let ctx = if p.owner.xform.is_some() { Context::Component } else { Context::Group };
-                let pts: Vec<[f64; 3]> = hard
-                    .iter()
-                    .flat_map(|&e| {
-                        let ed = mesh.edge(e);
-                        [f64v(pos(mesh, ed.v0)), f64v(pos(mesh, ed.v1))]
-                    })
-                    .collect();
                 let mapped: Vec<V3> = match &p.xform {
                     Some(m) => {
                         let (rot, trans) = np_affine(m);
-                        affine_rows(&pts, &rot, Some(&trans)).iter().map(|q| V3(q[0] as f32, q[1] as f32, q[2] as f32)).collect()
+                        affine_rows(&proto.hard_pts, &rot, Some(&trans)).iter().map(|q| V3(q[0] as f32, q[1] as f32, q[2] as f32)).collect()
                     }
-                    None => pts.iter().map(|q| V3(q[0] as f32, q[1] as f32, q[2] as f32)).collect(),
+                    None => proto.hard_pts.iter().map(|q| V3(q[0] as f32, q[1] as f32, q[2] as f32)).collect(),
                 };
                 for (k, pair) in mapped.chunks(2).enumerate() {
-                    w.gedges.push(GEdge { a: pair[0], b: pair[1], context: ctx, place: place_ix, edge: hard[k] });
+                    gedges.push(GEdge { a: pair[0], b: pair[1], context: ctx, place: e.place_ix, edge: proto.hard[k] });
+                }
+            }
+            (ents, tris, gedges)
+        };
+        {
+            use rayon::prelude::*;
+            for batch in entries.chunks(PLACEMENT_BATCH) {
+                let outs: Vec<(Vec<Entity>, Vec<Tri>, Vec<GEdge>)> = batch.par_iter().map(&place_out).collect();
+                for (ents, tris, gedges) in outs {
+                    w.ents.extend(ents);
+                    w.tris.extend(tris);
+                    w.gedges.extend(gedges);
                 }
             }
         }
+
 
         // ---- scene.bounds(): the REAL loose mesh and every placement
         w.bounds = scene_bounds(scene, h, &all_pts);
