@@ -18,6 +18,7 @@ members = [
     "crates/ingetrazo_py",
     "crates/ingetrazo-render",
     "crates/ingetrazo-spike-ui",
+    "crates/ingetrazo-snap",
 ]
 
 [workspace.package]

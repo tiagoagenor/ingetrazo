@@ -10,7 +10,10 @@
 //! * [`camera`]: `OrbitCamera` and the projections `Viewport` offers them.
 //! * [`world`]: the model flattened the way the viewport's pick index and
 //!   `_snap_scene` gather it.
-//! * [`pick`]: occlusion and the face under the cursor.
+//! * [`pick`]: occlusion and the face under the cursor, for the snap.
+//! * [`picking`]: what a click or a selection box picks (M3.12): the
+//!   `Viewport.pick_*` family and `SelectTool`, held to the Python by
+//!   `tests/pick_parity.rs`.
 //! * [`workplane`]: the drawing plane and the cursor's world point.
 //! * [`engine`]: `core/inference.py::InferenceEngine.snap`, the snap scene,
 //!   the axis-source cue and the tip.
@@ -35,6 +38,7 @@ pub mod compute;
 pub mod engine;
 pub mod hover;
 pub mod pick;
+pub mod picking;
 pub mod types;
 pub mod workplane;
 pub mod world;
