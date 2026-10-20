@@ -118,6 +118,10 @@ prog("flat", CAM, select(("face", 0), ("edge", 8)), hover(C0), press(C0), hover(
 prog("solids", CAM, select(("face", 1), ("face", 0)), hover((1.5, 1.5, 3)), press((1.5, 1.5, 3)),
      hover((2.5, 1.5, 4), drag=True), release((2.5, 1.5, 4)), hover((2.5, 2, 4)), click((2.5, 2, 4)),
      hover((2.5, 2.5, 4.5)), click((2.5, 2.5, 4.5)))
+# the drag threshold sits at 8 px: just under it is a click, just over it tilts
+for _dx, _dy in ((8.6, 0), (7.4, 0), (0, 8.6), (0, -7.4), (6.1, 6.1)):
+    prog("flat", CAM, select(("face", 0)), hover(C0), press(C0), hover(at(C0, _dx, _dy), drag=True),
+         release(at(C0, _dx, _dy)), hover(REF), click(REF), hover(NEAR_A), click(NEAR_A))
 # the exact-snap rule: aiming at corners lands the arm on them
 prog("flat", CAM, select(("face", 1)), hover((6, 0, 0)), click((6, 0, 0)), hover((9, 0, 0)), click((9, 0, 0)),
      hover((9, 2, 0)), click((9, 2, 0)))

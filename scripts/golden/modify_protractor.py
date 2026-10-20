@@ -194,6 +194,10 @@ prog("flat", CAM, hover(C0), press(C0), hover(at(C0, 0, -90), drag=True), releas
 prog("solids", CAM, hover((1.5, 1.5, 3)), press((1.5, 1.5, 3)), hover((2.5, 1.5, 4), drag=True),
      release((2.5, 1.5, 4)), hover((2.5, 2, 4)), click((2.5, 2, 4)), hover((2.5, 2.5, 4.5)), click((2.5, 2.5, 4.5)))
 prog("flat", CAM, hover(C0), press(C0), release(C0), hover(REF), click(REF), hover(NEAR_B), click(NEAR_B))
+# the drag threshold sits at 8 px: just under it is a click, just over it tilts
+for _dx, _dy in ((8.6, 0), (7.4, 0), (0, 8.6), (0, -7.4), (6.1, 6.1)):
+    prog("flat", CAM, hover(C0), press(C0), hover(at(C0, _dx, _dy), drag=True), release(at(C0, _dx, _dy)),
+         hover(REF), click(REF), hover(NEAR_A), click(NEAR_A))
 # the exact-snap rule: aiming at an endpoint lands the arm on it
 prog("flat", CAM, hover((0, 0, 0)), click((0, 0, 0)), hover((4, 0, 0)), click((4, 0, 0)), hover((4, 4, 0)),
      click((4, 4, 0)))
