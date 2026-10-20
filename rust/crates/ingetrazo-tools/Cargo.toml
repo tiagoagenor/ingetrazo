@@ -11,6 +11,7 @@ ingetrazo-math.workspace = true
 ingetrazo-geom.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-snap = { path = "../ingetrazo-snap" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
 
 [dev-dependencies]

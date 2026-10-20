@@ -241,6 +241,29 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Herramientas de dibujo, en Rust** (`ingetrazo-tools`, M3.13, parte de
+  dibujo): Línea, Rectángulo, Rectángulo girado, Círculo, Polígono, Arco,
+  Arco de 3 puntos, Arco con centro, Sector (Pie) y Mano alzada
+  (`tools/line.py`, `rectangle.py`, `rotated_rectangle.py`, `circle.py`,
+  `arc.py`, `freehand.py`) sobre la base común de `tools/base.py` (`base.rs`:
+  el bloqueo de plano de las flechas y de Mayús, el imán de ejes,
+  `face_the_plane`). Cada herramienta es una máquina de estados sin interfaz:
+  recibe puntero, teclas y texto del cuadro de medidas y responde con la vista
+  previa y los `Command`s que ejecuta. `host.rs` hace de `Viewport` sin
+  ventana (`_process_hover`, `_build_ctx`, el clic y el doble clic, las
+  flechas, Mayús, Alt, Abajo, Esc en cascada, el búfer del cuadro de valores
+  —`vcb.rs`: `3;2`, `24s`, `2r`, unidades—, Ctrl+Z, el plano de trabajo y el
+  centro de círculo adquirido) sobre el motor de inferencia de
+  `ingetrazo-snap`. Pruebas (`tests/draw_parity.rs`): el `Viewport` real de
+  Python, sin ventana, mueve el puntero por una cámara real y teclea valores
+  (`scripts/golden/make_draw_tool_fixtures.py`: 376 programas y 6 133 eventos,
+  escritos a mano y aleatorios con semilla). Tras CADA evento Rust coincide bit
+  a bit en la malla (vértices en float32, aristas, caras), el estado de la
+  herramienta, la vista previa, el rótulo, el texto del cuadro de medidas, la
+  inferencia, los avisos y la profundidad de deshacer. Sin portar: la edición
+  dentro de un grupo y la búsqueda de tangentes en grupos; y los programas
+  cuyo resultado depende del último bit del ajuste de círculo sobre un arco
+  corto (no es LAPACK) quedan fuera del generador.
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un

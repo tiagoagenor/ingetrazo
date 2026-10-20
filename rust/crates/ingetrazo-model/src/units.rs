@@ -78,7 +78,7 @@ pub fn localized(text: &str, decimal: &str) -> String {
 
 /// `1.2345` to `n` decimals "the way a person rounds it": half up on the
 /// number as written to twelve significant digits, and never `-0.00`.
-fn fixed(value: f64, n: usize) -> String {
+pub fn fixed(value: f64, n: usize) -> String {
     if !value.is_finite() {
         return if value.is_nan() { "nan".into() } else if value > 0.0 { "inf".into() } else { "-inf".into() };
     }
