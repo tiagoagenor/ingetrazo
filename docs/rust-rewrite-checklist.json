@@ -464,7 +464,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Alfa: city-L a 60 quadros por segundo",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -716,7 +716,7 @@
    "marco": "M8",
    "marco_nome": "Scripts e IA",
    "item": "Console de scripts",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -734,7 +734,7 @@
    "marco": "M8",
    "marco_nome": "Scripts e IA",
    "item": "Assistente de IA sobre Rhai",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
