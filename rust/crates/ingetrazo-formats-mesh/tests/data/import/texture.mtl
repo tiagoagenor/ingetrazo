@@ -1,0 +1,8 @@
+newmtl wood
+Kd 1 1 1
+map_Kd -s 1 1 1 wood.png
+newmtl nope
+Kd 0.2 0.3 0.4
+map_Kd missing.png
+newmtl spaced
+map_Kd "C:/Documents and Settings/x/wood.png"

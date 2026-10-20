@@ -10,7 +10,7 @@ pub mod layers;
 pub mod materials;
 pub mod mesh;
 pub mod scene;
-mod pyalnum;
+pub mod pyalnum;
 pub mod pyval;
 pub mod texture;
 

@@ -53,7 +53,7 @@ impl Texture {
 /// `Path(name).name` as pathlib computes it: `windows` selects
 /// `PureWindowsPath` (both separators, drives and UNC prefixes) or
 /// `PurePosixPath`.
-fn path_name(name: &str, windows: bool) -> String {
+pub fn path_name(name: &str, windows: bool) -> String {
     let rest: String;
     if windows {
         let norm: Vec<char> = name.replace('/', "\\").chars().collect();

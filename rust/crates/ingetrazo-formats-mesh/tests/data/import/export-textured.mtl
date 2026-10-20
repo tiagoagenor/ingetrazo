@@ -1,0 +1,11 @@
+newmtl Madera
+Kd 1.0000 1.0000 1.0000
+map_Kd wood.png
+
+newmtl Ladrillo
+Kd 1.0000 1.0000 1.0000
+map_Kd ladrillo rústico.png
+
+newmtl mat2
+Kd 0.2000 0.2000 0.9000
+
