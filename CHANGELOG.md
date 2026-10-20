@@ -241,7 +241,6 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
-<<<<<<< HEAD
 - **Consola de scripts y asistente de IA sobre Rhai** (M8.2, M8.4):
   `ingetrazo_script::console::Console` es la consola de Python sin ventana:
   `submit` ejecuta el texto como UN paso de deshacer (un error lo revierte
@@ -275,7 +274,6 @@ follow [SemVer](https://semver.org).
   `hypot` de MSVC. En Python, el texto 3D pide a Qt métricas sin hinting, así
   que la letra suelta y el texto de una pieza coinciden también con el hinting
   por defecto de Windows.
-=======
 - **Alfa de la app en Rust: city-L a más de 60 fotogramas por segundo**
   (M4.9): `ingetrazo --bench-orbit <s> modelo.igz` corre el bucle real de la
   app (ventana, egui, renderer, GPU) con entradas sintéticas —órbita
@@ -308,7 +306,6 @@ follow [SemVer](https://semver.org).
   subiendo desde `target/` con `cargo run`; `INGETRAZO_HOME` lo fuerza. Las
   texturas de la biblioteca que un documento nombra por ruta se leen de ahí.
   La ventana se registra como `IngeTrazo` (`StartupWMClass` de los `.desktop`).
->>>>>>> worktree-agent-acfe91b961f5e7222
 - **Paquetes de macOS y Linux de la app en Rust** (M9.2, M9.3):
   `packaging/macos/build.sh` arma `IngeTrazo.app` (binario universal
   aarch64 + x86_64 con `lipo`, Info.plist con el id `com.ingetrazo.IngeTrazo`,
