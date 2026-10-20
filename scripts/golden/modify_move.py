@@ -138,6 +138,10 @@ prog("plate", CAM, select(("edge", 8)), hover((-3, 1, 0.5)), tap("ctrl"), click(
      click((-1, 1, 0.5)), typed("2x"))
 prog("plate", CAM, select(("face", 0), ("edge", 8)), hover(C0), click(C0), tap("ctrl"), hover((4, 4, 0)),
      click((4, 4, 0)), typed("2x"), undo())
+# tiny copies and tiny moves: the 1e-9 threshold, the retype of an array with a step
+prog("plate", CAM, hover(C0), click(C0), tap("ctrl"), hover((3, 2, 0)), typed("0.005"), typed("2x"))
+prog("plate", CAM, hover(C0), click(C0), hover((3, 2, 0)), typed("0.0000000001"), hover((3, 2, 0)), typed("0.003"))
+prog("plate", CAM, hover(C0), click(C0), tap("ctrl"), hover((3, 2, 0)), typed("2x1.5"), typed("3x0"), typed("2x"))
 # a key that is not Ctrl, the arrow-key axis locks (the viewport's), Shift
 prog("plate", CAM, hover(C0), click(C0), key("right"), hover((3, 3, 0)), hover((4, 3.5, 0)), click((4, 3.5, 0)))
 prog("plate", CAM, hover(C0), click(C0), key("up"), hover((3, 3, 0)), hover((3.5, 3, 2)), key("up"), hover((4, 4, 0)),
