@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=IngeTrazo
+GenericName=3D Modeler
+GenericName[es]=Modelador 3D
+Comment=Free 3D modeler for civil engineering and architecture
+Comment[es]=Modelador 3D libre para ingeniería civil y arquitectura
+Exec=ingetrazo %f
+Icon=${SNAP}/meta/gui/ingetrazo.png
+Terminal=false
+Categories=Graphics;3DGraphics;Engineering;
+MimeType=application/x-ingetrazo;model/vnd.collada+xml;application/vnd.sketchup.skp;
+Keywords=3D;CAD;modeling;architecture;engineering;BIM;SketchUp;
+StartupWMClass=IngeTrazo

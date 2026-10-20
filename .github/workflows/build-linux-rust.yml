@@ -1,0 +1,114 @@
+name: Build Linux (Rust)
+
+# AppImage, Snap and Flatpak of the Rust IngeTrazo (M9.3), each audited for
+# Python (M9.4). Side by side with release.yml / release-flatpak.yml (the
+# Python app, shipped until M10): these jobs only upload artifacts, they
+# never touch a Release and never publish to a store.
+#   - push of a vX.Y.Z tag
+#   - manual run from the Actions tab
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  appimage:
+    # Oldest glibc we can get: the AppImage uses the host's libraries.
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      - name: Build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ pkg-config \
+            libxkbcommon-dev libwayland-dev libx11-dev libvulkan-dev unzip
+
+      - name: Version (tag or workspace)
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "INGETRAZO_VERSION=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build, audit and package the AppImage
+        run: ./packaging/linux/build.sh appimage
+
+      - name: Upload the AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingetrazo-rust-linux-appimage
+          path: dist/linux/IngeTrazo-*-rust.AppImage
+          if-no-files-found: error
+          retention-days: 14
+
+  snap:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Build the snap
+        id: build
+        uses: snapcore/action-build@v1
+
+      # M9.4: the .snap is a squashfs; unpack it and audit the contents.
+      - name: Audit the snap (no Python)
+        run: |
+          sudo apt-get install -y --no-install-recommends squashfs-tools unzip
+          unsquashfs -d "$RUNNER_TEMP/snap-root" "${{ steps.build.outputs.snap }}"
+          ./packaging/audit_no_python.sh "$RUNNER_TEMP/snap-root"
+
+      - name: Upload the snap
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingetrazo-rust-linux-snap
+          path: ${{ steps.build.outputs.snap }}
+          if-no-files-found: error
+          retention-days: 14
+
+  flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flatpak/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # flatpak-builder has no network: vendor the crates first (a Rust
+      # toolchain on the host is enough for `cargo vendor`).
+      - name: Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Vendor the crates
+        run: ./packaging/linux/build.sh flatpak-vendor
+
+      # The manifest's last build command runs the no-Python audit on /app.
+      - name: Build the Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: IngeTrazo-rust.flatpak
+          manifest-path: packaging/linux/flatpak/com.ingetrazo.IngeTrazo.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+          upload-artifact: false
+
+      - name: Upload the Flatpak
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingetrazo-rust-linux-flatpak
+          path: IngeTrazo-rust.flatpak
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,62 @@
+# Flatpak manifest of the Rust IngeTrazo (M9.3). Not the Python one
+# (packaging/flatpak, untouched until M10).
+#
+# flatpak-builder runs with no network, so:
+#   - the crates come from `cargo vendor` (packaging/linux/build.sh
+#     flatpak-vendor writes rust/vendor and rust/.cargo/config.toml; CI runs
+#     it before the build), and
+#   - Manifold and Clipper2, which manifold-sys normally downloads in its
+#     build.rs, are declared as archive sources below (same versions and
+#     hashes as rust/crates/manifold-sys/build.rs) and handed over through
+#     MANIFOLD_SRC_DIR / CLIPPER2_SRC_DIR.
+app-id: com.ingetrazo.IngeTrazo
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: ingetrazo
+
+finish-args:
+  - --share=ipc
+  - --share=network          # terrain / base-map tiles
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri             # wgpu: Vulkan / OpenGL
+  - --filesystem=home        # open and save models anywhere under $HOME
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin
+  env:
+    CARGO_HOME: /run/build/ingetrazo/cargo
+    MANIFOLD_SRC_DIR: /run/build/ingetrazo/manifold-src
+    CLIPPER2_SRC_DIR: /run/build/ingetrazo/clipper2-src
+
+modules:
+  - name: ingetrazo
+    buildsystem: simple
+    build-commands:
+      - cargo --offline build --release --locked -p ingetrazo-app --manifest-path rust/Cargo.toml
+      - packaging/linux/install-tree.sh /app rust/target/release/ingetrazo
+      # M9.4: the installed tree must hold no Python.
+      - packaging/audit_no_python.sh /app
+    sources:
+      - type: dir
+        path: ../../..
+        skip:
+          - .git
+          - dist
+          - build
+          - venv
+          - rust/target
+          - .claude
+      - type: archive
+        url: https://github.com/elalish/manifold/archive/refs/tags/v3.5.4.tar.gz
+        sha256: ce2f8b7798409b9f07e092c0ec0524ed0806431e01aea4020b65d0e934ea9438
+        strip-components: 1
+        dest: manifold-src
+      - type: archive
+        url: https://github.com/AngusJohnson/Clipper2/archive/46f639177fe418f9689e8ddb74f08a870c71f5b4.tar.gz
+        sha256: 73f5783e0c88299976334f48e3e356c756b96212c652ecc8bceec3bd99455bcb
+        strip-components: 1
+        dest: clipper2-src

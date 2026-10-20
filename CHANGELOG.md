@@ -241,6 +241,22 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Paquetes de macOS y Linux de la app en Rust** (M9.2, M9.3):
+  `packaging/macos/build.sh` arma `IngeTrazo.app` (binario universal
+  aarch64 + x86_64 con `lipo`, Info.plist con el id `com.ingetrazo.IngeTrazo`,
+  tipo de documento `.igz` y UTI exportado, `.icns`) dentro de un `.dmg`;
+  firma con Developer ID y notariza (`notarytool`, `stapler`) solo si están
+  los secretos `APPLE_CERT_P12_BASE64`, `APPLE_CERT_PASSWORD`, `APPLE_ID`,
+  `APPLE_TEAM_ID` y `APPLE_APP_PASSWORD`; si no, firma ad hoc y avisa.
+  `packaging/linux/` trae el `.desktop`, el MIME de `.igz`, los iconos
+  hicolor, el AppStream, `build.sh` (AppImage sin librerías empaquetadas: la
+  GPU y Vulkan/GL son los del sistema) y el manifiesto Flatpak
+  (`cargo vendor` + fuentes de Manifold/Clipper2 con hash); `snap/snapcraft.yaml`
+  (core22, confinamiento estricto). `packaging/audit_no_python.sh` es el gemelo
+  en bash de la auditoría «sin Python» y se corre sobre cada paquete.
+  Flujos `build-macos-rust.yml` y `build-linux-rust.yml` (tags `v*` y manual):
+  solo suben artefactos, nunca tocan Releases. El empaquetado de Python sigue
+  intacto.
 - **Instalador de Windows de la app en Rust y auditoría «sin Python»**
   (M9.1, M9.4): `packaging/windows/build.ps1` compila `ingetrazo-app` en
   release, prepara la carpeta del paquete (`ingetrazo.exe`, `resources/`, el

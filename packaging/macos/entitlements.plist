@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Hardened-runtime entitlements. wgpu draws through Metal, which needs none
+  of the JIT / unsigned-memory / library-validation exceptions: this is
+  deliberately empty. Add keys here only if a notarised run proves one is
+  needed (and say why).
+-->
+<plist version="1.0">
+<dict/>
+</plist>
