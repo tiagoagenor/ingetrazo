@@ -344,6 +344,26 @@ follow [SemVer](https://semver.org).
   dentro de un grupo y la búsqueda de tangentes en grupos; y los programas
   cuyo resultado depende del último bit del ajuste de círculo sobre un arco
   corto (no es LAPACK) quedan fuera del generador.
+- **Herramientas de modificar y medir, en Rust** (`ingetrazo-tools`, M3.13):
+  Mover, Girar, Escalar, Voltear, Equidistancia, Borrador, Pintar, Cinta
+  métrica y Transportador como máquinas de estado sin interfaz. Entran
+  `modify_base` (el `ToolContext` de Python, la selección, el `Env` con
+  historial y el trait `Viewport` de la cámara y los picks) y
+  `modify_viewport` (una vista sin ventana sobre los picks de
+  `ingetrazo-snap`). Los fixtures salen de las herramientas de Python de
+  verdad: `scripts/golden/_modify_harness.py` manda eventos reales de ratón y
+  teclado al `Viewport` real (Qt sin pantalla, cámara real, VCB tecleado),
+  graba cada llamada que recibe la herramienta y, tras cada evento, la malla
+  ordenada, las transformaciones de grupo, las guías, la selección, la
+  profundidad de deshacer y lo que la herramienta ofrece para dibujar. Rust
+  repite las llamadas y queda igual, bit a bit, tras cada evento: 1128
+  programas (14 599 eventos) en 9 herramientas, con programas al azar con
+  semilla; comprobado al cambiar a propósito varias constantes. Se fijan los
+  órdenes de Python que no se repiten (la selección, `pieces` de
+  `fold_nonplanar_faces`, los uids de grupo, el filtro de `hover` por
+  tiempo del visor). No se portan las pinzas de giro de Mover (hace falta la
+  caja orientada del grupo), ni mover o girar planos de corte, imágenes,
+  cotas y textos con Mover/Girar; `History` gana `top`/`top_redo`.
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un

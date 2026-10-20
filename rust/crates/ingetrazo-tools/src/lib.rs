@@ -9,6 +9,13 @@
 //! * The drawing tools (M3.13): [`line`], [`rectangle`], ... on the shared
 //!   [`base`] (`tools/base.py`), driven by a [`host`] that plays the viewport
 //!   (pointer, snap, keys, value box) and reads typed values with [`vcb`].
+//! * The modify and measure tools (M3.13): [`move_tool`], [`rotate`],
+//!   [`scale`], [`offset`], [`eraser`], [`paint`], [`tape`], [`protractor`],
+//!   [`flip`], on [`modify_base`] and [`modify_viewport`].
+
+// The tools' `probe` fills a `Probe::default()` field by field, the way the
+// Python tools answer one method at a time.
+#![allow(clippy::field_reassign_with_default)]
 
 pub mod arc;
 pub mod base;
@@ -23,3 +30,17 @@ pub mod rotated_rectangle;
 pub mod units;
 pub mod vcb;
 pub mod view;
+
+// The MODIFY and MEASURE tools (M3.13): what they share, then one per tool.
+pub mod modify_base;
+pub mod modify_viewport;
+
+pub mod eraser;
+pub mod flip;
+pub mod move_tool;
+pub mod offset;
+pub mod paint;
+pub mod protractor;
+pub mod rotate;
+pub mod scale;
+pub mod tape;

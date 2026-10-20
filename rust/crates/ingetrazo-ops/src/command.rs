@@ -133,6 +133,16 @@ impl History {
         self.undo_stack.last().map(|d| d.serial)
     }
 
+    /// The command on top of the undo stack (`undo_stack[-1]`).
+    pub fn top(&self) -> Option<&dyn Command> {
+        self.undo_stack.last().map(|d| d.cmd.as_ref())
+    }
+
+    /// The command `redo` would run next (`redo_stack[-1]`).
+    pub fn top_redo(&self) -> Option<&dyn Command> {
+        self.redo_stack.last().map(|d| d.cmd.as_ref())
+    }
+
     pub fn undo_len(&self) -> usize {
         self.undo_stack.len()
     }
