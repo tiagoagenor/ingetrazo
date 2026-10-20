@@ -674,14 +674,20 @@ impl Command for Lock {
 
 /// `RenameGroupCommand`.
 pub struct RenameGroup {
-    path: Path,
+    target: GroupRef,
     name: String,
     old: Option<String>,
 }
 
 impl RenameGroup {
     pub fn new(path: &[usize], name: String) -> Self {
-        RenameGroup { path: path.to_vec(), name, old: None }
+        RenameGroup::of(GroupRef::Scene(path.to_vec()), name)
+    }
+
+    /// Rename any group the scene holds — a placed one or a kept component
+    /// template (Rename reaches "every copy and the kept template").
+    pub fn of(target: GroupRef, name: String) -> Self {
+        RenameGroup { target, name, old: None }
     }
 }
 
@@ -690,12 +696,12 @@ impl Command for RenameGroup {
         "rename_group"
     }
     fn apply(&mut self, scene: &mut Scene, _cx: &mut Cx) -> Result<(), Fail> {
-        let g = group_at_mut(&mut scene.groups, &self.path).ok_or_else(gone)?;
+        let g = group_ref_mut(scene, &self.target).ok_or_else(gone)?;
         self.old = Some(std::mem::replace(&mut g.name, self.name.clone()));
         Ok(())
     }
     fn undo(&mut self, scene: &mut Scene, _cx: &mut Cx) {
-        if let (Some(g), Some(old)) = (group_at_mut(&mut scene.groups, &self.path), &self.old) {
+        if let (Some(g), Some(old)) = (group_ref_mut(scene, &self.target), &self.old) {
             g.name = old.clone();
         }
     }

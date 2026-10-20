@@ -11,16 +11,23 @@
 
 use ingetrazo_formats::igz::{self, Zip};
 use ingetrazo_formats::pyjson::Value;
+use ingetrazo_math::Hypot;
 use ingetrazo_model::scene::Scene;
 use ingetrazo_ops::command::{Command, Cx, History};
 
 use crate::decode::Res;
 use crate::sig::{signature_hash, Files};
-use crate::{model_sig, ops_groups, ops_transform, Outcome, Script};
+use crate::{model_sig, ops_edits, ops_groups, ops_transform, Outcome, Script};
 
 /// The Command `op` builds from `args` against `scene`: `None` when no
 /// module of the engine knows the op yet.
 pub fn build_command(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Command>>> {
+    build_others(op, args, scene).or_else(|| ops_edits::build(op, args, scene))
+}
+
+/// Every module but `ops_edits` (whose nested ops fall back on these). A new
+/// module of ops adds a line here.
+pub fn build_others(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Command>>> {
     ops_transform::build(op, args, scene).or_else(|| ops_groups::build(op, args, scene))
 }
 
@@ -60,8 +67,13 @@ pub fn run_steps(script: &Script, steps: &[Value]) -> Outcome {
     if signature_hash(&model_sig::scene_signature(&scene, &files)) != start_hash {
         return Outcome::Start(vec!["(the model opens the start differently)".into()]);
     }
+    // The corpus was recorded on Windows, with MSVC's `std::hypot`: replay
+    // with that formula wherever it runs.
+    for m in &mut scene.meshes {
+        m.hypot = Hypot::Msvc;
+    }
     let mut history = History::new();
-    let mut cx = Cx::default();
+    let mut cx = Cx { hypot: Hypot::Msvc, ..Cx::default() };
     for (i, step) in steps.iter().enumerate() {
         let op = text(step, "op").to_string();
         let diverges = |why: String| Outcome::Diverges { at: i, op: op.clone(), why };
@@ -74,6 +86,7 @@ pub fn run_steps(script: &Script, steps: &[Value]) -> Outcome {
                 }
             }
             _ => {
+                ops_edits::new_step();
                 let empty = Value::Object(Vec::new());
                 let args = step.get("args").unwrap_or(&empty);
                 let cmd = match build_command(&op, args, &scene) {
@@ -92,6 +105,10 @@ pub fn run_steps(script: &Script, steps: &[Value]) -> Outcome {
                     return diverges(format!("rejected: {:?}", history.last_rejected));
                 }
                 if let Some(e) = &history.last_error {
+                    // A nested op nobody builds yet: a blocker, not a divergence.
+                    if let Some(at) = e.find(ops_edits::UNSUPPORTED) {
+                        return Outcome::Unsupported { at: i, op: e[at + ops_edits::UNSUPPORTED.len()..].to_string() };
+                    }
                     return diverges(e.clone());
                 }
             }

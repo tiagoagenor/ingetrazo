@@ -54,13 +54,18 @@ impl Counters {
 /// points at (the loose one, or a group being edited) and the counters.
 #[derive(Clone, Debug)]
 pub struct Cx {
+    /// This Qt's `std::hypot` formula (the golden corpus is MSVC's).
+    pub hypot: ingetrazo_math::Hypot,
+    /// `scene.active_ifc`: the BIM class a drawn face is tagged with
+    /// (`{"class", "name"}`), when one is active.
+    pub active_ifc: Option<ingetrazo_formats::pyjson::Value>,
     pub mesh: MeshId,
     pub counters: Counters,
 }
 
 impl Default for Cx {
     fn default() -> Self {
-        Cx { mesh: MeshId(0), counters: Counters::default() }
+        Cx { hypot: ingetrazo_math::Hypot::default(), active_ifc: None, mesh: MeshId(0), counters: Counters::default() }
     }
 }
 
@@ -71,6 +76,21 @@ pub trait Command {
     fn name(&self) -> &'static str;
     fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail>;
     fn undo(&mut self, scene: &mut Scene, cx: &mut Cx);
+    /// For the planner's `isinstance` tests and `describe`: the commands
+    /// that are looked into say so; the rest answer `None`.
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        None
+    }
+}
+
+impl Cx {
+    /// `scene.mesh`.
+    pub fn mesh<'a>(&self, scene: &'a Scene) -> &'a ingetrazo_model::mesh::Mesh {
+        &scene.meshes[self.mesh.0 as usize]
+    }
+    pub fn mesh_mut<'a>(&self, scene: &'a mut Scene) -> &'a mut ingetrazo_model::mesh::Mesh {
+        &mut scene.meshes[self.mesh.0 as usize]
+    }
 }
 
 struct Done {

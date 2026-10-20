@@ -195,7 +195,7 @@ pub fn build(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Comman
             b(ReparentGroups::new(&paths(scene, arg(a, "groups")?)?, target))
         })(),
         "delete_group" => (|| b(DeleteGroup::new(&group_path(scene, arg(a, "group")?)?)))(),
-        "rename_group" => (|| b(RenameGroup::new(&group_path(scene, arg(a, "group")?)?, text(arg(a, "name")?)?)))(),
+        "rename_group" => (|| b(RenameGroup::of(group_ref(scene, arg(a, "group")?)?, text(arg(a, "name")?)?)))(),
         "lock" => (|| b(Lock::new(&paths(scene, arg(a, "groups")?)?, flag(a, "locked", true))))(),
         "set_group_material" => (|| {
             let m = opt(a, "material").map(plain).transpose()?;

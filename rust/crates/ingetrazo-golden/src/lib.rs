@@ -12,6 +12,7 @@
 
 pub mod decode;
 pub mod model_sig;
+pub mod ops_edits;
 pub mod ops_groups;
 pub mod ops_transform;
 pub mod run;

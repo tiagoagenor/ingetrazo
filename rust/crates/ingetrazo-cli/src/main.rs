@@ -42,6 +42,7 @@ fn main() -> ExitCode {
     let mut root = PathBuf::from("golden");
     let mut only: Option<String> = None;
     let mut verbose = false;
+    let mut list_ok: Option<String> = None;
     let mut it = args[2..].iter();
     while let Some(a) = it.next() {
         match a.as_str() {
@@ -54,6 +55,10 @@ fn main() -> ExitCode {
                 None => return usage(),
             },
             "--verbose" | "-v" => verbose = true,
+            "--list-ok" => match it.next() {
+                Some(p) => list_ok = Some(p.clone()),
+                None => return usage(),
+            },
             _ => return usage(),
         }
     }
@@ -68,6 +73,7 @@ fn main() -> ExitCode {
     let (mut ok, mut start_ok, mut bad, mut further) = (0usize, 0usize, 0usize, 0usize);
     let mut blockers: BTreeMap<String, usize> = BTreeMap::new();
     let mut parts: BTreeMap<String, usize> = BTreeMap::new();
+    let mut ok_ids: Vec<String> = Vec::new();
     for id in &all {
         let outcome = match load(&root, id) {
             Ok(s) => replay(&s),
@@ -75,6 +81,7 @@ fn main() -> ExitCode {
         };
         match &outcome {
             Outcome::Ok => {
+                ok_ids.push(id.clone());
                 ok += 1;
                 start_ok += 1;
             }
@@ -110,6 +117,13 @@ fn main() -> ExitCode {
     }
     println!();
     println!("{} scripts: {ok} replay to the end, {further} more run some steps before an op the engine lacks, {start_ok} start state identical, {bad} differ or broken", all.len());
+    if let Some(path) = &list_ok {
+        let mut text = ok_ids.join("\n");
+        text.push('\n');
+        if let Err(e) = std::fs::write(path, text) {
+            eprintln!("{path}: {e}");
+        }
+    }
     if !parts.is_empty() {
         println!("start signature parts that differ: {parts:?}");
     }

@@ -4,12 +4,20 @@
 //! of `core/history.py`, the group functions of `core/group.py` they use,
 //! and the solid booleans (`core/solids.py`) through Manifold.
 
+pub mod arrangement;
 pub mod command;
+pub mod describe;
+pub mod draw;
 pub mod edit_cmds;
+pub mod edits;
 pub mod group;
 pub mod group_cmds;
-pub mod intersect;
 pub mod grouping;
+pub mod intersect;
+pub mod orient;
+pub mod pyrandom;
+pub mod pyset;
+pub mod rebuild;
 pub mod solids;
 pub mod transform;
 pub mod world;

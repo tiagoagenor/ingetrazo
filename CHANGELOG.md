@@ -258,6 +258,31 @@ follow [SemVer](https://semver.org).
   final, con 4 guiones nuevos (`tests/test_group_commands_parity.py`: vista
   explosionada, reubicar, agrupar en contexto y pintura de caras) y una
   entrada más en `golden/undo_all_drift.json`.
+- **El planificador de edición y los comandos de dibujo, en Rust**
+  (`rust/crates/ingetrazo-ops`, M3.1): `core/edits.py` entero
+  (`plan_edge_commands`, `build_add_edge(s)`, la reconstrucción plana con
+  curvas y la de plano, la etiqueta BIM al dibujar, `divide_edges`,
+  `join_edges` y `join_preview`) y los comandos de `core/history.py` que
+  usa: `AddEdge`, `DeleteEdges`, `EraseSelection`, `TagCurve`, `AddFace`,
+  `DeleteFace`, `FlipFaces`, `SnapshotCompound`, `CompoundCommand`,
+  `MeshSnapshotCommand`, `AutoTagDrawnFaces`, `RebuildPlanarFaces`,
+  `RebuildPlaneFaces`, pintar caras, ocultar aristas y deshacer-podando.
+  Cada comando deshace lo mismo que el de Python (no el diario de la
+  malla), porque las firmas incluyen lo que un deshacer deja atrás. Con
+  ellos entran `core/arrangement.py` (el arreglo plano), `core/orient.py`
+  (`orient_outward` con `random.Random(12345)`: `PyRandom` es el MT19937 de
+  Python) y `PySet`, el `set` de CPython para pares de enteros hasta la
+  ranura, porque el orden en que el arreglo emite aristas y caras sale de
+  recorrer esos conjuntos. `ingetrazo-golden` ejecuta los pasos de los
+  guiones (`ops_edits.rs` sobre el `run.rs` común: selectores, `$cmd`
+  decodificados al ejecutar, `$ran`, contadores, firma L2 tras cada paso,
+  deshacer y rehacer): con las transformaciones, 460 de los 621 guiones se
+  reproducen enteros, ninguno se desvía y los demás se
+  detienen en el primer comando que falta; `golden/replay_ok.txt` fija los
+  verdes. `scripts/golden/make_edits_fixtures.py` corre el Python real
+  sobre 120 sesiones de dibujo (líneas, rectángulos, cajas, círculos,
+  borrados, divisiones) y la prueba compara el plan y la firma de cada uno
+  de sus 1233 pasos.
 - **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
   M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
   Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila
