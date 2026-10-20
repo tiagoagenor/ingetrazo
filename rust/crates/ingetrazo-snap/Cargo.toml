@@ -1,0 +1,20 @@
+[package]
+name = "ingetrazo-snap"
+description = "IngeTrazo's snap and inference engine (M3.11): what the cursor snaps to, bit for bit as the Python app answers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-math.workspace = true
+ingetrazo-geom.workspace = true
+ingetrazo-i18n.workspace = true
+ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-ops = { path = "../ingetrazo-ops" }
+
+[dev-dependencies]
+ingetrazo-formats.workspace = true
+
+[lints]
+workspace = true
