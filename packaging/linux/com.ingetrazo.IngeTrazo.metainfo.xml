@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @VERSION@ and @DATE@ are filled in by packaging/linux/install-tree.sh. -->
+<component type="desktop-application">
+  <id>com.ingetrazo.IngeTrazo</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>IngeTrazo</name>
+  <summary>Draw as if by hand: free 3D modeler for architecture and engineering</summary>
+  <summary xml:lang="es">Traza como a mano: modelador 3D libre para arquitectura e ingeniería</summary>
+  <developer id="com.ingetrazo">
+    <name>Marco Sumari Tellez</name>
+  </developer>
+  <description>
+    <p>
+      Free 3D modeler that lets you draw as if by hand: push/pull modelling,
+      groups and components, materials with textures, dimensions and leader
+      texts, layers, scenes and display styles, plus a sheet composer that
+      turns the model into printable, to-scale plan sheets.
+    </p>
+    <p xml:lang="es">
+      Modelador 3D libre para trazar como a mano: empujar/tirar, grupos y
+      componentes, materiales con texturas, cotas y textos guía, capas,
+      escenas y estilos de visualización, más un compositor de láminas que
+      convierte el modelo en planos imprimibles a escala.
+    </p>
+    <p>
+      Opens .skp files natively, imports and exports COLLADA and OBJ, exports
+      STL, glTF/GLB and IFC4 for BIM quantity take-off, and brings real
+      terrain in. Written in Rust, drawn with the GPU (Vulkan or OpenGL).
+    </p>
+    <p xml:lang="es">
+      Abre archivos .skp de forma nativa, importa y exporta COLLADA y OBJ,
+      exporta STL, glTF/GLB e IFC4 para metrados BIM, y trae el terreno real.
+      Escrito en Rust, dibujado con la GPU (Vulkan u OpenGL).
+    </p>
+  </description>
+  <launchable type="desktop-id">com.ingetrazo.IngeTrazo.desktop</launchable>
+  <provides>
+    <binary>ingetrazo</binary>
+    <mediatype>application/x-ingetrazo</mediatype>
+  </provides>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://ingetrazo.com/images/screenshots/principal.jpeg</image>
+      <caption>Modelling a plaza: push/pull, groups, materials and shadows</caption>
+      <caption xml:lang="es">Modelando una plaza: empujar/tirar, grupos, materiales y sombras</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://ingetrazo.com/images/screenshots/laminas.jpeg</image>
+      <caption>The sheet composer: to-scale plans with dimensions, labels and a title block</caption>
+      <caption xml:lang="es">El compositor de láminas: planos a escala con cotas, etiquetas y cajetín</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://ingetrazo.com</url>
+  <url type="bugtracker">https://github.com/ingelibre/ingetrazo/issues</url>
+  <url type="vcs-browser">https://github.com/ingelibre/ingetrazo</url>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="@VERSION@" date="@DATE@"/>
+  </releases>
+</component>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- @VERSION@ and @MIN_MACOS@ are filled in by packaging/macos/build.sh. -->
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleExecutable</key><string>ingetrazo</string>
+  <key>CFBundleIdentifier</key><string>com.ingetrazo.IngeTrazo</string>
+  <key>CFBundleName</key><string>IngeTrazo</string>
+  <key>CFBundleDisplayName</key><string>IngeTrazo</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleSignature</key><string>????</string>
+  <key>CFBundleShortVersionString</key><string>@VERSION@</string>
+  <key>CFBundleVersion</key><string>@VERSION@</string>
+  <key>CFBundleIconFile</key><string>ingetrazo</string>
+  <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+  <key>CFBundleLocalizations</key>
+  <array><string>en</string><string>es</string></array>
+  <key>LSMinimumSystemVersion</key><string>@MIN_MACOS@</string>
+  <key>LSApplicationCategoryType</key><string>public.app-category.graphics-design</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
+  <key>NSHumanReadableCopyright</key><string>GPL-3.0-or-later. Marco Sumari Tellez and IngeTrazo contributors.</string>
+
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key><string>IngeTrazo document</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>LSHandlerRank</key><string>Owner</string>
+      <key>LSItemContentTypes</key>
+      <array><string>com.ingetrazo.igz</string></array>
+      <key>CFBundleTypeIconFile</key><string>ingetrazo</string>
+    </dict>
+    <dict>
+      <key>CFBundleTypeName</key><string>COLLADA 3D model</string>
+      <key>CFBundleTypeRole</key><string>Viewer</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>CFBundleTypeExtensions</key>
+      <array><string>dae</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeName</key><string>SKP model</string>
+      <key>CFBundleTypeRole</key><string>Viewer</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>CFBundleTypeExtensions</key>
+      <array><string>skp</string></array>
+    </dict>
+  </array>
+
+  <key>UTExportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key><string>com.ingetrazo.igz</string>
+      <key>UTTypeDescription</key><string>IngeTrazo document</string>
+      <key>UTTypeConformsTo</key>
+      <array><string>public.data</string><string>public.content</string></array>
+      <key>UTTypeIconFile</key><string>ingetrazo</string>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array><string>igz</string></array>
+        <key>public.mime-type</key>
+        <array><string>application/x-ingetrazo</string></array>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

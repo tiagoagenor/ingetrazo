@@ -1,0 +1,86 @@
+# Snap of the Rust IngeTrazo (M9.3), strict confinement. Not the Python snap
+# (packaging/snap/snapcraft.yaml.in, staged by release.yml, untouched until
+# M10). Built with `snapcraft` or snapcore/action-build from the repo root.
+#
+# No Python anywhere: the binary, its data, and the host-facing libraries
+# wgpu loads at run time (Vulkan loader, EGL/GL, Wayland, X11, xkbcommon).
+# The GPU drivers come from the host through the opengl plug.
+name: ingetrazo
+base: core22
+adopt-info: ingetrazo
+title: IngeTrazo
+summary: Traza como a mano — modelador 3D libre para arquitectura e ingeniería
+description: |
+  IngeTrazo is a free (GPL-3.0) 3D modeler to draw as if by hand, for
+  architecture, civil engineering and 3D printing: push/pull modelling,
+  groups and components, exact measurements from the keyboard, real-sun
+  shadows, sections and printable to-scale sheets, SKP/DXF/DWG/DAE/OBJ/GLB/STL
+  import and DXF/DAE/OBJ/GLB/STL/IFC export.
+
+  IngeTrazo (in-je-TRA-so) es un modelador 3D libre para trazar como a mano,
+  en español, para arquitectura, ingeniería civil e impresión 3D.
+license: GPL-3.0-or-later
+website: https://ingetrazo.com
+contact: https://github.com/ingelibre/ingetrazo/issues
+source-code: https://github.com/ingelibre/ingetrazo
+issues: https://github.com/ingelibre/ingetrazo/issues
+grade: stable
+confinement: strict
+architectures:
+  - build-on: amd64
+
+apps:
+  ingetrazo:
+    command: opt/ingetrazo/ingetrazo
+    plugs:
+      - opengl
+      - x11
+      - wayland
+      - desktop
+      - desktop-legacy
+      - home
+      - network
+      - removable-media
+
+parts:
+  ingetrazo:
+    plugin: nil
+    source: .
+    build-packages:
+      - build-essential
+      - cmake
+      - pkg-config
+      - curl
+      - ca-certificates
+    stage-packages:
+      - libvulkan1
+      - libegl1
+      - libgl1
+      - libx11-6
+      - libx11-xcb1
+      - libxcursor1
+      - libxi6
+      - libxrandr2
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+      - libwayland-client0
+      - libwayland-cursor0
+      - libwayland-egl1
+      - libfontconfig1
+      - fonts-dejavu-core
+    override-build: |
+      set -eu
+      # rustup stable (core22 ships an old rustc); the build has network.
+      curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+      . "$HOME/.cargo/env"
+      (cd rust && cargo build --release --locked -p ingetrazo-app)
+      "$CRAFT_PART_SRC/packaging/linux/install-tree.sh" "$CRAFT_PART_INSTALL/usr" \
+        rust/target/release/ingetrazo
+      # The snap runs opt/ingetrazo/ingetrazo: the tree under usr/lib/ingetrazo,
+      # exposed at the path the app entry uses.
+      mkdir -p "$CRAFT_PART_INSTALL/opt"
+      mv "$CRAFT_PART_INSTALL/usr/lib/ingetrazo" "$CRAFT_PART_INSTALL/opt/ingetrazo"
+      # M9.4: no Python in the part (stage-packages included).
+      "$CRAFT_PART_SRC/packaging/audit_no_python.sh" "$CRAFT_PART_INSTALL"
+      version=$(awk '/^\[workspace\.package\]/{f=1;next} f && /^version[[:space:]]*=/{gsub(/.*"|".*/,"");print;exit}' rust/Cargo.toml)
+      craftctl set version="$version"
