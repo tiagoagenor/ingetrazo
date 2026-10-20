@@ -311,9 +311,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Siga-me",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.7",
@@ -356,9 +356,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Motor de snap e inferências",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.12",
@@ -707,9 +707,9 @@
    "marco": "M8",
    "marco_nome": "Scripts e IA",
    "item": "Motor Rhai e API do modelo",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M8.2",
@@ -725,9 +725,9 @@
    "marco": "M8",
    "marco_nome": "Scripts e IA",
    "item": "Script de vitrine portado",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M8.4",
