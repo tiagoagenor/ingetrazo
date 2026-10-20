@@ -777,6 +777,10 @@ class Session:
             out["x"], out["y"] = x, y
         drag = ev.get("drag", False)
         if kind == "hover":
+            # The viewport coalesces hovers by the measured cost of the last
+            # one (a deferred hover waits for a timer that never fires here):
+            # a gate of zero makes every hover run, whatever the machine does.
+            vp._hover_cost = 0.0
             vp.mouseMoveEvent(self.mouse("move", x, y, mods, drag))
         elif kind == "press":
             vp.mousePressEvent(self.mouse("press", x, y, mods))
