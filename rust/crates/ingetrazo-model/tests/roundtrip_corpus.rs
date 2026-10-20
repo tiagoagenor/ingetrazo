@@ -166,7 +166,9 @@ fn the_corpus_covers_every_igz() {
             let p = e.path();
             let n = e.file_name().to_string_lossy().into_owned();
             if p.is_dir() {
-                if !matches!(n.as_str(), ".venv" | "target" | ".git" | ".claude" | "node_modules" | "vendor") {
+                // `benchmarks/models` holds the generated city models, ignored by git.
+                let generated = n == "models" && dir.ends_with("benchmarks");
+                if !generated && !matches!(n.as_str(), ".venv" | "target" | ".git" | ".claude" | "node_modules" | "vendor") {
                     walk(&p, out, base);
                 }
             } else if n.ends_with(".igz") {
