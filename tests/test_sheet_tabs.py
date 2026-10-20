@@ -145,6 +145,10 @@ def test_the_standing_hint_never_widens_the_window(monkeypatch):
     not become the window's minimum width (Marco could not maximise)."""
     win = _window(monkeypatch)
     try:
+        # On a machine whose GL is Mesa's llvmpipe (a CI runner, WSL) the
+        # viewport reports a software renderer once it is up, and the window
+        # answers with its own 30 s status message over the stand-in below.
+        win.viewport.glReady.disconnect(win._on_gl_ready)
         win.show()
         bar = win.statusBar()
         # The standing hint is one line per tool now; a long one (a wordy

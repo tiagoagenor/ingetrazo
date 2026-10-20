@@ -38,6 +38,12 @@ def _font(font_family: str, bold: bool, italic: bool) -> QFont:
     font.setPointSizeF(_FONT_PT)
     font.setBold(bold)
     font.setItalic(italic)
+    # The outlines are scaled into a model, so glyph advances must be the
+    # font's own design metrics. With hinting on (the Windows default) Qt
+    # rounds the positions in a glyph run (what splits the text into letters)
+    # differently from the ones ``addText`` lays out (the one-piece text), and
+    # kerned pairs such as "AV" drift apart between the two.
+    font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
     return font
 
 

@@ -286,6 +286,12 @@ fn windows_looks_for_the_exe_and_linux_for_the_bare_name() {
     let onpath = root.join("p");
     std::fs::create_dir_all(&onpath).unwrap();
     std::fs::write(onpath.join("dwg2dxf.exe"), b"MZ").unwrap();
+    // A PATH search wants the execute bit where there is one (`os.access`).
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(onpath.join("dwg2dxf.exe"), std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
     let mut w = bridge(&root, vec![onpath.clone()]);
     w.vendor_bin = root.join("none");
     w.platform = Platform::Windows;

@@ -302,6 +302,7 @@ fn expect_err(t: &mut Tally, f: &str, ctx: &str, rec: &Value, got: Result<(), in
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn tiles_match_python() {
     let mut t = Tally::default();
     for r in records("tiles.jsonl") {
@@ -624,6 +625,7 @@ fn hash_terrain(tr: &TerrainObject) -> String {
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn terrain_matches_python() {
     let mut t = Tally::default();
     for r in records("terrain.jsonl") {
@@ -756,6 +758,7 @@ fn check_tris(t: &mut Tally, f: &str, ctx: &str, got: Option<Vec<[V3; 3]>>, want
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn surface_matches_python() {
     let mut t = Tally::default();
     for r in records("surface.jsonl") {
@@ -881,6 +884,7 @@ fn row_of(v: &Value) -> PointRow {
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn points_match_python() {
     let mut t = Tally::default();
     for r in records("points.jsonl") {
@@ -1069,6 +1073,7 @@ fn compare_profile(t: &mut Tally, ctx: &str, p: &Profile, want: &Value) {
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn profile_matches_python() {
     let mut t = Tally::default();
     for r in records("profile.jsonl") {

@@ -263,6 +263,17 @@ follow [SemVer](https://semver.org).
   el registro de la API. HTTP detrás del trait `Transport` (`ureq`); los tests
   usan un transporte falso y la clave nunca se registra ni sale en un error.
   No se porta aún el envío de capturas del visor al modelo.
+- **`cargo test` en verde en Linux y macOS** (CI `rust`): las pruebas de
+  paridad con los fixtures grabados en Windows se ajustan a lo que depende de
+  la plataforma. Las que comparan bit a bit resultados de `sin`/`cos`/`atan2`/
+  `pow`/`hypot` (libm de MSVC en los fixtures; glibc y macOS redondean el
+  último bit distinto) se marcan `ignore` fuera de Windows con ese motivo, y
+  Windows las sigue corriendo todas. Las demás se corrigen: rutas de Windows y
+  `./sub/../x.png` en los fixtures, el bit de ejecución en la búsqueda de
+  `dwg2dxf` en el PATH y la cámara de las pruebas de render, que ahora fija el
+  `hypot` de MSVC. En Python, el texto 3D pide a Qt métricas sin hinting, así
+  que la letra suelta y el texto de una pieza coinciden también con el hinting
+  por defecto de Windows.
 - **Paquetes de macOS y Linux de la app en Rust** (M9.2, M9.3):
   `packaging/macos/build.sh` arma `IngeTrazo.app` (binario universal
   aarch64 + x86_64 con `lipo`, Info.plist con el id `com.ingetrazo.IngeTrazo`,
