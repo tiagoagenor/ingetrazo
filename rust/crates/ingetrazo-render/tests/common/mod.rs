@@ -32,7 +32,7 @@ pub fn device() -> Option<Device> {
     let guard = GPU.lock().unwrap_or_else(|e| e.into_inner());
     let o = Offscreen::new();
     if o.is_none() {
-        eprintln!("SKIP: no wgpu adapter on this machine (set INGETRAZO_RENDER_FALLBACK=1 for the software one)");
+        eprintln!("SKIP: no wgpu adapter on this machine, or a hosted CI runner off Windows (set INGETRAZO_RENDER_FALLBACK=1 for the software adapter, INGETRAZO_RENDER_CI=1 to run on CI)");
     }
     o.map(|off| Device { off, _guard: guard })
 }

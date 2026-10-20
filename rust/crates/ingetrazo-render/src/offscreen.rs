@@ -88,6 +88,14 @@ pub struct Offscreen {
 impl Offscreen {
     /// `None` when the machine has no adapter at all.
     pub fn new() -> Option<Offscreen> {
+        // A hosted CI runner is not the machine the pixel floors were measured
+        // on. Windows runners expose WARP (measured: the floors hold for it);
+        // Linux ones have no GPU or a software Mesa and macOS ones a virtual
+        // Metal device, none of them measured. There the GPU tests skip
+        // (their message says so) unless `INGETRAZO_RENDER_CI=1` asks for them.
+        if cfg!(not(windows)) && std::env::var_os("CI").is_some() && !std::env::var("INGETRAZO_RENDER_CI").is_ok_and(|v| v == "1") {
+            return None;
+        }
         let fallback = std::env::var("INGETRAZO_RENDER_FALLBACK").is_ok_and(|v| v == "1");
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle_from_env());
         let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {

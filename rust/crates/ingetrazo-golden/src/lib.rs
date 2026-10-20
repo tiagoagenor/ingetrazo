@@ -66,6 +66,18 @@ pub fn ids(root: &Path) -> Vec<String> {
     out
 }
 
+/// Every string of the script that names one of the corpus' own copies of
+/// an external file (`golden/files/…`, what the recorder writes in place of
+/// a test's temp folder) becomes the path of that file in this checkout.
+fn vendored_paths(v: Value, repo: &Path) -> Value {
+    match v {
+        Value::Str(s) if s.starts_with("golden/files/") => Value::Str(repo.join(&s).to_string_lossy().into_owned()),
+        Value::Array(a) => Value::Array(a.into_iter().map(|x| vendored_paths(x, repo)).collect()),
+        Value::Object(o) => Value::Object(o.into_iter().map(|(k, x)| (k, vendored_paths(x, repo))).collect()),
+        other => other,
+    }
+}
+
 pub fn load(root: &Path, id: &str) -> Result<Script, String> {
     let text = std::fs::read_to_string(root.join("ops").join(format!("{id}.json"))).map_err(|e| e.to_string())?;
     let doc = pyjson::loads(&text).map_err(|e| e.to_string())?;
@@ -78,6 +90,7 @@ pub fn load(root: &Path, id: &str) -> Result<Script, String> {
     };
     // Paths are relative to the repository, which holds golden/.
     let repo: PathBuf = root.join("..");
+    let doc = vendored_paths(doc, &repo);
     let start = std::fs::read(repo.join(&file)).map_err(|e| format!("{file}: {e}"))?;
     let sig_file = repo.join(file.trim_end_matches(".igz").to_string() + ".sig.json");
     let start_sig = std::fs::read_to_string(sig_file).ok().and_then(|t| pyjson::loads(&t).ok());

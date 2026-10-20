@@ -17,8 +17,48 @@ written and the test is not harvested (``NotSerializable`` says why).
 """
 from __future__ import annotations
 
+import hashlib
 import math
+import shutil
+from pathlib import Path
 from typing import Any
+
+#: The repository root, and the corpus' own copies of external files.
+REPO = Path(__file__).resolve().parents[2]
+FILES = "golden/files"
+_FILE_EXT = {".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".tif", ".tiff"}
+
+
+def vendor_file(s: str) -> str:
+    """An absolute path to an existing image outside the repository (a test's
+    ``tmp_path``) becomes ``golden/files/<sha>-<name>``, a copy kept in the
+    corpus: a script must replay on a machine that has never seen that
+    folder. Anything else is returned as it is."""
+    if len(s) < 4 or Path(s).suffix.lower() not in _FILE_EXT:
+        return s
+    try:
+        p = Path(s)
+        if not p.is_absolute() or not p.is_file():
+            return s
+        p = p.resolve()
+        if REPO in p.parents:
+            return s
+        data = p.read_bytes()
+    except OSError:
+        return s
+    name = f"{hashlib.sha256(data).hexdigest()[:12]}-{p.name}"
+    dest = REPO / FILES / name
+    if not dest.exists():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(p, dest)
+    return f"{FILES}/{name}"
+
+
+def resolve_file(s: str) -> str:
+    """The inverse on replay: ``golden/files/…`` is a path in the repository."""
+    if s.startswith(FILES + "/"):
+        return str(REPO / s)
+    return s
 
 
 class NotSerializable(Exception):
@@ -104,7 +144,9 @@ class Encoder:
     def encode(self, v: Any):
         from PySide6.QtGui import QColor, QMatrix4x4, QVector3D
 
-        if v is None or isinstance(v, (bool, str)):
+        if isinstance(v, str):
+            return vendor_file(v)
+        if v is None or isinstance(v, bool):
             return v
         if isinstance(v, int):
             return v
@@ -225,6 +267,8 @@ class Decoder:
 
         if isinstance(v, list):
             return [self.decode(x) for x in v]
+        if isinstance(v, str):
+            return resolve_file(v)
         if not isinstance(v, dict):
             return v
         if len(v) != 1 or not next(iter(v)).startswith("$"):
