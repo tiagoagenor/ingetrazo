@@ -149,9 +149,9 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Linhas ocultas: o que falta",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M1.9",
@@ -239,9 +239,9 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Escrita do .igz idêntica byte a byte",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.9",
@@ -275,9 +275,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Topologia (ciclos, regiões, laços)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.3",
@@ -671,18 +671,18 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Tiles de mapa",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M7.3",
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Terreno a partir do relevo (DEM)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M7.4",
@@ -698,9 +698,9 @@
    "marco": "M7",
    "marco_nome": "Georreferência",
    "item": "Busca de endereço, trajeto e perfil",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M8.1",
