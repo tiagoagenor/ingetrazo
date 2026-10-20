@@ -254,7 +254,9 @@ fn play(label: &str, case: &Value, states: &[Value], make: &dyn Fn() -> Box<dyn 
             "press" => host.press(num(ev.get("x").unwrap()), num(ev.get("y").unwrap()), mods),
             "double" => host.double_click(num(ev.get("x").unwrap()), num(ev.get("y").unwrap()), mods),
             "release" => host.release(),
-            "keydown" => host.key_press(ev.get("k").unwrap().as_i64().unwrap() as i32, mods, ""),
+            "keydown" => {
+                host.key_press(ev.get("k").unwrap().as_i64().unwrap() as i32, mods, "");
+            }
             "keyup" => host.key_release(ev.get("k").unwrap().as_i64().unwrap() as i32),
             "type" => {
                 for ch in text(ev.get("t").unwrap()).chars() {

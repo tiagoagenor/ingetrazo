@@ -106,6 +106,25 @@ impl Field {
     }
 }
 
+/// What the viewport reads off a tool every frame to draw and to word: the
+/// rubber band (`rubber_band_lines`), the dashed guide of the Tape and the
+/// Protractor (`guide_preview_lines`), the floating label (`value_label`),
+/// the pen the band is drawn with (`wireframe_color`), the Ctrl clause of the
+/// status bar (`status_clause`) and the `+` of the cursor (`cursor_plus`).
+#[derive(Clone, Debug, Default)]
+pub struct Overlay {
+    pub rubber: Vec<(V3, V3)>,
+    pub guide: Vec<(V3, V3)>,
+    pub label: Option<(String, V3)>,
+    /// A colour the tool forces on its band (`wireframe_color`).
+    pub wireframe: Option<[f64; 4]>,
+    pub clause: String,
+    pub plus: bool,
+    /// Push/Pull's inference: the marker and the "level with" guide.
+    pub marker: Option<(V3, &'static str)>,
+    pub inference_guides: Vec<(V3, V3, &'static str)>,
+}
+
 /// A tool the viewport drives (`tools.base.Tool` for the drawing tools).
 pub trait DrawTool {
     fn name(&self) -> &'static str;
@@ -150,6 +169,11 @@ pub trait DrawTool {
     fn on_undo(&mut self, _core: &mut Core) -> bool {
         false
     }
+    /// Ctrl+Y goes to the tool first too (Push/Pull ends its drag); `true` =
+    /// it took it.
+    fn on_redo(&mut self, _core: &mut Core) -> bool {
+        false
+    }
     fn on_key(&mut self, _core: &mut Core, _key: i32, _mods: u32) -> bool {
         false
     }
@@ -170,6 +194,38 @@ pub trait DrawTool {
     fn rubber_band_lines(&self, core: &Core) -> Vec<(V3, V3)>;
     fn value_label(&self, _core: &Core) -> Option<(String, V3)> {
         None
+    }
+    /// `accepts_array`: the value box takes `3x`, `*3` and `/3` (Move).
+    fn accepts_array(&self) -> bool {
+        false
+    }
+    /// `array_pending`: a copy was just made that `x5` would turn into an array.
+    fn array_pending(&self, _core: &Core) -> bool {
+        false
+    }
+    /// `close_array_window`: Esc right after a copy.
+    fn close_array_window(&mut self) {}
+    /// `box_select`: the press decides at the release, a tiny drag is a click
+    /// and a real one a rubber-band box (the Select tool).
+    fn box_select(&self) -> bool {
+        false
+    }
+    /// `on_box_select(viewport, rect, crossing, additive, mode)`: `mods` are
+    /// the modifiers the box was released with.
+    fn on_box_select(&mut self, _core: &mut Core, _rect: [f64; 4], _crossing: bool, _mods: u32) {}
+    /// The whole typed buffer, before the host parses it: a tool that reads
+    /// its own grammar (the Move's `3x` arrays, Scale's `2m` sizes) answers
+    /// `true` and takes it.
+    fn on_buffer(&mut self, _core: &mut Core, _buffer: &str) -> bool {
+        false
+    }
+    /// What the viewport shades as the one under the cursor (`set_hover`).
+    fn hover(&self) -> Option<crate::modify_base::Sel> {
+        None
+    }
+    /// What the viewport draws for the tool besides the snap marker.
+    fn overlay(&self, core: &Core) -> Overlay {
+        Overlay { rubber: self.rubber_band_lines(core), label: self.value_label(core), ..Overlay::default() }
     }
     /// The tool's state, by Python attribute name, for the parity test.
     fn fields(&self) -> Vec<(&'static str, Field)>;
