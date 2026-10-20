@@ -6,9 +6,11 @@
 
 pub mod arrangement;
 pub mod command;
+pub mod describe;
 pub mod draw;
 pub mod edits;
 pub mod orient;
+pub mod pyset;
 pub mod rebuild;
 
 pub use command::{CmdResult, Command, CommandError, Env, History};

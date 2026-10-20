@@ -11,12 +11,13 @@
 //! CPython's own `vector_norm`, `sum()` is the 3.12 compensated sum.
 //!
 //! ORDER. Python keeps each vertex's neighbours in a `set` of integer
-//! tuples. Its iteration order is a function of CPython's hash table, not
-//! of the values, and is not reproduced: neighbours are kept in insertion
-//! order. The set of faces and edges that come out does not depend on it;
-//! the ORDER in which they are emitted (hence the order of `mesh.edges`,
-//! `mesh.faces` and the arena ids a rebuild creates) can, when a vertex has
-//! more than two neighbours. The L2 signature is order-free.
+//! tuples and walks them in table order, which fixes the order the edges and
+//! faces of a rebuild are emitted in (so `mesh.edges`, `mesh.faces`, and the
+//! plans that read them afterwards). That order is a function of the values
+//! and of CPython's hash table, not of memory addresses, so `PySet`
+//! (`pyset.rs`) reproduces it, to the slot. The only remaining ties are
+//! neighbours at exactly the same angle (`sorted` is stable, so they keep
+//! the set's order, as here).
 
 use std::collections::HashMap;
 use std::hint::black_box;
@@ -25,6 +26,8 @@ use ingetrazo_geom::arrange::splits;
 use ingetrazo_geom::sweep::py_hypot2;
 use ingetrazo_math::pyfloat::{py_max2, py_min2, py_sum};
 use ingetrazo_math::{Hypot, V3};
+
+use crate::pyset::{hash_pair, PySet};
 
 const TOL: f64 = 1e-4;
 
@@ -89,10 +92,12 @@ pub fn point_in_polygon(p: XY, poly: &[XY]) -> bool {
 }
 
 /// The split edge graph: vertices in creation order, each with its
-/// neighbours in insertion order.
+/// neighbours in a Python `set` (`hash` is the hash of the vertex's key
+/// tuple, which fixes where it sits in a neighbour's table).
 struct Graph {
     coords: Vec<XY>,
-    adj: Vec<Vec<usize>>,
+    hash: Vec<i64>,
+    adj: Vec<PySet>,
 }
 
 /// `_build_graph`.
@@ -100,12 +105,13 @@ fn build_graph(segs: &[[XY; 2]]) -> Graph {
     let arr: Vec<[P; 2]> = segs.iter().map(|s| [[s[0].0, s[0].1], [s[1].0, s[1].1]]).collect();
     let (start, pts) = splits(&arr);
     let mut index: HashMap<(i64, i64), usize> = HashMap::new();
-    let mut g = Graph { coords: Vec::new(), adj: Vec::new() };
+    let mut g = Graph { coords: Vec::new(), hash: Vec::new(), adj: Vec::new() };
     let mut vert = |p: P, g: &mut Graph| -> usize {
         let k = qkey(p[0], p[1]);
         *index.entry(k).or_insert_with(|| {
             g.coords.push((p[0], p[1]));
-            g.adj.push(Vec::new());
+            g.hash.push(hash_pair(k.0, k.1));
+            g.adj.push(PySet::new());
             g.coords.len() - 1
         })
     };
@@ -115,12 +121,9 @@ fn build_graph(segs: &[[XY; 2]]) -> Graph {
             let ka = vert(row[k], &mut g);
             let kb = vert(row[k + 1], &mut g);
             if ka != kb {
-                if !g.adj[ka].contains(&kb) {
-                    g.adj[ka].push(kb);
-                }
-                if !g.adj[kb].contains(&ka) {
-                    g.adj[kb].push(ka);
-                }
+                let (ha, hb) = (g.hash[ka], g.hash[kb]);
+                g.adj[ka].add(kb as u32, hb);
+                g.adj[kb].add(ka as u32, ha);
             }
         }
     }
@@ -129,7 +132,7 @@ fn build_graph(segs: &[[XY; 2]]) -> Graph {
 
 /// `_prune_dangling`: drop degree-1 vertices until none is left. `alive`
 /// marks the vertices still in the dict.
-fn prune_dangling(adj: &mut [Vec<usize>], alive: &mut [bool]) {
+fn prune_dangling(adj: &mut [PySet], hash: &[i64], alive: &mut [bool]) {
     let mut changed = true;
     while changed {
         changed = false;
@@ -138,10 +141,9 @@ fn prune_dangling(adj: &mut [Vec<usize>], alive: &mut [bool]) {
                 continue;
             }
             if adj[k].len() == 1 {
-                let other = adj[k][0];
-                adj[other].retain(|&x| x != k);
+                let other = adj[k].iter()[0] as usize;
+                adj[other].discard(k as u32, hash[k]);
                 alive[k] = false;
-                adj[k].clear();
                 changed = true;
             } else if adj[k].is_empty() {
                 alive[k] = false;
@@ -153,14 +155,14 @@ fn prune_dangling(adj: &mut [Vec<usize>], alive: &mut [bool]) {
 
 /// `_trace_faces`: every face as a vertex loop by the next-edge-clockwise
 /// rule. Bounded faces come out CCW; the unbounded one CW.
-fn trace_faces(coords: &[XY], adj: &[Vec<usize>], alive: &[bool]) -> Vec<Vec<usize>> {
+fn trace_faces(coords: &[XY], adj: &[PySet], alive: &[bool]) -> Vec<Vec<usize>> {
     let mut order: Vec<Vec<usize>> = vec![Vec::new(); adj.len()];
     for k in 0..adj.len() {
         if !alive[k] {
             continue;
         }
         let (kx, ky) = coords[k];
-        let mut ring = adj[k].clone();
+        let mut ring: Vec<usize> = adj[k].iter().into_iter().map(|x| x as usize).collect();
         ring.sort_by(|&a, &b| {
             let ta = (coords[a].1 - ky).atan2(coords[a].0 - kx);
             let tb = (coords[b].1 - ky).atan2(coords[b].0 - kx);
@@ -179,7 +181,7 @@ fn trace_faces(coords: &[XY], adj: &[Vec<usize>], alive: &[bool]) -> Vec<Vec<usi
         if !alive[u] {
             continue;
         }
-        for &v in &adj[u] {
+        for v in adj[u].iter().into_iter().map(|x| x as usize) {
             if visited.contains(&(u, v)) {
                 continue;
             }
@@ -305,7 +307,7 @@ fn classify(loops: &[Vec<usize>], coords: &[XY]) -> Vec<FaceXY> {
 /// to 3D.
 pub struct Arranged {
     coords: Vec<XY>,
-    adj: Vec<Vec<usize>>,
+    adj: Vec<PySet>,
     pub faces: Vec<FaceXY>,
     origin: V3,
     u: V3,
@@ -336,9 +338,9 @@ pub fn arrange(segments: &[(V3, V3)], origin: V3, normal: V3, h: Hypot) -> Arran
         return Arranged { coords: Vec::new(), adj: Vec::new(), faces: Vec::new(), origin, u, v };
     }
     let g = build_graph(&segs);
-    let mut adj = g.adj.clone();
+    let mut adj: Vec<PySet> = g.adj.iter().map(PySet::copy_of).collect();
     let mut alive = vec![true; adj.len()];
-    prune_dangling(&mut adj, &mut alive);
+    prune_dangling(&mut adj, &g.hash, &mut alive);
     let loops = trace_faces(&g.coords, &adj, &alive);
     let faces = classify(&loops, &g.coords);
     Arranged { coords: g.coords, adj: g.adj, faces, origin, u, v }
@@ -351,7 +353,7 @@ pub fn planar_rebuild(segments: &[(V3, V3)], origin: V3, normal: V3, h: Hypot) -
     let mut edges = Vec::new();
     let mut seen: std::collections::HashSet<(usize, usize)> = std::collections::HashSet::new();
     for k in 0..a.adj.len() {
-        for &m in &a.adj[k] {
+        for m in a.adj[k].iter().into_iter().map(|x| x as usize) {
             let key = if k <= m { (k, m) } else { (m, k) };
             if !seen.insert(key) {
                 continue;

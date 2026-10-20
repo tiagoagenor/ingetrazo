@@ -156,7 +156,7 @@ impl Command for AddEdgeCommand {
 /// `DeleteEdgesCommand`: erase edges (found by endpoint position); with
 /// `cascade_faces` also the faces that used one on their outer boundary.
 pub struct DeleteEdgesCommand {
-    endpoints: Vec<(V3, V3)>,
+    pub(crate) endpoints: Vec<(V3, V3)>,
     pub cascade_faces: bool,
     removed_edges: Vec<EdgeId>,
     removed_faces: Vec<FaceId>,
@@ -227,8 +227,8 @@ impl Command for DeleteEdgesCommand {
 /// coplanar faces dissolves them into one, any other takes its faces with
 /// it. Undo restores a snapshot.
 pub struct EraseSelectionCommand {
-    edge_endpoints: Vec<(V3, V3)>,
-    face_loops: Vec<Vec<V3>>,
+    pub(crate) edge_endpoints: Vec<(V3, V3)>,
+    pub(crate) face_loops: Vec<Vec<V3>>,
     snapshot: Option<State>,
 }
 
@@ -611,7 +611,7 @@ impl Command for AddFaceCommand {
 
 /// `DeleteFaceCommand`: remove a face, found by its outer loop.
 pub struct DeleteFaceCommand {
-    loop_: Vec<V3>,
+    pub(crate) loop_: Vec<V3>,
     face: Option<FaceId>,
 }
 

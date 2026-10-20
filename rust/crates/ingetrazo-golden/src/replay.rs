@@ -16,7 +16,7 @@ use std::rc::Rc;
 
 use ingetrazo_formats::igz::{self, Zip};
 use ingetrazo_formats::pyjson::Value;
-use ingetrazo_math::V3;
+use ingetrazo_math::{Hypot, V3};
 use ingetrazo_model::mesh::{FaceId, Mesh};
 use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_model::stitch::{CoplanarMergeCommand, PruneOrphanEdgesCommand, StitchSolidCommand};
@@ -339,7 +339,7 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
         "rebuild_plane_faces" => {
             let o = point(args.get("origin").ok_or_else(|| DecodeError::Bad("origin".into()))?)?;
             let n = point(args.get("normal").ok_or_else(|| DecodeError::Bad("normal".into()))?)?;
-            Box::new(RebuildPlaneFacesCommand::from_args(o, n, ingetrazo_math::Hypot::default()))
+            Box::new(RebuildPlaneFacesCommand::from_args(o, n, Hypot::Msvc))
         }
         "set_face_color" | "set_face_opacity" | "set_face_material_tag" => {
             let mut faces = Vec::new();
@@ -353,13 +353,7 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
             }
             let nul = |k: &str| arg(args, k).map(plain);
             match name {
-                "set_face_color" => {
-                    let c = nul("color").map(|c| match c {
-                        Value::Array(items) => Value::Array(items.iter().map(|x| x.clone()).collect()),
-                        o => o,
-                    });
-                    Box::new(SetFaceAttrCommand::color(faces, c))
-                }
+                "set_face_color" => Box::new(SetFaceAttrCommand::color(faces, nul("color"))),
                 "set_face_opacity" => Box::new(SetFaceAttrCommand::opacity(faces, nul("opacity").map(|v| match v {
                     Value::Int(s) => Value::Float(s.parse().unwrap_or(0.0)),
                     o => o,
@@ -428,8 +422,13 @@ pub fn run_steps(script: &Script) -> Outcome {
         Err(e) => return Outcome::Broken(format!("start.igz: {e:?}")),
     };
     let Some(Value::Array(steps)) = script.doc.get("steps") else { return Outcome::Broken("no steps".into()) };
+    // The corpus was recorded on Windows, with MSVC's `std::hypot`: replay
+    // with that formula wherever it runs.
+    for m in &mut scene.meshes {
+        m.hypot = Hypot::Msvc;
+    }
     let mut history = History::new();
-    let mut env = Env::default();
+    let mut env = Env { hypot: Hypot::Msvc, ..Env::default() };
     for (i, step) in steps.iter().enumerate() {
         let op = match step.get("op") {
             Some(Value::Str(o)) => o.clone(),
