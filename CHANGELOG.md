@@ -241,6 +241,17 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **El corpus golden ya no depende de la carpeta temporal de pytest**: tres
+  guiones apuntaban a imágenes de `pytest-of-<usuario>\pytest-N\…`, que en
+  otra máquina (o tras otra ejecución) no existen, y su firma cambiaba (el
+  CI llevaba rojo desde el 19-10). Las imágenes viven ahora en
+  `golden/files/`, el grabador copia ahí cualquier imagen externa y escribe
+  la ruta relativa al repositorio, y tanto Python como el ejecutor de Rust la
+  resuelven. Además, el replay de Python del corpus se omite (no falla) fuera
+  de Windows, donde `hypot` de Qt redondea distinto al de MSVC con que se
+  grabó; Rust fija `Hypot::Msvc` y lo comprueba en las tres plataformas.
+  Las pruebas de GPU de `ingetrazo-render` se omiten en los runners de CI que
+  no son Windows (`INGETRAZO_RENDER_CI=1` las activa).
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un
