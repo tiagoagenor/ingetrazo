@@ -34,16 +34,19 @@
 //! (`Cx::mesh`): the loose model, or a group being edited.
 
 pub mod api;
+pub mod console;
 pub mod convert;
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use ingetrazo_model::scene::Scene;
 use ingetrazo_ops::command::{Command, Cx, History};
 use ingetrazo_ops::edit_cmds::Entity;
-use rhai::{Dynamic, Engine, EvalAltResult, Scope};
+use rhai::{Dynamic, Engine, EvalAltResult, Scope, AST};
 
 use convert::{fail, Res};
 
@@ -130,14 +133,19 @@ pub(crate) fn exec_all(sh: &Shared, mut cmds: Vec<Box<dyn Command>>) -> Res<()> 
 pub struct ScriptError {
     pub message: String,
     pub line: Option<usize>,
+    /// The column on that line (1-based), where known.
+    pub column: Option<usize>,
     pub output: String,
+    /// The run was stopped by [`ScriptEngine::cancel_token`].
+    pub cancelled: bool,
 }
 
 impl std::fmt::Display for ScriptError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.line {
-            Some(l) => write!(f, "line {l}: {}", self.message),
-            None => write!(f, "{}", self.message),
+        match (self.line, self.column) {
+            (Some(l), Some(c)) => write!(f, "line {l}, column {c}: {}", self.message),
+            (Some(l), None) => write!(f, "line {l}: {}", self.message),
+            _ => write!(f, "{}", self.message),
         }
     }
 }
@@ -159,7 +167,12 @@ pub struct ScriptEngine {
     shared: Shared,
     output: Rc<RefCell<String>>,
     deadline: Rc<Cell<Option<Instant>>>,
+    cancel: Arc<AtomicBool>,
     limits: Limits,
+    /// Console mode: variables and functions survive from run to run.
+    persist: bool,
+    scope: Scope<'static>,
+    fns: AST,
 }
 
 /// Put the document back into the caller's variables when a run ends, even
@@ -230,7 +243,12 @@ impl ScriptEngine {
             }
         });
         let dl = deadline.clone();
+        let cancel = Arc::new(AtomicBool::new(false));
+        let stop = cancel.clone();
         engine.on_progress(move |ops| {
+            if stop.load(Ordering::Relaxed) {
+                return Some(Dynamic::from("the script was cancelled"));
+            }
             if ops % 512 == 0 {
                 if let Some(t) = dl.get() {
                     if Instant::now() > t {
@@ -241,7 +259,41 @@ impl ScriptEngine {
             None
         });
         api::register(&mut engine, &shared);
-        ScriptEngine { engine, shared, output, deadline, limits }
+        ScriptEngine { engine, shared, output, deadline, cancel, limits, persist: false, scope: Scope::new(), fns: AST::empty() }
+    }
+
+    /// A flag that stops the run in progress (and the next one, until a run
+    /// starts, which clears it) when set; checked on every Rhai operation.
+    /// It is `Send`: a watchdog or another thread's Esc key can set it.
+    pub fn cancel_token(&self) -> Arc<AtomicBool> {
+        self.cancel.clone()
+    }
+
+    /// In persistent mode the variables and functions a run defines stay for
+    /// the next ones (a console session). A failed run leaves them as they
+    /// were. Off by default: every run is then a fresh script.
+    pub fn set_persistent(&mut self, on: bool) {
+        self.persist = on;
+        if !on {
+            self.reset_scope();
+        }
+    }
+
+    /// Forget the variables and functions of earlier runs.
+    pub fn reset_scope(&mut self) {
+        self.scope = Scope::new();
+        self.fns = AST::empty();
+    }
+
+    /// The names of the variables a persistent session holds.
+    pub fn scope_names(&self) -> Vec<String> {
+        self.scope.iter().map(|(n, _, _)| n.to_string()).collect()
+    }
+
+    /// The signatures of everything registered on the engine (the API), as
+    /// Rhai prints them: the source of truth for completion and the prompt.
+    pub fn signatures(&mut self) -> Vec<String> {
+        self.engine.gen_fn_signatures(false)
     }
 
     pub fn limits(&self) -> &Limits {
@@ -259,6 +311,19 @@ impl ScriptEngine {
         &mut self.engine
     }
 
+    /// Run `source` on a COPY of the document, with its own history, and
+    /// forget everything but the answer: the document, its history and the
+    /// session's variables are untouched. A script is deterministic (no
+    /// clock, no randomness, no files), so one that runs here runs the same
+    /// on the document.
+    pub fn dry_run(&mut self, scene: &Scene, cx: &Cx, source: &str) -> Result<Report, ScriptError> {
+        let (mut s, mut c, mut h) = (scene.clone(), cx.clone(), History::new());
+        let saved = (self.scope.clone(), self.fns.clone());
+        let r = self.run(&mut s, &mut c, &mut h, source);
+        (self.scope, self.fns) = saved;
+        r
+    }
+
     /// Run `source` against the document. On success the commands it ran are
     /// ONE undo step of `history`; on error everything is rolled back and the
     /// document is as it was.
@@ -270,34 +335,48 @@ impl ScriptEngine {
             st.max_commands = self.limits.max_commands;
         }
         self.deadline.set(self.limits.timeout.map(|t| Instant::now() + t));
+        self.cancel.store(false, Ordering::Relaxed);
         let mut swap = Swap { shared: &self.shared, scene, cx, history };
         swap.take();
         let batch = self.shared.borrow_mut().history.begin_batch();
 
-        let ast = match self.engine.compile(source) {
+        let mut scope = if self.persist { self.scope.clone() } else { Scope::new() };
+        let compiled = self.engine.compile_with_scope(&scope, source);
+        let ast = match compiled {
             Ok(a) => a,
             Err(e) => {
-                let line = e.1.line();
+                let (line, column) = (e.1.line(), e.1.position());
                 let mut st = self.shared.borrow_mut();
                 let State { scene, cx, history, .. } = &mut *st;
                 history.rollback_batch(batch, scene, cx);
-                return Err(ScriptError { message: e.0.to_string(), line, output: self.output.borrow().clone() });
+                return Err(ScriptError {
+                    message: e.0.to_string(),
+                    line,
+                    column,
+                    output: self.output.borrow().clone(),
+                    cancelled: false,
+                });
             }
         };
-        let mut scope = Scope::new();
-        let result: Result<Dynamic, Box<EvalAltResult>> = self.engine.eval_ast_with_scope(&mut scope, &ast);
+        let full = if self.persist { self.fns.merge(&ast) } else { ast };
+        let result: Result<Dynamic, Box<EvalAltResult>> = self.engine.eval_ast_with_scope(&mut scope, &full);
         let mut st = self.shared.borrow_mut();
         let State { scene, cx, history, commands, .. } = &mut *st;
         let output = self.output.borrow().clone();
         match result {
             Ok(v) => {
                 history.commit_batch(batch);
+                if self.persist {
+                    self.scope = scope;
+                    self.fns = full.clone_functions_only();
+                }
                 let value = if v.is_unit() { String::new() } else { v.to_string() };
                 Ok(Report { output, value, commands: *commands })
             }
             Err(e) => {
                 history.rollback_batch(batch, scene, cx);
-                Err(ScriptError { message: error_text(&e), line: e.position().line(), output })
+                let cancelled = matches!(&*e, EvalAltResult::ErrorTerminated(..)) && self.cancel.load(Ordering::Relaxed);
+                Err(ScriptError { message: error_text(&e), line: e.position().line(), column: e.position().position(), output, cancelled })
             }
         }
     }

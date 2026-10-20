@@ -241,6 +241,28 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Consola de scripts y asistente de IA sobre Rhai** (M8.2, M8.4):
+  `ingetrazo_script::console::Console` es la consola de Python sin ventana:
+  `submit` ejecuta el texto como UN paso de deshacer (un error lo revierte
+  entero y señala línea y columna con el trozo de código y un `^`; una
+  ejecución que solo lee no deja entrada de deshacer), las variables y
+  funciones persisten entre envíos, historial con Arriba/Abajo que conserva
+  el borrador, `is_complete` para saber si Enter ejecuta o abre otra línea,
+  `completions` con las funciones y propiedades del motor (salen del registro,
+  no de una lista a mano), y un `cancel_token` que corta un script largo. La
+  referencia de la API pasa a `api_reference.md` y un test comprueba que cada
+  función registrada está documentada. El nuevo crate `ingetrazo-assistant`
+  porta `core/ai.py` y `plugins/ai_assistant.py`: mismos proveedores
+  (Anthropic con la API Messages; Groq, OpenAI, Gemini, OpenRouter, DeepSeek y
+  un servidor local por el endpoint compatible con OpenAI), misma regla de
+  proveedor por prefijo de la clave y mismos modelos por defecto, reintentos
+  ante 429/5xx, y el mismo bucle: UN bloque ```` ```rhai ```` por respuesta, se
+  prueba primero en una copia del documento (si falla no se toca nada y el
+  error vuelve al modelo), luego se ejecuta de verdad como un paso de deshacer,
+  con tope de rondas y de fallos seguidos. El prompt de sistema se arma desde
+  el registro de la API. HTTP detrás del trait `Transport` (`ureq`); los tests
+  usan un transporte falso y la clave nunca se registra ni sale en un error.
+  No se porta aún el envío de capturas del visor al modelo.
 - **Paquetes de macOS y Linux de la app en Rust** (M9.2, M9.3):
   `packaging/macos/build.sh` arma `IngeTrazo.app` (binario universal
   aarch64 + x86_64 con `lipo`, Info.plist con el id `com.ingetrazo.IngeTrazo`,

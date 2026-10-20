@@ -1,0 +1,18 @@
+[package]
+name = "ingetrazo-assistant"
+description = "IngeTrazo's AI assistant (M8.4): turns a request into a Rhai script over the model API, vets it on a copy, runs it as one undo step"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-ops = { path = "../ingetrazo-ops" }
+ingetrazo-script = { path = "../ingetrazo-script" }
+serde_json = "1"
+# A small blocking HTTP client; the app talks to it through the Transport trait.
+ureq = "2"
+
+[lints]
+workspace = true
