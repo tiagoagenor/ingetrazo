@@ -383,9 +383,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "90% dos gabaritos coletados verdes",
-   "status": "pendente",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.1",
@@ -428,7 +428,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Ferramentas: linha, retângulo, círculo",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -437,7 +437,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Ferramentas: empurrar/puxar e mover",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -446,7 +446,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Desfazer e refazer na interface",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -455,7 +455,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Abrir e salvar .igz",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -743,7 +743,7 @@
    "marco": "M9",
    "marco_nome": "Empacotamento",
    "item": "Instalador Windows",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -770,7 +770,7 @@
    "marco": "M9",
    "marco_nome": "Empacotamento",
    "item": "Auditoria: nenhum Python nos pacotes",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
