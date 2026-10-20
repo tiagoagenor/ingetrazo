@@ -12,7 +12,7 @@ ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
 # no_module: `import` (the only way a script reaches a file) does not exist.
-rhai = { version = "=1.26.1", features = ["no_module", "no_time"] }
+rhai = { version = "=1.26.1", features = ["no_module", "no_time", "metadata"] }
 
 [dev-dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
