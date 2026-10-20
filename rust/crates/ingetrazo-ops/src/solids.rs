@@ -666,6 +666,37 @@ pub fn undo(scene: &mut Scene, applied: Applied) {
     }
 }
 
+/// `SolidOperationCommand` on the scene's top-level groups: one solid
+/// operation as one undo step. The boolean runs on every `apply` (the same
+/// inputs give the same result, so a redo replays the same placement).
+pub struct SolidOperationCommand {
+    op: Op,
+    picks: Vec<usize>,
+    applied: Option<Applied>,
+}
+
+impl SolidOperationCommand {
+    pub fn new(op: Op, picks: Vec<usize>) -> Self {
+        SolidOperationCommand { op, picks, applied: None }
+    }
+}
+
+impl crate::command::Command for SolidOperationCommand {
+    fn name(&self) -> &'static str {
+        "solid_operation"
+    }
+    fn apply(&mut self, scene: &mut Scene, cx: &mut crate::command::Cx) -> Result<(), crate::command::Fail> {
+        let applied = apply(scene, self.op, &self.picks, &|n| n.to_string(), cx.hypot).map_err(|e| crate::command::Fail::Failed(e.to_string()))?;
+        self.applied = Some(applied);
+        Ok(())
+    }
+    fn undo(&mut self, scene: &mut Scene, _cx: &mut crate::command::Cx) {
+        if let Some(a) = self.applied.take() {
+            undo(scene, a);
+        }
+    }
+}
+
 /// The world mesh of a group (for callers that show a solid's volume).
 pub fn group_world_mesh<'a>(scene: &'a Scene, group: &Group, h: Hypot) -> Cow<'a, Mesh> {
     world_mesh(scene, group, h)

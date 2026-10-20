@@ -36,7 +36,7 @@ use ingetrazo_model::scene::Scene;
 use ingetrazo_model::units::fmt_len;
 use ingetrazo_ops::command::{Command, Cx, Fail};
 use ingetrazo_ops::draw::{AddEdgeCommand, AddFaceCommand, CompoundCommand};
-use ingetrazo_ops::edits::build_add_edges;
+use ingetrazo_ops::edits::{build_add_edges, PlannedWhenRun};
 use ingetrazo_ops::group::{copy_group, group_at_mut, iter_placements, transformed_attrs, Path};
 use ingetrazo_ops::grouping::InsertGroup;
 use ingetrazo_ops::transform::{MoveGroup, MoveVertices};
@@ -63,32 +63,6 @@ impl Command for MoveVerticesWelded {
     }
     fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         self.inner.undo(scene, cx);
-    }
-}
-
-/// `_PlannedWhenRun`: drawn edges planned when the command RUNS, not when it
-/// is built: by then the copied faces before it in the same compound are in
-/// the model, so the Line tool's planner splits the faces the edges land on
-/// without laying another face over the copied ones (#379).
-struct PlannedWhenRun {
-    segments: Vec<(V3, V3)>,
-    cmd: Option<Box<dyn Command>>,
-}
-
-impl Command for PlannedWhenRun {
-    fn name(&self) -> &'static str {
-        "planned_when_run"
-    }
-    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
-        if self.cmd.is_none() {
-            self.cmd = Some(build_add_edges(scene, cx, &self.segments, true, Vec::new(), None, false));
-        }
-        self.cmd.as_mut().expect("planned").apply(scene, cx)
-    }
-    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
-        if let Some(c) = self.cmd.as_mut() {
-            c.undo(scene, cx);
-        }
     }
 }
 
@@ -174,7 +148,7 @@ impl CopyBuilder {
             cmds.push(build_add_edges(env.scene, env.cx, &plain, true, Vec::new(), None, false));
         }
         if !bound.is_empty() {
-            cmds.push(Box::new(PlannedWhenRun { segments: bound, cmd: None }));
+            cmds.push(Box::new(PlannedWhenRun::new(bound)));
         }
         if cmds.is_empty() {
             return None;

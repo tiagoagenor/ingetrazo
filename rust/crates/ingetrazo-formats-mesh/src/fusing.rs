@@ -321,7 +321,7 @@ fn collapse_all(mesh: &mut Mesh, h: Hypot) {
 
 /// `simplify_mesh(mesh, max_angle_degrees, principal_planes)`: merge the
 /// connected near-coplanar faces of `mesh` in place; returns the faces
-/// removed. The new mesh replaces the old one (Python's
+/// removed. The new mesh replaces the old one's contents (Python's
 /// `mesh.restore_state(simplified.capture_state())` adopts its objects).
 pub fn simplify_mesh(mesh: &mut Mesh, max_angle_degrees: f64, principal: bool, h: Hypot) -> Result<usize, String> {
     if !max_angle_degrees.is_finite() || !(0.0..=5.0).contains(&max_angle_degrees) {
@@ -385,7 +385,7 @@ pub fn simplify_mesh(mesh: &mut Mesh, max_angle_degrees: f64, principal: bool, h
     collapse_all(&mut simplified, h);
     soften_smooth_edges(&mut simplified, h);
     let removed = original_count.saturating_sub(simplified.faces.len());
-    *mesh = simplified;
+    mesh.adopt(simplified);
     Ok(removed)
 }
 

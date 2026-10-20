@@ -184,6 +184,13 @@ pub fn build(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Comman
             ))
         })(),
         "group_in_context" => (|| b(GroupInContext::new(inner(scene, arg(a, "inner")?)?, &group_path(scene, arg(a, "context")?)?)))(),
+        // The solids need the Manifold kernel: without it the op stays unsupported.
+        #[cfg(feature = "manifold")]
+        "solid_operation" => (|| {
+            let id = text(arg(a, "op")?)?;
+            let op = ingetrazo_ops::solids::Op::from_id(&id).ok_or_else(|| format!("unknown solid op {id}"))?;
+            b(ingetrazo_ops::solids::SolidOperationCommand::new(op, top_indices(scene, arg(a, "groups")?, false)?))
+        })(),
         "merge_groups" => (|| b(MergeGroups::new(&top_indices(scene, arg(a, "groups")?, false)?)))(),
         "explode_group" => (|| b(ExplodeGroup::new(top_index(scene, arg(a, "group")?, false)?)))(),
         "explode_view" => (|| {

@@ -14,5 +14,9 @@ ingetrazo-math.workspace = true
 ingetrazo-georef.workspace = true
 sha2 = "0.10"
 
+[features]
+# Build `solid_operation` too (needs Manifold: CMake and a C++ compiler).
+manifold = ["ingetrazo-ops/manifold"]
+
 [lints]
 workspace = true

@@ -52,7 +52,7 @@ fn every_golden_script_starts_where_python_started() {
 fn scripts_of_the_ported_ops_replay_to_the_end() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../golden");
     let done = ids(&root).iter().filter(|id| matches!(load(&root, id).map(|s| replay(&s)), Ok(Outcome::Ok))).count();
-    assert!(done >= 625, "only {done} scripts replay to the end");
+    assert!(done >= 628, "only {done} scripts replay to the end");
 }
 
 /// The hand-written annotation scripts (scripts/golden/make_annotation_scripts.py)
