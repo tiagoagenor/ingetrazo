@@ -52,6 +52,11 @@ fn lf(raw: &[u8]) -> Vec<u8> {
     }
 }
 
+fn is_windows_path(p: &str) -> bool {
+    let b = p.as_bytes();
+    b.len() > 3 && b[0].is_ascii_alphabetic() && b[1] == b':' && b[2] == b'\\'
+}
+
 /// `_unpack_textures`: each embedded image goes to a file named as the
 /// app's texture cache names it (`<sha1[:16]>-<safe name>`) and the entry
 /// points at it.
@@ -61,6 +66,13 @@ fn unpack_textures(scene: &mut Scene, zip: &Zip, dir: &Path) {
             Value::Object(items) => {
                 for (k, x) in items.iter_mut() {
                     match x {
+                        // A file that was on the Windows machine the fixtures
+                        // were recorded on (`C:\...\gone.png`): there `Path`
+                        // takes its name after the last backslash, on POSIX
+                        // the whole string is one name. It is gone either way.
+                        Value::Str(p) if cfg!(not(windows)) && (k == "path" || k == "base") && is_windows_path(p) => {
+                            *p = p.rsplit('\\').next().unwrap_or(p).to_string();
+                        }
                         Value::Str(member) if (k == "path" || k == "base") && member.starts_with("textures/") => {
                             if let Ok(data) = zip.read(member) {
                                 let name = member.rsplit('/').next().unwrap_or(member);

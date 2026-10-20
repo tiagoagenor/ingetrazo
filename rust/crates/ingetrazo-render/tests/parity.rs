@@ -101,6 +101,9 @@ fn camera_of(v: &Value, w: u32, h: u32) -> Camera {
         pitch: num(v.get("pitch").unwrap()),
         perspective: flag("perspective"),
         two_point: flag("two_point"),
+        // The fixtures were recorded with MSVC's `hypot`; the platform default
+        // (libstdc++, libc++) rounds the last bit of `lookAt` another way.
+        hypot: ingetrazo_math::Hypot::Msvc,
         ..Default::default()
     };
     c.set_aspect(w, h);

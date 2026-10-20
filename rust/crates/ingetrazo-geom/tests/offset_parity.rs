@@ -260,6 +260,7 @@ fn same_controls(a: &[Control], b: &[Control]) -> bool {
 }
 
 #[test]
+#[cfg_attr(not(windows), ignore = "fixtures recorded with the MSVC CRT's libm (sin/cos/atan2/pow differ by an ulp elsewhere)")]
 fn bevel_profiles_match_python() {
     let all = rows("bevel_profiles.jsonl");
     let mut seen = std::collections::HashMap::new();
