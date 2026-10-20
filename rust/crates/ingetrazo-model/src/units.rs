@@ -28,12 +28,16 @@ pub struct ModelUnits {
     pub precision: i64,
     /// `"."` or `","`.
     pub decimal: String,
+    /// `"deg"`, `"rad"` or `"grad"`.
+    pub angle: String,
+    /// Decimals of an angle, 0..=6.
+    pub angle_precision: i64,
 }
 
 impl Default for ModelUnits {
-    /// `DEFAULT_MODEL_UNITS`: metres, two decimals, a point.
+    /// `DEFAULT_MODEL_UNITS`: metres, two decimals, a point, degrees with one.
     fn default() -> Self {
-        ModelUnits { length: "m".into(), precision: 2, decimal: ".".into() }
+        ModelUnits { length: "m".into(), precision: 2, decimal: ".".into(), angle: "deg".into(), angle_precision: 1 }
     }
 }
 
@@ -58,8 +62,44 @@ impl ModelUnits {
             Some(Value::Str(d)) if d == "," => ",".to_string(),
             _ => ".".to_string(),
         };
-        ModelUnits { length: length.clone(), precision, decimal }
+        // `_OPTIONAL`: the angle unit and its precision, when valid.
+        let angle = match u.get("angle") {
+            Some(Value::Str(a)) if ["deg", "rad", "grad"].contains(&a.as_str()) => a.clone(),
+            _ => "deg".to_string(),
+        };
+        let angle_precision = match u.get("angle_precision") {
+            Some(Value::Int(s)) => match s.parse::<i64>() {
+                Ok(n) if (0..=6).contains(&n) => n,
+                _ => 1,
+            },
+            _ => 1,
+        };
+        ModelUnits { length: length.clone(), precision, decimal, angle, angle_precision }
     }
+}
+
+/// `format_angle` of `radians` in `unit` (`deg`, `rad` or `grad`).
+pub fn format_angle(radians: f64, unit: &str, decimals: i64) -> String {
+    if !radians.is_finite() {
+        return "\u{2014}".to_string();
+    }
+    let (factor, symbol, glue) = match unit {
+        "rad" => (1.0, "rad", " "),
+        "grad" => (std::f64::consts::PI / 200.0, "gon", " "),
+        _ => (std::f64::consts::PI / 180.0, "\u{b0}", ""),
+    };
+    let n = decimals.clamp(0, 6) as usize;
+    format!("{}{glue}{symbol}", fixed(radians / factor, n))
+}
+
+/// `fmt_angle_deg(degrees, signed)`: an angle measured in degrees, in the
+/// document's angle unit and precision (`+45.0°` by default).
+pub fn fmt_angle_deg(degrees: f64, signed: bool, units: &ModelUnits) -> String {
+    let mut txt = format_angle(degrees.to_radians(), &units.angle, units.angle_precision);
+    if signed && !txt.starts_with(['-', '\u{2014}']) {
+        txt.insert(0, '+');
+    }
+    localized(&txt, &units.decimal)
 }
 
 /// `core.units.fmt_len` with the document's settings given.
