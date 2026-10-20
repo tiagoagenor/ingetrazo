@@ -59,6 +59,8 @@ pub struct PickViewport {
     /// What the host bumps when the model changes (`scene.version`).
     pub hint: u64,
     cache: RefCell<Option<(u64, u64, PickIndex)>>,
+    /// The prototype chunks, kept across the rebuilds of the index.
+    chunks: RefCell<ingetrazo_snap::picking::ChunkCache>,
 }
 
 impl PickViewport {
@@ -74,6 +76,7 @@ impl PickViewport {
             use_cache: false,
             hint: 0,
             cache: RefCell::new(None),
+            chunks: RefCell::new(Default::default()),
         }
     }
 
@@ -85,7 +88,7 @@ impl PickViewport {
         let idx = if self.use_cache {
             match self.cache.borrow_mut().take() {
                 Some((hint, s, idx)) if hint == self.hint && s == stamp => idx,
-                _ => PickIndex::build(&st),
+                _ => PickIndex::build_cached(&st, &mut self.chunks.borrow_mut()),
             }
         } else {
             PickIndex::build(&st)

@@ -18,7 +18,7 @@
 use ingetrazo_math::V3;
 
 use crate::compute::closest_on_segment_2d;
-use crate::engine::{project_px, segment_distance, InferenceState, Settings};
+use crate::engine::{project_px, segment_distance, segment_distance_under, InferenceState, Settings};
 use crate::types::EdgeRef;
 use crate::workplane::ToolState;
 use crate::world::World;
@@ -116,26 +116,29 @@ impl World {
         if self.gedges.is_empty() {
             return loose.map(HoverEdge::Loose);
         }
-        let pts: Vec<[f64; 3]> = self.gedges.iter().flat_map(|g| [f64v(g.a), f64v(g.b)]).collect();
-        let proj = project_px(view, &pts);
-        if !proj.iter().any(|p| p.2) {
+        let gv = self.gedge_view(view);
+        if !gv.any_ok {
             return loose.map(HoverEdge::Loose);
         }
-        let d: Vec<f64> = (0..self.gedges.len()).map(|i| segment_distance(proj[2 * i], proj[2 * i + 1], x, y)).collect();
+        // The first of the nearest (np.argmin), over the edges that can be
+        // within the threshold: the others are infinitely far.
         let mut i = 0;
-        for k in 1..d.len() {
-            if d[k] < d[i] {
+        let mut best = f64::INFINITY;
+        gv.for_each_near(x, y, pick_px, |k| {
+            let dk = segment_distance_under(gv.proj[2 * k], gv.proj[2 * k + 1], x, y, pick_px);
+            if dk < best {
                 i = k;
+                best = dk;
             }
-        }
-        if d[i] >= pick_px {
+        });
+        if best >= pick_px {
             return loose.map(HoverEdge::Loose);
         }
         if let Some(li) = loose {
             let e = &self.loose_edges[li];
             if let (Some(pa), Some(pb)) = (view.world_to_pixel(e.a), view.world_to_pixel(e.b)) {
                 let (dl, _t) = closest_on_segment_2d((x, y), pa, pb);
-                if dl <= d[i] {
+                if dl <= best {
                     return Some(HoverEdge::Loose(li));
                 }
             }
@@ -148,33 +151,37 @@ impl World {
     pub fn pick_vertex(&self, view: &View, pick_px: f64, x: f64, y: f64) -> Option<V3> {
         // [loose a's, loose b's, group a's, group b's]
         let mut cands: Vec<(f64, V3)> = Vec::new();
-        let mut parts: Vec<(Vec<(f64, f64, bool)>, Vec<V3>)> = Vec::new();
+        if self.loose_edges.is_empty() && self.gedges.is_empty() {
+            return None;
+        }
+        // A corner farther than the threshold along either axis is farther in
+        // the plane: no square root for it.
+        let mut consider = |s: (f64, f64), ok: bool, v: V3| {
+            if !ok || (s.0 - x).abs() >= pick_px || (s.1 - y).abs() >= pick_px {
+                return;
+            }
+            let d = (s.0 - x).hypot(s.1 - y);
+            if d < pick_px {
+                cands.push((d, v));
+            }
+        };
         if !self.loose_edges.is_empty() {
             let pts: Vec<[f64; 3]> = self.loose_edges.iter().flat_map(|e| [f64v(e.a), f64v(e.b)]).collect();
             let proj = project_px(view, &pts);
-            let a: Vec<(f64, f64, bool)> = (0..self.loose_edges.len()).map(|i| (proj[2 * i].0, proj[2 * i].1, proj[2 * i].2 && proj[2 * i + 1].2)).collect();
-            let b: Vec<(f64, f64, bool)> = (0..self.loose_edges.len()).map(|i| (proj[2 * i + 1].0, proj[2 * i + 1].1, proj[2 * i].2 && proj[2 * i + 1].2)).collect();
-            parts.push((a, self.loose_edges.iter().map(|e| e.a).collect()));
-            parts.push((b, self.loose_edges.iter().map(|e| e.b).collect()));
+            for (i, e) in self.loose_edges.iter().enumerate() {
+                consider((proj[2 * i].0, proj[2 * i].1), proj[2 * i].2 && proj[2 * i + 1].2, e.a);
+            }
+            for (i, e) in self.loose_edges.iter().enumerate() {
+                consider((proj[2 * i + 1].0, proj[2 * i + 1].1), proj[2 * i].2 && proj[2 * i + 1].2, e.b);
+            }
         }
         if !self.gedges.is_empty() {
-            let pts: Vec<[f64; 3]> = self.gedges.iter().flat_map(|g| [f64v(g.a), f64v(g.b)]).collect();
-            let proj = project_px(view, &pts);
-            let a: Vec<(f64, f64, bool)> = (0..self.gedges.len()).map(|i| (proj[2 * i].0, proj[2 * i].1, proj[2 * i].2 && proj[2 * i + 1].2)).collect();
-            let b: Vec<(f64, f64, bool)> = (0..self.gedges.len()).map(|i| (proj[2 * i + 1].0, proj[2 * i + 1].1, proj[2 * i].2 && proj[2 * i + 1].2)).collect();
-            parts.push((a, self.gedges.iter().map(|g| g.a).collect()));
-            parts.push((b, self.gedges.iter().map(|g| g.b).collect()));
-        }
-        if parts.is_empty() {
-            return None;
-        }
-        for (screen, verts) in &parts {
-            for (s, v) in screen.iter().zip(verts) {
-                let d = if s.2 { (s.0 - x).hypot(s.1 - y) } else { f64::INFINITY };
-                if d < pick_px {
-                    cands.push((d, *v));
-                }
-            }
+            let gv = self.gedge_view(view);
+            let proj = &gv.proj;
+            // The corners within the threshold are on edges whose box is
+            // within it: all the a's of those edges, then all the b's.
+            gv.for_each_near(x, y, pick_px, |i| consider((proj[2 * i].0, proj[2 * i].1), proj[2 * i].2 && proj[2 * i + 1].2, self.gedges[i].a));
+            gv.for_each_near(x, y, pick_px, |i| consider((proj[2 * i + 1].0, proj[2 * i + 1].1), proj[2 * i].2 && proj[2 * i + 1].2, self.gedges[i].b));
         }
         cands.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         cands.into_iter().map(|c| c.1).find(|&v| !self.is_occluded(view.cam.eye(), v, view.h))

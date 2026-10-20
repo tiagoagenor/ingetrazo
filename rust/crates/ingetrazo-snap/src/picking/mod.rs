@@ -31,7 +31,7 @@ pub mod state;
 
 pub use camera::{Camera, View};
 pub use edit::enter_edit;
-pub use index::{EntRef, PickIndex, Place};
+pub use index::{ChunkCache, EntRef, GScreenCache, PickIndex, Place};
 pub use picks::{FaceHit, TextMetrics};
 pub use select::Picked;
 pub use state::{FaceMode, Path, State};

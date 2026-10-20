@@ -164,6 +164,20 @@ pub(crate) fn segment_distance(a: (f64, f64, bool), b: (f64, f64, bool), px: f64
     }
 }
 
+/// [`segment_distance`] for a caller that only tells apart distances under
+/// `limit`: a segment whose screen box lies farther than that from the cursor
+/// (the nearest point of a segment is inside its box) answers infinity at
+/// once. Over a model with hundreds of thousands of edges that skips nearly
+/// all the square roots; a distance under `limit` is the same bits.
+#[inline]
+pub(crate) fn segment_distance_under(a: (f64, f64, bool), b: (f64, f64, bool), px: f64, py: f64, limit: f64) -> f64 {
+    let lim = limit + 1e-6;
+    if a.0.min(b.0) - lim > px || a.0.max(b.0) + lim < px || a.1.min(b.1) - lim > py || a.1.max(b.1) + lim < py {
+        return f64::INFINITY;
+    }
+    segment_distance(a, b, px, py)
+}
+
 /// `POINT_INFERENCE_PX`.
 const POINT_INFERENCE_PX: f64 = 40.0;
 
@@ -185,19 +199,15 @@ pub fn snap_scene(view: &View, world: &World, inf: &InferenceState, settings: &S
     // Group hard edges near the cursor, in index order (at most 48 within
     // 48 px; the fixtures never reach the cap).
     if !world.gedges.is_empty() {
-        let pts: Vec<[f64; 3]> = world
-            .gedges
-            .iter()
-            .flat_map(|g| [[g.a.0 as f64, g.a.1 as f64, g.a.2 as f64], [g.b.0 as f64, g.b.1 as f64, g.b.2 as f64]])
-            .collect();
-        let proj = project_px(view, &pts);
+        let gv = world.gedge_view(view);
+        let proj = &gv.proj;
         let mut cand: Vec<(f64, usize)> = Vec::new();
-        for (i, _) in world.gedges.iter().enumerate() {
-            let d = segment_distance(proj[2 * i], proj[2 * i + 1], px, py);
+        gv.for_each_near(px, py, 48.0, |i| {
+            let d = segment_distance_under(proj[2 * i], proj[2 * i + 1], px, py, 48.0);
             if d < 48.0 {
                 cand.push((d, i));
             }
-        }
+        });
         if cand.len() > 48 {
             cand.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
             cand.truncate(48);
@@ -485,12 +495,7 @@ pub fn snap(inp: &SnapInput, px: f64, py: f64) -> (Option<SnapResult>, SnapTrace
 /// The screen distance from the cursor to every group hard edge
 /// (`Viewport._gedge_dist`), in the order of `world.gedges`.
 pub fn gedge_distances(view: &View, world: &World, px: f64, py: f64) -> Vec<f64> {
-    let pts: Vec<[f64; 3]> = world
-        .gedges
-        .iter()
-        .flat_map(|g| [[g.a.0 as f64, g.a.1 as f64, g.a.2 as f64], [g.b.0 as f64, g.b.1 as f64, g.b.2 as f64]])
-        .collect();
-    let proj = project_px(view, &pts);
+    let proj = &world.gedge_view(view).proj;
     (0..world.gedges.len()).map(|i| segment_distance(proj[2 * i], proj[2 * i + 1], px, py)).collect()
 }
 

@@ -169,6 +169,17 @@ impl View {
         Some((a, b))
     }
 
+    /// What identifies this view for a cache of projections: the matrix and the size.
+    pub fn key(&self) -> ([u64; 16], i32, i32) {
+        let mut k = [0u64; 16];
+        for r in 0..4 {
+            for c in 0..4 {
+                k[r * 4 + c] = self.mvp_np[r][c].to_bits();
+            }
+        }
+        (k, self.w, self.h)
+    }
+
     /// `_project_px`: world points to `(px, py, in_front)`.
     pub fn project_px(&self, pts: &[P3]) -> (Vec<f64>, Vec<f64>, Vec<bool>) {
         let n = pts.len();

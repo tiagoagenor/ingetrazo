@@ -12,6 +12,7 @@ use ingetrazo_model::igz_write::{save_scene, SaveOptions};
 use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_render::document::open_igz;
 
+use crate::paths::{resource_path, InstallTextures};
 use crate::viewport::Textures;
 
 /// `core.version.__version__`, written into every document as `app_version`.
@@ -50,7 +51,7 @@ pub fn window_title(path: Option<&Path>, dirty: bool) -> String {
 pub fn open_path(path: &Path) -> Result<(Document, Textures), String> {
     let raw = std::fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let (scene, textures) = open_igz(&raw).map_err(|e| format!("{}: {e}", path.display()))?;
-    Ok((Document { scene: Arc::new(scene), path: Some(path.to_path_buf()), raw: Arc::new(raw) }, Box::new(textures)))
+    Ok((Document { scene: Arc::new(scene), path: Some(path.to_path_buf()), raw: Arc::new(raw) }, Box::new(InstallTextures(textures))))
 }
 
 /// What a save wrote.
@@ -87,7 +88,7 @@ pub fn write_bytes(scene: &mut Scene, raw: &[u8]) -> Result<Written, String> {
     // Saving reads every dimension (`read_dimensions`).
     scene.read_dimensions(MeshId(0));
     let zip = if igz::is_container(raw) { Zip::open(raw).ok() } else { None };
-    let reader = |name: &str| zip.as_ref().and_then(|z| z.read(name).ok()).or_else(|| std::fs::read(name).ok());
+    let reader = |name: &str| zip.as_ref().and_then(|z| z.read(name).ok()).or_else(|| std::fs::read(name).ok()).or_else(|| std::fs::read(resource_path(name)).ok());
     let opts = SaveOptions::new(APP_VERSION, &reader);
     let saved = save_scene(scene, &opts).map_err(|e| format!("{e:?}"))?;
     Ok(Written { bytes: saved.bytes, embedded: saved.embedded, missing: saved.missing })

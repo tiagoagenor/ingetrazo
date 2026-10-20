@@ -78,6 +78,9 @@ pub struct Session {
     pub size: (i32, i32),
     /// Frame the model once the viewport has a size (a document just opened).
     pub fit_pending: bool,
+    /// Build what the first pointer move would build (the snap world, the
+    /// pick index) once the model is on the screen: [`Session::warm`].
+    pub warm_pending: bool,
     pub box_drag: Option<BoxDrag>,
     saved_serial: Option<u64>,
     pick: PickCache,
@@ -136,6 +139,7 @@ impl Session {
             tool: ToolId::Select,
             size: (1, 1),
             fit_pending: false,
+            warm_pending: false,
             box_drag: None,
             saved_serial: None,
             pick: PickCache::default(),
@@ -182,10 +186,11 @@ impl Session {
         self.nav.end_drag();
         self.box_drag = None;
         self.fit_pending = true;
+        self.warm_pending = true;
         self.view_key = None;
         self.scene_changed = true;
         self.seen = (0, 0);
-        self.pick.invalidate();
+        self.pick.reset();
     }
 
     /// Open a file: the textures for the renderer come back.
@@ -284,6 +289,19 @@ impl Session {
             self.pick.invalidate();
             self.scene_changed = true;
         }
+    }
+
+    /// Build what the first pointer move over a big model would build (the
+    /// snap world and the Select tool's pick index: some hundreds of
+    /// milliseconds), so the user's first move is not the one that stalls.
+    /// A move to a pixel outside the viewport touches nothing visible.
+    pub fn warm(&mut self) {
+        self.warm_pending = false;
+        self.sync();
+        let last = self.host.core.last_mouse_pos;
+        self.host.hover(-1.0, -1.0, 0);
+        self.host.core.last_mouse_pos = last;
+        self.sync();
     }
 
     /// `MainWindow._on_zoom_extents`.

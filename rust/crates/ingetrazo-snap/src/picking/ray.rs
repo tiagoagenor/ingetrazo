@@ -24,6 +24,13 @@ impl Picker<'_> {
     /// box the ray meets, one NumPy pass over their concatenation. `None`
     /// when the index holds no triangles.
     pub fn ray_hits(&self, o: P3, d: P3, mask: &[bool], reduce_global: bool) -> Option<Hits> {
+        self.ray_hits_touched(o, d, mask, reduce_global, None)
+    }
+
+    /// [`Picker::ray_hits`] that also lists, when `touched` is given, the
+    /// entities the ray hit (each once, in no order): the caller then reads
+    /// those and not the whole per-entity array.
+    pub fn ray_hits_touched(&self, o: P3, d: P3, mask: &[bool], reduce_global: bool, mut touched: Option<&mut Vec<usize>>) -> Option<Hits> {
         let idx = &self.idx;
         if !idx.has_tris() {
             return None;
@@ -52,6 +59,11 @@ impl Picker<'_> {
                         best = t;
                     }
                 } else if t < face_t[te] {
+                    if let Some(list) = touched.as_deref_mut() {
+                        if face_t[te] == f64::INFINITY {
+                            list.push(te);
+                        }
+                    }
                     face_t[te] = t;
                 }
             }
@@ -121,6 +133,22 @@ impl Picker<'_> {
             }
         }
         Some(face_t)
+    }
+
+    /// [`Picker::hover_face_t`] with the list of the entities it hit (those
+    /// whose time is finite), for the picks that read only those.
+    pub fn hover_face_t_touched(&self, origin: V3, direction: V3) -> Option<(Vec<f64>, Vec<usize>)> {
+        if self.st.active_cut().is_some() {
+            let t = self.hover_face_t(origin, direction)?;
+            let touched = (0..t.len()).filter(|&i| t[i].is_finite()).collect();
+            return Some((t, touched));
+        }
+        let (o, d) = (p3(origin), p3(direction));
+        let mut touched = Vec::new();
+        match self.ray_hits_touched(o, d, &self.idx.sel, false, Some(&mut touched))? {
+            Hits::PerEnt(t) => Some((t, touched)),
+            Hits::Global(_) => unreachable!(),
+        }
     }
 
     /// `_coplanar_eps`: how much deeper than the nearest hit a face may sit

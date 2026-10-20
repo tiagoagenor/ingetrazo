@@ -1830,6 +1830,7 @@ dependencies = [
  "ingetrazo-math",
  "ingetrazo-model",
  "ingetrazo-ops",
+ "rayon",
 ]
 
 [[package]]
