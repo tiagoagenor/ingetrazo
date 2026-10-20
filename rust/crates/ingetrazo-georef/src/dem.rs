@@ -172,3 +172,33 @@ impl DemSampler {
         self.fields.contains_key(&(tx, ty, self.zoom))
     }
 }
+
+/// What terrain, surfaces and profiles ask of an elevation source: Python's
+/// duck-typed `sampler` (`datum`, `elevation_at`, `elevation_at_local`,
+/// `ensure_area`). [`DemSampler`] is the real one; the app wires a fetching
+/// sampler through the same trait.
+pub trait ElevationSampler {
+    fn datum(&self) -> &SceneDatum;
+
+    /// Metres at `(lat, lon)`, or `None` if the tile is not loaded.
+    fn elevation_at(&self, lat: f64, lon: f64) -> Option<f64>;
+
+    /// Elevation at a local-metre scene point (via the datum).
+    fn elevation_at_local(&self, point: V3) -> Option<f64> {
+        let (lat, lon, _) = self.datum().local_to_geodetic(point);
+        self.elevation_at(lat, lon)
+    }
+
+    /// Request every tile covering the geodetic bbox (idempotent). The
+    /// default asks for nothing; an app sampler queues the downloads.
+    fn ensure_area(&self, _lat_s: f64, _lon_w: f64, _lat_n: f64, _lon_e: f64) {}
+}
+
+impl ElevationSampler for DemSampler {
+    fn datum(&self) -> &SceneDatum {
+        &self.datum
+    }
+    fn elevation_at(&self, lat: f64, lon: f64) -> Option<f64> {
+        DemSampler::elevation_at(self, lat, lon)
+    }
+}
