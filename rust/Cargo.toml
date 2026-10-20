@@ -15,6 +15,7 @@ members = [
     "crates/ingetrazo-cli",
     "crates/ingetrazo_py",
     "crates/ingetrazo-spike-ui",
+    "crates/ingetrazo-snap",
 ]
 
 [workspace.package]

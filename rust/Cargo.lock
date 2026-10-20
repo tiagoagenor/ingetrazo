@@ -1737,6 +1737,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ingetrazo-snap"
+version = "0.1.0"
+dependencies = [
+ "ingetrazo-formats",
+ "ingetrazo-geom",
+ "ingetrazo-math",
+ "ingetrazo-model",
+ "ingetrazo-ops",
+]
+
+[[package]]
 name = "ingetrazo-spike-ui"
 version = "0.1.0"
 dependencies = [

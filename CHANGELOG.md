@@ -241,6 +241,27 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Selección por rayo (picking), en Rust** (`ingetrazo-snap`, M3.12): lo que
+  el cursor señala dados la escena, la cámara y un píxel —`pick_face`,
+  `pick_face_any` y `pick_face_placement` (la cara y el grupo que un clic
+  selecciona, y la colocación por la que se la alcanzó), `pick_group`,
+  `pick_edge`, `pick_visible_edge`, `pick_vertex`, cotas, textos con guía,
+  guías, planos de sección, imágenes de referencia, trayectos georreferenciados
+  y el orden de prioridad de la herramienta Seleccionar— y la caja de
+  selección (ventana y cruce), con las tolerancias en píxeles, el desempate de
+  caras coplanares (la menor), la exclusión de lo oculto, bloqueado o en capa
+  oculta, el grupo abierto para editar (lo de fuera ocluye y no se puede
+  seleccionar), rayos X y el corte de sección activo. Incluye la cámara
+  orbital (`view_matrix`, `projection_matrix`) y la aritmética de NumPy en su
+  orden (gemv/gemm con FMA para N ≥ 2, `einsum`), con `QMatrix4x4` y su
+  indicador de tipo. `scripts/golden/make_pick_fixtures.py` hace correr el
+  `Viewport` real (Qt sin pantalla) sobre 11 escenas, 85 vistas, ~24 000
+  píxeles y ~2 900 cajas; Rust da la misma entidad en todos salvo lo que
+  `np.argsort` (AVX2, no estable) decide entre dos distancias exactamente
+  iguales, que el generador marca y la prueba no compara. No se portan las
+  figuras «mírame» (billboards), las colocaciones perezosas de modelos de más
+  de un millón de caras, la rejilla de celdas de los trozos de más de 8192
+  triángulos ni la cámara de dos puntos.
 - **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
   los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
   Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,
