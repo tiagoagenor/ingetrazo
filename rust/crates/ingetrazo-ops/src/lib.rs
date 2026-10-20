@@ -7,6 +7,7 @@
 pub mod command;
 pub mod group;
 pub mod group_cmds;
+pub mod intersect;
 pub mod solids;
 pub mod transform;
 pub mod world;
