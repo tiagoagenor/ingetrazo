@@ -267,6 +267,27 @@ follow [SemVer](https://semver.org).
   0,7 ms; rehacer el buffer tras mover la cámara, 60 ms con todas las capas
   y 16 ms solo con caras (`PickOptions::layers`), y `prepare` sin cambios
   180 µs. `examples/bench.rs --pick` lo mide.
+- **Aplicación mínima en Rust: ventana, visor y navegación** (`ingetrazo-app`,
+  binario `ingetrazo`, M4.3 y M4.4): `ingetrazo [archivo.igz]` abre una
+  ventana egui (eframe 0.36.2, wgpu) con una barra superior (Archivo ▸
+  Abrir… con diálogo nativo, Salir; Ver), el visor central dibujado por
+  `ingetrazo-render` mediante un callback de pintado, y una línea de estado
+  con los fps. La navegación es la del visor de Python: botón central
+  orbita (alrededor del punto bajo el cursor), Mayús + central desplaza, la
+  rueda hace zoom hacia el cursor (con el punto fijado entre muescas), Mayús+Z
+  o F2 encuadra todo, Mayús+P alterna perspectiva y paralela, O/H/Z dan al
+  botón izquierdo órbita, desplazamiento y zoom. Las matemáticas de
+  `OrbitCamera` (`orbit`, `orbit_about`, `pan`, `zoom`, `zoom_to`, `fit_box`)
+  y la máquina de gestos de `Viewport` trabajan sobre la `Camera` del render
+  (sin una tercera copia), en el mismo float32 de Qt, y `QQuaternion` se
+  porta tal como lo compila el Qt de PySide6 (sin atajo «ya es unitario»,
+  longitud con la cadena `hypot` de MSVC). `scripts/golden/make_nav_fixtures.py`
+  maneja el `Viewport` real con eventos de ratón y rueda sintéticos sobre
+  cuatro `examples/*.igz` (2574 eventos); `tests/nav_parity.rs` los repite y
+  la cámara tras cada uno es idéntica bit a bit, tanto con los argumentos que
+  Python pasó a la cámara como por los gestos y el sondeo de escena propios
+  de Rust. Una prueba de humo dibuja un cuadro de un ejemplo por la ruta del
+  visor sin ventana.
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un

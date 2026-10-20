@@ -1,0 +1,29 @@
+[package]
+name = "ingetrazo-app"
+description = "IngeTrazo's Rust application (M4.3): the egui window, the wgpu viewport and the camera navigation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "ingetrazo_app"
+
+[[bin]]
+name = "ingetrazo"
+path = "src/main.rs"
+
+[dependencies]
+ingetrazo-math.workspace = true
+ingetrazo-geom.workspace = true
+ingetrazo-formats.workspace = true
+ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-snap = { path = "../ingetrazo-snap" }
+ingetrazo-render = { path = "../ingetrazo-render" }
+# The versions of the M0.8 spike; eframe 0.36.2 builds against wgpu 30.0.1,
+# the renderer's pin.
+eframe = { version = "=0.36.2", features = ["accesskit", "wgpu"] }
+rfd = "0.17"
+
+[lints]
+workspace = true
