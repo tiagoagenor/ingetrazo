@@ -464,9 +464,9 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Alfa: city-L a 60 quadros por segundo",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.1",
@@ -545,7 +545,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Janela principal e painéis acopláveis",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -554,7 +554,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Bandeja lateral",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -563,7 +563,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Estrutura do modelo (outliner)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -572,7 +572,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Informações da entidade",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -581,7 +581,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Materiais e biblioteca",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -590,7 +590,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Preferências",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -599,7 +599,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Busca de comandos (F3)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -608,7 +608,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Atalhos de teclado",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -617,7 +617,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Dicas de status e caixa de medidas",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -626,7 +626,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Todas as ferramentas na interface",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -635,7 +635,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Estilos e temas",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
