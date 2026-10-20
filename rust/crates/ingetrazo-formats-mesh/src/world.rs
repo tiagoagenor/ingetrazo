@@ -71,7 +71,7 @@ fn default_layer() -> Value {
 }
 
 /// `scene.entity_visible(face)`: not hidden, and its layer shown.
-fn face_visible(scene: &Scene, f: &WFace) -> bool {
+pub fn face_visible(scene: &Scene, f: &WFace) -> bool {
     if truthy(f.attr("hidden")) {
         return false;
     }
@@ -83,7 +83,7 @@ fn face_visible(scene: &Scene, f: &WFace) -> bool {
 }
 
 /// `scene.entity_visible(group)`.
-fn group_visible(scene: &Scene, g: &Group) -> bool {
+pub fn group_visible(scene: &Scene, g: &Group) -> bool {
     if g.hidden {
         return false;
     }
@@ -93,7 +93,7 @@ fn group_visible(scene: &Scene, g: &Group) -> bool {
     }
 }
 
-fn billboard(g: &Group) -> bool {
+pub fn billboard(g: &Group) -> bool {
     g.billboard.as_ref().is_some_and(pyval::truthy)
 }
 
@@ -101,7 +101,7 @@ fn billboard(g: &Group) -> bool {
 
 /// `_remap_uvws` / `transformed_attrs` on one face: the texture's world to
 /// UV map follows the transform, g' = L⁻ᵀ·g, c' = c − g'·t.
-fn remap_uvw(attrs: &[(String, Value)], inv: &M4, t: [f64; 3]) -> Vec<(String, Value)> {
+pub(crate) fn remap_uvw(attrs: &[(String, Value)], inv: &M4, t: [f64; 3]) -> Vec<(String, Value)> {
     let mut out = attrs.to_vec();
     let Some(Value::Object(tex)) = attr(attrs, "texture") else { return out };
     let Some(Value::Array(uvw)) = tex.iter().rev().find(|(k, _)| k == "uvw").map(|(_, v)| v) else { return out };
@@ -128,7 +128,7 @@ fn remap_uvw(attrs: &[(String, Value)], inv: &M4, t: [f64; 3]) -> Vec<(String, V
 }
 
 /// The translation column `m(0, 3), m(1, 3), m(2, 3)`.
-fn translation(m: &M4) -> [f64; 3] {
+pub(crate) fn translation(m: &M4) -> [f64; 3] {
     [m.row(0)[3] as f64, m.row(1)[3] as f64, m.row(2)[3] as f64]
 }
 
@@ -147,22 +147,24 @@ pub fn np_affine(m: &M4) -> ([[f64; 3]; 3], [f64; 3]) {
     ([[d[0], d[4], d[8]], [d[1], d[5], d[9]], [d[2], d[6], d[10]]], [d[12], d[13], d[14]])
 }
 
-/// `pts @ rot.T + trans` for one point, as NumPy's float64 matmul computes a
-/// row: three products summed in order, then the translation added.
+/// `pts @ rot.T + trans` for one point, as NumPy's float64 matmul (OpenBLAS
+/// on x86-64, checked against it for N = 1..1000 rows) computes a row: the
+/// first product, then each next one fused into the running sum, then the
+/// translation added.
 pub fn affine_point(rot: &[[f64; 3]; 3], trans: &[f64; 3], p: V3) -> V3 {
     let (x, y, z) = (p.0 as f64, p.1 as f64, p.2 as f64);
-    let row = |i: usize| x * rot[i][0] + y * rot[i][1] + z * rot[i][2] + trans[i];
+    let row = |i: usize| z.mul_add(rot[i][2], y.mul_add(rot[i][1], x * rot[i][0])) + trans[i];
     V3(row(0) as f32, row(1) as f32, row(2) as f32)
 }
 
 /// A mesh's rings in the order `transformed_mesh` flattens them: the end
 /// points of every edge, then each face's outer ring and its holes.
-struct Flat {
-    edge_points: Vec<V3>,
-    faces: Vec<(Vec<V3>, Vec<Vec<V3>>, Vec<(String, Value)>)>,
+pub(crate) struct Flat {
+    pub(crate) edge_points: Vec<V3>,
+    pub(crate) faces: Vec<(Vec<V3>, Vec<Vec<V3>>, Vec<(String, Value)>)>,
 }
 
-fn flatten(src: &Mesh) -> Flat {
+pub(crate) fn flatten(src: &Mesh) -> Flat {
     let mut edge_points = Vec::with_capacity(src.edges.len() * 2);
     for &e in &src.edges {
         let ed = src.edge(e);

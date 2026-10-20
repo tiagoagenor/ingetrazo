@@ -260,6 +260,32 @@ follow [SemVer](https://semver.org).
   cilindros, un sólido dentro de otro, huecos, túneles, prismas cóncavos,
   texturas, uniones en T) coincide bit a bit con Python: mismas caras,
   mismo orden, mismos atributos y mismos bordes suaves.
+- **glTF y GLB desde Rust** (`rust/crates/ingetrazo-formats-mesh`, M5.3):
+  exporta con los mismos bytes que `formats/gltf.py` (el JSON con
+  `json.dumps` compacto, los buffers de posiciones, normales, UV e índices
+  en el orden de Python, el relleno, la cabecera y los dos trozos del GLB,
+  las imágenes incrustadas) recorriendo la escena Rust como ella: un nodo
+  por grupo y componente con su matriz en Y arriba, la malla compartida por
+  las copias, la geometría suelta, las figuras «mirar al visor» (de contorno
+  y de cuadro) de pie hacia la vista frontal con sus pies y su rumbo en
+  `extras`, los acabados de `core/finish.py` (con su regex a mano), la
+  opacidad, el recorte de las texturas con alfa (`QImage.scaled` rápido a
+  32 × 32: la muestra cae en `ceil((2d+1)·n/64) − 1`) y la geolocalización.
+  Importa como Python sin motor Rust: contenedor GLB y `.gltf` con `.bin`,
+  URI de datos o archivos, accesores con `byteStride` y normalizados, nodos
+  con matriz o TRS, materiales PBR y especular-brillo, `KHR_texture_transform`,
+  imágenes a la caché de texturas, el mapa mundo → UV de cada triángulo y
+  las aristas suaves y ocultas del follaje. Los casos de NumPy se reproducen
+  en el orden de OpenBLAS: `@` es un FMA encadenado (también el 4 × 4), el
+  `einsum` de tres términos suma el primero con el tercero y luego el
+  segundo, y `solve` es la LU de `dgetf2` con reciprocal del pivote y
+  división en la sustitución regresiva (no la fila por fila). Fuera por ahora:
+  la ruta con cámara (`face_me=`, Render con Blender) y la selección
+  (`only=`); el alfa de GIF/WebP/TIFF/BMP solo se lee por la cabecera.
+  `scripts/golden/make_gltf_fixtures.py` corre el Python real sobre 10
+  escenas (bytes idénticos) y 86 entradas de importación (firma L2 o mensaje
+  de error), más 1 463 sistemas 3 × 3 contra `np.linalg.solve`; `affine_point`
+  de `world.rs` también usa ahora el FMA de NumPy.
 - **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
   todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
   base de cámara, el recorte por plano de sección, la tapa del corte (el

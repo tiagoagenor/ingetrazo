@@ -21,6 +21,25 @@ pub fn face_normal(outer: &[V3], h: Hypot) -> V3 {
     if count < 3 {
         return V3(0.0, 0.0, 1.0);
     }
+    let n = newell(outer);
+    let length = n.length(h);
+    if (length as f64) < 1e-9 {
+        return V3(0.0, 0.0, 1.0);
+    }
+    n.div(length)
+}
+
+/// `Face.area()`: half the length of the Newell vector (0 under 3 corners).
+pub fn face_area(outer: &[V3], h: Hypot) -> f64 {
+    if outer.len() < 3 {
+        return 0.0;
+    }
+    0.5 * newell(outer).length(h) as f64
+}
+
+/// `Face._newell()`: the sum in double, rounded to float32 once.
+fn newell(outer: &[V3]) -> V3 {
+    let count = outer.len();
     let (mut nx, mut ny, mut nz) = (0.0f64, 0.0f64, 0.0f64);
     for i in 0..count {
         let c = outer[i];
@@ -31,12 +50,7 @@ pub fn face_normal(outer: &[V3], h: Hypot) -> V3 {
         ny += (z0 - z1) * (x0 + x1);
         nz += (x0 - x1) * (y0 + y1);
     }
-    let n = V3(nx as f32, ny as f32, nz as f32);
-    let length = n.length(h);
-    if (length as f64) < 1e-9 {
-        return V3(0.0, 0.0, 1.0);
-    }
-    n.div(length)
+    V3(nx as f32, ny as f32, nz as f32)
 }
 
 /// `Face.triangulate()`.
