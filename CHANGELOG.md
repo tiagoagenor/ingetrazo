@@ -266,6 +266,25 @@ follow [SemVer](https://semver.org).
   M3, así que el paso intermedio queda como gancho y se compara con la firma
   L2 que Python tiene justo antes. Los fixtures salen de
   `scripts/golden/make_mesh_formats_fixtures.py`.
+- **COLLADA desde Rust** (`ingetrazo-formats-mesh`, módulos `dae`, `dae_in`
+  y `xml`, M5.4): exporta los mismos bytes que `formats/dae.py` (una sola
+  `<geometry>` con fuentes deduplicadas, los materiales de `meshexport` con
+  su opacidad y nombres, textura con UV, `<geographic_location>`, `\r\n` y
+  sin salto final como el modo texto de Python en Windows); las marcas
+  `<created>`/`<modified>` son un parámetro y las pruebas las enmascaran.
+  Importa como `_load_dae_inner`: árbol de nodos con `matrix`/`translate`/
+  `rotate`/`scale` en float32 como los compone Qt, `instance_node`, `Y_UP`/
+  `X_UP` y unidad, `triangles`/`polylist`/`polygons` con sus índices
+  negativos y desfases, colores y texturas por la cadena
+  sampler→surface→image, y la ubicación geográfica. Un lector XML propio y
+  estricto (`xml.rs`) reproduce lo que el código usa de `ElementTree`:
+  etiquetas expandidas, `text` anterior al primer hijo, comentarios y CDATA,
+  entidades internas, fin de línea; sin red ni entidades externas. Como en
+  OBJ, `run_stitch`/`orient_outward` quedan como gancho, y la fusión coplanar
+  (modelos de más de 400 polígonos, siluetas «mira a cámara») y el color
+  medio de una imagen (`QImage.scaled`) devuelven `not ported`. Fixtures de
+  `scripts/golden/make_dae_fixtures.py`: 11 exportaciones reales y 73
+  importaciones (estilo SketchUp y Blender, rotas, extrañas).
 - **Espacio de trabajo Rust** (`rust/Cargo.toml`, M0 de
   `docs/rust-rewrite-plan.md`): los núcleos salen del módulo PyO3 a dos
   crates sin Python, `ingetrazo-math` (aritmética float32 de QVector3D y los

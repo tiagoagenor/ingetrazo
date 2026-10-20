@@ -52,20 +52,20 @@ enum MatKey {
     Color([u64; 3]),
 }
 
-struct Mat {
-    color: [f64; 3],
-    map: Option<String>,
-    src: Option<String>,
-    mat: Option<Value>,
+pub(crate) struct Mat {
+    pub(crate) color: [f64; 3],
+    pub(crate) map: Option<String>,
+    pub(crate) src: Option<String>,
+    pub(crate) mat: Option<Value>,
 }
 
 /// A float as a dict key: `-0.0 == 0.0`.
-fn fkey(x: f64) -> u64 {
+pub(crate) fn fkey(x: f64) -> u64 {
     (x + 0.0).to_bits()
 }
 
 /// A rounded coordinate as `round(x, 6)` keys a dict.
-fn round_key(x: f64) -> (bool, i64) {
+pub(crate) fn round_key(x: f64) -> (bool, i64) {
     // A float32 times 1e6 is exact in double, so ties-to-even of the product
     // is `round(x, 6)`; anything wider goes through the decimal string.
     if x.abs() < 1e9 {
@@ -95,8 +95,27 @@ fn number_or_one(tex: &Value, key: &str) -> f64 {
     }
 }
 
+/// A texture's mapping as the exporters read it: `(sw, sh, rot, uvw)`, where
+/// `uvw` is the 8-number world to UV map when the texture has one.
+pub(crate) fn tex_rule(tex: &Value) -> (f64, f64, f64, Option<[f64; 8]>) {
+    let sw = number_or_one(tex, "sw");
+    let sh = number_or_one(tex, "sh");
+    let rot = tex.get("rot").map(|v| pyval::float(v).unwrap_or(0.0)).unwrap_or(0.0);
+    let uvw = match tex.get("uvw") {
+        Some(Value::Array(a)) if !a.is_empty() => {
+            let mut w = [0.0f64; 8];
+            for (k, v) in a.iter().take(8).enumerate() {
+                w[k] = pyval::float(v).unwrap_or(0.0);
+            }
+            Some(w)
+        }
+        _ => None,
+    };
+    (sw, sh, rot, uvw)
+}
+
 /// `export_names`: a unique, export-safe name per material.
-fn export_names(mats: &[&Mat]) -> Vec<String> {
+pub(crate) fn export_names(mats: &[&Mat]) -> Vec<String> {
     let mut used: HashSet<String> = HashSet::new();
     let mut out = Vec::new();
     for (i, info) in mats.iter().enumerate() {
@@ -155,19 +174,7 @@ pub fn save_obj_text(scene: &Scene, mtl_name: &str, h: Hypot) -> ObjExport {
                 mats.push(Mat { color: [1.0, 1.0, 1.0], map: Some(name.clone()), src: Some(path.clone()), mat: None });
                 mats.len() - 1
             });
-            let sw = number_or_one(tex, "sw");
-            let sh = number_or_one(tex, "sh");
-            let rot = tex.get("rot").map(|v| pyval::float(v).unwrap_or(0.0)).unwrap_or(0.0);
-            let uvw = match tex.get("uvw") {
-                Some(Value::Array(a)) if !a.is_empty() => {
-                    let mut w = [0.0f64; 8];
-                    for (k, v) in a.iter().take(8).enumerate() {
-                        w[k] = pyval::float(v).unwrap_or(0.0);
-                    }
-                    Some(w)
-                }
-                _ => None,
-            };
+            let (sw, sh, rot, uvw) = tex_rule(tex);
             (mi, Some((sw, sh, rot, uvw)))
         } else {
             let col = color_of(&face);

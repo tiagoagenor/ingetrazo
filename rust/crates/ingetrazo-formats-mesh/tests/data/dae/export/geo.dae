@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+<asset>
+<contributor><authoring_tool>IngeTrazo</authoring_tool></contributor>
+<created>2026-10-20T00:51:56+00:00</created><modified>2026-10-20T00:51:56+00:00</modified>
+<coverage><geographic_location>
+<longitude>-77.042800000</longitude>
+<latitude>-12.046400000</latitude>
+<altitude mode="absolute">154.300</altitude>
+</geographic_location></coverage>
+<unit name="meter" meter="1"/>
+<up_axis>Z_UP</up_axis>
+</asset>
+<library_images>
+<image id="img3" name="img3"><init_from>wood.png</init_from></image>
+<image id="img4" name="img4"><init_from>wood.png</init_from></image>
+</library_images>
+<library_effects>
+<effect id="eff0"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.2000 0.4000 0.6000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff1"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.2000 0.4000 0.6000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff2"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.2000 0.4000 0.6000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff3"><profile_COMMON>
+<newparam sid="surf3"><surface type="2D"><init_from>img3</init_from></surface></newparam>
+<newparam sid="samp3"><sampler2D><source>surf3</source></sampler2D></newparam>
+<technique sid="common"><lambert><diffuse><texture texture="samp3" texcoord="UVSET0"/></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff4"><profile_COMMON>
+<newparam sid="surf4"><surface type="2D"><init_from>img4</init_from></surface></newparam>
+<newparam sid="samp4"><sampler2D><source>surf4</source></sampler2D></newparam>
+<technique sid="common"><lambert><diffuse><texture texture="samp4" texcoord="UVSET0"/></diffuse></lambert></technique>
+</profile_COMMON></effect>
+</library_effects>
+<library_materials>
+<material id="mat0" name="mat0"><instance_effect url="#eff0"/></material>
+<material id="mat1" name="mat1"><instance_effect url="#eff1"/></material>
+<material id="mat2" name="mat2"><instance_effect url="#eff2"/></material>
+<material id="mat3" name="mat3"><instance_effect url="#eff3"/></material>
+<material id="mat4" name="mat4"><instance_effect url="#eff4"/></material>
+</library_materials>
+<library_geometries>
+<geometry id="geom0" name="IngeTrazo"><mesh>
+<source id="geom0-pos"><float_array id="geom0-pos-array" count="72">0.000000 0.000000 0.000000 2.000000 0.000000 0.000000 2.000000 2.000000 0.000000 0.000000 2.000000 0.000000 3.000000 0.000000 0.000000 5.000000 0.000000 0.000000 5.000000 2.000000 0.000000 6.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 2.000000 0.000000 9.000000 0.000000 0.000000 11.000000 0.000000 0.000000 11.000000 2.000000 0.000000 12.000000 0.000000 0.000000 14.000000 0.000000 0.000000 14.000000 2.000000 0.000000 15.000000 0.000000 0.000000 17.000000 0.000000 0.000000 17.000000 2.000000 0.000000 15.000000 2.000000 0.000000 18.000000 0.000000 0.000000 20.000000 0.000000 0.000000 20.000000 2.000000 0.000000 18.000000 2.000000 0.000000</float_array><technique_common><accessor source="#geom0-pos-array" count="24" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-nrm"><float_array id="geom0-nrm-array" count="3">0.00000 0.00000 1.00000</float_array><technique_common><accessor source="#geom0-nrm-array" count="1" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-uv"><float_array id="geom0-uv-array" count="16">15.000000 0.000000 17.000000 0.000000 17.000000 2.000000 15.000000 2.000000 18.000000 0.000000 20.000000 0.000000 20.000000 2.000000 18.000000 2.000000</float_array><technique_common><accessor source="#geom0-uv-array" count="8" stride="2"><param name="S" type="float"/><param name="T" type="float"/></accessor></technique_common></source>
+<vertices id="geom0-vertices"><input semantic="POSITION" source="#geom0-pos"/></vertices>
+<triangles material="sym0" count="3">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>0 0 1 0 2 0 0 0 2 0 3 0 4 0 5 0 6 0</p>
+</triangles>
+<triangles material="sym1" count="1">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>7 0 8 0 9 0</p>
+</triangles>
+<triangles material="sym2" count="2">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>10 0 11 0 12 0 13 0 14 0 15 0</p>
+</triangles>
+<triangles material="sym3" count="2">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<input semantic="TEXCOORD" source="#geom0-uv" offset="2" set="0"/>
+<p>16 0 0 17 0 1 18 0 2 16 0 0 18 0 2 19 0 3</p>
+</triangles>
+<triangles material="sym4" count="2">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<input semantic="TEXCOORD" source="#geom0-uv" offset="2" set="0"/>
+<p>20 0 4 21 0 5 22 0 6 20 0 4 22 0 6 23 0 7</p>
+</triangles>
+</mesh></geometry>
+</library_geometries>
+<library_visual_scenes>
+<visual_scene id="scene"><node id="model" name="IngeTrazo model">
+<instance_geometry url="#geom0"><bind_material><technique_common>
+<instance_material symbol="sym0" target="#mat0">
+</instance_material>
+<instance_material symbol="sym1" target="#mat1">
+</instance_material>
+<instance_material symbol="sym2" target="#mat2">
+</instance_material>
+<instance_material symbol="sym3" target="#mat3">
+<bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
+</instance_material>
+<instance_material symbol="sym4" target="#mat4">
+<bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
+</instance_material>
+</technique_common></bind_material></instance_geometry>
+</node></visual_scene></library_visual_scenes>
+<scene><instance_visual_scene url="#scene"/></scene>
+</COLLADA>

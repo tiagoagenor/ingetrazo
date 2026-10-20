@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+<asset>
+<contributor><authoring_tool>IngeTrazo</authoring_tool></contributor>
+<created>2026-10-20T00:51:56+00:00</created><modified>2026-10-20T00:51:56+00:00</modified>
+<unit name="meter" meter="1"/>
+<up_axis>Z_UP</up_axis>
+</asset>
+<library_effects>
+<effect id="eff0"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.9600 0.9500 0.9250 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff1"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.9000 0.1000 0.1000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff2"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.0000 1.0000 0.0000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff3"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.2500 0.5000 0.7500 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff4"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.5000 0.4000 0.3000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff5"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.1000 0.4000 0.3000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+</library_effects>
+<library_materials>
+<material id="mat0" name="mat0"><instance_effect url="#eff0"/></material>
+<material id="mat1" name="mat1"><instance_effect url="#eff1"/></material>
+<material id="mat2" name="mat2"><instance_effect url="#eff2"/></material>
+<material id="mat3" name="mat3"><instance_effect url="#eff3"/></material>
+<material id="mat4" name="Concreto_visto_1"><instance_effect url="#eff4"/></material>
+<material id="mat5" name="Concreto_visto_1_2"><instance_effect url="#eff5"/></material>
+</library_materials>
+<library_geometries>
+<geometry id="geom0" name="IngeTrazo"><mesh>
+<source id="geom0-pos"><float_array id="geom0-pos-array" count="156">1.400000 1.000000 0.000000 2.000000 1.000000 0.000000 2.500000 1.500000 0.000000 2.500000 1.000000 0.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 2.500000 0.000000 1.400000 1.300000 0.000000 3.000000 0.000000 0.000000 1.000000 1.300000 0.000000 3.000000 2.500000 0.000000 3.000000 0.000000 1.200000 0.000000 0.000000 1.200000 6.000000 3.000000 0.000000 5.000000 3.000000 0.000000 5.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 1.000000 0.000000 6.000000 1.000000 0.000000 0.000000 10.000000 0.000000 2.000000 10.000000 0.000000 2.000000 11.000000 0.000000 0.000000 20.000000 0.000000 2.000000 20.000000 0.000000 2.000000 21.000000 1.000000 0.000000 21.000000 1.000000 0.000000 30.000000 0.000000 0.000000 30.000000 1.000000 1.000000 31.000000 1.000000 1.000000 31.000000 0.000000 0.100000 0.200000 0.300000 0.333333 0.666667 0.700000 -0.001000 0.000001 5.500000 10.000000 0.000000 0.000000 11.000000 0.000000 0.000000 11.000000 1.000000 0.000000 10.000000 1.000000 0.000000 12.000000 0.000000 0.000000 13.000000 0.000000 0.000000 13.000000 1.000000 0.000000 14.000000 0.000000 0.000000 15.000000 0.000000 0.000000 15.000000 1.000000 0.000000 16.000000 0.000000 0.000000 17.000000 0.000000 0.000000 17.000000 1.000000 0.000000 20.000000 0.000000 0.000000 21.000000 0.000000 0.000000 21.000000 1.000000 0.000000 18.000000 0.000000 0.000000 19.000000 0.000000 0.000000 19.000000 1.000000 0.000000</float_array><technique_common><accessor source="#geom0-pos-array" count="52" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-nrm"><float_array id="geom0-nrm-array" count="15">0.00000 0.00000 1.00000 0.00000 -1.00000 0.00000 0.00000 -0.70711 0.70711 -0.70711 0.70711 0.00000 0.89437 -0.44733 0.00017</float_array><technique_common><accessor source="#geom0-nrm-array" count="5" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<vertices id="geom0-vertices"><input semantic="POSITION" source="#geom0-pos"/></vertices>
+<triangles material="sym0" count="23">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>0 0 1 0 2 0 3 0 4 0 5 0 6 0 5 0 4 0 7 0 0 0 2 0 3 0 5 0 8 0 6 0 4 0 9 0 9 0 7 0 2 0 2 0 3 0 8 0 10 0 6 0 9 0 2 0 8 0 10 0 10 0 9 0 2 0 5 1 8 1 11 1 5 1 11 1 12 1 13 0 14 0 15 0 15 0 16 0 17 0 18 0 13 0 15 0 15 0 17 0 18 0 19 0 20 0 21 0 22 2 23 2 24 2 22 2 24 2 25 2 26 3 27 3 28 3 26 3 28 3 29 3 30 4 31 4 32 4</p>
+</triangles>
+<triangles material="sym1" count="2">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>33 0 34 0 35 0 33 0 35 0 36 0</p>
+</triangles>
+<triangles material="sym2" count="1">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>37 0 38 0 39 0</p>
+</triangles>
+<triangles material="sym3" count="1">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>40 0 41 0 42 0</p>
+</triangles>
+<triangles material="sym4" count="2">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>43 0 44 0 45 0 46 0 47 0 48 0</p>
+</triangles>
+<triangles material="sym5" count="1">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>49 0 50 0 51 0</p>
+</triangles>
+</mesh></geometry>
+</library_geometries>
+<library_visual_scenes>
+<visual_scene id="scene"><node id="model" name="Casa &amp; &lt;Jardín&gt; &quot;x&quot;">
+<instance_geometry url="#geom0"><bind_material><technique_common>
+<instance_material symbol="sym0" target="#mat0">
+</instance_material>
+<instance_material symbol="sym1" target="#mat1">
+</instance_material>
+<instance_material symbol="sym2" target="#mat2">
+</instance_material>
+<instance_material symbol="sym3" target="#mat3">
+</instance_material>
+<instance_material symbol="sym4" target="#mat4">
+</instance_material>
+<instance_material symbol="sym5" target="#mat5">
+</instance_material>
+</technique_common></bind_material></instance_geometry>
+</node></visual_scene></library_visual_scenes>
+<scene><instance_visual_scene url="#scene"/></scene>
+</COLLADA>
