@@ -10,17 +10,18 @@ const VERTICAL_TOLERANCE: f64 = 1e-3;
 
 type Axes = ([f64; 3], [f64; 3]);
 
-/// `projection_basis((nx, ny, nz))`.
+/// `projection_basis((nx, ny, nz))`. Python's `** 0.5` is C `pow`, which is not
+/// always `sqrt` to the last bit (`black_box` keeps LLVM from folding it).
 pub fn projection_basis(normal: [f64; 3]) -> Axes {
     let (mut nx, mut ny, mut nz) = (normal[0], normal[1], normal[2]);
-    let ln = (nx * nx + ny * ny + nz * nz).sqrt();
+    let ln = (nx * nx + ny * ny + nz * nz).powf(std::hint::black_box(0.5));
     if ln > 1e-30 {
         nx /= ln;
         ny /= ln;
         nz /= ln;
     }
     let (mut xx, mut xy) = (-ny, nx);
-    let lx = (xx * xx + xy * xy).sqrt();
+    let lx = (xx * xx + xy * xy).powf(std::hint::black_box(0.5));
     if lx < VERTICAL_TOLERANCE {
         return if nz > 0.0 {
             ([1.0, 0.0, 0.0], [0.0, 1.0, 0.0])

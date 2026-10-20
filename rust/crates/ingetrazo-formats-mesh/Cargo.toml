@@ -11,7 +11,9 @@ ingetrazo-math.workspace = true
 ingetrazo-geom.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-skp = { path = "../ingetrazo-skp" }
 png = "0.18"
+zune-jpeg = "0.5"
 
 [dev-dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
