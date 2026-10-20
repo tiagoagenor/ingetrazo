@@ -1,6 +1,6 @@
 [package]
 name = "ingetrazo-ops"
-description = "IngeTrazo's model operations (M3): solid booleans through Manifold, and the edit engine as it lands"
+description = "IngeTrazo's operations (M3): the Commands that edit a scene and their undo, and solid booleans through Manifold"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

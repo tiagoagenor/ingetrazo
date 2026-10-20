@@ -286,6 +286,17 @@ follow [SemVer](https://semver.org).
   escenas (bytes idénticos) y 86 entradas de importación (firma L2 o mensaje
   de error), más 1 463 sistemas 3 × 3 contra `np.linalg.solve`; `affine_point`
   de `world.rs` también usa ahora el FMA de NumPy.
+- **Mover, girar y escalar en Rust (M3.5).** Nuevo crate `ingetrazo-ops`
+  con `Command`/`History` y los comandos de transformación de
+  `core/history.py` (mover, girar, escalar y reflejar vértices y grupos,
+  Cambiar ejes, Hacer único, Grupo a componente) y las funciones de
+  `core/group.py` que usan. Se replican las banderas de tipo de
+  `QMatrix4x4`, incluido que PySide6 marca la matriz como General al leer
+  `m(r, c)`, y el orden de `pts @ rot.T + trans` de NumPy/OpenBLAS (fma;
+  una fila = `gemv`). El replay dorado ya ejecuta pasos: 63 guiones llegan
+  al final con las firmas de Python; `golden/undo_all_drift.json` guarda la
+  firma a la que Python vuelve al deshacer todo en los 5 guiones cuyo
+  deshacer aritmético no recupera el inicio exacto.
 - **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
   todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
   base de cámara, el recorte por plano de sección, la tapa del corte (el

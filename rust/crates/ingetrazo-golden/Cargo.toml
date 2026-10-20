@@ -9,6 +9,7 @@ publish.workspace = true
 [dependencies]
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-ops = { path = "../ingetrazo-ops" }
 ingetrazo-math.workspace = true
 sha2 = "0.10"
 

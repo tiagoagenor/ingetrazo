@@ -65,7 +65,7 @@ fn main() -> ExitCode {
         eprintln!("no scripts under {}", root.join("ops").display());
         return ExitCode::from(2);
     }
-    let (mut ok, mut start_ok, mut bad) = (0usize, 0usize, 0usize);
+    let (mut ok, mut start_ok, mut bad, mut further) = (0usize, 0usize, 0usize, 0usize);
     let mut blockers: BTreeMap<String, usize> = BTreeMap::new();
     let mut parts: BTreeMap<String, usize> = BTreeMap::new();
     for id in &all {
@@ -78,9 +78,16 @@ fn main() -> ExitCode {
                 ok += 1;
                 start_ok += 1;
             }
-            Outcome::Unsupported { op, .. } => {
+            Outcome::Unsupported { at, op } => {
                 start_ok += 1;
+                if *at > 0 {
+                    further += 1;
+                }
                 *blockers.entry(op.clone()).or_default() += 1;
+            }
+            Outcome::Diverges { .. } => {
+                start_ok += 1;
+                bad += 1;
             }
             Outcome::Start(ps) => {
                 bad += 1;
@@ -90,18 +97,19 @@ fn main() -> ExitCode {
             }
             Outcome::Broken(_) => bad += 1,
         }
-        let real = matches!(outcome, Outcome::Start(_) | Outcome::Broken(_));
+        let real = matches!(outcome, Outcome::Start(_) | Outcome::Broken(_) | Outcome::Diverges { .. });
         if verbose || real {
             match &outcome {
                 Outcome::Ok => println!("ok        {id}"),
                 Outcome::Unsupported { at, op } => println!("stops     {id}: step {at}, op {op} not in Rust yet"),
+                Outcome::Diverges { at, op, why } => println!("DIVERGES  {id}: step {at}, op {op}: {why}"),
                 Outcome::Start(ps) => println!("DIFFERS   {id}: start signature ({})", ps.join(", ")),
                 Outcome::Broken(e) => println!("BROKEN    {id}: {e}"),
             }
         }
     }
     println!();
-    println!("{} scripts: {ok} replay to the end, {start_ok} start state identical, {bad} differ or broken", all.len());
+    println!("{} scripts: {ok} replay to the end, {further} more run some steps before an op the engine lacks, {start_ok} start state identical, {bad} differ or broken", all.len());
     if !parts.is_empty() {
         println!("start signature parts that differ: {parts:?}");
     }

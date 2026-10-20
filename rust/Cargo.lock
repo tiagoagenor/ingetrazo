@@ -1693,6 +1693,7 @@ dependencies = [
  "ingetrazo-formats",
  "ingetrazo-math",
  "ingetrazo-model",
+ "ingetrazo-ops",
  "sha2",
 ]
 

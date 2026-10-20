@@ -10,7 +10,10 @@
 //! milestone that lands an op (M2 the model, M3 the operations) moves the
 //! first divergence further on.
 
+pub mod decode;
 pub mod model_sig;
+pub mod ops_transform;
+pub mod run;
 pub mod sig;
 
 use std::path::{Path, PathBuf};
@@ -24,6 +27,11 @@ pub struct Script {
     pub doc: Value,
     pub start: Vec<u8>,
     pub start_sig: Option<Value>,
+    /// The signature Python ends at when it undoes every step, for the scripts
+    /// where that is not the start (`golden/undo_all_drift.json`: group
+    /// transforms undo by the inverse arithmetic, which float32 does not
+    /// round-trip).
+    pub undo_all: Option<String>,
 }
 
 /// Where a replay stopped.
@@ -33,8 +41,12 @@ pub enum Outcome {
     Ok,
     /// The start document's signature differs; the parts that differ.
     Start(Vec<String>),
-    /// Step `at` is an op the Rust engine does not run yet.
+    /// Step `at` is an op the Rust engine does not run yet; the steps
+    /// before it ran and matched.
     Unsupported { at: usize, op: String },
+    /// Step `at` ran in Rust and parted from Python: the signature differs,
+    /// `undo`/`redo` answered otherwise, or a selector found nothing.
+    Diverges { at: usize, op: String, why: String },
     /// The script could not be read.
     Broken(String),
 }
@@ -66,7 +78,14 @@ pub fn load(root: &Path, id: &str) -> Result<Script, String> {
     let start = std::fs::read(repo.join(&file)).map_err(|e| format!("{file}: {e}"))?;
     let sig_file = repo.join(file.trim_end_matches(".igz").to_string() + ".sig.json");
     let start_sig = std::fs::read_to_string(sig_file).ok().and_then(|t| pyjson::loads(&t).ok());
-    Ok(Script { id: id.to_string(), doc, start, start_sig })
+    let undo_all = std::fs::read_to_string(root.join("undo_all_drift.json"))
+        .ok()
+        .and_then(|t| pyjson::loads(&t).ok())
+        .and_then(|d| match d.get(id) {
+            Some(Value::Str(h)) => Some(h.clone()),
+            _ => None,
+        });
+    Ok(Script { id: id.to_string(), doc, start, start_sig, undo_all })
 }
 
 /// The L2 signature of an .igz file's document.
@@ -98,16 +117,7 @@ pub fn replay(script: &Script) -> Outcome {
         return Outcome::Start(parts);
     }
     match script.doc.get("steps") {
-        Some(Value::Array(steps)) => match steps.first() {
-            None => Outcome::Ok,
-            Some(step) => Outcome::Unsupported {
-                at: 0,
-                op: match step.get("op") {
-                    Some(Value::Str(op)) => op.clone(),
-                    _ => "?".into(),
-                },
-            },
-        },
+        Some(Value::Array(steps)) => run::run_steps(script, steps),
         _ => Outcome::Broken("no steps".into()),
     }
 }
