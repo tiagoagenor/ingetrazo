@@ -320,7 +320,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Aplicar cruzamentos do Intersecar",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -338,7 +338,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Corte de seção",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -347,7 +347,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Explodir e limpar (purge)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -356,7 +356,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Motor de snap e inferências",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -392,7 +392,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Renderizador wgpu: faces, arestas, estilos",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
