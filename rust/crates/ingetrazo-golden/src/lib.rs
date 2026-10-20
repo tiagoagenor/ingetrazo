@@ -11,6 +11,7 @@
 //! first divergence further on.
 
 pub mod model_sig;
+pub mod replay;
 pub mod sig;
 
 use std::path::{Path, PathBuf};
@@ -37,6 +38,8 @@ pub enum Outcome {
     Unsupported { at: usize, op: String },
     /// The script could not be read.
     Broken(String),
+    /// Step `at` ran and parted from Python: `what` says how.
+    Diverged { at: usize, op: String, what: String },
 }
 
 pub fn ids(root: &Path) -> Vec<String> {
@@ -98,16 +101,21 @@ pub fn replay(script: &Script) -> Outcome {
         return Outcome::Start(parts);
     }
     match script.doc.get("steps") {
-        Some(Value::Array(steps)) => match steps.first() {
-            None => Outcome::Ok,
-            Some(step) => Outcome::Unsupported {
-                at: 0,
-                op: match step.get("op") {
-                    Some(Value::Str(op)) => op.clone(),
-                    _ => "?".into(),
-                },
-            },
-        },
+        Some(Value::Array(_)) => {
+            // A panic in the engine is a divergence of that script, not the
+            // end of the run.
+            match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| replay::run_steps(script))) {
+                Ok(o) => o,
+                Err(p) => {
+                    let msg = p
+                        .downcast_ref::<String>()
+                        .cloned()
+                        .or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))
+                        .unwrap_or_default();
+                    Outcome::Diverged { at: 0, op: "?".into(), what: format!("panic: {msg}") }
+                }
+            }
+        }
         _ => Outcome::Broken("no steps".into()),
     }
 }

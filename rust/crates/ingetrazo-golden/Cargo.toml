@@ -10,6 +10,7 @@ publish.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-math.workspace = true
+ingetrazo-ops = { path = "../ingetrazo-ops" }
 sha2 = "0.10"
 
 [lints]

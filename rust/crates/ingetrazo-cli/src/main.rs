@@ -17,7 +17,7 @@ use std::process::ExitCode;
 use ingetrazo_golden::{file_signature, ids, load, replay, Outcome};
 
 fn usage() -> ExitCode {
-    eprintln!("usage: ingetrazo-cli golden replay [--root <golden dir>] [--id <id>] [--verbose]");
+    eprintln!("usage: ingetrazo-cli golden replay [--root <golden dir>] [--id <id>] [--verbose] [--list-ok <file>]");
     ExitCode::from(2)
 }
 
@@ -42,6 +42,7 @@ fn main() -> ExitCode {
     let mut root = PathBuf::from("golden");
     let mut only: Option<String> = None;
     let mut verbose = false;
+    let mut list_ok: Option<String> = None;
     let mut it = args[2..].iter();
     while let Some(a) = it.next() {
         match a.as_str() {
@@ -54,6 +55,10 @@ fn main() -> ExitCode {
                 None => return usage(),
             },
             "--verbose" | "-v" => verbose = true,
+            "--list-ok" => match it.next() {
+                Some(p) => list_ok = Some(p.clone()),
+                None => return usage(),
+            },
             _ => return usage(),
         }
     }
@@ -65,8 +70,9 @@ fn main() -> ExitCode {
         eprintln!("no scripts under {}", root.join("ops").display());
         return ExitCode::from(2);
     }
-    let (mut ok, mut start_ok, mut bad) = (0usize, 0usize, 0usize);
+    let (mut ok, mut start_ok, mut bad, mut diverged) = (0usize, 0usize, 0usize, 0usize);
     let mut blockers: BTreeMap<String, usize> = BTreeMap::new();
+    let mut ok_ids: Vec<String> = Vec::new();
     let mut parts: BTreeMap<String, usize> = BTreeMap::new();
     for id in &all {
         let outcome = match load(&root, id) {
@@ -76,6 +82,11 @@ fn main() -> ExitCode {
         match &outcome {
             Outcome::Ok => {
                 ok += 1;
+                start_ok += 1;
+                ok_ids.push(id.clone());
+            }
+            Outcome::Diverged { .. } => {
+                diverged += 1;
                 start_ok += 1;
             }
             Outcome::Unsupported { op, .. } => {
@@ -90,9 +101,10 @@ fn main() -> ExitCode {
             }
             Outcome::Broken(_) => bad += 1,
         }
-        let real = matches!(outcome, Outcome::Start(_) | Outcome::Broken(_));
+        let real = matches!(outcome, Outcome::Start(_) | Outcome::Broken(_) | Outcome::Diverged { .. });
         if verbose || real {
             match &outcome {
+                Outcome::Diverged { at, op, what } => println!("DIVERGES  {id}: step {at} ({op}): {what}"),
                 Outcome::Ok => println!("ok        {id}"),
                 Outcome::Unsupported { at, op } => println!("stops     {id}: step {at}, op {op} not in Rust yet"),
                 Outcome::Start(ps) => println!("DIFFERS   {id}: start signature ({})", ps.join(", ")),
@@ -101,7 +113,17 @@ fn main() -> ExitCode {
         }
     }
     println!();
-    println!("{} scripts: {ok} replay to the end, {start_ok} start state identical, {bad} differ or broken", all.len());
+    println!(
+        "{} scripts: {ok} replay to the end, {start_ok} start state identical, {diverged} diverge at a step, {bad} start differs or broken",
+        all.len()
+    );
+    if let Some(path) = &list_ok {
+        let mut text = ok_ids.join("\n");
+        text.push('\n');
+        if let Err(e) = std::fs::write(path, text) {
+            eprintln!("{path}: {e}");
+        }
+    }
     if !parts.is_empty() {
         println!("start signature parts that differ: {parts:?}");
     }

@@ -1656,6 +1656,7 @@ dependencies = [
  "ingetrazo-formats",
  "ingetrazo-math",
  "ingetrazo-model",
+ "ingetrazo-ops",
  "sha2",
 ]
 
@@ -1673,6 +1674,16 @@ dependencies = [
  "ingetrazo-formats",
  "ingetrazo-geom",
  "ingetrazo-math",
+]
+
+[[package]]
+name = "ingetrazo-ops"
+version = "0.1.0"
+dependencies = [
+ "ingetrazo-formats",
+ "ingetrazo-geom",
+ "ingetrazo-math",
+ "ingetrazo-model",
 ]
 
 [[package]]

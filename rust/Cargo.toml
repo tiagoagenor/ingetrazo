@@ -6,6 +6,7 @@ members = [
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
     "crates/ingetrazo-model",
+    "crates/ingetrazo-ops",
     "crates/ingetrazo-formats-mesh",
     "crates/ingetrazo-georef",
     "crates/ingetrazo-golden",
