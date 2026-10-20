@@ -12,13 +12,14 @@ use std::path::{Path, PathBuf};
 
 use ingetrazo_formats::igz;
 use ingetrazo_formats::pyjson::{loads, Value};
-use ingetrazo_formats_mesh::obj::{self, add_obj_faces, parse_obj, save_obj, save_obj_text};
+use ingetrazo_formats_mesh::obj::{self, add_obj_faces, parse_obj, save_obj, save_obj_text, ObjNames};
 use ingetrazo_formats_mesh::pyutil;
 use ingetrazo_formats_mesh::stl::{load_stl, save_stl_bytes, Simplify};
 use ingetrazo_golden::model_sig::scene_signature;
 use ingetrazo_golden::sig::{canon_dumps, Files};
 use ingetrazo_math::Hypot;
 use ingetrazo_model::scene::Scene;
+use ingetrazo_ops::import_engine::{stitch_and_orient, Engine};
 
 const H: Hypot = Hypot::Msvc;
 const SCENES: [&str; 7] = ["faces", "textured", "components", "bulk", "weld", "classic", "empty"];
@@ -190,7 +191,7 @@ fn matrix_of(case: &Value) -> Option<[f64; 9]> {
 fn imports_give_the_signature_python_had() {
     let dir = data().join("import");
     let mut compared = 0;
-    let mut skipped = Vec::new();
+    let mut failures: Vec<String> = Vec::new();
     let mut errors = 0;
     for case in read_cases() {
         let file = str_of(case.get("file")).unwrap().to_string();
@@ -202,12 +203,18 @@ fn imports_give_the_signature_python_had() {
         if let Some(unit) = str_of(case.get("unit")) {
             assert_eq!(obj::suggest_unit(&std::fs::read(&path).unwrap()), unit, "{label}: suggested unit");
         }
+        // The names Python counts from 1 for each import.
+        let mut group_counter = 1i64;
         let result: Result<(), String> = if kind == "stl" {
             let simplify = Simplify::parse(str_of(case.get("simplify")).unwrap_or("none")).unwrap();
             let data = std::fs::read(&path).unwrap();
-            load_stl(&mut scene, &stem(&file), &data, scale, simplify).map(|_| ())
+            load_stl(&mut scene, &stem(&file), &data, scale, simplify, H, Some(&mut Engine { hypot: H }))
         } else {
-            parse_obj(&path, scale, matrix_of(&case).as_ref()).and_then(|m| add_obj_faces(&mut scene, &m, H, None))
+            parse_obj(&path, scale, matrix_of(&case).as_ref()).and_then(|m| {
+                let mut hook = stitch_and_orient(H);
+                let names = ObjNames { stem: &stem(&file), part: "Part {n}", group_counter: &mut group_counter };
+                add_obj_faces(&mut scene, &m, H, Some(&mut hook), names)
+            })
         };
         if let Some(want) = str_of(case.get("error")) {
             let got = result.expect_err(&format!("{label}: Python raised {want}"));
@@ -217,24 +224,25 @@ fn imports_give_the_signature_python_had() {
         }
         let want_text = std::fs::read_to_string(dir.join(str_of(case.get("sig")).unwrap())).unwrap();
         let want = canon_dumps(&loads(&want_text).unwrap());
-        match result {
-            Err(e) if e.contains("not ported") => {
-                // What Python fuses with code that lives in the edit engine.
-                assert!(case.get("fused").is_some() || case.get("simplify").is_some(), "{label}: {e}");
-                skipped.push(file);
-            }
-            Err(e) => panic!("{label}: {e}"),
-            Ok(()) => {
-                assert!(case.get("fused").is_none(), "{label}: Python fused it");
-                assert_eq!(sig_of(&scene), want, "{label}: signature");
-                compared += 1;
-            }
+        if let Err(e) = result {
+            failures.push(format!("{label}: {e}"));
+            continue;
         }
+        let got = sig_of(&scene);
+        if got != want {
+            if let Ok(dump) = std::env::var("INGETRAZO_DUMP_SIGS") {
+                let name = str_of(case.get("sig")).unwrap();
+                std::fs::write(format!("{dump}/{name}.got"), &got).unwrap();
+                std::fs::write(format!("{dump}/{name}.want"), &want).unwrap();
+            }
+            failures.push(format!("{label} {}: signature differs{}", str_of(case.get("sig")).unwrap(), if case.get("fused").is_some() { " (fused)" } else { "" }));
+            continue;
+        }
+        compared += 1;
     }
-    assert_eq!(compared, 41, "signatures compared");
+    assert!(failures.is_empty(), "{} of {} cases differ:\n{}", failures.len(), compared + failures.len(), failures.join("\n"));
+    assert_eq!(compared, 95, "signatures compared");
     assert_eq!(errors, 25, "errors compared");
-    skipped.sort();
-    assert_eq!(skipped, ["bigobj.obj", "cube.bin.stl", "parts.obj"]);
 }
 
 #[test]

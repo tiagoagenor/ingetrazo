@@ -14,6 +14,7 @@ pub mod dae_in;
 pub mod dxf;
 pub mod figure;
 pub mod finish;
+pub mod fusing;
 pub mod glb;
 pub mod gltf;
 pub mod img;

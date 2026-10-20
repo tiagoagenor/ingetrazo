@@ -10,12 +10,14 @@
 //! [`MAX_FUSE_LOOPS`] polygons goes into the loose mesh, then `stitch` stands
 //! where Python runs `run_stitch` and `orient_outward`.
 //!
-//! Not ported yet, each an `Err` starting with `not ported`:
-//! - models of more than [`MAX_FUSE_LOOPS`] polygons (`fuse_coplanar_loops`
-//!   builds one group per assembly) and face-me sprites (billboard groups);
-//! - the average colour of an image (`QImage.scaled(1, 1, ...)`): it is only
-//!   read when a polygon falls back to the material colour, and then only for
-//!   a material whose image file exists next to the `.dae`.
+//! Models of more than [`MAX_FUSE_LOOPS`] polygons are reference imports: one
+//! group per assembly of the node tree (the greedy splitter of `_bucketize`),
+//! a shared prototype mesh per reused component (`instances`), billboard
+//! groups for the face-me sprites, every mesh through `fuse_coplanar_loops`.
+//! The average colour of an image is `QImage.scaled(1, 1, ...)`
+//! ([`crate::img::smooth_average`], PNG only: any other format is an `Err`
+//! starting with `not ported`); it is worked out only when a polygon falls
+//! back to the material colour.
 //!
 //! A material whose image is missing gets the tint Python derives from
 //! `hash(ref)`; that hash is salted per process, so the tint is what a run
@@ -29,10 +31,11 @@ use std::rc::Rc;
 use ingetrazo_formats::pyjson::Value;
 use ingetrazo_geom::sweep::py_hypot3;
 use ingetrazo_math::{Hypot, M4, V3};
-use ingetrazo_model::mesh::{key, FaceId, Key};
+use ingetrazo_model::mesh::{key, FaceId, Key, Mesh};
 use ingetrazo_model::pyval;
-use ingetrazo_model::scene::Scene;
+use ingetrazo_model::scene::{Group, MeshId, Scene};
 
+use crate::fusing::{add_fused, fuse_coplanar_loops, group_name, new_group, push_mesh, soften_smooth_edges, RawLoop};
 use crate::obj::Stitch;
 use crate::pyutil;
 use crate::uv::fit_uv_affine;
@@ -227,8 +230,12 @@ pub fn py_str_hash_seed0(text: &str) -> i64 {
 #[derive(Clone, Debug)]
 enum ColorV {
     Rgb(Vec<f64>),
-    /// The average of an image that exists on disk (not ported).
-    ImageAverage,
+    /// The average of an image that exists on disk, worked out when a polygon
+    /// needs it (Python works it out for every textured material, but only
+    /// a polygon without a texture of its own looks at the result): the
+    /// file, and the `init_from` text the tint is derived from if Qt cannot
+    /// read it.
+    ImageAverage { file: PathBuf, reference: String },
 }
 
 /// A texture: the image path and the UVs of a polygon\'s corners.
@@ -255,6 +262,13 @@ struct Dae<'a> {
     scale: f64,
     up: String,
     src_cache: RefCell<HashMap<usize, Rc<(Vec<f64>, i64)>>>,
+    /// `inst_counts`: how many times each library node is instanced.
+    inst_counts: HashMap<String, usize>,
+    /// `_polys_cache`: the first count asked for a node stays (Python keys
+    /// it by the node alone, whatever depth later callers ask at).
+    polys_cache: RefCell<HashMap<usize, i64>>,
+    /// `_img_alpha`: whether an image has a cut-out, by path.
+    img_alpha: RefCell<HashMap<String, bool>>,
 }
 
 impl<'a> Dae<'a> {
@@ -274,7 +288,55 @@ impl<'a> Dae<'a> {
                 }
             }
         }
-        Ok(Dae { doc, base_dir, by_id, scale, up, src_cache: RefCell::new(HashMap::new()) })
+        let mut inst_counts: HashMap<String, usize> = HashMap::new();
+        for el in doc.iter_tag(Doc::ROOT, &ns("instance_node")) {
+            *inst_counts.entry(doc.get(el, "url").unwrap_or("").to_string()).or_insert(0) += 1;
+        }
+        Ok(Dae {
+            doc,
+            base_dir,
+            by_id,
+            scale,
+            up,
+            src_cache: RefCell::new(HashMap::new()),
+            inst_counts,
+            polys_cache: RefCell::new(HashMap::new()),
+            img_alpha: RefCell::new(HashMap::new()),
+        })
+    }
+
+    /// `polys_of(node_el, depth)`.
+    fn polys_of(&self, node: usize, depth: usize) -> i64 {
+        if let Some(&n) = self.polys_cache.borrow().get(&node) {
+            return n;
+        }
+        let n = self.subtree_count(node, depth);
+        self.polys_cache.borrow_mut().insert(node, n);
+        n
+    }
+
+    /// `zup_matrix()`: `to_zup` as a matrix, to conjugate instance transforms.
+    fn zup_matrix(&self) -> M4 {
+        let s = self.scale as f32;
+        match self.up.as_str() {
+            "Y_UP" => M4::from_rows([s, 0.0, 0.0, 0.0, 0.0, 0.0, -s, 0.0, 0.0, s, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]),
+            "X_UP" => M4::from_rows([0.0, s, 0.0, 0.0, s, 0.0, 0.0, 0.0, 0.0, 0.0, s, 0.0, 0.0, 0.0, 0.0, 1.0]),
+            _ => {
+                let mut m = M4::identity();
+                m.scale1(s);
+                m
+            }
+        }
+    }
+
+    /// `_image_has_cutout(dae, path)`.
+    fn image_has_cutout(&self, path: &str) -> bool {
+        if let Some(&hit) = self.img_alpha.borrow().get(path) {
+            return hit;
+        }
+        let ok = std::fs::read(path).is_ok_and(|data| crate::img::image_has_cutout(&data));
+        self.img_alpha.borrow_mut().insert(path.to_string(), ok);
+        ok
     }
 
     /// `ref(url)`.
@@ -451,11 +513,10 @@ impl<'a> Dae<'a> {
         if reference.is_empty() {
             return None;
         }
-        if self.candidate(&reference).is_some_and(|c| c.is_file()) {
-            return Some(ColorV::ImageAverage);
+        if let Some(file) = self.candidate(&reference).filter(|c| c.is_file()) {
+            return Some(ColorV::ImageAverage { file, reference });
         }
-        let h = py_str_hash_seed0(&reference);
-        Some(ColorV::Rgb([0, 4, 8].iter().map(|&s| 0.78 + (((h >> s) & 15) as f64) / 100.0).collect()))
+        Some(ColorV::Rgb(tint(&reference)))
     }
 
     /// `_image_file(dae, image_el)`.
@@ -674,16 +735,22 @@ impl<'a> Dae<'a> {
         if n_ref.is_none() {
             return Ok(false);
         }
-        if corners.len() > 4 {
-            return Ok(true);
-        }
-        Err("not ported: a rectangular face-me candidate needs the transparency of its image".to_string())
+        Ok(corners.len() > 4 || path.is_some_and(|p| self.image_has_cutout(p)))
     }
 
-    /// `_collect(dae, node_el, xform, out, depth, faceme)` with `faceme`
-    /// given: a child component that reads as a face-me sprite is where
-    /// Python builds a billboard group (not ported).
-    fn collect(&self, node: usize, xform: &M4, out: &mut Vec<Loop>, depth: usize, h: Hypot) -> Result<(), String> {
+    /// `_node_label(node_el)`.
+    fn node_label(&self, node: usize) -> String {
+        let doc = self.doc;
+        [doc.get(node, "name"), doc.get(node, "id")].into_iter().flatten().find(|s| !s.is_empty()).unwrap_or("node").to_string()
+    }
+
+    /// `_collect(dae, node_el, xform, out, depth, faceme, instances)`: walk a
+    /// node tree, baking transforms. With `faceme` given, a child component
+    /// whose geometry is a face-me silhouette is pulled out into it instead
+    /// of flattening into the parent; with `instances` given, a reused
+    /// component worth sharing is pulled out as an [`Instance`] instead of
+    /// baking a copy.
+    fn collect(&self, node: usize, xform: &M4, out: &mut Vec<Loop>, depth: usize, h: Hypot, mut sinks: Sinks) -> Result<(), String> {
         if depth > MAX_DEPTH {
             return Ok(());
         }
@@ -697,12 +764,29 @@ impl<'a> Dae<'a> {
                 _ => (None, depth),
             };
             let Some(target) = target else { continue };
-            let mut sub = Vec::new();
-            self.collect(target, &m, &mut sub, d2, h)?;
-            if !sub.is_empty() && self.looks_faceme(&sub, h)? {
-                return Err("not ported: face-me sprites become billboard groups (fuse_coplanar_loops)".to_string());
+            if let (true, Some(instances)) = (local(&doc.el(el).tag) == "instance_node", sinks.instances.as_deref_mut()) {
+                let count = self.inst_counts.get(doc.get(el, "url").unwrap_or("")).copied().unwrap_or(1);
+                let polys = self.polys_of(target, d2);
+                if count >= 2 && polys >= INST_MIN_POLYS && polys * (count as i64 - 1) >= INST_MIN_SAVED {
+                    let name = doc.get(el, "name").filter(|n| !n.is_empty()).map_or_else(|| self.node_label(target), str::to_string);
+                    instances.push(Instance { name, node: target, xform: m, depth: d2 });
+                    continue;
+                }
             }
-            out.extend(sub);
+            if sinks.faceme.is_some() {
+                let mut sub = Vec::new();
+                self.collect(target, &m, &mut sub, d2, h, Sinks { faceme: sinks.faceme.as_deref_mut(), instances: sinks.instances.as_deref_mut() })?;
+                if !sub.is_empty() && self.looks_faceme(&sub, h)? {
+                    let name = doc.get(el, "name").filter(|n| !n.is_empty()).map_or_else(|| self.node_label(target), str::to_string);
+                    if let Some(faceme) = sinks.faceme.as_deref_mut() {
+                        faceme.push((name, sub));
+                    }
+                } else {
+                    out.extend(sub);
+                }
+            } else {
+                self.collect(target, &m, out, d2, h, Sinks { faceme: None, instances: sinks.instances.as_deref_mut() })?;
+            }
         }
         Ok(())
     }
@@ -779,8 +863,42 @@ fn corner_key(p: V3) -> [i64; 3] {
 
 // ---- attributes and loading -----------------------------------------------------
 
+/// The light tint a missing image gets, from `hash(ref)`.
+fn tint(reference: &str) -> Vec<f64> {
+    let h = py_str_hash_seed0(reference);
+    [0, 4, 8].iter().map(|&s| 0.78 + (((h >> s) & 15) as f64) / 100.0).collect()
+}
+
+/// What Qt's loaders do with a file: read it, or (the bytes are not an image
+/// it knows) answer with a null image.
+fn looks_like_an_image(data: &[u8]) -> bool {
+    data.starts_with(b"\x89PNG") || data.starts_with(&[0xff, 0xd8, 0xff]) || data.starts_with(b"GIF8") || data.starts_with(b"BM") || data.starts_with(b"II*\0") || data.starts_with(b"MM\0*")
+        || (data.len() > 12 && &data[..4] == b"RIFF" && &data[8..12] == b"WEBP")
+}
+
+/// `_image_color` for an image that exists: the average of
+/// `QImage(path).scaled(1, 1, IgnoreAspectRatio, SmoothTransformation)`, the
+/// tint of `reference` if Qt cannot read the file.
+fn average_or_tint(file: &Path, reference: &str) -> Result<Vec<f64>, String> {
+    let data = std::fs::read(file).map_err(|e| e.to_string())?;
+    if !looks_like_an_image(&data) {
+        return Ok(tint(reference));
+    }
+    match crate::img::smooth_average(&data) {
+        Ok(c) => Ok(c.to_vec()),
+        Err(e) if e.starts_with("not ported: unreadable PNG") => Ok(tint(reference)),
+        Err(e) => Err(e),
+    }
+}
+
 /// `_face_attrs(zpts, color, tex)`, in Python\'s key order.
 fn face_attrs(zpts: &[V3], color: &Option<ColorV>, tex: &Option<Tex>) -> Result<Vec<(String, Value)>, String> {
+    let rgb = |c: &[f64]| -> Vec<(String, Value)> {
+        vec![
+            ("color".to_string(), Value::Array(c.iter().take(3).map(|&x| Value::Float(x)).collect())),
+            ("back".to_string(), Value::Bool(true)),
+        ]
+    };
     if let Some((path, uvs)) = tex {
         if let Some(m) = fit_uv_affine(zpts, uvs) {
             let glu = py_hypot3(m[0], m[1], m[2]);
@@ -795,11 +913,8 @@ fn face_attrs(zpts: &[V3], color: &Option<ColorV>, tex: &Option<Tex>) -> Result<
         }
     }
     match color {
-        Some(ColorV::Rgb(c)) => Ok(vec![
-            ("color".to_string(), Value::Array(c.iter().take(3).map(|&x| Value::Float(x)).collect())),
-            ("back".to_string(), Value::Bool(true)),
-        ]),
-        Some(ColorV::ImageAverage) => Err("not ported: the average colour of an image (QImage.scaled)".to_string()),
+        Some(ColorV::Rgb(c)) => Ok(rgb(c)),
+        Some(ColorV::ImageAverage { file, reference }) => Ok(rgb(&average_or_tint(file, reference)?)),
         None => Ok(Vec::new()),
     }
 }
@@ -830,10 +945,165 @@ fn adopt_geolocation(scene: &mut Scene, doc: &Doc) {
     ]));
 }
 
-/// `load_dae(scene, path)` on the file\'s bytes; `path` is where it lives
+/// `_INST_MIN_SAVED` and `_INST_MIN_POLYS`: a reused component becomes a
+/// shared instance only when sharing saves that many polygons and the
+/// component is that big.
+const INST_MIN_SAVED: i64 = 400;
+const INST_MIN_POLYS: i64 = 60;
+/// `_MAX_GROUPS` and `_SPLIT_MIN`: how far the greedy splitter goes.
+const MAX_GROUPS: usize = 250;
+const SPLIT_MIN: i64 = 4000;
+
+/// A reused component pulled out of a node walk: `(name, target_node,
+/// pre_xform, depth)`.
+struct Instance {
+    name: String,
+    node: usize,
+    xform: M4,
+    depth: usize,
+}
+
+/// A face-me sprite: `(name, loops)`.
+type Sprite = (String, Vec<Loop>);
+
+/// What a node walk may set aside: the `faceme` and `instances` arguments of
+/// `_collect`.
+#[derive(Default)]
+struct Sinks<'a> {
+    faceme: Option<&'a mut Vec<Sprite>>,
+    instances: Option<&'a mut Vec<Instance>>,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Kind {
+    Subtree,
+    Direct,
+}
+
+/// A heap entry of `_bucketize`: `(-tris, tie, kind, node, xform, depth,
+/// name, via_inst)`.
+struct Entry {
+    neg: i64,
+    tie: u64,
+    kind: Kind,
+    node: usize,
+    xform: M4,
+    depth: usize,
+    name: String,
+    via: bool,
+}
+
+impl Dae<'_> {
+    /// `_bucketize(dae, top_nodes, faceme, instances)`: split the visual
+    /// scene into `(name, loops)` buckets along the node hierarchy, at most
+    /// [`MAX_GROUPS`] of them, the largest assemblies split first. Face-me
+    /// silhouettes found anywhere land in `faceme`, reused components in
+    /// `instances`.
+    fn bucketize(&self, top_nodes: &[usize], h: Hypot, faceme: &mut Vec<Sprite>, instances: &mut Vec<Instance>) -> Result<Vec<Sprite>, String> {
+        let doc = self.doc;
+        let mut tie = 0u64;
+        let mut next_tie = || {
+            tie += 1;
+            tie - 1
+        };
+        // Python's heapq: the smallest `(neg, tie)` first; `tie` is unique.
+        let mut heap: Vec<Entry> = Vec::new();
+        let pop = |heap: &mut Vec<Entry>| -> Option<Entry> {
+            let i = (0..heap.len()).min_by_key(|&i| (heap[i].neg, heap[i].tie))?;
+            Some(heap.swap_remove(i))
+        };
+        for &nd in top_nodes {
+            let n = self.subtree_count(nd, 0);
+            if n > 0 {
+                heap.push(Entry { neg: -n, tie: next_tie(), kind: Kind::Subtree, node: nd, xform: M4::identity(), depth: 0, name: self.node_label(nd), via: false });
+            }
+        }
+        let mut finals: Vec<Entry> = Vec::new();
+        while !heap.is_empty() && finals.len() + heap.len() < MAX_GROUPS {
+            let Some(entry) = pop(&mut heap) else { break };
+            if -entry.neg <= SPLIT_MIN {
+                heap.push(entry);
+                break; // the largest left is small: all are done
+            }
+            let kids: Vec<usize> = doc.el(entry.node).children.iter().copied().filter(|&e| self.tag_is(e, "node")).collect();
+            let insts: Vec<usize> = doc.el(entry.node).children.iter().copied().filter(|&e| self.tag_is(e, "instance_node")).collect();
+            if entry.kind == Kind::Direct || entry.depth > MAX_DEPTH || (kids.is_empty() && insts.is_empty()) {
+                finals.push(entry); // big but unsplittable: keep as it is
+                continue;
+            }
+            let m = entry.xform.mul(&self.node_matrix(entry.node)?);
+            let dg = self.direct_count(entry.node);
+            if dg > 0 {
+                heap.push(Entry { neg: -dg, tie: next_tie(), kind: Kind::Direct, node: entry.node, xform: m, depth: entry.depth, name: entry.name.clone(), via: false });
+            }
+            for el in kids {
+                let n = self.subtree_count(el, entry.depth);
+                if n > 0 {
+                    heap.push(Entry { neg: -n, tie: next_tie(), kind: Kind::Subtree, node: el, xform: m, depth: entry.depth, name: self.node_label(el), via: false });
+                }
+            }
+            for el in insts {
+                let Some(target) = self.reference(doc.get(el, "url")) else { continue };
+                let n = self.subtree_count(target, entry.depth + 1);
+                if n > 0 {
+                    let name = doc.get(el, "name").filter(|n| !n.is_empty()).map_or_else(|| self.node_label(target), str::to_string);
+                    heap.push(Entry { neg: -n, tie: next_tie(), kind: Kind::Subtree, node: target, xform: m, depth: entry.depth + 1, name, via: true });
+                }
+            }
+        }
+        finals.extend(heap);
+        finals.sort_by_key(|e| (e.neg, e.tie));
+        let mut bucket_inst: HashMap<usize, usize> = HashMap::new();
+        for e in &finals {
+            if e.via && e.kind == Kind::Subtree {
+                *bucket_inst.entry(e.node).or_insert(0) += 1;
+            }
+        }
+        let mut buckets: Vec<Sprite> = Vec::new();
+        for e in finals {
+            if e.via && e.kind == Kind::Subtree && bucket_inst.get(&e.node).copied().unwrap_or(0) >= 2 {
+                instances.push(Instance { name: e.name, node: e.node, xform: e.xform, depth: e.depth });
+                continue;
+            }
+            let mut loops = Vec::new();
+            if e.kind == Kind::Direct {
+                self.collect_direct(e.node, &e.xform, &mut loops)?;
+            } else {
+                self.collect(e.node, &e.xform, &mut loops, e.depth, h, Sinks { faceme: Some(&mut *faceme), instances: Some(&mut *instances) })?;
+                if !loops.is_empty() && self.looks_faceme(&loops, h)? {
+                    faceme.push((e.name, loops)); // the bucket itself is a sprite
+                    continue;
+                }
+            }
+            if !loops.is_empty() {
+                buckets.push((e.name, loops));
+            }
+        }
+        Ok(buckets)
+    }
+
+    /// `build_mesh(loops)` of the reference import: the polygons in Z-up
+    /// metres, fused, their smooth seams softened.
+    fn build_mesh(&self, loops: &[Loop], h: Hypot) -> Result<Mesh, String> {
+        let mut raw: Vec<RawLoop> = Vec::with_capacity(loops.len());
+        for l in loops {
+            let zpts: Vec<V3> = l.pts.iter().map(|&p| self.to_zup(p)).collect();
+            let attrs = face_attrs(&zpts, &l.color, &l.tex)?;
+            raw.push((zpts, attrs));
+        }
+        let mut target = Mesh::new();
+        target.hypot = h;
+        add_fused(&mut target, &fuse_coplanar_loops(&raw, 0.99999, false, h));
+        soften_smooth_edges(&mut target, h);
+        Ok(target)
+    }
+}
+
+/// `load_dae(scene, path)` on the file's bytes; `path` is where it lives
 /// (the textures are looked up beside it). `stitch` stands where Python runs
-/// `run_stitch(..., coplanar_merge=True)` and `orient_outward`.
-pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, stitch: Option<Stitch>) -> Result<(), String> {
+/// `run_stitch(..., coplanar_merge=True)` and `orient_outward`;
+/// `group_counter` is the process-wide `Group N` counter.
+pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, stitch: Option<Stitch>, group_counter: &mut i64) -> Result<(), String> {
     let doc = xml::parse(data)?;
     let dae = Dae::new(&doc, Some(path.parent().map(Path::to_path_buf).unwrap_or_default()))?;
     adopt_geolocation(scene, &doc);
@@ -843,19 +1113,30 @@ pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, sti
     }
     let total: i64 = top_nodes.iter().map(|&n| dae.subtree_count(n, 0)).sum();
     if total > MAX_FUSE_LOOPS as i64 {
-        return Err("not ported: a model of more than 400 polygons becomes groups (fuse_coplanar_loops)".to_string());
+        return load_reference(scene, &dae, &top_nodes, h, group_counter);
     }
 
     let mut pending: Vec<Loop> = Vec::new();
+    let mut faceme: Vec<Sprite> = Vec::new();
     for &node in &top_nodes {
         let mut sub = Vec::new();
-        dae.collect(node, &M4::identity(), &mut sub, 0, h)?;
+        dae.collect(node, &M4::identity(), &mut sub, 0, h, Sinks { faceme: Some(&mut faceme), instances: None })?;
         if !sub.is_empty() && dae.looks_faceme(&sub, h)? {
-            return Err("not ported: face-me sprites become billboard groups (fuse_coplanar_loops)".to_string());
+            faceme.push((dae.node_label(node), sub)); // the top node is a sprite
+        } else {
+            pending.extend(sub);
         }
-        pending.extend(sub);
     }
-    if pending.is_empty() {
+    // Face-me sprites become billboard groups even in a small import.
+    for (name, loops) in &faceme {
+        let target = dae.build_mesh(loops, h)?;
+        if !target.faces.is_empty() {
+            let mut g = new_group(scene, target, name, group_counter);
+            g.billboard = Some(Value::Str("mesh".to_string()));
+            scene.groups.push(g);
+        }
+    }
+    if pending.is_empty() && faceme.is_empty() {
         // No visual scene (bare geometry library): import it un-instanced.
         for geom in doc.iter_tag(Doc::ROOT, &ns("geometry")) {
             let Some(mesh_el) = doc.find(geom, &ns("mesh")) else { continue };
@@ -870,10 +1151,19 @@ pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, sti
         }
     }
     if pending.is_empty() {
+        if !faceme.is_empty() {
+            return Ok(());
+        }
         return Err("No geometry found in the COLLADA file".to_string());
     }
     if pending.len() > MAX_FUSE_LOOPS {
-        return Err("not ported: a model of more than 400 polygons becomes one group (fuse_coplanar_loops)".to_string());
+        // A bare geometry library too big for the editable pipeline: one
+        // reference group named after the file.
+        let target = dae.build_mesh(&pending, h)?;
+        let stem = path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+        let group = new_group(scene, target, &stem, group_counter);
+        scene.groups.push(group);
+        return Ok(());
     }
 
     let mesh = &mut scene.meshes[0];
@@ -881,7 +1171,7 @@ pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, sti
     let mut new_faces: HashSet<FaceId> = HashSet::new();
     for l in &pending {
         let pts: Vec<V3> = l.pts.iter().map(|&p| dae.to_zup(p)).collect();
-        // Python\'s `add_face` raises on a NaN or infinite corner (its weld
+        // Python's `add_face` raises on a NaN or infinite corner (its weld
         // key is an int), after welding the corners before it; the import
         // skips such a polygon.
         if let Some(bad) = pts.iter().position(|c| !(c.0.is_finite() && c.1.is_finite() && c.2.is_finite())) {
@@ -905,10 +1195,80 @@ pub fn load_dae_bytes(scene: &mut Scene, data: &[u8], path: &Path, h: Hypot, sti
     Ok(())
 }
 
+/// The reference import of a model of more than [`MAX_FUSE_LOOPS`]
+/// polygons: one group per assembly of the node tree, a shared prototype
+/// per reused component, billboard groups for the face-me sprites.
+fn load_reference(scene: &mut Scene, dae: &Dae, top_nodes: &[usize], h: Hypot, counter: &mut i64) -> Result<(), String> {
+    let mut faceme: Vec<Sprite> = Vec::new();
+    let mut instances: Vec<Instance> = Vec::new();
+    let buckets = dae.bucketize(top_nodes, h, &mut faceme, &mut instances)?;
+    if buckets.is_empty() && faceme.is_empty() && instances.is_empty() {
+        return Err("No geometry found in the COLLADA file".to_string());
+    }
+    let zm = dae.zup_matrix();
+    let (zm_inv, _) = zm.inverted();
+    for inst in &instances {
+        dae.polys_of(inst.node, inst.depth);
+    }
+    for (name, loops) in &buckets {
+        let target = dae.build_mesh(loops, h)?;
+        if !target.faces.is_empty() {
+            let g = new_group(scene, target, name, counter);
+            scene.groups.push(g);
+        }
+    }
+    // Components: ONE prototype mesh in Z-up LOCAL coordinates, shared by
+    // every copy; each copy is a group with only a local to world matrix. A
+    // component carrying a face-me sprite inside falls back to per-copy
+    // geometry (the sprite must be extracted at its world spot).
+    let mut protos: HashMap<usize, Option<MeshId>> = HashMap::new();
+    for inst in &instances {
+        if let std::collections::hash_map::Entry::Vacant(slot) = protos.entry(inst.node) {
+            let mut probe: Vec<Sprite> = Vec::new();
+            let mut local_loops: Vec<Loop> = Vec::new();
+            dae.collect(inst.node, &M4::identity(), &mut local_loops, inst.depth, h, Sinks { faceme: Some(&mut probe), instances: None })?;
+            let proto = if probe.is_empty() {
+                let mesh = dae.build_mesh(&local_loops, h)?;
+                if mesh.faces.is_empty() { None } else { Some(push_mesh(scene, mesh)) }
+            } else {
+                None // sprites inside: per-copy fallback
+            };
+            slot.insert(proto);
+        }
+        if let Some(Some(id)) = protos.get(&inst.node) {
+            let mut g = Group::new(*id, group_name(counter, &inst.name));
+            g.xform = Some(zm.mul(&inst.xform).mul(&zm_inv));
+            scene.groups.push(g);
+            continue;
+        }
+        // Fallback: bake this copy in world coordinates (sprites and all).
+        let mut loops = Vec::new();
+        dae.collect(inst.node, &inst.xform, &mut loops, inst.depth, h, Sinks { faceme: Some(&mut faceme), instances: None })?;
+        if !loops.is_empty() && dae.looks_faceme(&loops, h)? {
+            faceme.push((inst.name.clone(), loops));
+            continue;
+        }
+        let target = dae.build_mesh(&loops, h)?;
+        if !target.faces.is_empty() {
+            let g = new_group(scene, target, &inst.name, counter);
+            scene.groups.push(g);
+        }
+    }
+    for (name, loops) in &faceme {
+        let target = dae.build_mesh(loops, h)?;
+        if !target.faces.is_empty() {
+            let mut g = new_group(scene, target, name, counter);
+            g.billboard = Some(Value::Str("mesh".to_string())); // geometry turns toward the camera
+            scene.groups.push(g);
+        }
+    }
+    Ok(())
+}
+
 /// `load_dae(scene, path)`.
-pub fn load_dae(scene: &mut Scene, path: &Path, h: Hypot, stitch: Option<Stitch>) -> Result<(), String> {
+pub fn load_dae(scene: &mut Scene, path: &Path, h: Hypot, stitch: Option<Stitch>, group_counter: &mut i64) -> Result<(), String> {
     let data = std::fs::read(path).map_err(|e| e.to_string())?;
-    load_dae_bytes(scene, &data, path, h, stitch)
+    load_dae_bytes(scene, &data, path, h, stitch, group_counter)
 }
 
 #[cfg(test)]

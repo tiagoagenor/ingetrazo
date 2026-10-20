@@ -241,6 +241,28 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Importaciones OBJ, STL y COLLADA terminadas, en Rust** (`ingetrazo-formats-mesh`,
+  M5.1, M5.2 y M5.4): la costura real (`run_stitch` con fusión coplanar y
+  `orient_outward`) entra por un gancho —`ingetrazo_ops::import_engine`—,
+  porque `ingetrazo-ops` depende de `ingetrazo-formats-mesh` y `orient_outward`
+  necesita el índice de rayos, la aritmética de arreglos 2D y el `random` de
+  Python, todo de `ingetrazo-ops`: moverlo hacia abajo arrastraría medio
+  crate. Las firmas de referencia de OBJ, STL y COLLADA se regeneran ahora con
+  la costura y la orientación de verdad (`scripts/golden/_pin_order.py` fija el
+  orden de los conjuntos de Python, como en los fixtures de la costura), y los
+  casos que quedaban como «no portado» pasan: OBJ de varias partes o de más de
+  400 polígonos (`fuse_coplanar_loops`), STL con simplificación «principal» y
+  «todo» (`simplify_mesh` sobre la malla), COLLADA de más de 400 polígonos (un
+  grupo por ensamblaje, prototipos compartidos por componente, billboards de
+  figuras «mírame») y el color medio de una imagen. Ese promedio es
+  `QImage.scaled(1, 1, …, SmoothTransformation)`, cuyo algoritmo (el muestreo
+  por áreas de imlib2 con pesos de 14 bits, la suma de fila recortada 4 bits,
+  la conversión de alfa premultiplicado y los empates de su SIMD) se
+  determinó contra PySide6 6.11 con 123 imágenes PNG de referencia
+  (`scripts/golden/make_qimage_fixtures.py`); no se reproducen los JPEG, los
+  PNG de 16 bits ni unas pocas imágenes diminutas con alfa parcial.
+  Casos de importación que coinciden con Python: OBJ y STL de 41 a 95, COLLADA
+  de 48 a 82.
 - **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
   los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
   Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,
