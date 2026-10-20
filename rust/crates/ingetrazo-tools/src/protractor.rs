@@ -27,13 +27,14 @@
 use ingetrazo_formats::pyjson::Value;
 use ingetrazo_geom::facegeom::plane_axes;
 use ingetrazo_geom::sweep::py_hypot2;
-use ingetrazo_math::{Hypot, V3};
+use ingetrazo_math::{Hypot, M4, V3};
 use ingetrazo_model::guide::Guide;
 use ingetrazo_model::units::fmt_angle_deg;
 use ingetrazo_ops::annotate::{AddGuide, ChangeGuide};
+use ingetrazo_snap::world::face_plane_world;
 use ingetrazo_snap::SnapKind;
 
-use crate::modify_base::{keys, Env, FaceRef, ModifyTool, Mods, Probe, ToolCx, Vcb};
+use crate::modify_base::{keys, Env, FaceHit, FaceRef, ModifyTool, Mods, Probe, ToolCx, Vcb};
 
 /// The disc keeps a fixed SCREEN size; ticks every 15 degrees.
 pub const DISC_PX: f64 = 60.0;
@@ -277,6 +278,49 @@ impl ProtractorBase {
             };
             Some((cx.world, normal.normalized(h)))
         });
+    }
+
+    // ---- the viewport's follow-up of a click -----------------------------------------------
+
+    /// `Viewport._dispatch_tool_click`, before the tool is called: with no
+    /// start point and no plane captured, the face under the click.
+    pub fn face_at_click(&self, env: &Env, cx: &ToolCx) -> Option<FaceHit> {
+        if self.start_point.is_some() || self.work_plane.is_some() {
+            return None;
+        }
+        env.vp.pick_face_any(env.scene, env.cx, cx.screen.0, cx.screen.1)
+    }
+
+    /// ... and after it: a click that placed the start point on a face locks
+    /// the tool's plane to that face (`face_plane_world`, in WORLD space) when
+    /// the tool holds none.
+    pub fn lock_plane_to_face(&mut self, env: &Env, hit: Option<FaceHit>) {
+        if self.start_point.is_none() || self.work_plane.is_some() {
+            return;
+        }
+        let Some(hit) = hit else { return };
+        let h = env.cx.hypot;
+        self.work_plane = match &hit.face {
+            FaceRef::Loose(f) => Some(face_plane_world(env.cx.mesh(env.scene), *f, None, h)),
+            FaceRef::Placed { placement, index } => {
+                let path = hit.placement.as_ref().or(hit.owner.as_ref()).unwrap_or(placement);
+                let mut m: Option<M4> = None;
+                let mut list = &env.scene.groups;
+                for &i in path {
+                    let Some(next) = list.get(i) else { return };
+                    if let Some(x) = next.xform {
+                        m = Some(match m {
+                            None => x,
+                            Some(b) => b.mul(&x),
+                        });
+                    }
+                    list = &next.children;
+                }
+                let Some(pg) = ingetrazo_ops::group::group_at(&env.scene.groups, placement) else { return };
+                let mesh = env.scene.mesh(pg.mesh);
+                Some(face_plane_world(mesh, mesh.faces[*index], m.as_ref(), h))
+            }
+        };
     }
 
     // ---- screen metrics / snapping ------------------------------------------------------
@@ -538,23 +582,13 @@ impl ModifyTool for ProtractorTool {
     }
 
     fn on_click(&mut self, env: &mut Env, cx: &ToolCx) {
-        self.last = None; // a click ends the retype window
-        let h = env.cx.hypot;
-        let Some(start) = self.base.start_point else {
-            self.base.start_point = Some(cx.world);
-            self.base.axis_drag_armed = true; // a DRAG from here tilts the disc
-            return;
-        };
-        if self.base.ref_point.is_none() {
-            if (cx.world.sub(start).length(h) as f64) < 1e-6 {
-                return;
-            }
-            self.base.ref_point = Some(cx.world);
-            return;
-        }
-        self.base.note_snap(cx);
-        if let Some(deg) = self.base.commit_deg(cx.world, h) {
-            self.commit(env, deg);
+        // The viewport's follow-up (`_dispatch_tool_click`): a start point
+        // placed on a face locks the plane to it.
+        let hit = self.base.face_at_click(env, cx);
+        let had_start = self.base.start_point.is_some();
+        self.click(env, cx);
+        if !had_start {
+            self.base.lock_plane_to_face(env, hit);
         }
     }
 
@@ -581,6 +615,43 @@ impl ModifyTool for ProtractorTool {
     }
 
     fn on_value(&mut self, env: &mut Env, value: &Vcb) -> bool {
+        self.value(env, value)
+    }
+
+    fn on_cancel(&mut self, _env: &mut Env) {
+        self.reset();
+        self.last = None;
+        self.base.axis_pick = None; // Esc and the reload both let it go (#48)
+    }
+
+    fn probe(&self, env: &Env) -> Probe {
+        self.probe_state(env)
+    }
+}
+
+impl ProtractorTool {
+    fn click(&mut self, env: &mut Env, cx: &ToolCx) {
+        self.last = None; // a click ends the retype window
+        let h = env.cx.hypot;
+        let Some(start) = self.base.start_point else {
+            self.base.start_point = Some(cx.world);
+            self.base.axis_drag_armed = true; // a DRAG from here tilts the disc
+            return;
+        };
+        if self.base.ref_point.is_none() {
+            if (cx.world.sub(start).length(h) as f64) < 1e-6 {
+                return;
+            }
+            self.base.ref_point = Some(cx.world);
+            return;
+        }
+        self.base.note_snap(cx);
+        if let Some(deg) = self.base.commit_deg(cx.world, h) {
+            self.commit(env, deg);
+        }
+    }
+
+    fn value(&mut self, env: &mut Env, value: &Vcb) -> bool {
         let Vcb::Num(value) = value else { return false };
         let value = *value;
         let h = env.cx.hypot;
@@ -611,13 +682,7 @@ impl ModifyTool for ProtractorTool {
         true
     }
 
-    fn on_cancel(&mut self, _env: &mut Env) {
-        self.reset();
-        self.last = None;
-        self.base.axis_pick = None; // Esc and the reload both let it go (#48)
-    }
-
-    fn probe(&self, env: &Env) -> Probe {
+    fn probe_state(&self, env: &Env) -> Probe {
         let h = env.cx.hypot;
         let mut p = Probe::default();
         p.rb = Some(self.rubber_band_lines(h));
