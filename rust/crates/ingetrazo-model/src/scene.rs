@@ -500,6 +500,19 @@ fn matrix16(v: Option<&Value>) -> Option<M4> {
     }
 }
 
+/// `core.group.new_uid`: 16 random hex digits (`uuid4().hex[:16]`). Random
+/// like Python's, so two documents merged never collide; the loader gives
+/// one to a stored group that has none.
+pub fn fresh_uid() -> String {
+    use std::collections::hash_map::RandomState;
+    use std::hash::{BuildHasher, Hasher};
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static SEQ: AtomicU64 = AtomicU64::new(0);
+    let mut h = RandomState::new().build_hasher();
+    h.write_u64(SEQ.fetch_add(1, Ordering::Relaxed));
+    format!("{:016x}", h.finish())
+}
+
 impl Scene {
     pub fn new() -> Scene {
         Scene { meshes: vec![Mesh::new()], layers: vec![Value::Object(vec![("name".into(), s(DEFAULT_LAYER))])], ..Default::default() }
@@ -558,10 +571,12 @@ impl Scene {
                 protos.push(id);
             }
         }
+        // `core.group._counter`: a fresh process numbers unnamed groups from 1.
+        let mut auto = 1i64;
         let mut groups = Vec::new();
         if let Some(Value::Array(gs)) = payload.get("groups") {
             for raw in gs {
-                groups.push(sc.group_from(raw, &protos, 0)?);
+                groups.push(sc.group_from(raw, &protos, 0, &mut auto)?);
             }
         }
         sc.groups = groups;
@@ -569,7 +584,7 @@ impl Scene {
         if let Some(Value::Array(ks)) = payload.get("kept_components") {
             for raw in ks {
                 if matches!(raw, Value::Object(_)) {
-                    let g = sc.group_from(raw, &protos, 0)?;
+                    let g = sc.group_from(raw, &protos, 0, &mut auto)?;
                     if g.is_component() {
                         kept.push(g);
                     }
@@ -625,7 +640,7 @@ impl Scene {
             _ => None,
         };
         let x = &mut self.extra;
-        x.compositions = list("compositions");
+        x.compositions = list("compositions").iter().filter_map(crate::composition::normalize_sheet).collect();
         // scene.dimension_style.update({"ends": "tick", **style}): merged
         // over the default dict, keeping the default's key order.
         if let Value::Object(items) = &mut x.dimension_style {
@@ -664,21 +679,27 @@ impl Scene {
             x.show_hidden_objects = truthy(v.get("objects"));
             x.show_hidden_geometry = truthy(v.get("geometry"));
         }
-        x.display_style = object("display_style");
-        x.shadows = object("shadows");
+        // Each of these is rebuilt as an object and written back from it.
+        x.display_style = object("display_style").and_then(|v| crate::display::display_style(&v));
+        x.shadows = object("shadows").and_then(|v| crate::display::shadows(&v));
         if let Some(g @ Value::Object(_)) = payload.get("georef") {
             if let Some(d @ Value::Object(_)) = g.get("datum") {
-                x.georef_datum = Some(d.clone());
+                x.georef_datum = Some(crate::display::datum(d));
             }
         }
-        x.tile_layer = payload.get("tile_layer").filter(|v| truthy(Some(v))).cloned();
+        x.tile_layer = payload.get("tile_layer").and_then(crate::display::tile_layer);
     }
 
     /// `_group_from`.
-    fn group_from(&mut self, raw: &Value, protos: &[MeshId], depth: usize) -> Result<Group, LoadError> {
+    fn group_from(&mut self, raw: &Value, protos: &[MeshId], depth: usize, auto: &mut i64) -> Result<Group, LoadError> {
         let name = match raw.get("name") {
             Some(Value::Str(n)) if !n.is_empty() => n.clone(),
-            _ => String::new(), // Python numbers it "Group N"; documents always carry names
+            _ => {
+                // `Group.__init__`: "Group N" from the counter (documents
+                // saved before names were written carry none).
+                *auto += 1;
+                format!("Group {}", *auto - 1)
+            }
         };
         let xform = raw.get("xform");
         let mut g = if let (Some(x), Some(p)) = (xform.filter(|v| !matches!(v, Value::Null)), raw.get("proto")) {
@@ -710,8 +731,10 @@ impl Scene {
         if let Some(e @ Value::Object(_)) = raw.get("ext") {
             g.ext = Some(e.clone());
         }
-        if let Some(Value::Str(u)) = raw.get("uid") {
-            g.uid = u.clone();
+        match raw.get("uid") {
+            Some(Value::Str(u)) if !u.is_empty() => g.uid = u.clone(),
+            // Older documents keep the fresh one `Group.__init__` made.
+            _ => g.uid = fresh_uid(),
         }
         g.hidden = truthy(raw.get("hidden"));
         g.locked = truthy(raw.get("locked"));
@@ -732,7 +755,7 @@ impl Scene {
             let mut kids = Vec::new();
             if let Some(Value::Array(cs)) = raw.get("children") {
                 for c in cs {
-                    kids.push(self.group_from(c, protos, depth + 1)?);
+                    kids.push(self.group_from(c, protos, depth + 1, auto)?);
                 }
             }
             g.adopt(kids);

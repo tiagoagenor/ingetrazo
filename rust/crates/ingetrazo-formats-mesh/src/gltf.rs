@@ -10,15 +10,15 @@
 //! normals are baked `(x, y, z) -> (x, z, -y)`; images ride in the one
 //! binary buffer.
 //!
-//! Not ported: the camera path (`face_me=`, Render with Blender) and the
-//! `only=` selection filter.
+//! Not ported: the camera path (`face_me=`, Render with Blender).
+//! `only=` (the selection) is [`Only`].
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use ingetrazo_formats::pyjson::{dumps, Options, Value};
 use ingetrazo_math::{Hypot, M4, V3};
-use ingetrazo_model::mesh::Mesh;
+use ingetrazo_model::mesh::{FaceId, Mesh};
 use ingetrazo_model::pyval;
 use ingetrazo_model::scene::{Group, MeshId, Scene};
 use ingetrazo_model::texture::{is_image_bytes, path_name};
@@ -389,19 +389,37 @@ impl Tree<'_> {
     }
 }
 
-/// `_file_hierarchy(scene)`: `(materials, meshes, roots)`.
-fn file_hierarchy(scene: &Scene, h: Hypot, labels: &Labels) -> Result<(Registry, Vec<(MeshKey, Prims)>, Vec<Node>), String> {
+/// `save_glb(..., only=)`: the selected entities. Only loose faces and
+/// top-level groups (by their place in `scene.groups`) are looked at.
+#[derive(Clone, Debug, Default)]
+pub struct Only {
+    pub faces: HashSet<FaceId>,
+    pub groups: HashSet<usize>,
+}
+
+/// `_file_hierarchy(scene, only)`: `(materials, meshes, roots)`.
+fn file_hierarchy(scene: &Scene, h: Hypot, labels: &Labels, only: Option<&Only>) -> Result<(Registry, Vec<(MeshKey, Prims)>, Vec<Node>), String> {
     let mut t = Tree { scene, h, labels, reg: Registry::default(), meshes: Vec::new(), figures: Vec::new(), n_figures: 0 };
     let mut roots = Vec::new();
-    let loose: Vec<WFace> = mesh_faces(scene.loose()).into_iter().filter(|f| face_visible(scene, f)).collect();
+    let loose: Vec<WFace> = scene
+        .loose()
+        .faces
+        .iter()
+        .zip(mesh_faces(scene.loose()))
+        .filter(|(id, f)| face_visible(scene, f) && only.is_none_or(|o| o.faces.contains(id)))
+        .map(|(_, f)| f)
+        .collect();
     if !loose.is_empty() {
         let mut prims = Prims::default();
         add_faces(&loose, &mut t.reg, &mut prims, h)?;
         t.meshes.push((MeshKey::Loose, prims));
         roots.push(Node { name: labels.loose.clone(), matrix: None, mesh: Some(MeshKey::Loose), children: Vec::new(), extras: None });
     }
-    for g in &scene.groups {
+    for (i, g) in scene.groups.iter().enumerate() {
         if !group_visible(scene, g) {
+            continue;
+        }
+        if only.is_some_and(|o| !o.groups.contains(&i)) {
             continue;
         }
         if let Some(node) = t.part(g, None)? {
@@ -546,7 +564,12 @@ fn geolocation(scene: &Scene) -> Option<(f64, f64, f64)> {
 
 /// `save_glb(scene, path)` into memory: the bytes of the `.glb`.
 pub fn save_glb_bytes(scene: &Scene, h: Hypot, labels: &Labels) -> Result<Vec<u8>, String> {
-    let (reg, meshes, tree) = file_hierarchy(scene, h, labels)?;
+    save_glb_bytes_only(scene, h, labels, None)
+}
+
+/// `save_glb(scene, path, only=only)` into memory.
+pub fn save_glb_bytes_only(scene: &Scene, h: Hypot, labels: &Labels, only: Option<&Only>) -> Result<Vec<u8>, String> {
+    let (reg, meshes, tree) = file_hierarchy(scene, h, labels, only)?;
     let mut bin = Binary::default();
 
     // ---- materials (and the embedded images) ----

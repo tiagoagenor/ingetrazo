@@ -5,6 +5,9 @@
 //! undo follow.
 
 pub mod bim;
+pub mod composition;
+pub mod composition_schema;
+pub mod display;
 pub mod face_attrs;
 pub mod layers;
 pub mod materials;

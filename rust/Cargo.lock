@@ -1703,6 +1703,7 @@ dependencies = [
  "ingetrazo-model",
  "ingetrazo-ops",
  "png",
+ "sha2",
 ]
 
 [[package]]
@@ -1758,6 +1759,7 @@ dependencies = [
  "ingetrazo-geom",
  "ingetrazo-georef",
  "ingetrazo-math",
+ "sha2",
 ]
 
 [[package]]
