@@ -32,9 +32,9 @@ fn every_golden_script_starts_where_python_started() {
                     bad.push(format!("{id}: used to replay to the end, now stops at step {at} ({op})"));
                 }
             }
-            Ok(Outcome::Diverged { at, op, what }) => {
+            Ok(Outcome::Diverges { at, op, why }) => {
                 if pinned.contains(id) {
-                    bad.push(format!("{id}: used to replay to the end, now diverges at step {at} ({op}): {what}"));
+                    bad.push(format!("{id}: used to replay to the end, now diverges at step {at} ({op}): {why}"));
                 }
             }
             Ok(other) => bad.push(format!("{id}: {other:?}")),
@@ -43,4 +43,14 @@ fn every_golden_script_starts_where_python_started() {
     }
     assert!(bad.is_empty(), "{} of {} scripts:\n{}", bad.len(), all.len(), bad.join("\n"));
     assert!(ok >= pinned.len(), "{ok} scripts replay to the end, {} are pinned", pinned.len());
+}
+
+/// The scripts whose every step the engine runs (M3.5: the transform
+/// commands, undo and redo) replay to the end with Python's signatures; this
+/// number only goes up as ops land.
+#[test]
+fn scripts_of_the_ported_ops_replay_to_the_end() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../golden");
+    let done = ids(&root).iter().filter(|id| matches!(load(&root, id).map(|s| replay(&s)), Ok(Outcome::Ok))).count();
+    assert!(done >= 63, "only {done} scripts replay to the end");
 }

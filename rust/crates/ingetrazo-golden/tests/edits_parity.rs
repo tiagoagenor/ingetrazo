@@ -20,7 +20,7 @@ use ingetrazo_ops::describe::describe;
 use ingetrazo_ops::draw::{AddFaceCommand, EraseSelectionCommand, FlipFacesCommand, TagCurveCommand};
 use ingetrazo_ops::edits::{build_add_edge, build_add_edges, divide_edges, join_edges};
 use ingetrazo_ops::rebuild::RebuildPlanarFacesCommand;
-use ingetrazo_ops::{Command, CommandError, Env, History};
+use ingetrazo_ops::command::{Command, Cx, History};
 
 fn arr(v: &Value) -> &Vec<Value> {
     match v {
@@ -78,7 +78,7 @@ fn rust_planner_builds_the_commands_python_built() {
         scenarios += 1;
         let mut scene = Scene::new();
         scene.meshes[0].hypot = Hypot::Msvc;
-        let mut env = Env { hypot: Hypot::Msvc, ..Env::default() };
+        let mut env = Cx { hypot: Hypot::Msvc, ..Cx::default() };
         if let Some(t @ Value::Object(_)) = sc.get("ifc") {
             env.active_ifc = Some(t.clone());
         }
@@ -98,7 +98,7 @@ fn rust_planner_builds_the_commands_python_built() {
                 assert!(ok);
             } else if kind == "divide" || kind == "join" {
                 // Direct mesh edits (Divide, Join Segments): nothing on the undo stack.
-                env.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
+                env.counters.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
                 let h = env.hypot;
                 let find = |m: &ingetrazo_model::mesh::Mesh, a: V3, b: V3| {
                     let bits = |p: V3| [p.0.to_bits(), p.1.to_bits(), p.2.to_bits()];
@@ -114,9 +114,9 @@ fn rust_planner_builds_the_commands_python_built() {
                     let ends = arr(step.get("edge").unwrap());
                     let e = find(m, pt(&ends[0]), pt(&ends[1])).expect("edge to divide");
                     let n = step.get("n").and_then(Value::as_i64).unwrap();
-                    let mut counter = env.curve;
+                    let mut counter = env.counters.curve;
                     let cuts = divide_edges(m, &[e], n, &mut counter, h);
-                    env.curve = counter;
+                    env.counters.curve = counter;
                     cuts
                 } else {
                     let es: Vec<_> = segs(step.get("edges").unwrap()).into_iter().map(|(a, b)| find(m, a, b).expect("edge to join")).collect();
@@ -129,7 +129,7 @@ fn rust_planner_builds_the_commands_python_built() {
                     break;
                 }
             } else {
-                env.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
+                env.counters.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
                 let eye = match step.get("eye") {
                     Some(e @ Value::Array(_)) => Some(pt(e)),
                     _ => None,
@@ -165,7 +165,7 @@ fn rust_planner_builds_the_commands_python_built() {
                                 g.dedup();
                                 g == w
                             });
-                            faces.push((env.active, hit.expect("flip target")));
+                            faces.push((env.mesh, hit.expect("flip target")));
                         }
                         Box::new(FlipFacesCommand { faces })
                     }
@@ -178,17 +178,11 @@ fn rust_planner_builds_the_commands_python_built() {
                         break;
                     }
                 }
-                match hist.execute(cmd, &mut scene, &mut env) {
-                    Ok(()) => {}
-                    Err(CommandError::Unsupported(_)) => {
-                        complete = false;
-                        break;
-                    }
-                    Err(e) => {
-                        bad.push(format!("scenario {n} step {i} ({kind}): {e:?}"));
-                        complete = false;
-                        break;
-                    }
+                hist.execute(&mut scene, &mut env, cmd);
+                if hist.last_error.is_some() || hist.last_rejected.is_some() {
+                    bad.push(format!("scenario {n} step {i} ({kind}): {:?} {:?}", hist.last_error, hist.last_rejected));
+                    complete = false;
+                    break;
                 }
             }
             let got = sig::signature_hash(&model_sig::scene_signature(&scene, &sig::Files { zip: None }));

@@ -3,12 +3,14 @@
 resolver = "2"
 members = [
     "crates/ingetrazo-math",
+    "crates/manifold-sys",
+    "crates/ingetrazo-ops",
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
     "crates/ingetrazo-model",
-    "crates/ingetrazo-ops",
     "crates/ingetrazo-formats-mesh",
     "crates/ingetrazo-georef",
+    "crates/ingetrazo-i18n",
     "crates/ingetrazo-golden",
     "crates/ingetrazo-cli",
     "crates/ingetrazo_py",
@@ -26,6 +28,7 @@ ingetrazo-math = { path = "crates/ingetrazo-math" }
 ingetrazo-geom = { path = "crates/ingetrazo-geom" }
 ingetrazo-formats = { path = "crates/ingetrazo-formats" }
 ingetrazo-georef = { path = "crates/ingetrazo-georef" }
+ingetrazo-i18n = { path = "crates/ingetrazo-i18n" }
 rayon = "1.12.0"
 
 [profile.release]

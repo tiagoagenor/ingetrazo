@@ -126,6 +126,13 @@ jobs:
         with:
           workspaces: rust
       - name: cargo clippy
-        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+        run: cargo clippy --workspace --exclude manifold-sys --all-targets --locked -- -D warnings
       - name: cargo test
-        run: cargo test --workspace --exclude ingetrazo_py --locked
+        run: cargo test --workspace --exclude ingetrazo_py --exclude manifold-sys --locked
+      # Solid booleans build Manifold from its C++ source (CMake + a C++17
+      # compiler, a pinned and checksummed download): their own step, so the
+      # rest of the workspace does not wait for it.
+      - name: solids (Manifold)
+        run: |
+          cargo clippy -p manifold-sys -p ingetrazo-ops --features ingetrazo-ops/manifold --all-targets --locked -- -D warnings
+          cargo test -p manifold-sys -p ingetrazo-ops --features ingetrazo-ops/manifold --locked

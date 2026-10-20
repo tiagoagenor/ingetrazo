@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset><unit name="meter" meter="1"/><up_axis>Z_UP</up_axis></asset>
+<library_effects><effect id="e"><profile_COMMON><technique sid="common"><lambert><diffuse><color sid="diffuse">1 1 1 1</color></diffuse></lambert></technique></profile_COMMON></effect></library_effects>
+</COLLADA>

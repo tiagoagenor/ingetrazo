@@ -302,9 +302,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Mover, girar e escalar",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.6",
@@ -320,7 +320,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Aplicar cruzamentos do Intersecar",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -329,16 +329,16 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Sólidos com o Manifold (manifold-sys)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.9",
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Corte de seção",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -347,7 +347,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Explodir e limpar (purge)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -356,7 +356,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Motor de snap e inferências",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -392,7 +392,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Renderizador wgpu: faces, arestas, estilos",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -491,18 +491,18 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "glTF/GLB (importar e exportar)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.4",
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "COLLADA (importar e exportar)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.5",
@@ -644,9 +644,9 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Traduções (10 idiomas)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M6.13",

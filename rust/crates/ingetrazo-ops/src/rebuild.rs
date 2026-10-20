@@ -14,7 +14,7 @@ use ingetrazo_model::scene::Scene;
 use ingetrazo_model::topology::{self, key, PFace};
 
 use crate::arrangement::{coplanar_plane, planar_rebuild};
-use crate::command::{CmdResult, Command, CommandError, Env};
+use crate::command::{Command, Cx, Fail};
 
 const IN_TRI_SLACK: f64 = 1e-7;
 
@@ -76,10 +76,10 @@ impl RebuildPlanarFacesCommand {
 }
 
 impl Command for RebuildPlanarFacesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        self.snapshot = Some(env.mesh(scene).capture_state());
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        self.snapshot = Some(cx.mesh(scene).capture_state());
+        let m = cx.mesh_mut(scene);
         let footprint = topology::winding_footprint(m, h);
         if m.edges.is_empty() {
             self.flat = false;
@@ -121,7 +121,7 @@ impl Command for RebuildPlanarFacesCommand {
         let (edges, faces) = planar_rebuild(&segments, origin, normal, h);
         m.clear();
         for (a, b) in &edges {
-            let e = m.add_edge(*a, *b).map_err(|_| CommandError::Failed("degenerate edge".into()))?;
+            let e = m.add_edge(*a, *b).map_err(|_| Fail::Failed("degenerate edge".into()))?;
             let (ea, eb) = (m.position(m.edge(e).v0), m.position(m.edge(e).v1));
             for (fa, fb, flags) in &flagged {
                 if topology::point_on_seg_incl(ea, *fa, *fb, topology::SPLIT_TOLERANCE, h)
@@ -154,24 +154,24 @@ impl Command for RebuildPlanarFacesCommand {
         if let Some(fp) = &footprint {
             topology::orient_coplanar_faces(m, Some(fp), h);
         }
-        let mut counter = env.curve;
+        let mut counter = cx.counters.curve;
         m.resplit_curves(&mut counter);
-        env.curve = counter;
+        cx.counters.curve = counter;
         self.rebuilt = faces.len();
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(s) = &self.snapshot {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
     }
 
     fn name(&self) -> &'static str {
         "RebuildPlanarFacesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -209,14 +209,14 @@ impl RebuildPlaneFacesCommand {
 }
 
 impl Command for RebuildPlaneFacesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        self.snapshot = Some(env.mesh(scene).capture_state());
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        self.snapshot = Some(cx.mesh(scene).capture_state());
         if (self.normal.length_squared() as f64) < 0.5 {
             // No plane, nothing to rebuild.
             return Ok(());
         }
-        let m = env.mesh_mut(scene);
+        let m = cx.mesh_mut(scene);
         let plane_edges: Vec<ingetrazo_model::EdgeId> = m
             .edges
             .iter()
@@ -323,23 +323,23 @@ impl Command for RebuildPlaneFacesCommand {
         }
         // Prune the collinear duplicates the re-added polygons left.
         topology::prune_collinear_orphan_edges(m, h);
-        let mut counter = env.curve;
+        let mut counter = cx.counters.curve;
         m.resplit_curves(&mut counter);
-        env.curve = counter;
+        cx.counters.curve = counter;
         self.rebuilt = keep.len();
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(s) = &self.snapshot {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
     }
 
     fn name(&self) -> &'static str {
         "RebuildPlaneFacesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }

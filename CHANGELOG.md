@@ -257,14 +257,71 @@ follow [SemVer](https://semver.org).
   Python) y `PySet`, el `set` de CPython para pares de enteros hasta la
   ranura, porque el orden en que el arreglo emite aristas y caras sale de
   recorrer esos conjuntos. `ingetrazo-golden` ejecuta los pasos de los
-  guiones (`replay.rs`: selectores, `$cmd` decodificados al ejecutar,
-  `$ran`, contadores, firma L2 tras cada paso, deshacer y rehacer): 366 de
-  los 621 guiones se reproducen enteros, ninguno se desvía y los demás se
+  guiones (`ops_edits.rs` sobre el `run.rs` común: selectores, `$cmd`
+  decodificados al ejecutar, `$ran`, contadores, firma L2 tras cada paso,
+  deshacer y rehacer): con las transformaciones, 460 de los 621 guiones se
+  reproducen enteros, ninguno se desvía y los demás se
   detienen en el primer comando que falta; `golden/replay_ok.txt` fija los
   verdes. `scripts/golden/make_edits_fixtures.py` corre el Python real
   sobre 120 sesiones de dibujo (líneas, rectángulos, cajas, círculos,
   borrados, divisiones) y la prueba compara el plan y la firma de cada uno
   de sus 1233 pasos.
+- **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
+  M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
+  Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila
+  Manifold 3.5.4 —la versión de la rueda `manifold3d` de Python— de forma
+  estática con `cmake`, a partir de un tarball fijado por SHA-256 (más el
+  commit de Clipper2 que usa su CMake), guardado en `OUT_DIR` o en
+  `MANIFOLD_SYS_CACHE`; con `MANIFOLD_SRC_DIR` y `CLIPPER2_SRC_DIR` se
+  construye sin red. Enlaza la API C (`manifoldc`) más una función propia
+  (`face_id` del `MeshGL64`, que esa API no expone). `ingetrazo-ops` arma la
+  malla de Manifold desde la malla del mundo (`world_mesh` con la matriz del
+  componente, soldadura masiva incluida), repite el paso de uniones en T
+  (`conform`), reconstruye las caras con `fuse`, quita las esquinas colineales
+  y deja suaves las costuras de las superficies curvas. La función `apply`
+  deshace y rehace como `SolidOperationCommand`. El `fixture`
+  (`scripts/golden/make_solids_fixtures.py`, 197 casos: cajas que se
+  solapan, se tocan, coinciden o están separadas, componentes girados,
+  cilindros, un sólido dentro de otro, huecos, túneles, prismas cóncavos,
+  texturas, uniones en T) coincide bit a bit con Python: mismas caras,
+  mismo orden, mismos atributos y mismos bordes suaves.
+- **glTF y GLB desde Rust** (`rust/crates/ingetrazo-formats-mesh`, M5.3):
+  exporta con los mismos bytes que `formats/gltf.py` (el JSON con
+  `json.dumps` compacto, los buffers de posiciones, normales, UV e índices
+  en el orden de Python, el relleno, la cabecera y los dos trozos del GLB,
+  las imágenes incrustadas) recorriendo la escena Rust como ella: un nodo
+  por grupo y componente con su matriz en Y arriba, la malla compartida por
+  las copias, la geometría suelta, las figuras «mirar al visor» (de contorno
+  y de cuadro) de pie hacia la vista frontal con sus pies y su rumbo en
+  `extras`, los acabados de `core/finish.py` (con su regex a mano), la
+  opacidad, el recorte de las texturas con alfa (`QImage.scaled` rápido a
+  32 × 32: la muestra cae en `ceil((2d+1)·n/64) − 1`) y la geolocalización.
+  Importa como Python sin motor Rust: contenedor GLB y `.gltf` con `.bin`,
+  URI de datos o archivos, accesores con `byteStride` y normalizados, nodos
+  con matriz o TRS, materiales PBR y especular-brillo, `KHR_texture_transform`,
+  imágenes a la caché de texturas, el mapa mundo → UV de cada triángulo y
+  las aristas suaves y ocultas del follaje. Los casos de NumPy se reproducen
+  en el orden de OpenBLAS: `@` es un FMA encadenado (también el 4 × 4), el
+  `einsum` de tres términos suma el primero con el tercero y luego el
+  segundo, y `solve` es la LU de `dgetf2` con reciprocal del pivote y
+  división en la sustitución regresiva (no la fila por fila). Fuera por ahora:
+  la ruta con cámara (`face_me=`, Render con Blender) y la selección
+  (`only=`); el alfa de GIF/WebP/TIFF/BMP solo se lee por la cabecera.
+  `scripts/golden/make_gltf_fixtures.py` corre el Python real sobre 10
+  escenas (bytes idénticos) y 86 entradas de importación (firma L2 o mensaje
+  de error), más 1 463 sistemas 3 × 3 contra `np.linalg.solve`; `affine_point`
+  de `world.rs` también usa ahora el FMA de NumPy.
+- **Mover, girar y escalar en Rust (M3.5).** Nuevo crate `ingetrazo-ops`
+  con `Command`/`History` y los comandos de transformación de
+  `core/history.py` (mover, girar, escalar y reflejar vértices y grupos,
+  Cambiar ejes, Hacer único, Grupo a componente) y las funciones de
+  `core/group.py` que usan. Se replican las banderas de tipo de
+  `QMatrix4x4`, incluido que PySide6 marca la matriz como General al leer
+  `m(r, c)`, y el orden de `pts @ rot.T + trans` de NumPy/OpenBLAS (fma;
+  una fila = `gemv`). El replay dorado ya ejecuta pasos: 63 guiones llegan
+  al final con las firmas de Python; `golden/undo_all_drift.json` guarda la
+  firma a la que Python vuelve al deshacer todo en los 5 guiones cuyo
+  deshacer aritmético no recupera el inicio exacto.
 - **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
   todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
   base de cámara, el recorte por plano de sección, la tapa del corte (el
@@ -290,6 +347,25 @@ follow [SemVer](https://semver.org).
   M3, así que el paso intermedio queda como gancho y se compara con la firma
   L2 que Python tiene justo antes. Los fixtures salen de
   `scripts/golden/make_mesh_formats_fixtures.py`.
+- **COLLADA desde Rust** (`ingetrazo-formats-mesh`, módulos `dae`, `dae_in`
+  y `xml`, M5.4): exporta los mismos bytes que `formats/dae.py` (una sola
+  `<geometry>` con fuentes deduplicadas, los materiales de `meshexport` con
+  su opacidad y nombres, textura con UV, `<geographic_location>`, `\r\n` y
+  sin salto final como el modo texto de Python en Windows); las marcas
+  `<created>`/`<modified>` son un parámetro y las pruebas las enmascaran.
+  Importa como `_load_dae_inner`: árbol de nodos con `matrix`/`translate`/
+  `rotate`/`scale` en float32 como los compone Qt, `instance_node`, `Y_UP`/
+  `X_UP` y unidad, `triangles`/`polylist`/`polygons` con sus índices
+  negativos y desfases, colores y texturas por la cadena
+  sampler→surface→image, y la ubicación geográfica. Un lector XML propio y
+  estricto (`xml.rs`) reproduce lo que el código usa de `ElementTree`:
+  etiquetas expandidas, `text` anterior al primer hijo, comentarios y CDATA,
+  entidades internas, fin de línea; sin red ni entidades externas. Como en
+  OBJ, `run_stitch`/`orient_outward` quedan como gancho, y la fusión coplanar
+  (modelos de más de 400 polígonos, siluetas «mira a cámara») y el color
+  medio de una imagen (`QImage.scaled`) devuelven `not ported`. Fixtures de
+  `scripts/golden/make_dae_fixtures.py`: 11 exportaciones reales y 73
+  importaciones (estilo SketchUp y Blender, rotas, extrañas).
 - **Espacio de trabajo Rust** (`rust/Cargo.toml`, M0 de
   `docs/rust-rewrite-plan.md`): los núcleos salen del módulo PyO3 a dos
   crates sin Python, `ingetrazo-math` (aritmética float32 de QVector3D y los

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+<asset>
+<contributor><authoring_tool>IngeTrazo</authoring_tool></contributor>
+<created>2026-10-20T00:51:56+00:00</created><modified>2026-10-20T00:51:56+00:00</modified>
+<unit name="meter" meter="1"/>
+<up_axis>Z_UP</up_axis>
+</asset>
+<library_images>
+<image id="img2" name="img2"><init_from>wood.png</init_from></image>
+</library_images>
+<library_effects>
+<effect id="eff0"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.9600 0.9500 0.9250 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff1"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.2000 0.6000 0.2000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff2"><profile_COMMON>
+<newparam sid="surf2"><surface type="2D"><init_from>img2</init_from></surface></newparam>
+<newparam sid="samp2"><sampler2D><source>surf2</source></sampler2D></newparam>
+<technique sid="common"><lambert><diffuse><texture texture="samp2" texcoord="UVSET0"/></diffuse></lambert></technique>
+</profile_COMMON></effect>
+<effect id="eff3"><profile_COMMON>
+<technique sid="common"><lambert><diffuse><color>0.3000 0.3000 0.8000 1</color></diffuse></lambert></technique>
+</profile_COMMON></effect>
+</library_effects>
+<library_materials>
+<material id="mat0" name="mat0"><instance_effect url="#eff0"/></material>
+<material id="mat1" name="mat1"><instance_effect url="#eff1"/></material>
+<material id="mat2" name="mat2"><instance_effect url="#eff2"/></material>
+<material id="mat3" name="Azul"><instance_effect url="#eff3"/></material>
+</library_materials>
+<library_geometries>
+<geometry id="geom0" name="IngeTrazo"><mesh>
+<source id="geom0-pos"><float_array id="geom0-pos-array" count="243">-5.000000 -5.000000 0.000000 -4.000000 -5.000000 0.000000 -4.000000 -4.000000 0.000000 0.000000 30.000000 0.000000 2.000000 30.000000 0.000000 2.000000 31.000000 0.000000 0.000000 31.000000 0.000000 2.000000 32.000000 0.000000 86.319199 37.587704 0.000000 89.138275 38.613766 0.000000 88.112213 41.432842 0.000000 85.293137 40.406784 0.000000 82.898994 46.984631 0.000000 83.838684 47.326653 0.000000 83.496666 48.266342 0.000000 0.000000 21.000000 0.500000 0.000000 20.000000 0.500000 0.250000 20.250000 0.500000 0.500000 20.250000 0.500000 0.500000 20.500000 0.500000 1.000000 20.000000 0.500000 1.000000 21.000000 0.500000 5.049205 20.350113 0.500000 4.398185 20.798635 0.500000 5.000000 20.000000 0.500000 5.098410 20.700226 0.500000 5.248864 20.500566 0.500000 5.196821 21.400450 0.500000 5.798635 20.601814 0.500000 10.228238 20.206793 0.673620 9.972221 20.525843 1.350128 10.000000 20.000000 0.500000 10.940730 20.301331 0.344352 10.912951 20.827173 1.194481 10.456476 20.413586 0.847240 10.463421 20.282125 0.634708 15.000000 20.000000 0.500000 15.241482 20.500000 0.435295 15.482963 21.000000 0.370590 15.482963 20.500000 0.370590 15.965926 20.000000 0.241181 15.965926 22.000000 0.241181 15.000000 22.000000 0.500000 19.000000 21.000000 0.500000 19.500000 20.500000 0.500000 19.500000 20.250000 0.500000 19.750000 20.250000 0.500000 20.000000 21.000000 0.500000 19.000000 20.000000 0.500000 20.000000 20.000000 0.500000 1.000000 20.000000 2.500000 0.000000 20.000000 2.500000 5.798635 20.601814 2.500000 5.000000 20.000000 2.500000 11.616762 18.710495 1.350445 10.676032 18.409164 1.506093 16.224745 20.000000 1.207107 15.258819 20.000000 1.465926 19.000000 20.000000 2.500000 20.000000 20.000000 2.500000 85.977173 38.527397 0.000000 86.447021 38.698406 0.000000 86.276009 39.168255 0.200000 86.916870 38.869419 0.000000 87.270424 39.222973 0.000000 86.916870 39.576527 0.200000 2.000000 20.000000 0.500000 3.000000 20.000000 0.500000 3.000000 21.000000 1.000000 6.597271 21.203630 0.500000 7.395906 21.805445 0.500000 6.794092 22.604080 1.000000 11.881460 20.602661 0.188704 12.822191 20.903992 0.033057 12.963421 21.032125 1.134708 16.931852 20.000000 -0.017638 17.897778 20.000000 -0.276457 17.962482 22.000000 -0.034976 18.000000 20.000000 0.500000 17.000000 20.000000 0.500000 17.000000 21.000000 1.000000</float_array><technique_common><accessor source="#geom0-pos-array" count="81" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-nrm"><float_array id="geom0-nrm-array" count="45">0.00000 0.00000 1.00000 0.33802 -0.79542 0.50305 0.25882 0.00000 0.96593 0.00000 0.00000 -1.00000 0.00000 -1.00000 0.00000 0.60181 -0.79864 0.00000 0.02778 -0.52584 -0.85013 0.00000 1.00000 0.00000 0.12702 -0.34899 0.92848 0.26261 -0.26261 0.92848 0.00000 -0.44721 0.89443 0.26914 -0.35716 0.89443 0.31475 -0.94661 0.06975 0.25682 -0.12403 0.95847 0.00000 0.44721 -0.89443</float_array><technique_common><accessor source="#geom0-nrm-array" count="15" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common></source>
+<source id="geom0-uv"><float_array id="geom0-uv-array" count="16">0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 1.000004 -0.000003 1.000000 1.000003 1.000001 0.000000 1.000001 1.000001</float_array><technique_common><accessor source="#geom0-uv-array" count="8" stride="2"><param name="S" type="float"/><param name="T" type="float"/></accessor></technique_common></source>
+<vertices id="geom0-vertices"><input semantic="POSITION" source="#geom0-pos"/></vertices>
+<triangles material="sym0" count="6">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>0 0 1 0 2 0 3 0 4 0 5 0 6 0 5 0 7 0 8 0 9 0 10 0 8 0 10 0 11 0 12 0 13 0 14 0</p>
+</triangles>
+<triangles material="sym1" count="34">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>15 0 16 0 17 0 18 0 17 0 16 0 15 0 17 0 19 0 18 0 16 0 20 0 21 0 15 0 19 0 19 0 18 0 20 0 20 0 21 0 19 0 22 0 23 0 24 0 23 0 22 0 25 0 26 0 22 0 24 0 27 0 23 0 25 0 26 0 24 0 28 0 28 0 27 0 25 0 25 0 26 0 28 0 29 1 30 1 31 1 32 1 33 1 30 1 30 1 29 1 34 1 35 1 29 1 31 1 32 1 30 1 34 1 35 1 31 1 32 1 32 1 34 1 35 1 36 2 37 2 38 2 39 2 37 2 36 2 40 2 41 2 42 2 42 2 36 2 38 2 39 2 36 2 40 2 40 2 42 2 38 2 38 2 39 2 40 2 43 3 44 3 45 3 46 3 43 3 47 3 48 3 43 3 45 3 46 3 47 3 49 3 49 3 48 3 45 3 45 3 46 3 49 3</p>
+</triangles>
+<triangles material="sym2" count="12">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<input semantic="TEXCOORD" source="#geom0-uv" offset="2" set="0"/>
+<p>16 4 0 20 4 1 50 4 2 16 4 0 50 4 2 51 4 3 24 5 0 28 5 1 52 5 2 24 5 0 52 5 2 53 5 3 31 6 0 32 6 1 54 6 2 31 6 0 54 6 2 55 6 3 36 4 0 40 4 1 56 4 2 36 4 0 56 4 2 57 4 3 49 7 0 48 7 1 58 7 2 49 7 0 58 7 2 59 7 3 60 8 0 61 8 4 62 8 5 63 9 0 64 9 6 65 9 7</p>
+</triangles>
+<triangles material="sym3" count="5">
+<input semantic="VERTEX" source="#geom0-vertices" offset="0"/>
+<input semantic="NORMAL" source="#geom0-nrm" offset="1"/>
+<p>66 10 67 10 68 10 69 11 70 11 71 11 72 12 73 12 74 12 75 13 76 13 77 13 78 14 79 14 80 14</p>
+</triangles>
+</mesh></geometry>
+</library_geometries>
+<library_visual_scenes>
+<visual_scene id="scene"><node id="model" name="IngeTrazo model">
+<instance_geometry url="#geom0"><bind_material><technique_common>
+<instance_material symbol="sym0" target="#mat0">
+</instance_material>
+<instance_material symbol="sym1" target="#mat1">
+</instance_material>
+<instance_material symbol="sym2" target="#mat2">
+<bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
+</instance_material>
+<instance_material symbol="sym3" target="#mat3">
+</instance_material>
+</technique_common></bind_material></instance_geometry>
+</node></visual_scene></library_visual_scenes>
+<scene><instance_visual_scene url="#scene"/></scene>
+</COLLADA>

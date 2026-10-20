@@ -1,16 +1,28 @@
 [package]
 name = "ingetrazo-ops"
-description = "IngeTrazo's operations: commands and undo, the edits planner, drawing commands"
+description = "IngeTrazo's operations (M3): the Commands that edit a scene and their undo, and solid booleans through Manifold"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish.workspace = true
 
+[features]
+# The solid booleans need Manifold, which builds from C++ source (CMake and
+# a C++ compiler); without the feature the crate still compiles and the
+# operations answer `SolidError::NoKernel`.
+default = []
+manifold = ["dep:manifold-sys"]
+
 [dependencies]
 ingetrazo-math.workspace = true
-ingetrazo-formats.workspace = true
 ingetrazo-geom.workspace = true
+ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
+ingetrazo-formats-mesh = { path = "../ingetrazo-formats-mesh" }
+manifold-sys = { path = "../manifold-sys", optional = true }
+
+[dev-dependencies]
+ingetrazo-golden = { path = "../ingetrazo-golden" }
 
 [lints]
 workspace = true

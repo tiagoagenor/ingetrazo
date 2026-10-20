@@ -42,7 +42,7 @@ fn opt_bool(b: Option<bool>) -> Value {
 /// The command as a JSON list `[class, args...]`, or `None` for a command
 /// this does not describe.
 pub fn describe(c: &dyn Command) -> Option<Value> {
-    let any = c.as_any();
+    let any = c.as_any()?;
     let list = |items: Vec<Value>| Some(Value::Array(items));
     if let Some(x) = any.downcast_ref::<AddEdgeCommand>() {
         return list(vec![s("AddEdge"), bits(x.a), bits(x.b), opt_bool(x.soft), x.curve.map_or(Value::Null, Value::int)]);

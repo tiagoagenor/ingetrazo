@@ -26,7 +26,7 @@ use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_model::stitch::{self, CoplanarMergeCommand, PruneOrphanEdgesCommand, StitchSolidCommand};
 use ingetrazo_model::topology::{self, key, PFace};
 
-use crate::command::{CmdResult, Command, CommandError, Env};
+use crate::command::{Command, Cx, Fail};
 use crate::orient;
 
 type Key = topology::Key;
@@ -108,8 +108,8 @@ impl AddEdgeCommand {
 }
 
 impl Command for AddEdgeCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let m = cx.mesh_mut(scene);
         if self.owned {
             if let Some(e) = self.edge {
                 m.relink_edge(e);
@@ -127,27 +127,27 @@ impl Command for AddEdgeCommand {
             self.stamp(m, pre);
             return Ok(());
         }
-        let e = m.add_edge(self.a, self.b).map_err(|_| CommandError::Failed("degenerate edge: endpoints weld to one vertex".into()))?;
+        let e = m.add_edge(self.a, self.b).map_err(|_| Fail::Failed("degenerate edge: endpoints weld to one vertex".into()))?;
         self.edge = Some(e);
         self.owned = true;
         self.stamp(m, e);
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if !self.owned {
             return;
         }
         if let Some(e) = self.edge {
-            env.mesh_mut(scene).remove_edge(e);
+            cx.mesh_mut(scene).remove_edge(e);
         }
     }
 
     fn name(&self) -> &'static str {
         "AddEdgeCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -176,8 +176,8 @@ pub fn edge_at(m: &Mesh, a: V3, b: V3) -> Option<EdgeId> {
 }
 
 impl Command for DeleteEdgesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let m = cx.mesh_mut(scene);
         self.removed_edges.clear();
         for &(a, b) in &self.endpoints {
             if let Some(e) = edge_at(m, a, b) {
@@ -202,8 +202,8 @@ impl Command for DeleteEdgesCommand {
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        let m = env.mesh_mut(scene);
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        let m = cx.mesh_mut(scene);
         for &e in &self.removed_edges {
             m.relink_edge(e);
         }
@@ -216,8 +216,8 @@ impl Command for DeleteEdgesCommand {
     fn name(&self) -> &'static str {
         "DeleteEdgesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -239,14 +239,14 @@ impl EraseSelectionCommand {
 }
 
 impl Command for EraseSelectionCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        self.snapshot = Some(env.mesh(scene).capture_state());
-        let footprint = topology::winding_footprint(env.mesh(scene), h);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        self.snapshot = Some(cx.mesh(scene).capture_state());
+        let footprint = topology::winding_footprint(cx.mesh(scene), h);
         // Loop -> faces through one index (list order; `pop(0)` takes the first).
         let mut by_loop: HashMap<Vec<Key>, Vec<FaceId>> = HashMap::new();
         {
-            let m = env.mesh(scene);
+            let m = cx.mesh(scene);
             for &f in &m.faces {
                 by_loop.entry(loop_keyset(&positions(m, &m.face(f).outer))).or_default().push(f);
             }
@@ -258,7 +258,7 @@ impl Command for EraseSelectionCommand {
                 _ => None,
             };
             if let Some(f) = f {
-                env.mesh_mut(scene).remove_face(f);
+                cx.mesh_mut(scene).remove_face(f);
             }
         }
         // One segment -> faces index for the cascade, kept live as faces merge.
@@ -269,7 +269,7 @@ impl Command for EraseSelectionCommand {
             }
         }
         {
-            let m = env.mesh(scene);
+            let m = cx.mesh(scene);
             for &f in &m.faces {
                 index_face(m, &mut seg_faces, f);
             }
@@ -277,7 +277,7 @@ impl Command for EraseSelectionCommand {
         let mut dead_faces: HashSet<FaceId> = HashSet::new();
         let mut slit_planes: Vec<(V3, V3)> = Vec::new();
         for &(a, b) in &self.edge_endpoints {
-            let m = env.mesh_mut(scene);
+            let m = cx.mesh_mut(scene);
             let Some(edge) = edge_at(m, a, b) else { continue };
             let faces = m.edge(edge).faces.clone();
             let mut merged: Option<FaceId> = None;
@@ -323,9 +323,9 @@ impl Command for EraseSelectionCommand {
                 continue;
             }
             done_planes.push((origin, nn));
-            crate::rebuild::RebuildPlaneFacesCommand::new(origin, nn, h).apply(scene, env)?;
+            crate::rebuild::RebuildPlaneFacesCommand::new(origin, nn, h).apply(scene, cx)?;
         }
-        let m = env.mesh_mut(scene);
+        let m = cx.mesh_mut(scene);
         // Deleting a curved surface takes its hidden seams with it.
         for e in m.edges.clone() {
             if m.edge(e).soft && m.edge(e).faces.is_empty() {
@@ -340,17 +340,17 @@ impl Command for EraseSelectionCommand {
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(s) = &self.snapshot {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
     }
 
     fn name(&self) -> &'static str {
         "EraseSelectionCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -364,19 +364,19 @@ pub struct TagCurveCommand {
 }
 
 impl Command for TagCurveCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        let mut counter = env.curve;
-        env.mesh_mut(scene).tag_curve(&mut counter, &self.pts, self.closed, h);
-        env.curve = counter;
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        let mut counter = cx.counters.curve;
+        cx.mesh_mut(scene).tag_curve(&mut counter, &self.pts, self.closed, h);
+        cx.counters.curve = counter;
         Ok(())
     }
-    fn undo(&mut self, _scene: &mut Scene, _env: &mut Env) {}
+    fn undo(&mut self, _scene: &mut Scene, _cx: &mut Cx) {}
     fn name(&self) -> &'static str {
         "TagCurveCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -427,9 +427,9 @@ impl AddFaceCommand {
 }
 
 impl Command for AddFaceCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        let m = cx.mesh_mut(scene);
         let face = match self.face.get() {
             None => {
                 let holes: Vec<Vec<V3>> = self.preset_holes.clone().unwrap_or_default();
@@ -559,8 +559,8 @@ impl Command for AddFaceCommand {
         Ok(())
     }
 
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        let m = env.mesh_mut(scene);
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        let m = cx.mesh_mut(scene);
         if let Some(mother) = self.subdiv_mother.take() {
             for rem in self.subdiv_remainder.take().unwrap_or_default() {
                 m.remove_face(rem);
@@ -596,8 +596,8 @@ impl Command for AddFaceCommand {
     fn name(&self) -> &'static str {
         "AddFaceCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -616,24 +616,24 @@ impl DeleteFaceCommand {
 }
 
 impl Command for DeleteFaceCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let m = cx.mesh_mut(scene);
         self.face = find_face_by_loop(m, &self.loop_);
         if let Some(f) = self.face {
             m.remove_face(f);
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(f) = self.face {
-            env.mesh_mut(scene).relink_face(f);
+            cx.mesh_mut(scene).relink_face(f);
         }
     }
     fn name(&self) -> &'static str {
         "DeleteFaceCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -658,18 +658,18 @@ impl FlipFacesCommand {
 }
 
 impl Command for FlipFacesCommand {
-    fn apply(&mut self, scene: &mut Scene, _env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, _cx: &mut Cx) -> Result<(), Fail> {
         self.flip(scene);
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, _env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, _cx: &mut Cx) {
         self.flip(scene);
     }
     fn name(&self) -> &'static str {
         "FlipFacesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -681,11 +681,11 @@ pub struct CompoundCommand {
 }
 
 impl Command for CompoundCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
         let mut done = 0;
         let mut failure = None;
         for cmd in self.commands.iter_mut() {
-            match cmd.apply(scene, env) {
+            match cmd.apply(scene, cx) {
                 Ok(()) => done += 1,
                 Err(e) => {
                     failure = Some(e);
@@ -695,26 +695,26 @@ impl Command for CompoundCommand {
         }
         match failure {
             None => Ok(()),
-            Some(CommandError::Rejected(why)) => {
+            Some(Fail::Rejected(why)) => {
                 // One part declined: the rest goes back too.
                 for cmd in self.commands[..done].iter_mut().rev() {
-                    cmd.undo(scene, env);
+                    cmd.undo(scene, cx);
                 }
-                Err(CommandError::Rejected(why))
+                Err(Fail::Rejected(why))
             }
             Some(e) => Err(e),
         }
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         for cmd in self.commands.iter_mut().rev() {
-            cmd.undo(scene, env);
+            cmd.undo(scene, cx);
         }
     }
     fn name(&self) -> &'static str {
         "CompoundCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -735,39 +735,39 @@ impl SnapshotCompound {
 }
 
 impl Command for SnapshotCompound {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
         if self.after.is_none() {
-            let h = env.hypot;
-            self.before = Some(env.mesh(scene).capture_state());
+            let h = cx.hypot;
+            self.before = Some(cx.mesh(scene).capture_state());
             // Which way every face looked before the draw: the heal may align
             // the faces the draw MADE, never the ones already there.
-            let footprint = topology::winding_footprint(env.mesh(scene), h);
+            let footprint = topology::winding_footprint(cx.mesh(scene), h);
             for cmd in self.inner.iter_mut() {
-                cmd.apply(scene, env)?;
+                cmd.apply(scene, cx)?;
             }
-            let m = env.mesh_mut(scene);
+            let m = cx.mesh_mut(scene);
             topology::heal_overlapping_faces(m, 0.5, None, footprint.as_deref(), h, &mut |mm: &mut Mesh| {
                 orient::orient_outward(mm, h);
             });
-            let mut counter = env.curve;
+            let mut counter = cx.counters.curve;
             m.resplit_curves(&mut counter);
-            env.curve = counter;
+            cx.counters.curve = counter;
             self.after = Some(m.capture_state());
         } else if let Some(s) = &self.after {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(s) = &self.before {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
     }
     fn name(&self) -> &'static str {
         "SnapshotCompound"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -786,28 +786,28 @@ impl MeshSnapshotCommand {
 }
 
 impl Command for MeshSnapshotCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        self.snapshot = Some(env.mesh(scene).capture_state());
-        let before: HashSet<FaceId> = env.mesh(scene).faces.iter().copied().collect();
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        self.snapshot = Some(cx.mesh(scene).capture_state());
+        let before: HashSet<FaceId> = cx.mesh(scene).faces.iter().copied().collect();
         for cmd in self.inner.iter_mut() {
-            cmd.apply(scene, env)?;
+            cmd.apply(scene, cx)?;
         }
-        let m = env.mesh_mut(scene);
+        let m = cx.mesh_mut(scene);
         let mut new_faces: HashSet<FaceId> = m.faces.iter().copied().filter(|f| !before.contains(f)).collect();
         stitch::run_stitch(m, &stitch::seed_keys(&self.seed), Some(&mut new_faces), true, true, h);
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(s) = &self.snapshot {
-            env.mesh_mut(scene).restore_state(s);
+            cx.mesh_mut(scene).restore_state(s);
         }
     }
     fn name(&self) -> &'static str {
         "MeshSnapshotCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -823,7 +823,7 @@ pub struct AutoTagDrawnFacesCommand {
 }
 
 impl Command for AutoTagDrawnFacesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
         // `next_object_id(scene)`: over the LOOSE mesh's faces.
         let mut top: i64 = 0;
         {
@@ -844,7 +844,7 @@ impl Command for AutoTagDrawnFacesCommand {
         }
         let mut tag = self.tag.clone();
         pyval::set(&mut tag, "id", Value::int(top + 1));
-        let m = env.mesh_mut(scene);
+        let m = cx.mesh_mut(scene);
         let live: HashSet<FaceId> = m.faces.iter().copied().collect();
         for fc in &self.face_commands {
             if let Some(f) = fc.get() {
@@ -858,64 +858,64 @@ impl Command for AutoTagDrawnFacesCommand {
         }
         Ok(())
     }
-    fn undo(&mut self, _scene: &mut Scene, _env: &mut Env) {}
+    fn undo(&mut self, _scene: &mut Scene, _cx: &mut Cx) {}
     fn name(&self) -> &'static str {
         "AutoTagDrawnFacesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
 // ---- The stitch commands as Commands ------------------------------------------------------------
 
 impl Command for StitchSolidCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        StitchSolidCommand::apply(self, env.mesh_mut(scene), h);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        StitchSolidCommand::apply(self, cx.mesh_mut(scene), h);
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        StitchSolidCommand::undo(self, env.mesh_mut(scene));
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        StitchSolidCommand::undo(self, cx.mesh_mut(scene));
     }
     fn name(&self) -> &'static str {
         "StitchSolidCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
 impl Command for CoplanarMergeCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let h = env.hypot;
-        CoplanarMergeCommand::apply(self, env.mesh_mut(scene), h);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let h = cx.hypot;
+        CoplanarMergeCommand::apply(self, cx.mesh_mut(scene), h);
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        CoplanarMergeCommand::undo(self, env.mesh_mut(scene));
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        CoplanarMergeCommand::undo(self, cx.mesh_mut(scene));
     }
     fn name(&self) -> &'static str {
         "CoplanarMergeCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
 impl Command for PruneOrphanEdgesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        PruneOrphanEdgesCommand::apply(self, env.mesh_mut(scene));
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        PruneOrphanEdgesCommand::apply(self, cx.mesh_mut(scene));
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        PruneOrphanEdgesCommand::undo(self, env.mesh_mut(scene));
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        PruneOrphanEdgesCommand::undo(self, cx.mesh_mut(scene));
     }
     fn name(&self) -> &'static str {
         "PruneOrphanEdgesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -966,7 +966,7 @@ impl SetFaceAttrCommand {
 }
 
 impl Command for SetFaceAttrCommand {
-    fn apply(&mut self, scene: &mut Scene, _env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, _cx: &mut Cx) -> Result<(), Fail> {
         if self.old.is_none() {
             self.old = Some(self.faces.iter().map(|&(m, f)| attr(&scene.meshes[m.0 as usize], f, self.key)).collect());
         }
@@ -981,7 +981,7 @@ impl Command for SetFaceAttrCommand {
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, _env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, _cx: &mut Cx) {
         let old = self.old.clone().unwrap_or_default();
         for (&(m, f), o) in self.faces.iter().zip(old) {
             attr_set(&mut scene.meshes[m.0 as usize], f, self.key, o);
@@ -996,8 +996,8 @@ impl Command for SetFaceAttrCommand {
     fn name(&self) -> &'static str {
         self.class
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -1017,7 +1017,7 @@ impl SetFaceBackCommand {
 }
 
 impl Command for SetFaceBackCommand {
-    fn apply(&mut self, scene: &mut Scene, _env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, _cx: &mut Cx) -> Result<(), Fail> {
         if self.old.is_none() {
             self.old = Some(self.faces.iter().map(|&(m, f)| attr(&scene.meshes[m.0 as usize], f, "back")).collect());
         }
@@ -1026,7 +1026,7 @@ impl Command for SetFaceBackCommand {
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, _env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, _cx: &mut Cx) {
         let old = self.old.clone().unwrap_or_default();
         for (&(m, f), o) in self.faces.iter().zip(old) {
             attr_set(&mut scene.meshes[m.0 as usize], f, "back", o);
@@ -1035,8 +1035,8 @@ impl Command for SetFaceBackCommand {
     fn name(&self) -> &'static str {
         "SetFaceBackCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -1055,14 +1055,14 @@ impl HideEdgesCommand {
 }
 
 impl Command for HideEdgesCommand {
-    fn apply(&mut self, scene: &mut Scene, _env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, _cx: &mut Cx) -> Result<(), Fail> {
         self.prev = self.edges.iter().map(|&(m, e)| scene.meshes[m.0 as usize].edge(e).hidden).collect();
         for &(m, e) in &self.edges {
             scene.meshes[m.0 as usize].edge_mut(e).hidden = self.hidden;
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, _env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, _cx: &mut Cx) {
         for (&(m, e), &p) in self.edges.iter().zip(self.prev.iter()) {
             scene.meshes[m.0 as usize].edge_mut(e).hidden = p;
         }
@@ -1070,8 +1070,8 @@ impl Command for HideEdgesCommand {
     fn name(&self) -> &'static str {
         "HideEdgesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -1090,8 +1090,8 @@ impl ExplodeCurvesCommand {
 }
 
 impl Command for ExplodeCurvesCommand {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let m = cx.mesh_mut(scene);
         self.ids = m
             .edges
             .iter()
@@ -1103,8 +1103,8 @@ impl Command for ExplodeCurvesCommand {
         }
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        let m = env.mesh_mut(scene);
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        let m = cx.mesh_mut(scene);
         for &(e, c) in &self.ids {
             m.edge_mut(e).curve = Some(c);
         }
@@ -1112,8 +1112,8 @@ impl Command for ExplodeCurvesCommand {
     fn name(&self) -> &'static str {
         "ExplodeCurvesCommand"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 
@@ -1125,14 +1125,14 @@ pub struct PruneOnUndo {
 }
 
 impl Command for PruneOnUndo {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
-        let m = env.mesh_mut(scene);
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        let m = cx.mesh_mut(scene);
         m.relink_vertices(&self.gone);
         self.gone.clear();
         Ok(())
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
-        let m = env.mesh_mut(scene);
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        let m = cx.mesh_mut(scene);
         let before = m.vertices.clone();
         m.prune_orphan_vertices();
         let kept: HashSet<VertexId> = m.vertices.iter().copied().collect();
@@ -1143,8 +1143,8 @@ impl Command for PruneOnUndo {
     fn name(&self) -> &'static str {
         "_PruneOnUndo"
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
     }
 }
 

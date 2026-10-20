@@ -1,30 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
-//! Running the op scripts of the golden corpus on the Rust engine
-//! (golden/SCHEMA.md §3, §4): the steps' ops are decoded into
-//! `ingetrazo-ops` commands, run through a `History` on a `Scene` opened
-//! from the script's start document, and the L2 signature after each step
-//! is compared with the one Python recorded.
+//! Golden ops of the drawing commands (M3.1), decoded into `ingetrazo-ops`
+//! commands: `add_edge`, `add_face`, `delete_*`, `erase_selection`,
+//! `flip_faces`, `snapshot_compound`, `compound`, the plane rebuilds, face
+//! paint, and the rest of `draw.rs`.
 //!
-//! A command is decoded when it RUNS (`Deferred`), against the scene as it
-//! is then, as the Python recorder's `from_op` does: a selector inside a
-//! compound sees what the commands before it did.
+//! A command NESTED in another (`{"$cmd": op}`) is decoded when it RUNS
+//! (`Deferred`), against the scene as it is then, as the Python recorder's
+//! `from_op` does: a selector inside a compound sees what the commands
+//! before it did. `$ran` refers to a sibling that already ran in the same
+//! step; the registry of those is per thread and per step ([`new_step`]).
 
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use ingetrazo_formats::igz::{self, Zip};
 use ingetrazo_formats::pyjson::Value;
 use ingetrazo_math::{Hypot, V3};
 use ingetrazo_model::mesh::{FaceId, Mesh};
 use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_model::stitch::{CoplanarMergeCommand, PruneOrphanEdgesCommand, StitchSolidCommand};
+use ingetrazo_ops::command::{Command, Cx, Fail};
 use ingetrazo_ops::draw::*;
 use ingetrazo_ops::rebuild::{RebuildPlanarFacesCommand, RebuildPlaneFacesCommand};
-use ingetrazo_ops::{CmdResult, Command, CommandError, Env, History};
 
-use crate::{model_sig, sig, Outcome, Script};
+/// The prefix of the failure a nested op nobody builds yet leaves in
+/// `History::last_error`; the runner reports it as `Unsupported`.
+pub const UNSUPPORTED: &str = "UNSUPPORTED ";
+
 
 /// Why a step's ops could not be decoded.
 #[derive(Debug)]
@@ -196,32 +199,50 @@ impl Deferred {
 }
 
 impl Command for Deferred {
-    fn apply(&mut self, scene: &mut Scene, env: &mut Env) -> CmdResult {
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
         if self.built.is_none() {
             match decode(&self.op, scene, &self.reg) {
                 Ok(c) => {
                     self.name = c.name();
                     self.built = Some(c);
                 }
-                Err(DecodeError::Unsupported(op)) => return Err(CommandError::Unsupported(op)),
-                Err(DecodeError::Bad(why)) => return Err(CommandError::Failed(format!("decode: {why}"))),
+                Err(DecodeError::Unsupported(op)) => return Err(Fail::Failed(format!("{UNSUPPORTED}{op}"))),
+                Err(DecodeError::Bad(why)) => return Err(Fail::Failed(format!("decode: {why}"))),
             }
         }
         match self.built.as_mut() {
-            Some(c) => c.apply(scene, env),
+            Some(c) => c.apply(scene, cx),
             None => Ok(()),
         }
     }
-    fn undo(&mut self, scene: &mut Scene, env: &mut Env) {
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
         if let Some(c) = self.built.as_mut() {
-            c.undo(scene, env);
+            c.undo(scene, cx);
         }
     }
     fn name(&self) -> &'static str {
         self.name
     }
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
+}
+
+thread_local! {
+    static REG: Reg = Rc::new(RefCell::new(Registry::default()));
+}
+
+/// A new step begins: no command has run in it yet.
+pub fn new_step() {
+    REG.with(|r| r.borrow_mut().faces.clear());
+}
+
+/// The command of a top-level step `op`, or `None` when this module does not
+/// know the op (the shape `run::build_command` chains).
+pub fn build(op: &str, args: &Value, scene: &Scene) -> Option<Result<Box<dyn Command>, String>> {
+    let items = vec![("op".to_string(), Value::Str(op.to_string())), ("args".to_string(), args.clone())];
+    let reg = REG.with(|r| r.clone());
+    match decode(&Value::Object(items), scene, &reg) {
+        Ok(c) => Some(Ok(c)),
+        Err(DecodeError::Unsupported(_)) => None,
+        Err(DecodeError::Bad(why)) => Some(Err(why)),
     }
 }
 
@@ -412,95 +433,11 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
             }
             Box::new(ExplodeCurvesCommand::new(ids))
         }
-        other => return Err(DecodeError::Unsupported(other.to_string())),
+        other => match crate::run::build_others(other, args, scene) {
+            Some(Ok(c)) => c,
+            Some(Err(e)) => return bad(e),
+            None => return Err(DecodeError::Unsupported(other.to_string())),
+        },
     })
 }
 
-// ---- the replay --------------------------------------------------------------
-
-fn sig_of(scene: &Scene, zip: Option<&Zip>) -> String {
-    sig::signature_hash(&model_sig::scene_signature(scene, &sig::Files { zip }))
-}
-
-fn diverged(at: usize, op: &str, what: impl Into<String>) -> Outcome {
-    Outcome::Diverged { at, op: op.to_string(), what: what.into() }
-}
-
-/// Run the steps of `script` after its (already checked) start document.
-pub fn run_steps(script: &Script) -> Outcome {
-    let raw = &script.start;
-    let doc = match igz::read_document(raw) {
-        Ok(d) => d,
-        Err(e) => return Outcome::Broken(format!("start.igz: {e}")),
-    };
-    let zip = if igz::is_container(raw) { Zip::open(raw).ok() } else { None };
-    let mut scene = match Scene::from_document(&doc) {
-        Ok(s) => s,
-        Err(e) => return Outcome::Broken(format!("start.igz: {e:?}")),
-    };
-    let Some(Value::Array(steps)) = script.doc.get("steps") else { return Outcome::Broken("no steps".into()) };
-    // The corpus was recorded on Windows, with MSVC's `std::hypot`: replay
-    // with that formula wherever it runs.
-    for m in &mut scene.meshes {
-        m.hypot = Hypot::Msvc;
-    }
-    let mut history = History::new();
-    let mut env = Env { hypot: Hypot::Msvc, ..Env::default() };
-    for (i, step) in steps.iter().enumerate() {
-        let op = match step.get("op") {
-            Some(Value::Str(o)) => o.clone(),
-            _ => return Outcome::Broken(format!("step {i} has no op")),
-        };
-        match op.as_str() {
-            "undo" | "redo" => {
-                let ok = if op == "undo" { history.undo(&mut scene, &mut env) } else { history.redo(&mut scene, &mut env) };
-                if Some(&Value::Bool(ok)) != step.get("ok") {
-                    return diverged(i, &op, format!("returned {ok}"));
-                }
-            }
-            "undo_all" | "save" | "export" | "import" => return Outcome::Unsupported { at: i, op },
-            _ => {
-                if let Some(c) = step.get("counters") {
-                    if let Some(n) = c.get("curve").and_then(Value::as_i64) {
-                        env.curve = n;
-                    }
-                    if let Some(n) = c.get("group").and_then(Value::as_i64) {
-                        env.group = n;
-                    }
-                }
-                let reg: Reg = Rc::new(RefCell::new(Registry::default()));
-                let cmd = Deferred::boxed(step.clone(), &reg);
-                let result = history.execute(cmd, &mut scene, &mut env);
-                match &result {
-                    Err(CommandError::Unsupported(what)) => return Outcome::Unsupported { at: i, op: what.clone() },
-                    Err(CommandError::Failed(why)) => return diverged(i, &op, format!("failed: {why}")),
-                    Err(CommandError::Rejected(_)) | Ok(()) => {}
-                }
-                if matches!(result, Err(CommandError::Rejected(_))) != step.get("rejected").is_some() {
-                    return diverged(i, &op, format!("rejected: {:?}", history.last_rejected));
-                }
-            }
-        }
-        match step.get("sig") {
-            Some(Value::Str(want)) => {
-                let got = sig_of(&scene, zip.as_ref());
-                if &got != want {
-                    return diverged(i, &op, "signature differs");
-                }
-            }
-            _ => return Outcome::Broken(format!("step {i} has no sig")),
-        }
-    }
-    Outcome::Ok
-}
-
-/// For the tests and tools: the first line of why a script diverged.
-pub fn describe(o: &Outcome) -> String {
-    match o {
-        Outcome::Ok => "ok".into(),
-        Outcome::Start(p) => format!("start differs ({})", p.join(", ")),
-        Outcome::Unsupported { at, op } => format!("step {at}: {op} not in Rust yet"),
-        Outcome::Diverged { at, op, what } => format!("step {at} ({op}): {what}"),
-        Outcome::Broken(e) => format!("broken: {e}"),
-    }
-}

@@ -27,7 +27,7 @@ use ingetrazo_model::topology::{self, key, CycleGraph, PFace, Seg};
 use ingetrazo_math::{Hypot, V3};
 
 use crate::arrangement::coplanar_plane;
-use crate::command::{Command, Env};
+use crate::command::{Command, Cx};
 use crate::draw::{AddEdgeCommand, AddFaceCommand, AutoTagDrawnFacesCommand, DeleteEdgesCommand, DeleteFaceCommand, SnapshotCompound};
 use crate::rebuild::{RebuildPlanarFacesCommand, RebuildPlaneFacesCommand};
 
@@ -334,7 +334,7 @@ fn scene_has_curves(m: &Mesh) -> bool {
 }
 
 fn has_rebuild(commands: &[Box<dyn Command>]) -> bool {
-    commands.iter().any(|c| c.as_any().is::<RebuildPlanarFacesCommand>() || c.as_any().is::<RebuildPlaneFacesCommand>())
+    commands.iter().any(|c| c.as_any().is_some_and(|a| a.is::<RebuildPlanarFacesCommand>() || a.is::<RebuildPlaneFacesCommand>()))
 }
 
 /// `_append_flat_curve_rebuild`: the deterministic planar-arrangement
@@ -407,14 +407,14 @@ fn append_face_plane_rebuild(m: &Mesh, h: Hypot, commands: &mut Vec<Box<dyn Comm
 
 /// `_append_active_tag`: tag-as-you-draw. When the BIM active class is set,
 /// stamp it on the plan's own drawn faces, BEFORE the plane rebuilds.
-fn append_active_tag(env: &Env, commands: &mut Vec<Box<dyn Command>>) {
-    let Some(Value::Object(tag)) = &env.active_ifc else { return };
+fn append_active_tag(cx: &Cx, commands: &mut Vec<Box<dyn Command>>) {
+    let Some(Value::Object(tag)) = &cx.active_ifc else { return };
     if tag.is_empty() {
         return;
     }
     let face_cmds: Vec<_> = commands
         .iter()
-        .filter_map(|c| c.as_any().downcast_ref::<AddFaceCommand>())
+        .filter_map(|c| c.as_any().and_then(|a| a.downcast_ref::<AddFaceCommand>()))
         .filter(|c| c.auto)
         .map(|c| c.face.clone())
         .collect();
@@ -424,11 +424,11 @@ fn append_active_tag(env: &Env, commands: &mut Vec<Box<dyn Command>>) {
 }
 
 /// `build_add_edge`: one drawn edge as one atomic command.
-pub fn build_add_edge(scene: &Scene, env: &Env, a: V3, b: V3, detect_faces: bool, eye: Option<V3>) -> Box<dyn Command> {
-    let m = env.mesh(scene);
-    let h = env.hypot;
+pub fn build_add_edge(scene: &Scene, cx: &Cx, a: V3, b: V3, detect_faces: bool, eye: Option<V3>) -> Box<dyn Command> {
+    let m = cx.mesh(scene);
+    let h = cx.hypot;
     let mut commands = plan_edge_commands(m, &[(a, b)], detect_faces, eye, h);
-    append_active_tag(env, &mut commands);
+    append_active_tag(cx, &mut commands);
     append_flat_curve_rebuild(m, h, &mut commands, &[a, b]);
     if detect_faces {
         append_face_plane_rebuild(m, h, &mut commands, &[a, b]);
@@ -447,18 +447,18 @@ pub fn build_add_edge(scene: &Scene, env: &Env, a: V3, b: V3, detect_faces: bool
 /// on to be rebuilt (the Rectangle tool).
 pub fn build_add_edges(
     scene: &Scene,
-    env: &Env,
+    cx: &Cx,
     segments: &[Segment],
     detect_faces: bool,
     extra: Vec<Box<dyn Command>>,
     eye: Option<V3>,
     plane_rebuild: bool,
 ) -> Box<dyn Command> {
-    let m = env.mesh(scene);
-    let h = env.hypot;
+    let m = cx.mesh(scene);
+    let h = cx.hypot;
     let mut commands = plan_edge_commands(m, segments, detect_faces, eye, h);
     commands.extend(extra);
-    append_active_tag(env, &mut commands);
+    append_active_tag(cx, &mut commands);
     let points: Vec<V3> = segments.iter().flat_map(|&(a, b)| [a, b]).collect();
     append_flat_curve_rebuild(m, h, &mut commands, &points);
     if plane_rebuild {

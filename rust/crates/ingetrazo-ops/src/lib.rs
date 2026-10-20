@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Marco Sumari Tellez and IngeTrazo contributors.
-//! IngeTrazo's operations (docs/rust-rewrite-plan.md, M3): commands and
-//! undo, the edits planner, the drawing commands. Push/pull, transforms and
-//! solids join here.
+//! IngeTrazo's operations (docs/rust-rewrite-plan.md, M3): the `Command`s
+//! of `core/history.py`, the group functions of `core/group.py` they use,
+//! and the solid booleans (`core/solids.py`) through Manifold.
 
 pub mod arrangement;
 pub mod command;
 pub mod describe;
 pub mod draw;
 pub mod edits;
+pub mod group;
+pub mod group_cmds;
 pub mod orient;
 pub mod pyrandom;
 pub mod pyset;
 pub mod rebuild;
-
-pub use command::{CmdResult, Command, CommandError, Env, History};
+pub mod solids;
+pub mod transform;
+pub mod world;
