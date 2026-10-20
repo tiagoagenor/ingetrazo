@@ -1,0 +1,18 @@
+{
+ "schema": 1,
+ "id": "test_group_commands_parity__test_explode_view_pulls_the_parts_apart_and_back-e7e81264",
+ "source": {"pytest": "tests/test_group_commands_parity.py::test_explode_view_pulls_the_parts_apart_and_back", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/3bf49a3f86add8e0.igz"},
+ "start_sig": "bfd2553866bc089c271870785265166ac96ee1f245922fcfdccd3f573b6ff2e6",
+ "steps": [
+  {"op":"explode_view","args":{"container":{"$group":[0]},"factor":0.5},"counters":{"group":1,"curve":1},"sig":"a786f894e4a91616f27c3cdbb7ca9b48b4ee4bcbc6cc6af116355675feb87aae"},
+  {"op":"explode_view","args":{"container":{"$group":[0]},"factor":1.25,"mode":"z"},"counters":{"group":1,"curve":1},"sig":"ac690ca0ea031920131461aacf03fe9d8cc9f082c1956f816963318ba7d14d7c"},
+  {"op":"explode_view","args":{"container":{"$group":[0]},"factor":0.0},"counters":{"group":1,"curve":1},"sig":"7084646c9577550cabc101e75aa2808159d768a5ee847566b6602a30fd8e9718"},
+  {"op":"undo","ok":true,"sig":"ac690ca0ea031920131461aacf03fe9d8cc9f082c1956f816963318ba7d14d7c"},
+  {"op":"undo","ok":true,"sig":"a786f894e4a91616f27c3cdbb7ca9b48b4ee4bcbc6cc6af116355675feb87aae"},
+  {"op":"undo","ok":true,"sig":"bfd2553866bc089c271870785265166ac96ee1f245922fcfdccd3f573b6ff2e6"},
+  {"op":"redo","ok":true,"sig":"a786f894e4a91616f27c3cdbb7ca9b48b4ee4bcbc6cc6af116355675feb87aae"},
+  {"op":"redo","ok":true,"sig":"ac690ca0ea031920131461aacf03fe9d8cc9f082c1956f816963318ba7d14d7c"},
+  {"op":"redo","ok":true,"sig":"7084646c9577550cabc101e75aa2808159d768a5ee847566b6602a30fd8e9718"}
+ ]
+}

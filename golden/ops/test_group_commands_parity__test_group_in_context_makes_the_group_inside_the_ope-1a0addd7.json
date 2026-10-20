@@ -1,0 +1,15 @@
+{
+ "schema": 1,
+ "id": "test_group_commands_parity__test_group_in_context_makes_the_group_inside_the_ope-1a0addd7",
+ "source": {"pytest": "tests/test_group_commands_parity.py::test_group_in_context_makes_the_group_inside_the_open_one", "app_version": "0.5.8", "harvested": "2026-10-19"},
+ "start": {"igz": "golden/starts/95747b433a263e31.igz"},
+ "start_sig": "29138d3967adb69cf8464fe5df612b088975b566723207d30a14c3e470d95f83",
+ "steps": [
+  {"op":"group_in_context","args":{"inner":{"$cmd":{"op":"make_nested_group","args":{"faces":[],"edges":[],"groups":[{"$group":[0]},{"$group":[1]}],"name":"Par"}}},"context":{"$group":[0]}},"counters":{"group":1,"curve":1},"sig":"b262fe47c2023016ff193edfbd9d35049ff78af52016e365257e7142d0fe355c"},
+  {"op":"group_in_context","args":{"inner":{"$cmd":{"op":"make_group","args":{"faces":[{"$face":{"loop":[[10.0,10.0,0.0],[12.0,10.0,0.0],[12.0,12.0,0.0],[10.0,12.0,0.0]],"in":null}}],"edges":[]}}},"context":{"$group":[1]}},"counters":{"group":1,"curve":1},"sig":"a5564f99b4c7a89711dc17b514bef26dc60b1b99b489fc5290730eff57883196"},
+  {"op":"undo","ok":true,"sig":"b262fe47c2023016ff193edfbd9d35049ff78af52016e365257e7142d0fe355c"},
+  {"op":"undo","ok":true,"sig":"29138d3967adb69cf8464fe5df612b088975b566723207d30a14c3e470d95f83"},
+  {"op":"redo","ok":true,"sig":"b262fe47c2023016ff193edfbd9d35049ff78af52016e365257e7142d0fe355c"},
+  {"op":"redo","ok":true,"sig":"eef67d8b1ce93c4a6aadf858cd3093c6bfd97b7eadf7d099e66d19ce21cf6d26"}
+ ]
+}
