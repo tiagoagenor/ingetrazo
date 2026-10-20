@@ -17,6 +17,7 @@ manifold = ["dep:manifold-sys"]
 ingetrazo-math.workspace = true
 ingetrazo-geom.workspace = true
 ingetrazo-formats.workspace = true
+ingetrazo-georef.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-formats-mesh = { path = "../ingetrazo-formats-mesh" }
 manifold-sys = { path = "../manifold-sys", optional = true }

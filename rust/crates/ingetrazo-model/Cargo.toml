@@ -10,6 +10,7 @@ publish.workspace = true
 ingetrazo-math.workspace = true
 ingetrazo-formats.workspace = true
 ingetrazo-geom.workspace = true
+ingetrazo-georef.workspace = true
 
 [lints]
 workspace = true

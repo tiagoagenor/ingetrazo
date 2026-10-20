@@ -45,13 +45,29 @@ fn every_golden_script_starts_where_python_started() {
     assert!(ok >= pinned.len(), "{ok} scripts replay to the end, {} are pinned", pinned.len());
 }
 
-/// The scripts whose every step the engine runs (M3.5 the transform commands,
-/// M3.10 groups, components, paint and purge; undo and redo) replay to the end
-/// with Python's signatures; this
-/// number only goes up as ops land.
+/// The scripts whose every step the engine runs (M3.1 drawing, M3.5
+/// transforms, M3.9 annotations, M3.10 groups/paint/purge; undo and redo)
+/// replay to the end with Python's signatures; this number only goes up.
 #[test]
 fn scripts_of_the_ported_ops_replay_to_the_end() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../golden");
     let done = ids(&root).iter().filter(|id| matches!(load(&root, id).map(|s| replay(&s)), Ok(Outcome::Ok))).count();
-    assert!(done >= 143, "only {done} scripts replay to the end");
+    assert!(done >= 625, "only {done} scripts replay to the end");
+}
+
+/// The hand-written annotation scripts (scripts/golden/make_annotation_scripts.py)
+/// carry the whole `document.json` Python wrote after every step, so they pin
+/// what the L2 signature leaves out: where dimension ends read once the
+/// geometry moved, every annotation's numbers, the datum and the sheets' world
+/// anchors after Straighten Model.
+#[test]
+fn the_annotation_scripts_replay_with_python_documents() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../golden");
+    let mut seen = 0;
+    for id in ids(&root).iter().filter(|id| id.starts_with("hand-annotations-")) {
+        let outcome = replay(&load(&root, id).expect("script"));
+        assert_eq!(outcome, Outcome::Ok, "{id}");
+        seen += 1;
+    }
+    assert!(seen >= 7, "only {seen} annotation scripts");
 }

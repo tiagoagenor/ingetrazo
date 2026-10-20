@@ -5,13 +5,26 @@
 //!
 //! Meshes live in one arena; a group names its mesh by index, so the
 //! instances of a component share one prototype exactly as Python's
-//! groups share one `Mesh` object. Annotation and style blocks are kept as
-//! the document's JSON until their typed models land (M2.4, M2.5).
+//! groups share one `Mesh` object. The annotation lists are typed (and keep
+//! an identity per item, `IdList`); style blocks are kept as
+//! the document's JSON until their typed models land.
 
 use ingetrazo_formats::pyjson::Value;
 use ingetrazo_math::{M4, V3};
 
+use ingetrazo_georef::geopath::GeoPath;
+use ingetrazo_georef::points::GeoPoint;
+
+use crate::annotations::Annotations;
+use crate::dimension::Dimension;
+use crate::pyconv::PyErr;
+use crate::guide::Guide;
+use crate::idlist::IdList;
+use crate::image_plane::ImagePlane;
 use crate::mesh::Mesh;
+use crate::saved_views::SavedView;
+use crate::section::{SectionPlane, UidCounter};
+use crate::textlabel::TextLabel;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct MeshId(pub u32);
@@ -85,12 +98,16 @@ pub struct Scene {
     /// Document blocks kept as JSON for now (typed in M2.4/M2.5).
     pub layers: Vec<Value>,
     pub materials: Vec<(String, Value)>,
-    pub dimensions: Vec<Value>,
-    pub text_labels: Vec<Value>,
-    pub guides: Vec<Value>,
-    pub section_planes: Vec<Value>,
-    pub image_planes: Vec<Value>,
-    pub geo_paths: Vec<Value>,
+    /// The annotation lists, typed. A command keeps an item by the identity
+    /// [`IdList`] gives it, as Python keeps the object.
+    pub dimensions: IdList<Dimension>,
+    pub text_labels: IdList<TextLabel>,
+    pub guides: IdList<Guide>,
+    pub section_planes: IdList<SectionPlane>,
+    pub image_planes: IdList<ImagePlane>,
+    pub geo_paths: IdList<GeoPath>,
+    /// `core.section._last_uid`: the counter section planes take their uid from.
+    pub section_uids: UidCounter,
     /// Blocks the .igz writer needs and the model does not edit yet, kept as
     /// the JSON the document brought (`igz_write::save_scene` writes them).
     pub extra: SceneExtra,
@@ -101,9 +118,9 @@ pub struct Scene {
 /// resets the same fields to their defaults.
 #[derive(Clone, Debug)]
 pub struct SceneExtra {
-    pub saved_views: Vec<Value>,
+    pub saved_views: IdList<SavedView>,
     pub compositions: Vec<Value>,
-    pub geo_points: Vec<Value>,
+    pub geo_points: IdList<GeoPoint>,
     /// `scene.dimension_style` (always present in Python: a default dict).
     pub dimension_style: Value,
     pub camera: Option<Value>,
@@ -125,6 +142,8 @@ pub struct SceneExtra {
     /// `georef.datum` (`SceneDatum.to_dict()`).
     pub georef_datum: Option<Value>,
     pub tile_layer: Option<Value>,
+    /// `Scene.load_repairs`: guides left out for holding a coordinate that is not a number.
+    pub load_repairs: usize,
     /// `photo_mesh`: its JSON block and the blobs `pack_mesh` made (stored
     /// members). Written, never read here.
     pub photo_mesh: Option<(Value, Vec<(String, Vec<u8>)>)>,
@@ -147,9 +166,9 @@ pub fn default_dimension_style() -> Value {
 impl Default for SceneExtra {
     fn default() -> Self {
         SceneExtra {
-            saved_views: Vec::new(),
+            saved_views: IdList::new(),
             compositions: Vec::new(),
-            geo_points: Vec::new(),
+            geo_points: IdList::new(),
             dimension_style: default_dimension_style(),
             camera: None,
             units: None,
@@ -164,6 +183,7 @@ impl Default for SceneExtra {
             shadows: None,
             georef_datum: None,
             tile_layer: None,
+            load_repairs: 0,
             photo_mesh: None,
         }
     }
@@ -265,6 +285,32 @@ fn face_attrs(raw: &Value) -> Vec<(String, Value)> {
         _ => {}
     }
     attrs
+}
+
+/// `payload` with each image plane's embedded texture read as its path
+/// (`_unpack_textures` on the `image_planes` block).
+fn unembed_image_planes(payload: &Value, planes: &[Value]) -> Value {
+    let fix = |p: &Value| -> Value {
+        let (Value::Object(items), Some(Value::Object(tex))) = (p, p.get("texture")) else { return p.clone() };
+        let has_path = tex.iter().any(|(k, v)| k == "path" && truthy(Some(v)));
+        let mut out: Vec<(String, Value)> = Vec::new();
+        for (k, v) in tex {
+            match k.as_str() {
+                "base_embed" => {}
+                "embed" if has_path => {}
+                "embed" => out.push(("path".into(), v.clone())),
+                _ => out.push((k.clone(), v.clone())),
+            }
+        }
+        let fixed = Value::Object(out);
+        Value::Object(items.iter().map(|(k, v)| (k.clone(), if k == "texture" { fixed.clone() } else { v.clone() })).collect())
+    };
+    let Value::Object(top) = payload else { return payload.clone() };
+    Value::Object(
+        top.iter()
+            .map(|(k, v)| (k.clone(), if k == "image_planes" { Value::Array(planes.iter().map(fix).collect()) } else { v.clone() }))
+            .collect(),
+    )
 }
 
 /// `igz._BULK_MIN`: a mesh at least this big (edges + 4 per face) loads in
@@ -531,17 +577,40 @@ impl Scene {
             }
         }
         sc.kept_components = kept;
-        let list = |k: &str| match payload.get(k) {
-            Some(Value::Array(a)) => a.clone(),
-            _ => Vec::new(),
+        let h = sc.meshes[0].hypot;
+        let bad = |e: PyErr| LoadError::Format(format!("{}: {}", e.kind, e.msg));
+        // `_unpack_textures` reaches the image planes' textures too: an
+        // embedded one is read back as its archive member.
+        let unpacked;
+        let payload = match payload.get("image_planes") {
+            Some(Value::Array(planes)) if planes.iter().any(|p| p.get("texture").is_some()) => {
+                unpacked = unembed_image_planes(payload, planes);
+                &unpacked
+            }
+            _ => payload,
         };
-        sc.dimensions = list("dimensions");
-        sc.text_labels = list("text_labels");
-        sc.guides = list("guides");
-        sc.section_planes = list("section_planes");
-        sc.image_planes = list("image_planes");
-        sc.geo_paths = list("geo_paths");
+        let ann = Annotations::from_igz_payload(payload, &mut sc.section_uids, h).map_err(bad)?;
+        sc.dimensions = ann.dimensions.into();
+        sc.text_labels = ann.text_labels.into();
+        sc.guides = ann.guides.into();
+        sc.section_planes = ann.section_planes.into();
+        sc.image_planes = ann.image_planes.into();
+        sc.extra.saved_views = ann.saved_views.into();
+        sc.extra.load_repairs = ann.load_repairs;
+        let georef_err = |e: ingetrazo_georef::pyconv::PyErr| LoadError::Format(format!("{}: {}", e.kind, e.msg));
+        if let Some(Value::Array(ps)) = payload.get("geo_paths") {
+            for raw in ps {
+                sc.geo_paths.push(GeoPath::from_dict(raw).map_err(georef_err)?);
+            }
+        }
+        if let Some(Value::Array(ps)) = payload.get("geo_points") {
+            for raw in ps {
+                sc.extra.geo_points.push(GeoPoint::from_dict(raw).map_err(georef_err)?);
+            }
+        }
         sc.load_extra(payload);
+        // `dim.bind(scene)`: each end takes the vertex under it.
+        sc.bind_dimensions(MeshId(0));
         Ok(sc)
     }
 
@@ -556,9 +625,7 @@ impl Scene {
             _ => None,
         };
         let x = &mut self.extra;
-        x.saved_views = list("saved_views");
         x.compositions = list("compositions");
-        x.geo_points = list("geo_points");
         // scene.dimension_style.update({"ends": "tick", **style}): merged
         // over the default dict, keeping the default's key order.
         if let Value::Object(items) = &mut x.dimension_style {

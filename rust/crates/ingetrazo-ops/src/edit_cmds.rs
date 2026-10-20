@@ -632,15 +632,17 @@ pub fn used_layers(scene: &Scene) -> HashSet<String> {
             used.insert(l.clone());
         }
     }
-    for d in scene.dimensions.iter().chain(scene.text_labels.iter()) {
-        used.insert(layer_value(d.get("layer")));
+    // `layer_of(ent)`: the entity's layer, or the default. (An image plane
+    // read without a layer key already carries the Images layer.)
+    let of = |l: &Option<String>| l.clone().filter(|l| !l.is_empty()).unwrap_or_else(|| DEFAULT_LAYER.to_string());
+    for d in scene.dimensions.iter() {
+        used.insert(of(&d.layer));
     }
-    for ip in &scene.image_planes {
-        // A missing key reads as the Images layer; `null` as the default.
-        used.insert(match ip.get("layer") {
-            None => ingetrazo_model::image_plane::IMAGE_LAYER.to_string(),
-            other => layer_value(other),
-        });
+    for t in scene.text_labels.iter() {
+        used.insert(of(&t.layer));
+    }
+    for ip in scene.image_planes.iter() {
+        used.insert(of(&ip.layer));
     }
     for _ in &scene.section_planes {
         used.insert(DEFAULT_LAYER.to_string());
@@ -652,13 +654,7 @@ pub fn used_layers(scene: &Scene) -> HashSet<String> {
 fn layers_held_by_scenes(scene: &Scene) -> HashSet<String> {
     let mut held = HashSet::new();
     for view in &scene.extra.saved_views {
-        if let Some(Value::Array(ls)) = view.get("hidden_layers") {
-            for l in ls {
-                if let Value::Str(s) = l {
-                    held.insert(s.clone());
-                }
-            }
-        }
+        held.extend(view.hidden_layers.iter().cloned());
     }
     held
 }

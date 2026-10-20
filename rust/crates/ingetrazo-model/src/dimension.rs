@@ -72,15 +72,25 @@ impl Axis {
     }
 }
 
-/// A hold on one mesh vertex (`VertexAnchor`): plain handles until the
-/// scene exists — `mesh` names the mesh that registers the vertex and
-/// `chain` the groups whose transforms place it in the world (empty for
-/// loose geometry), both by whatever id the scene gives them.
+/// One group of an anchor's chain. Python holds the group object; groups
+/// here are owned by the tree, so a link names where it was (`index` among its
+/// siblings) and what it was (its mesh and uid), and the scene finds it again
+/// by those (see `anchors.rs`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChainLink {
+    pub index: usize,
+    pub mesh: u32,
+    pub uid: String,
+}
+
+/// A hold on one mesh vertex (`VertexAnchor`): `mesh` names the mesh that
+/// registers the vertex and `chain` the groups whose transforms place it in
+/// the world, from the top level down (empty for loose geometry).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VertexAnchor {
     pub vertex: VertexId,
     pub mesh: u32,
-    pub chain: Vec<u32>,
+    pub chain: Vec<ChainLink>,
 }
 
 #[derive(Clone, Debug, PartialEq)]

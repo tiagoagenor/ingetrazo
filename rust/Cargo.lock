@@ -1691,6 +1691,7 @@ name = "ingetrazo-golden"
 version = "0.1.0"
 dependencies = [
  "ingetrazo-formats",
+ "ingetrazo-georef",
  "ingetrazo-math",
  "ingetrazo-model",
  "ingetrazo-ops",
@@ -1717,6 +1718,7 @@ version = "0.1.0"
 dependencies = [
  "ingetrazo-formats",
  "ingetrazo-geom",
+ "ingetrazo-georef",
  "ingetrazo-math",
 ]
 
@@ -1727,6 +1729,7 @@ dependencies = [
  "ingetrazo-formats",
  "ingetrazo-formats-mesh",
  "ingetrazo-geom",
+ "ingetrazo-georef",
  "ingetrazo-golden",
  "ingetrazo-math",
  "ingetrazo-model",
