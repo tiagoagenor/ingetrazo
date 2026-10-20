@@ -66,7 +66,7 @@ def build_tool(name: str) -> None:
     valid = getattr(mod, "is_valid", lambda rec: True)
     for n, (sname, cam, evs) in enumerate(mod.PROGRAMS):
         try:
-            rec = H.run_program(paths[sname], cam, mod.make_tool, evs, extra)
+            rec = H.run_program(paths[sname], cam, mod.make_tool, evs, extra, getattr(mod, "setup", None), n)
         except Exception:  # noqa: BLE001
             dropped += 1
             print(f"{name}: program {n} on {sname} raised, dropped", file=sys.stderr)

@@ -850,9 +850,13 @@ class Session:
         return out
 
 
-def run_program(scene_path: Path, cam: dict, make_tool, events: list, extra_probe=None) -> dict:
+def run_program(scene_path: Path, cam: dict, make_tool, events: list, extra_probe=None, setup=None, n=None) -> dict:
     s = Session(scene_path, cam, make_tool, extra_probe)
     rec = {"cam": cam, "pre": scene_state(s.vp, s.ids), "events": []}
+    if setup is not None:
+        # a module's per-program extras for the Rust side (text metrics, the
+        # initial state of class-level tool state...)
+        rec["setup"] = setup(s, n)
     # a tool's own on_activate during set_active_tool
     calls, flashes, gfx = s.rec.take()
     rec["activate"] = {"calls": calls, "flash": flashes, "gfx": gfx,

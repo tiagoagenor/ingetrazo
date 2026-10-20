@@ -524,6 +524,14 @@ pub struct Stats {
 
 /// Run every case of `tool` through `make()` and compare each event.
 pub fn run_cases(tool_dir: &str, make: &dyn Fn() -> Box<dyn ModifyTool>) -> Stats {
+    run_cases_with(tool_dir, &|_, _| make())
+}
+
+/// `run_cases` for a tool that needs the program's own extras (the `setup`
+/// record of the module: text metrics, the initial class-level state...):
+/// `make` gets the case and the rig, to set up the rig's viewport and build
+/// the tool.
+pub fn run_cases_with(tool_dir: &str, make: &dyn Fn(&Value, &mut Rig) -> Box<dyn ModifyTool>) -> Stats {
     let raw = std::fs::read_to_string(data(tool_dir).join("cases.json")).unwrap();
     let cases = loads(&raw).unwrap();
     let mut stats = Stats::default();
@@ -531,7 +539,7 @@ pub fn run_cases(tool_dir: &str, make: &dyn Fn() -> Box<dyn ModifyTool>) -> Stat
         let n = case.get("n").unwrap().as_i64().unwrap();
         let label0 = format!("program {n} on {}", text(case.get("scene").unwrap()));
         let mut rig = Rig::new(tool_dir, case);
-        let mut tool = make();
+        let mut tool = make(case, &mut rig);
         if let Some(d) = first_difference("pre", &rig.state(), case.get("pre").unwrap()) {
             panic!("{label0}: reopened scene differs: {d}");
         }
