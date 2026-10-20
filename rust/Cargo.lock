@@ -1839,6 +1839,7 @@ dependencies = [
  "ingetrazo-math",
  "ingetrazo-model",
  "ingetrazo-ops",
+ "ingetrazo-snap",
 ]
 
 [[package]]
