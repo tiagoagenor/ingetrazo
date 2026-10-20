@@ -241,6 +241,34 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Empujar/Tirar, en Rust** (`ingetrazo-ops` e `ingetrazo-tools`, M3.4):
+  la operación de `tools/pushpull.py` pasa de una clausura de
+  `SnapshotMutation` a un `Command` propio (`PushPullCommand`, deshacer y
+  rehacer por instantánea de la malla), con su tubería entera —orientar,
+  extrusión ingenua, costura, reconstrucción por plano hasta el punto fijo,
+  agujero pasante, guarda de rechazo y bisección «Push stopped at»—, y entra
+  `core/cap_rebuild.py` (`cap_rebuild.rs`: `rebuild_plane`, `apply_rebuild`,
+  `seam_planes`, `crack_planes`; el reparto de material por paridad usa el
+  `random.Random(54321)` de Python). Un crate nuevo, `ingetrazo-tools`,
+  guarda las máquinas de estado de las herramientas sin UI: entra el rayo
+  del puntero (la cámara `OrbitCamera` con matrices M4), Ctrl y el texto
+  tecleado, y salen la vista previa (barrido, alambre, marcador de
+  inferencia, etiqueta de distancia) y el comando a ejecutar. La
+  herramienta replica clic y arrastre medido desde el clic, soltar, doble
+  clic que repite la última distancia, VCB, copia con Ctrl (toque y
+  mantenido), reescritura en caliente, límite hacia dentro, inferencia
+  (vértice, arista, cara, origen, guías), la vista previa de prisma (la tapa
+  se mueve en el modelo) y la escalonada (la operación se aplica una vez y
+  solo se desliza la tapa). Los fixtures salen de la herramienta de Python
+  de verdad (`scripts/golden/make_pushpull_fixtures.py`): 215 programas
+  (656 pasos) con caja desde un rectángulo, rebaje, agujero pasante,
+  tirar de un lado, empujar a cero, copia, contra un muro, caras con
+  agujeros, curvas, grupos y una instancia de componente, inclinadas,
+  pintura y etiqueta BIM, 72 empujes al azar con rechazos y recortes, y 42
+  programas de puntero (277 eventos) con cámara; Rust deja idéntico, bit a
+  bit, el estado ordenado de la malla tras cada paso, tras deshacer y tras
+  rehacer. Dos órdenes de Python que no se repiten se fijan al de creación:
+  el conjunto de caras de `seam_planes` y el de `_resolve_stage`.
 - **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
   los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
   Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,

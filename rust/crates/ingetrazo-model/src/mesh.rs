@@ -1965,3 +1965,18 @@ impl Mesh {
         }
     }
 }
+
+impl State {
+    /// The vertices, edges and faces the snapshot listed, in order.
+    pub fn vertex_ids(&self) -> &[VertexId] {
+        &self.vertices
+    }
+
+    pub fn edge_ids(&self) -> &[EdgeId] {
+        &self.edges
+    }
+
+    pub fn face_ids(&self) -> &[FaceId] {
+        &self.faces
+    }
+}
