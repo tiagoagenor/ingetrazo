@@ -1659,6 +1659,7 @@ name = "ingetrazo-model"
 version = "0.1.0"
 dependencies = [
  "ingetrazo-formats",
+ "ingetrazo-geom",
  "ingetrazo-math",
 ]
 
