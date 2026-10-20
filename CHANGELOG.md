@@ -241,6 +241,48 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **El renderizador wgpu** (`ingetrazo-render`, M4.1): lo que `views/viewport.py`
+  dibuja con OpenGL, portado a wgpu y sin depender de ninguna interfaz. Un
+  `Renderer` posee sus propios destinos (color multimuestra, profundidad,
+  resolución), sincroniza la escena de forma incremental (cada malla se
+  vuelve a cocer solo si cambió su `serial`; `Mesh` ahora también lo sube
+  al editar atributos y posiciones) y dibuja en cualquier textura, a una
+  imagen sin ventana (`offscreen`) o, por `blit`, dentro del pase de egui.
+  Dibuja caras con la triangulación de `face_geometry` y el sombreado
+  difuso de `_shaded_color`, texturas (UV de `core/texture.py`, mipmaps,
+  recorte duro del follaje), transparencia ordenada de lejos a cerca, la
+  cara trasera por defecto y la pintura por lado, los seis estilos
+  (texturas, sombreado, línea oculta, monocromo, alambre, rayos X), aristas
+  duras, perfiles de las suaves (en el vértice, con el ojo en el marco de
+  cada colocación), aristas ocultas y rayos X con su pasada de profundidad,
+  geometría oculta como rejilla, difuminado del contexto al editar un
+  grupo, plano de sección (recorte, relleno sólido, trama y línea de corte
+  gruesa), ejes, guías, cielo y suelo, selección y hover, figuras que miran
+  al visitante (cuadro y silueta) y grosor de línea para exportar. Los
+  componentes se instancian: un buffer por prototipo (malla y pintura) y una
+  matriz por colocación, de modo que 2 025 prismas de 128 lados son 6
+  llamadas de dibujo. `Camera` es `OrbitCamera` con la misma aritmética de
+  Qt: las matrices de vista, proyección y `mvp` coinciden bit a bit con las
+  de Python (incluida la perspectiva de dos puntos); a wgpu solo se le
+  remapea la profundidad a 0..1. **Paridad**: `scripts/golden/make_render_fixtures.py`
+  dibuja 22 escenas con el visor real de Python (GL, MSAA 4x, ventana
+  transparente fuera de pantalla en Windows) y `tests/parity.rs` las compara
+  con la regla `render_pixels` (±2 por canal, 99,5 % de los píxeles): sin
+  líneas (caras, fondo, relleno de sección) coinciden 99,4–100 % en Vulkan,
+  DX12 y WARP; con aristas, ejes y perfiles 97–99,9 %, porque una línea GL
+  de 1 px y una de wgpu no caen en las mismas muestras (la de NVIDIA se
+  ajusta a la rejilla de esquinas del píxel); los pisos por caso están
+  escritos y razonados en el test. Una diferencia conocida es un defecto de
+  Python: tras una pasada con textura, el modo Sombreado deja el color
+  promedio de esa textura como «color trasero», y el reverso de una cara
+  sin pintar de un componente se ve de ese color y no del tinte. Medido en
+  una RTX 3060 (Vulkan, 4x MSAA, 1280x800, con la espera de la GPU):
+  `examples/arco-yanque.igz` 0,6 ms por cuadro; 1 028 700 triángulos
+  instanciados 2,45 ms (`cargo run -p ingetrazo-render --release --example
+  bench`). La maqueta de interfaz (`ingetrazo-spike-ui`) usa ahora este
+  renderizador por una llamada de pintura de egui. No hay todavía sombras
+  de sol, selección por buffer de identificadores (M4.2), planos de imagen,
+  mosaicos ni terreno.
 - **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
   M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
   Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila

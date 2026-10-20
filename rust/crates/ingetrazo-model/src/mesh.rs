@@ -144,7 +144,9 @@ pub struct Mesh {
     registry: HashMap<Key, VertexId>,
     /// Moved vertices waiting for a key another vertex still holds.
     displaced: HashMap<Key, Vec<VertexId>>,
-    /// Bumped by every mutation (`_mut_serial`).
+    /// Bumped by every mutation (`_mut_serial`), attribute edits through
+    /// `face_mut` / `edge_mut` and position edits included: the renderer
+    /// rebakes a mesh when this moves.
     pub serial: u64,
 }
 
@@ -166,6 +168,7 @@ impl Mesh {
     // ---- journal -------------------------------------------------------------
 
     fn vm(&mut self, v: VertexId) -> &mut Vertex {
+        self.serial += 1; // attribute and position edits dirty the renderer too
         if let Some(t) = self.txn.as_deref_mut() {
             if (v.0 as usize) < t.arena.0 && !t.vold.contains_key(&v) {
                 t.vold.insert(v, self.vs[v.0 as usize].clone());
@@ -175,6 +178,7 @@ impl Mesh {
     }
 
     fn em(&mut self, e: EdgeId) -> &mut Edge {
+        self.serial += 1;
         if let Some(t) = self.txn.as_deref_mut() {
             if (e.0 as usize) < t.arena.1 && !t.eold.contains_key(&e) {
                 t.eold.insert(e, self.es[e.0 as usize].clone());
@@ -184,6 +188,7 @@ impl Mesh {
     }
 
     fn fm(&mut self, f: FaceId) -> &mut Face {
+        self.serial += 1;
         if let Some(t) = self.txn.as_deref_mut() {
             if (f.0 as usize) < t.arena.2 && !t.fold.contains_key(&f) {
                 t.fold.insert(f, self.fs[f.0 as usize].clone());

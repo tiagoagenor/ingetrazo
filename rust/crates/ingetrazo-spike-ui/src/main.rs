@@ -4,14 +4,17 @@
 //! Usage: ingetrazo-spike-ui [--model PATH] [--stress] [--novsync]
 //!                           [--bench SECONDS] [--accesskit-dump]
 
-mod gpu;
-mod model;
+mod scenes;
+mod view;
 
 use eframe::egui::{self, PointerButton};
 use eframe::egui_wgpu::{self, wgpu};
 use egui_dock::{DockArea, DockState, NodeIndex, Style, TabViewer};
 use std::collections::VecDeque;
+use ingetrazo_model::scene::Scene;
+use ingetrazo_render::{Camera, TextureSource};
 use std::time::Instant;
+use view::{View, ViewCallback};
 
 const DEFAULT_MODEL: &str = "examples/arco-yanque.igz";
 
@@ -52,11 +55,19 @@ fn parse_args() -> Args {
     a
 }
 
+/// One outliner row.
+struct GroupRow {
+    name: String,
+    faces: usize,
+    edges: usize,
+    component: bool,
+}
+
 struct State {
     rs: egui_wgpu::RenderState,
-    mesh: model::Mesh,
+    rows: Vec<GroupRow>,
     source: String,
-    cam: gpu::Camera,
+    cam: Camera,
     selected: Option<usize>,
     text: String,
     backend: String,
@@ -74,24 +85,37 @@ struct State {
 }
 
 impl State {
-    fn set_mesh(&mut self, mesh: model::Mesh, source: String) {
-        let (c, r) = mesh.bounds();
-        self.cam = gpu::Camera::fit(c, r);
+    fn set_scene(&mut self, scene: Scene, textures: Box<dyn TextureSource + Send + Sync>, source: String) {
+        self.rows = scene
+            .groups
+            .iter()
+            .map(|g| {
+                let m = scene.mesh(g.mesh);
+                GroupRow { name: g.name.clone(), faces: m.faces.len(), edges: m.edges.len(), component: g.xform.is_some() }
+            })
+            .collect();
         self.selected = None;
+        let t = Instant::now();
         let mut renderer = self.rs.renderer.write();
-        if let Some(g) = renderer.callback_resources.get_mut::<gpu::Gpu>() {
-            g.upload(&self.rs, &mesh);
+        if let Some(v) = renderer.callback_resources.get_mut::<View>() {
+            self.cam = v.set_scene(scene, textures);
+            let s = v.stats;
+            eprintln!(
+                "{source}: synced in {:.0} ms ({} prototypes baked, {} instances)",
+                t.elapsed().as_secs_f32() * 1e3,
+                s.rebuilt,
+                s.instances
+            );
         }
-        self.mesh = mesh;
         self.source = source;
     }
 
     fn load_file(&mut self, path: &str) {
         let t = Instant::now();
-        match model::load_igz(path) {
-            Ok(m) => {
+        match scenes::load_igz(path) {
+            Ok((scene, tex)) => {
                 eprintln!("loaded {path} in {:.0} ms", t.elapsed().as_secs_f32() * 1e3);
-                self.set_mesh(m, path.to_string());
+                self.set_scene(scene, tex, path.to_string());
             }
             Err(e) => eprintln!("load failed: {e}"),
         }
@@ -99,13 +123,14 @@ impl State {
 
     fn load_stress(&mut self) {
         let t = Instant::now();
-        let m = model::stress_scene(45, 128);
-        eprintln!(
-            "stress scene built in {:.0} ms ({} tris)",
-            t.elapsed().as_secs_f32() * 1e3,
-            m.tri_count()
-        );
-        self.set_mesh(m, "synthetic stress scene".into());
+        let scene = scenes::stress_scene(45, 128);
+        eprintln!("stress scene built in {:.0} ms", t.elapsed().as_secs_f32() * 1e3);
+        self.set_scene(scene, Box::new(ingetrazo_render::NoTextures), "synthetic stress scene".into());
+    }
+
+    /// The renderer's numbers of the last frame.
+    fn stats(&self) -> ingetrazo_render::FrameStats {
+        self.rs.renderer.read().callback_resources.get::<View>().map(|v| v.stats).unwrap_or_default()
     }
 }
 
@@ -164,33 +189,28 @@ fn viewport_ui(s: &mut State, ui: &mut egui::Ui) {
     let (shift, scroll) = ui.input(|i| (i.modifiers.shift, i.smooth_scroll_delta.y));
     let d = resp.drag_delta();
     if resp.dragged_by(PointerButton::Middle) || (resp.dragged_by(PointerButton::Primary) && shift) {
-        let (r, u) = s.cam.right_up();
-        let k = s.cam.dist * 2.0 * (45.0f32.to_radians() * 0.5).tan() / rect.height().max(1.0);
-        for i in 0..3 {
-            s.cam.target[i] += (-r[i] * d.x + u[i] * d.y) * k;
-        }
+        // Pan: slide the target in the view plane (`OrbitCamera.pan`).
+        let f = s.cam.forward();
+        let r = f.cross(s.cam.up_vector()).normalized(s.cam.hypot);
+        let u = r.cross(f).normalized(s.cam.hypot);
+        let k = (s.cam.distance * 2.0 * (s.cam.fov_deg.to_radians() * 0.5).tan() / rect.height().max(1.0) as f64) as f32;
+        s.cam.target = s.cam.target.sub(r.mul(d.x * k)).add(u.mul(d.y * k));
     } else if resp.dragged_by(PointerButton::Primary) {
-        s.cam.yaw -= d.x * 0.008;
-        s.cam.pitch = (s.cam.pitch + d.y * 0.008).clamp(-1.55, 1.55);
+        // Orbit: the drag grabs the model (`OrbitCamera.orbit`).
+        let scale = std::f64::consts::PI / rect.height().max(1.0) as f64;
+        s.cam.yaw -= d.x as f64 * scale;
+        s.cam.pitch = (s.cam.pitch + d.y as f64 * scale).clamp(-89f64.to_radians(), 89f64.to_radians());
     }
     if resp.hovered() && scroll != 0.0 {
-        s.cam.dist = (s.cam.dist * (-scroll * 0.002).exp()).max(1e-3);
+        s.cam.distance = (s.cam.distance * (-scroll as f64 * 0.002).exp()).clamp(ingetrazo_render::camera::MIN_DISTANCE, ingetrazo_render::camera::MAX_DISTANCE);
     }
 
-    let aspect = rect.width().max(1.0) / rect.height().max(1.0);
-    let eye = s.cam.eye();
-    let mut l = [
-        eye[0] - s.cam.target[0],
-        eye[1] - s.cam.target[1],
-        eye[2] - s.cam.target[2] + s.cam.dist * 0.5,
-    ];
-    let len = (l[0] * l[0] + l[1] * l[1] + l[2] * l[2]).sqrt().max(1e-9);
-    l = [l[0] / len, l[1] / len, l[2] / len];
+    let ppp = ui.ctx().pixels_per_point();
     ui.painter().add(egui_wgpu::Callback::new_paint_callback(
         rect,
-        gpu::ViewportCallback {
-            view_proj: s.cam.view_proj(aspect),
-            light: l,
+        ViewCallback {
+            camera: s.cam,
+            px: ((rect.width() * ppp).round() as u32, (rect.height() * ppp).round() as u32),
         },
     ));
     ui.painter().text(
@@ -203,14 +223,14 @@ fn viewport_ui(s: &mut State, ui: &mut egui::Ui) {
 }
 
 fn outliner_ui(s: &mut State, ui: &mut egui::Ui) {
-    ui.label(format!("{} groups", s.mesh.groups.len()));
+    ui.label(format!("{} groups", s.rows.len()));
     ui.separator();
     let row_h = ui.text_style_height(&egui::TextStyle::Body);
-    let n = s.mesh.groups.len();
+    let n = s.rows.len();
     egui::ScrollArea::vertical().auto_shrink([false, false]).show_rows(ui, row_h, n, |ui, range| {
         for i in range {
-            let g = &s.mesh.groups[i];
-            let label = format!("{}  ({} tris)", g.name, g.tris);
+            let g = &s.rows[i];
+            let label = format!("{}  ({} faces)", g.name, g.faces);
             if ui.selectable_label(s.selected == Some(i), label).clicked() {
                 s.selected = Some(i);
             }
@@ -219,7 +239,7 @@ fn outliner_ui(s: &mut State, ui: &mut egui::Ui) {
 }
 
 fn info_ui(s: &mut State, ui: &mut egui::Ui) {
-    match s.selected.and_then(|i| s.mesh.groups.get(i)) {
+    match s.selected.and_then(|i| s.rows.get(i)) {
         Some(g) => {
             ui.heading(&g.name);
             egui::Grid::new("info").show(ui, |ui| {
@@ -228,14 +248,9 @@ fn info_ui(s: &mut State, ui: &mut egui::Ui) {
                     ui.label(v);
                     ui.end_row();
                 };
-                row("Triangles", g.tris.to_string());
+                row("Faces", g.faces.to_string());
                 row("Edges", g.edges.to_string());
-                row(
-                    "Prototype",
-                    g.proto.map_or("none".into(), |p| format!("#{p}")),
-                );
-                row("Min", format!("{:.2}, {:.2}, {:.2}", g.min[0], g.min[1], g.min[2]));
-                row("Max", format!("{:.2}, {:.2}, {:.2}", g.max[0], g.max[1], g.max[2]));
+                row("Component instance", g.component.to_string());
             });
         }
         None => {
@@ -270,10 +285,10 @@ impl App {
         let mean = d.iter().sum::<f32>() / d.len().max(1) as f32;
         let cpu = self.s.bench_cpu.iter().sum::<f32>() / self.s.bench_cpu.len().max(1) as f32;
         println!(
-            "BENCH source={:?} tris={} edges={} backend={:?} frames={} frame_ms mean={:.2} p50={:.2} p95={:.2} max={:.2} fps_mean={:.1} ui_cpu_ms_mean={:.3}",
+            "BENCH source={:?} tris={} draws={} backend={:?} frames={} frame_ms mean={:.2} p50={:.2} p95={:.2} max={:.2} fps_mean={:.1} ui_cpu_ms_mean={:.3}",
             self.s.source,
-            self.s.mesh.tri_count(),
-            self.s.mesh.edge_count(),
+            self.s.stats().triangles,
+            self.s.stats().draw_calls,
             self.s.backend,
             d.len(),
             mean,
@@ -356,10 +371,11 @@ impl eframe::App for App {
                 ui.label(format!("UI cpu {:.2} ms", self.s.cpu_ms));
                 ui.separator();
                 ui.label(format!(
-                    "{} triangles, {} edges, {} groups",
-                    self.s.mesh.tri_count(),
-                    self.s.mesh.edge_count(),
-                    self.s.mesh.groups.len()
+                    "{} triangles, {} draw calls, {} instances, {} groups",
+                    self.s.stats().triangles,
+                    self.s.stats().draw_calls,
+                    self.s.stats().instances,
+                    self.s.rows.len()
                 ));
                 ui.separator();
                 ui.label(&self.s.backend);
@@ -415,7 +431,7 @@ fn main() -> eframe::Result {
             .with_inner_size([1280.0, 800.0])
             .with_title("IngeTrazo UI spike (M0.8)"),
         renderer: eframe::Renderer::Wgpu,
-        depth_buffer: 32, // Depth32Float, matches gpu::DEPTH_FORMAT
+        // No depth buffer of egui's: the renderer owns its own targets.
         wgpu_options,
         ..Default::default()
     };
@@ -429,7 +445,7 @@ fn main() -> eframe::Result {
             let info = rs.adapter.get_info();
             let backend = format!("{:?}: {} ({:?})", info.backend, info.name, info.device_type);
             eprintln!("wgpu adapter: {backend}");
-            rs.renderer.write().callback_resources.insert(gpu::Gpu::new(&rs));
+            rs.renderer.write().callback_resources.insert(View::new(&rs));
 
             let mut dock = DockState::new(vec![Tab::Viewport]);
             let [main, _left] = dock
@@ -441,9 +457,9 @@ fn main() -> eframe::Result {
 
             let mut s = State {
                 rs,
-                mesh: model::Mesh::default(),
+                rows: Vec::new(),
                 source: String::new(),
-                cam: gpu::Camera::fit([0.0; 3], 1.0),
+                cam: Camera::default(),
                 selected: None,
                 text: String::new(),
                 backend,

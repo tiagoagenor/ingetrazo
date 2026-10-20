@@ -17,8 +17,19 @@ wgpu + `egui_dock` + a custom `egui_wgpu` paint callback. Not production code.
 - Status bar: fps / frame ms, UI cpu ms, triangles, edges, groups, wgpu backend.
 - Entity info has a text field for IME / typing tests.
 
-Simplifications: **fan triangulation** (wrong for concave faces) and **face
-holes are ignored**; no materials/colours; no picking; the dock layout is not
+**Update (M4.1):** the viewport no longer has the spike's throwaway renderer
+(fan triangulation, no colours, 1 px lines on egui's depth buffer). It draws
+through `ingetrazo-render`: the renderer owns its multisampled targets, renders
+into its own texture in the paint callback's `prepare`, and `paint` blits that
+texture into egui's pass (`ingetrazo_render::blit`). The renderer does not
+depend on egui. The measurements below are the ones of the original spike;
+with the real renderer (4x MSAA, textures, instancing, profiles) the same
+scenes take 1.40 ms/frame (arco-yanque.igz, 26,880 triangles, 77 draw calls)
+and 2.15 ms/frame (the stress scene, now 2,025 placements of one 128-gon
+prism: 6 draw calls) on the same machine, no vsync, `--bench 4`. The stress
+scene's old numbers (1.27 ms) were for static vertex buffers with no MSAA.
+
+Remaining simplifications: no picking (M4.2); the dock layout is not
 persisted (egui_dock has a `serde` feature; not wired in the spike).
 
 ## Run
