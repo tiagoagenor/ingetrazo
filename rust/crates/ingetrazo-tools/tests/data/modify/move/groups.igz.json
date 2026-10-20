@@ -373,7 +373,7 @@
      }
     ],
     "name": "classic",
-    "uid": "4253b50d18684c41"
+    "uid": "0000000000000001"
    },
    {
     "proto": 0,
@@ -397,7 +397,7 @@
     ],
     "component": true,
     "name": "inst_a",
-    "uid": "f2b9cffc463e4fa9"
+    "uid": "0000000000000002"
    },
    {
     "proto": 0,
@@ -421,7 +421,7 @@
     ],
     "component": true,
     "name": "inst_b",
-    "uid": "5c9cfbff158646df"
+    "uid": "0000000000000003"
    }
   ],
   "protos": [
