@@ -8,7 +8,7 @@
 //! libraries; `Hypot` names the formula, and `core._native` checks at
 //! start-up that it is the one this Qt uses.
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Hypot {
     /// libstdc++ (`std::__hypot3`): scale by the largest component.
     LibStdCxx,
@@ -18,6 +18,20 @@ pub enum Hypot {
     /// libc++ (`std::__hypot`): the plain sum of squares, scaled by a power
     /// of two only near float32 over/underflow.
     LibCxx,
+}
+
+impl Default for Hypot {
+    /// The formula the platform's Qt uses: MSVC's on Windows, libc++'s on
+    /// macOS, libstdc++'s elsewhere (what `core._native` probes at start-up).
+    fn default() -> Self {
+        if cfg!(target_env = "msvc") {
+            Hypot::Msvc
+        } else if cfg!(target_os = "macos") {
+            Hypot::LibCxx
+        } else {
+            Hypot::LibStdCxx
+        }
+    }
 }
 
 /// A `QVector3D`: three float32. Methods are Qt's operators and member

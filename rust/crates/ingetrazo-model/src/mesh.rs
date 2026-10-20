@@ -130,6 +130,9 @@ impl Entry {
 
 #[derive(Clone, Debug, Default)]
 pub struct Mesh {
+    /// This Qt's `std::hypot` formula, for the lengths the mesh computes
+    /// itself (the nested-hole test of `add_face`).
+    pub hypot: ingetrazo_math::Hypot,
     txn: Option<Box<Txn>>,
     vs: Vec<Vertex>,
     es: Vec<Edge>,
@@ -417,11 +420,19 @@ impl Mesh {
     /// `add_face`: weld the loops, create missing boundary edges and
     /// register the face on each (radial).
     ///
-    /// Python drops holes nested in a bigger hole of the same face
-    /// (`topology._maximal_holes`) when there are two or more; that lands
-    /// with the topology port (M3) — until then `holes` must not nest.
+    /// With two or more holes, those nested in a bigger hole of the same
+    /// face are dropped first (`topology._maximal_holes`), as in Python.
     pub fn add_face(&mut self, outer: &[V3], holes: &[Vec<V3>]) -> FaceId {
         self.touch();
+        // Nested holes are dropped at this choke point, as Python does
+        // (`topology._maximal_holes`) when there are two or more.
+        let kept: Vec<Vec<V3>>;
+        let holes = if holes.len() > 1 {
+            kept = crate::topology::maximal_holes(holes, self.hypot).into_iter().map(|i| holes[i].clone()).collect();
+            &kept[..]
+        } else {
+            holes
+        };
         let lp: Vec<VertexId> = outer.iter().map(|&p| self.vertex(p)).collect();
         let hs: Vec<Vec<VertexId>> = holes.iter().map(|h| h.iter().map(|&p| self.vertex(p)).collect()).collect();
         let f = FaceId(self.fs.len() as u32);

@@ -347,8 +347,12 @@ fn load_mesh_bulk(mesh: &mut Mesh, payload: &Value) -> Result<(), LoadError> {
             if !outer.iter().all(finite3) || !holes.iter().all(|h| h.iter().all(finite3)) {
                 continue;
             }
-            // Python runs _maximal_holes here for 2+ holes (topology, M3):
-            // until it lands, holes are kept as written.
+            // _load_mesh_json drops nested holes first, as add_face does.
+            let holes: Vec<Vec<V3>> = if holes.len() > 1 {
+                crate::topology::maximal_holes(&holes, mesh.hypot).into_iter().map(|i| holes[i].clone()).collect()
+            } else {
+                holes
+            };
             ring_counts.push(1 + holes.len());
             ring_sizes.push(outer.len());
             flat.extend(outer);

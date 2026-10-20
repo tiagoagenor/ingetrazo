@@ -313,3 +313,13 @@ fn journal_undo_redo_walks_the_recorded_states() {
     assert!(fails.is_empty(), "{} sequences fail ({checked} undo/redo steps checked):\n{}", fails.len(), fails.iter().take(8).cloned().collect::<Vec<_>>().join("\n"));
     assert!(checked > 5000, "only {checked} steps");
 }
+
+/// `add_face` drops a hole nested in a bigger hole of the same face (the
+/// `_maximal_holes` choke point), and keeps holes side by side.
+#[test]
+fn add_face_drops_nested_holes() {
+    let sq = |x: f32, y: f32, s: f32| vec![V3(x, y, 0.0), V3(x + s, y, 0.0), V3(x + s, y + s, 0.0), V3(x, y + s, 0.0)];
+    let mut m = Mesh::new();
+    let f = m.add_face(&sq(0.0, 0.0, 10.0), &[sq(1.0, 1.0, 6.0), sq(2.0, 2.0, 2.0), sq(8.0, 8.0, 1.0)]);
+    assert_eq!(m.face(f).holes.len(), 2, "the hole inside the first hole is dropped");
+}
