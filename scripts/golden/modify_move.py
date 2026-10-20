@@ -159,7 +159,7 @@ prog("cube", CAM, select(("face", 0), ("face", 1)), hover((1.5, 1.5, 3)), click(
 # the ridge: an edge lifted straight up, in the three cameras
 prog("ridge", CAM, hover((2, 2, 2)), click((2, 2, 2)), hover((2, 2, 2.5)), hover((2, 2, 3)), click((2, 2, 3)), undo())
 prog("ridge", CAM, hover((2, 2, 2)), click((2, 2, 2)), hover((2, 2, 3)), typed("1.5"))
-prog("ridge", CAM_LOW, hover((2, 2, 2)), click((2, 2, 2)), hover((2, 2, 2.6)), hover((2, 2, 3.2)), click((2, 2, 3.2)))
+prog("ridge", CAM_LOW, hover((2, 0, 1)), click((2, 0, 1)), hover((2, 0, 1.6)), hover((2, 0, 2.4)), click((2, 0, 2.4)))
 prog("ridge", CAM_ORTHO, hover((2, 2, 2)), click((2, 2, 2)), hover((2, 2, 3)), click((2, 2, 3)))
 prog("ridge", CAM, select(("edge", 11)), hover((2, 2, 2)), click((2, 2, 2)), hover((2, 3, 2)), hover((2, 3.5, 2.5)),
      click((2, 3.5, 2.5)))
@@ -194,8 +194,8 @@ prog("groups", CAM, hover(G_A), click(G_A), tap("ctrl"), hover((8, 0.5, 0.5)), c
 prog("groups", CAM, hover(G_A), click(G_A), hover((8, 0.5, 0.5)), esc(), hover((8, 0.5, 0.5)))
 prog("groups", CAM, select(("group", [1])), tap("ctrl"), hover(C0), click(C0), hover((3, 3, 0)), click((3, 3, 0)))
 prog("groups", CAM, hover(G_B), click(G_B), tap("ctrl"), hover((9, 4, 0.5)), typed("2"), undo())
-prog("container", CAM, hover((6.5, 1.5, 0.5)), click((6.5, 1.5, 0.5)), hover((6.5, 3.5, 0.5)), click((6.5, 3.5, 0.5)),
-     undo(), redo())
+prog("container", CAM, hover((7.17, 1.86, 1.0)), click((7.17, 1.86, 1.0)), hover((7.17, 3.5, 1.0)),
+     click((7.17, 3.5, 1.0)), undo(), redo())
 prog("container", CAM, hover((1.5, 1.5, 0)), click((1.5, 1.5, 0)), hover((2.5, 1.5, 0)), click((2.5, 1.5, 0)))
 prog("container", CAM, select(("group", [0])), hover((1.5, 1.5, 0)), click((1.5, 1.5, 0)), tap("ctrl"),
      hover((3, 1.5, 0)), click((3, 1.5, 0)), typed("2x"))
@@ -220,6 +220,7 @@ def random_program(seed: int, scene: str, cam: dict, n: int = 22):
         "ridge": [(2, 2, 2), (2, 1, 2), (2, 3, 2), (0, 0, 0), (4, 4, 2), (2, 0, 1), (2, 2, 3.5)],
         "groups": [(-4, 1, 0.75), (6.5, 0.5, 0.5), (9, 2, 0.5), (2, 2, 0), (4, 4, 0), (-2, 2, 0.75), (8, 3, 0.5)],
         "tight": [(0, 2, 0), (2, 5, 0), (4, 2, 0), (1, 1, 0), (3, 1, 0), (6, 0, 0), (5, 1, 0), (2, 2, 0), (1, 4, 0)],
+        "container": [(7.17, 1.86, 1.0), (2, 2, 0), (1.5, 1.5, 0), (8, 3, 0), (7.17, 3.5, 1.0)],
     }[scene]
     refs = {
         "plate": [("face", 0), ("face", 1), ("edge", 8)],
@@ -227,6 +228,7 @@ def random_program(seed: int, scene: str, cam: dict, n: int = 22):
         "ridge": [("edge", 11), ("face", 5), ("face", 6)],
         "groups": [("group", [0]), ("group", [1]), ("face", 0)],
         "tight": [("face", 0), ("face", 1), ("edge", 0)],
+        "container": [("group", [0]), ("face", 0)],
     }[scene]
     evs = []
     for _ in range(n):
@@ -257,8 +259,8 @@ def random_program(seed: int, scene: str, cam: dict, n: int = 22):
     return (scene, cam, evs)
 
 
-for _seed in range(100, 140):
-    _sc = ("plate", "cube", "ridge", "groups", "tight")[_seed % 5]
+for _seed in range(100, 150):
+    _sc = ("plate", "cube", "ridge", "groups", "tight", "container")[_seed % 6]
     PROGRAMS.append(random_program(_seed, _sc, (CAM, CAM_ORTHO, CAM_LOW)[_seed % 3]))
 
 
@@ -281,6 +283,8 @@ def extra_probe(tool, vp, ids):
         "grip_rot": tool._grip_rot is not None,
         "moving_faces": len(tool.moving_face_ids()),
         "ctrl_toggled": bool(tool._ctrl_toggled),
+        # a held group that an undo took out of the scene: not representable
+        "stale": any(id(g) not in ids.gpath for g in tool._groups),
     }
 
 

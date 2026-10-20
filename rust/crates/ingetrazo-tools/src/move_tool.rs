@@ -764,6 +764,8 @@ impl ModifyTool for MoveTool {
             ("grip_rot".into(), Value::Bool(false)),
             ("moving_faces".into(), i(self.moving_faces(env))),
             ("ctrl_toggled".into(), Value::Bool(self.ctrl_toggled)),
+            // The generator cuts a program where a held group left the scene.
+            ("stale".into(), Value::Bool(false)),
         ]));
         p
     }

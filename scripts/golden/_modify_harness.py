@@ -865,7 +865,10 @@ def run_program(scene_path: Path, cam: dict, make_tool, events: list, extra_prob
         # Python keeps an entity in the selection after a command made it
         # vanish without saying so (a split edge...); the Rust selection drops
         # what no longer exists. A program is cut where the two would differ.
-        if any(r[0] == "unknown" for r in out["state"]["sel"]):
+        # The same for a tool holding an object that is gone (its probe `x`
+        # says `stale`): Rust names groups by path and could not follow it.
+        if (any(r[0] == "unknown" for r in out["state"]["sel"])
+                or (out["probe"].get("x") or {}).get("stale")):
             rec["truncated"] = True
             break
         rec["events"].append(out)
