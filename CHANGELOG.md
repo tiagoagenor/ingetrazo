@@ -241,6 +241,19 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
+  todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
+  base de cámara, el recorte por plano de sección, la tapa del corte (el
+  poché como oclusor), la tubería de `hlr_drawing` (regla de silueta, tramos
+  visibles y ocultos, sondas de perfiles), la unión de colineales, las líneas
+  ocultas bajo visibles, la perspectiva (recorte a la pirámide de visión y
+  mapa proyectivo a vista paralela) y `hlr_view`. Los casos de NumPy que
+  pasan por OpenBLAS (`@`, `dot`, `einsum`, `linalg.solve`) se reproducen con
+  su orden y sus FMA; `solve3` pasa a ser la LU «left-looking» de
+  `dgetf2`, que difiere de la eliminación por filas en el último bit.
+  `scripts/golden/make_hlr_fixtures.py` corre el Python real sobre 348
+  casos y la prueba Rust compara bit a bit. `collect_geometry` y
+  `collect_circles` leen la escena y siguen en el modelo.
 - **Espacio de trabajo Rust** (`rust/Cargo.toml`, M0 de
   `docs/rust-rewrite-plan.md`): los núcleos salen del módulo PyO3 a dos
   crates sin Python, `ingetrazo-math` (aritmética float32 de QVector3D y los

@@ -13,7 +13,7 @@
 use ingetrazo_math::pyfloat::{py_max2 as py_max, py_min2 as py_min};
 use rayon::prelude::*;
 
-const T_EPS: f64 = 1e-6; // core.hlr._T_EPS
+pub(crate) const T_EPS: f64 = 1e-6; // core.hlr._T_EPS
 
 /// One thread's working buffers: a visit stamp per triangle (so the grid's
 /// candidates come out once each) and two index lists.
@@ -303,7 +303,7 @@ impl Occluders {
 
 /// core.hlr._interval_from_linear: c0 + c1·t ≥ 0 over [0,1].
 #[inline]
-fn interval_from_linear(c0: f64, c1: f64) -> Option<(f64, f64)> {
+pub(crate) fn interval_from_linear(c0: f64, c1: f64) -> Option<(f64, f64)> {
     if c1.abs() < 1e-15 {
         return if c0 >= 0.0 { Some((0.0, 1.0)) } else { None };
     }
@@ -315,49 +315,84 @@ fn interval_from_linear(c0: f64, c1: f64) -> Option<(f64, f64)> {
     }
 }
 
-/// Solve the 3×3 system m·x = z by LU with partial pivoting, as LAPACK's
-/// dgesv (numpy.linalg.solve) does. None where it reports a singular matrix.
-fn solve3(m: [[f64; 3]; 3], z: [f64; 3]) -> Option<[f64; 3]> {
+/// Solve the 3×3 system m·x = z as numpy's `linalg.solve` does (LAPACK
+/// `dgesv` in OpenBLAS): `getf2`, the LEFT-looking LU (each column first
+/// takes the earlier ones in, then pivots, then scales by the reciprocal of
+/// the pivot), and `getrs` with `trsv` (a column sweep for L, then for U,
+/// dividing by the diagonal). Every product and difference is separate: the
+/// bits of 6 000 random systems match NumPy's here. The third column of
+/// every matrix this crate hands in is ones, which is why the one place
+/// where a fused multiply-add could differ (`a0·1 + a1·x1`) is exact.
+/// None where it reports a singular matrix.
+pub(crate) fn solve3(m: [[f64; 3]; 3], z: [f64; 3]) -> Option<[f64; 3]> {
     let mut a = m;
-    let mut piv = [0usize, 1, 2];
+    let mut ipiv = [0usize; 3];
     for j in 0..3 {
-        // pivot: first row with the largest |a[i][j]| (idamax)
-        let mut p = j;
-        let mut best = a[j][j].abs();
-        for i in (j + 1)..3 {
-            if a[i][j].abs() > best {
-                best = a[i][j].abs();
-                p = i;
+        let mut b = [a[0][j], a[1][j], a[2][j]];
+        for i in 0..j {
+            if ipiv[i] != i {
+                b.swap(i, ipiv[i]);
             }
         }
-        if a[p][j] == 0.0 {
+        for i in 1..j {
+            let mut dot = 0.0f64;
+            for k in 0..i {
+                dot += a[i][k] * b[k];
+            }
+            b[i] -= dot;
+        }
+        for r in j..3 {
+            match j {
+                0 => {}
+                1 => b[r] -= a[r][0] * b[0],
+                _ => b[r] -= a[r][0] * b[0] + a[r][1] * b[1],
+            }
+        }
+        // pivot: first row with the largest |b[r]| (idamax)
+        let mut jp = j;
+        let mut best = b[j].abs();
+        for r in (j + 1)..3 {
+            if b[r].abs() > best {
+                best = b[r].abs();
+                jp = r;
+            }
+        }
+        ipiv[j] = jp;
+        let t = b[jp];
+        if t == 0.0 {
             return None;
         }
-        if p != j {
-            a.swap(p, j);
-            piv.swap(p, j);
+        for r in 0..3 {
+            a[r][j] = b[r];
         }
-        let r = 1.0 / a[j][j];
-        for i in (j + 1)..3 {
-            a[i][j] *= r;
-        }
-        for i in (j + 1)..3 {
-            for k in (j + 1)..3 {
-                a[i][k] -= a[i][j] * a[j][k];
+        if jp != j {
+            for c in 0..=j {
+                let tmp = a[j][c];
+                a[j][c] = a[jp][c];
+                a[jp][c] = tmp;
             }
         }
+        let rc = 1.0 / t;
+        for r in (j + 1)..3 {
+            a[r][j] *= rc;
+        }
     }
-    let mut y = [z[piv[0]], z[piv[1]], z[piv[2]]];
-    for i in 1..3 {
-        for k in 0..i {
-            y[i] -= a[i][k] * y[k];
+    let mut y = z;
+    for i in 0..3 {
+        if ipiv[i] != i {
+            y.swap(i, ipiv[i]);
+        }
+    }
+    for i in 0..3 {
+        for r in (i + 1)..3 {
+            y[r] -= y[i] * a[r][i];
         }
     }
     for i in (0..3).rev() {
-        for k in (i + 1)..3 {
-            y[i] -= a[i][k] * y[k];
-        }
         y[i] /= a[i][i];
+        for r in 0..i {
+            y[r] -= y[i] * a[r][i];
+        }
     }
     Some(y)
 }
