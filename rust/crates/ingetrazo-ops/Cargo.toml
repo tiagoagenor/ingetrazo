@@ -1,0 +1,15 @@
+[package]
+name = "ingetrazo-ops"
+description = "IngeTrazo's operations: the Commands that edit a scene, and their undo"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-math.workspace = true
+ingetrazo-formats.workspace = true
+ingetrazo-model = { path = "../ingetrazo-model" }
+
+[lints]
+workspace = true
