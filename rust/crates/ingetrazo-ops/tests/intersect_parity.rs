@@ -25,7 +25,8 @@ use ingetrazo_golden::sig::{canon_dumps, sha, Files};
 use ingetrazo_math::Hypot;
 use ingetrazo_model::mesh::Mesh;
 use ingetrazo_model::scene::Scene;
-use ingetrazo_ops::intersect::{intersect_faces, segments_for, Entity, Mode};
+use ingetrazo_ops::command::{Cx, History};
+use ingetrazo_ops::intersect::{apply_intersect,intersect_faces, segments_for, Entity, Mode};
 
 const H: Hypot = Hypot::Msvc;
 
@@ -154,7 +155,7 @@ fn want_segs(v: &Value) -> Vec<[[String; 3]; 2]> {
 #[test]
 fn intersect_segments_match_python() {
     let cases = loads(&std::fs::read_to_string(data().join("cases.json")).unwrap()).unwrap();
-    let (mut checked, mut with_segs, mut filtered, mut total) = (0, 0, 0, 0);
+    let (mut applied, mut checked, mut with_segs, mut filtered, mut total) = (0, 0, 0, 0, 0);
     for (n, case) in arr(&cases).iter().enumerate() {
         let name = text(case.get("scene").unwrap());
         let mode_s = text(case.get("mode").unwrap());
@@ -203,10 +204,25 @@ fn intersect_segments_match_python() {
             panic!("{label}: raw segments differ at {i}: {} found, Python {}\n rust   {:?}\n python {:?}", got_raw.len(), want_raw.len(), got_raw.get(i), want_raw.get(i));
         }
         assert_eq!(seg_bits(&kept), want_kept, "{label}: kept segments");
+        if let Some(post) = case.get("post") {
+            let mut scene = scene;
+            let mut cx = Cx { hypot: H, mesh: active, ..Cx::default() };
+            let mut hist = History::new();
+            apply_intersect(&mut scene, &mut hist, &mut cx, &kept);
+            if let Some(d) = first_difference("post", &mesh_state(scene.mesh(active)), post) {
+                panic!("{label}: after apply differs: {d}");
+            }
+            assert!(hist.undo(&mut scene, &mut cx), "{label}: nothing to undo");
+            if let Some(d) = first_difference("undone", &mesh_state(scene.mesh(active)), case.get("undone").unwrap()) {
+                panic!("{label}: after undo differs: {d}");
+            }
+            applied += 1;
+        }
         checked += 1;
         total += raw.len();
         with_segs += (!raw.is_empty()) as usize;
         filtered += raw.len() - kept.len();
     }
+    assert!(applied >= 50, "{applied} applied");
     assert!(checked >= 60 && with_segs >= 50 && total > 1400 && filtered >= 7, "{checked} cases, {with_segs} with crossings, {total} segments, {filtered} filtered");
 }

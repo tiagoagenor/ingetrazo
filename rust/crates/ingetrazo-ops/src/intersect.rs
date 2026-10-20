@@ -231,3 +231,14 @@ pub fn segments_for(scene: &Scene, active: MeshId, edit: Option<&[usize]>, selec
 pub fn intersect_faces(scene: &Scene, active: MeshId, edit: Option<&[usize]>, selection: &[Entity], mode: Mode, h: Hypot) -> Vec<Seg> {
     segments_for(scene, active, edit, selection, mode, h).into_iter().filter(|&(a, b)| length(b.sub(a), h) as f64 >= WELD_LENGTH).collect()
 }
+
+/// What `_on_intersect_faces` does with the segments it keeps:
+/// `history.execute(build_add_edges(scene, segs, detect_faces=True))` against
+/// the mesh being edited (`cx.mesh`). Nothing happens when none is kept.
+pub fn apply_intersect(scene: &mut Scene, history: &mut crate::command::History, cx: &mut crate::command::Cx, kept: &[Seg]) {
+    if kept.is_empty() {
+        return;
+    }
+    let cmd = crate::edits::build_add_edges(scene, cx, kept, true, Vec::new(), None, false);
+    history.execute(scene, cx, cmd);
+}
