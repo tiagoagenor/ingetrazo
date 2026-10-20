@@ -241,6 +241,30 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **El planificador de edición y los comandos de dibujo, en Rust**
+  (`rust/crates/ingetrazo-ops`, M3.1): `core/edits.py` entero
+  (`plan_edge_commands`, `build_add_edge(s)`, la reconstrucción plana con
+  curvas y la de plano, la etiqueta BIM al dibujar, `divide_edges`,
+  `join_edges` y `join_preview`) y los comandos de `core/history.py` que
+  usa: `AddEdge`, `DeleteEdges`, `EraseSelection`, `TagCurve`, `AddFace`,
+  `DeleteFace`, `FlipFaces`, `SnapshotCompound`, `CompoundCommand`,
+  `MeshSnapshotCommand`, `AutoTagDrawnFaces`, `RebuildPlanarFaces`,
+  `RebuildPlaneFaces`, pintar caras, ocultar aristas y deshacer-podando.
+  Cada comando deshace lo mismo que el de Python (no el diario de la
+  malla), porque las firmas incluyen lo que un deshacer deja atrás. Con
+  ellos entran `core/arrangement.py` (el arreglo plano), `core/orient.py`
+  (`orient_outward` con `random.Random(12345)`: `PyRandom` es el MT19937 de
+  Python) y `PySet`, el `set` de CPython para pares de enteros hasta la
+  ranura, porque el orden en que el arreglo emite aristas y caras sale de
+  recorrer esos conjuntos. `ingetrazo-golden` ejecuta los pasos de los
+  guiones (`replay.rs`: selectores, `$cmd` decodificados al ejecutar,
+  `$ran`, contadores, firma L2 tras cada paso, deshacer y rehacer): 366 de
+  los 621 guiones se reproducen enteros, ninguno se desvía y los demás se
+  detienen en el primer comando que falta; `golden/replay_ok.txt` fija los
+  verdes. `scripts/golden/make_edits_fixtures.py` corre el Python real
+  sobre 120 sesiones de dibujo (líneas, rectángulos, cajas, círculos,
+  borrados, divisiones) y la prueba compara el plan y la firma de cada uno
+  de sus 1233 pasos.
 - **Líneas ocultas, el resto en Rust** (`ingetrazo-geom::hlr_draw`, M1.8):
   todo lo geométrico de `core/hlr.py` que faltaba sobre arrays planos: la
   base de cámara, el recorte por plano de sección, la tapa del corte (el

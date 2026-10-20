@@ -333,15 +333,9 @@ impl Command for EraseSelectionCommand {
             }
         }
         // A merge can leave the big enclosing face overlapping its subdivisions.
-        let mut unsupported = false;
         topology::heal_overlapping_faces(m, 0.5, None, footprint.as_deref(), h, &mut |mm: &mut Mesh| {
-            if !orient::orient_outward(mm, h) {
-                unsupported = true;
-            }
+            orient::orient_outward(mm, h);
         });
-        if unsupported {
-            return Err(CommandError::Unsupported("orient_outward".into()));
-        }
         m.prune_orphan_vertices();
         Ok(())
     }
@@ -751,16 +745,10 @@ impl Command for SnapshotCompound {
             for cmd in self.inner.iter_mut() {
                 cmd.apply(scene, env)?;
             }
-            let mut unsupported = false;
             let m = env.mesh_mut(scene);
             topology::heal_overlapping_faces(m, 0.5, None, footprint.as_deref(), h, &mut |mm: &mut Mesh| {
-                if !orient::orient_outward(mm, h) {
-                    unsupported = true;
-                }
+                orient::orient_outward(mm, h);
             });
-            if unsupported {
-                return Err(CommandError::Unsupported("orient_outward".into()));
-            }
             let mut counter = env.curve;
             m.resplit_curves(&mut counter);
             env.curve = counter;
@@ -964,6 +952,9 @@ impl SetFaceAttrCommand {
     pub fn opacity(faces: Vec<(MeshId, FaceId)>, opacity: Option<Value>) -> Self {
         Self::make("SetFaceOpacityCommand", "opacity", faces, opacity)
     }
+    pub fn texture(faces: Vec<(MeshId, FaceId)>, texture: Option<Value>) -> Self {
+        Self::make("SetFaceTextureCommand", "texture", faces, texture)
+    }
     pub fn material_tag(faces: Vec<(MeshId, FaceId)>, name: Option<Value>, material: Option<(String, Value)>) -> Self {
         let mut c = Self::make("SetFaceMaterialTagCommand", "mat", faces, name);
         c.material = material;
@@ -1004,6 +995,45 @@ impl Command for SetFaceAttrCommand {
     }
     fn name(&self) -> &'static str {
         self.class
+    }
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
+
+/// `SetFaceBackCommand`: paint the BACK side of faces, one value per face
+/// (`attrs["back"]`; `None` clears it). The old value may be `true` (a
+/// two-sided face) and comes back as such.
+pub struct SetFaceBackCommand {
+    pub faces: Vec<(MeshId, FaceId)>,
+    pub backs: Vec<Option<Value>>,
+    old: Option<Vec<Option<Value>>>,
+}
+
+impl SetFaceBackCommand {
+    pub fn new(faces: Vec<(MeshId, FaceId)>, backs: Vec<Option<Value>>) -> Self {
+        SetFaceBackCommand { faces, backs, old: None }
+    }
+}
+
+impl Command for SetFaceBackCommand {
+    fn apply(&mut self, scene: &mut Scene, _env: &mut Env) -> CmdResult {
+        if self.old.is_none() {
+            self.old = Some(self.faces.iter().map(|&(m, f)| attr(&scene.meshes[m.0 as usize], f, "back")).collect());
+        }
+        for (&(m, f), b) in self.faces.iter().zip(self.backs.iter()) {
+            attr_set(&mut scene.meshes[m.0 as usize], f, "back", b.clone());
+        }
+        Ok(())
+    }
+    fn undo(&mut self, scene: &mut Scene, _env: &mut Env) {
+        let old = self.old.clone().unwrap_or_default();
+        for (&(m, f), o) in self.faces.iter().zip(old) {
+            attr_set(&mut scene.meshes[m.0 as usize], f, "back", o);
+        }
+    }
+    fn name(&self) -> &'static str {
+        "SetFaceBackCommand"
     }
     fn as_any(&self) -> &dyn std::any::Any {
         self

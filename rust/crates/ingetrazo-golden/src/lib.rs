@@ -4,11 +4,12 @@
 //! Python harvested and replay them as far as the Rust engine goes,
 //! reporting the first point where it parts from Python.
 //!
-//! Today that is the start: the start document is read and its L2
-//! signature compared, part by part, with the one Python recorded; the
-//! steps then stop at the first op the Rust engine does not run yet. Each
-//! milestone that lands an op (M2 the model, M3 the operations) moves the
-//! first divergence further on.
+//! The start document is read and its L2 signature compared, part by part,
+//! with the one Python recorded; the steps then run through `replay.rs` (the
+//! ops `ingetrazo-ops` has: drawing, erasing, the plane rebuilds) with the
+//! signature compared after each one, and stop at the first op the Rust
+//! engine does not run yet. Each milestone that lands an op moves that
+//! point further on.
 
 pub mod model_sig;
 pub mod replay;

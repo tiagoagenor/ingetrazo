@@ -341,7 +341,7 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
             let n = point(args.get("normal").ok_or_else(|| DecodeError::Bad("normal".into()))?)?;
             Box::new(RebuildPlaneFacesCommand::from_args(o, n, Hypot::Msvc))
         }
-        "set_face_color" | "set_face_opacity" | "set_face_material_tag" => {
+        "set_face_color" | "set_face_opacity" | "set_face_material_tag" | "set_face_texture" | "set_face_back" => {
             let mut faces = Vec::new();
             if let Some(fs) = args.get("faces") {
                 for f in arr(fs)? {
@@ -354,15 +354,32 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
             let nul = |k: &str| arg(args, k).map(plain);
             match name {
                 "set_face_color" => Box::new(SetFaceAttrCommand::color(faces, nul("color"))),
+                "set_face_texture" => Box::new(SetFaceAttrCommand::texture(faces, nul("texture"))),
+                "set_face_back" => {
+                    let n = faces.len();
+                    let backs: Vec<Option<Value>> = match arg(args, "backs").map(plain) {
+                        None => vec![None; n],
+                        Some(Value::Array(items)) => items.into_iter().map(|b| if matches!(b, Value::Object(_)) { Some(b) } else { None }).collect(),
+                        Some(b @ Value::Object(_)) => vec![Some(b); n],
+                        Some(_) => vec![None; n],
+                    };
+                    Box::new(SetFaceBackCommand::new(faces, backs))
+                }
                 "set_face_opacity" => Box::new(SetFaceAttrCommand::opacity(faces, nul("opacity").map(|v| match v {
                     Value::Int(s) => Value::Float(s.parse().unwrap_or(0.0)),
                     o => o,
                 }))),
                 _ => {
-                    if arg(args, "material").is_some() {
-                        return Err(DecodeError::Unsupported("set_face_material_tag(material)".into()));
-                    }
-                    Box::new(SetFaceAttrCommand::material_tag(faces, nul("name"), None))
+                    // `material` is a Material passed by value (`$obj`): its to_dict().
+                    let name = nul("name");
+                    let material = match (arg(args, "material"), &name) {
+                        (Some(m), Some(Value::Str(n))) => match m.get("data") {
+                            Some(d) => Some((n.clone(), plain(d))),
+                            None => return bad("a material without data"),
+                        },
+                        _ => None,
+                    };
+                    Box::new(SetFaceAttrCommand::material_tag(faces, name, material))
                 }
             }
         }

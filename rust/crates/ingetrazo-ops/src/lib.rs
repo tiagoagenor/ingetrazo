@@ -10,6 +10,7 @@ pub mod describe;
 pub mod draw;
 pub mod edits;
 pub mod orient;
+pub mod pyrandom;
 pub mod pyset;
 pub mod rebuild;
 

@@ -49,6 +49,16 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(cases, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(len(cases), "cases", sys.version.split()[0])
+    # random.Random(seed): the draws core.orient makes (seed 12345), and a few
+    # other seeds (0, a word boundary, a two-word one).
+    draws = []
+    for seed in (12345, 0, 1, 2**32 - 1, 2**32, 2**40 + 5, 987654321):
+        r = random.Random(seed)
+        draws.append({"seed": seed,
+                      "random": [r.random().hex() for _ in range(700)],
+                      "uniform": [r.uniform(-3e-4, 3e-4).hex() for _ in range(14)]})
+    (OUT.parent / "pyrandom.json").write_text(json.dumps(draws, separators=(",", ":")), encoding="utf-8",
+                                              newline="\n")
 
 
 if __name__ == "__main__":

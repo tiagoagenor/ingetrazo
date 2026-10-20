@@ -225,9 +225,28 @@ def run_scenario(seed: int, n_steps: int) -> dict:
     planes = ["xy"] if rnd.random() < 0.55 else ["xy", "xz", "yz"]
     steps = []
     sigs = [mesh_hash(scene)]
+    def emit_rect(corners) -> bool:
+        """The Rectangle tool: its own face, the plane rebuild."""
+        if (corners[0] - corners[2]).length() < 1e-3 or any(
+                (corners[i] - corners[(i + 1) % 4]).length() < 1e-3 for i in range(4)):
+            return False
+        step = {"kind": "rect", "ctr": cm._CURVE_COUNTER}
+        segs = [(corners[i], corners[(i + 1) % 4]) for i in range(4)]
+        extra = [ch.AddFaceCommand(list(corners))]
+        step.update(segs=[[bits(a), bits(b)] for a, b in segs], detect=False, plane_rebuild=True,
+                    extra=[["AddFace", [bits(p) for p in corners]]])
+        cmd = edits.build_add_edges(scene, segs, detect_faces=False, extra=extra, plane_rebuild=True)
+        step["plan"] = enc(cmd)
+        hist.execute(cmd)
+        if hist.last_error is not None or hist.last_rejected is not None:
+            raise Abort(hist.last_error or hist.last_rejected)
+        step["sig"] = mesh_hash(scene)
+        steps.append(step)
+        return True
+
     for _ in range(n_steps):
         kind = rnd.choice(["line", "line", "rect", "rect", "poly", "circle", "erase", "erase_face",
-                           "flip", "undo"])
+                           "flip", "undo", "box", "divide", "join"])
         plane = rnd.choice(planes)
         z = rnd.choice([0.0, 0.0, 0.0, 1.0])
         ctr = cm._CURVE_COUNTER
@@ -256,15 +275,50 @@ def run_scenario(seed: int, n_steps: int) -> dict:
             cmd = edits.build_add_edges(scene, segs, detect_faces=detect)
         elif kind == "rect":
             corners = rect_corners(rnd, plane, z)
-            if (corners[0] - corners[2]).length() < 1e-3 or any(
-                    (corners[i] - corners[(i + 1) % 4]).length() < 1e-3 for i in range(4)):
+            if not emit_rect(corners):
                 continue
-            segs = [(corners[i], corners[(i + 1) % 4]) for i in range(4)]
-            extra = [ch.AddFaceCommand(list(corners))]
-            prebuilt = [["AddFace", [bits(p) for p in corners]]]
-            step.update(segs=[[bits(a), bits(b)] for a, b in segs], detect=False, plane_rebuild=True,
-                        extra=prebuilt)
-            cmd = edits.build_add_edges(scene, segs, detect_faces=False, extra=extra, plane_rebuild=True)
+            continue
+        elif kind == "box":
+            x0, y0, z0 = rnd.choice(GRID[:3]), rnd.choice(GRID[:3]), rnd.choice(GRID[:2])
+            dx, dy, dz = rnd.choice([1.0, 2.0, 3.0]), rnd.choice([1.0, 2.0, 3.0]), rnd.choice([1.0, 2.0])
+            x1, y1, z1 = x0 + dx, y0 + dy, z0 + dz
+            faces = [
+                [V(x0, y0, z0), V(x1, y0, z0), V(x1, y1, z0), V(x0, y1, z0)],
+                [V(x0, y0, z1), V(x1, y0, z1), V(x1, y1, z1), V(x0, y1, z1)],
+                [V(x0, y0, z0), V(x1, y0, z0), V(x1, y0, z1), V(x0, y0, z1)],
+                [V(x0, y1, z0), V(x1, y1, z0), V(x1, y1, z1), V(x0, y1, z1)],
+                [V(x0, y0, z0), V(x0, y1, z0), V(x0, y1, z1), V(x0, y0, z1)],
+                [V(x1, y0, z0), V(x1, y1, z0), V(x1, y1, z1), V(x1, y0, z1)],
+            ]
+            rnd.shuffle(faces)
+            for corners in faces:
+                if rnd.random() < 0.4:
+                    corners = corners[::-1]
+                emit_rect(corners)
+            continue
+        elif kind == "divide":
+            if not m.edges:
+                continue
+            e = rnd.choice(list(m.edges))
+            n = rnd.randint(2, 5)
+            step.update(edge=[bits(e.a), bits(e.b)], n=n)
+            step["ret"] = edits.divide_edges(m, [e], n)
+            hist.undo_stack.clear()
+            hist.redo_stack.clear()
+            step["sig"] = mesh_hash(scene)
+            steps.append(step)
+            continue
+        elif kind == "join":
+            if not m.edges:
+                continue
+            es = rnd.sample(list(m.edges), max(1, len(m.edges) // rnd.choice([1, 2, 3])))
+            step.update(edges=[[bits(e.a), bits(e.b)] for e in es])
+            step["ret"] = len(edits.join_edges(m, es))
+            hist.undo_stack.clear()
+            hist.redo_stack.clear()
+            step["sig"] = mesh_hash(scene)
+            steps.append(step)
+            continue
         elif kind == "circle":
             sides = rnd.choice([6, 8, 12])
             pts = circle_pts(rnd, plane, z, sides)

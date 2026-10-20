@@ -18,7 +18,7 @@ use ingetrazo_math::{Hypot, V3};
 use ingetrazo_model::scene::Scene;
 use ingetrazo_ops::describe::describe;
 use ingetrazo_ops::draw::{AddFaceCommand, EraseSelectionCommand, FlipFacesCommand, TagCurveCommand};
-use ingetrazo_ops::edits::{build_add_edge, build_add_edges};
+use ingetrazo_ops::edits::{build_add_edge, build_add_edges, divide_edges, join_edges};
 use ingetrazo_ops::rebuild::RebuildPlanarFacesCommand;
 use ingetrazo_ops::{Command, CommandError, Env, History};
 
@@ -96,6 +96,38 @@ fn rust_planner_builds_the_commands_python_built() {
             if kind == "undo" || kind == "redo" {
                 let ok = if kind == "undo" { hist.undo(&mut scene, &mut env) } else { hist.redo(&mut scene, &mut env) };
                 assert!(ok);
+            } else if kind == "divide" || kind == "join" {
+                // Direct mesh edits (Divide, Join Segments): nothing on the undo stack.
+                env.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
+                let h = env.hypot;
+                let find = |m: &ingetrazo_model::mesh::Mesh, a: V3, b: V3| {
+                    let bits = |p: V3| [p.0.to_bits(), p.1.to_bits(), p.2.to_bits()];
+                    m.edges.iter().copied().find(|&e| {
+                        let ed = m.edge(e);
+                        let (p, q) = (bits(m.position(ed.v0)), bits(m.position(ed.v1)));
+                        (p == bits(a) && q == bits(b)) || (p == bits(b) && q == bits(a))
+                    })
+                };
+                let want_ret = step.get("ret").and_then(Value::as_i64).unwrap() as usize;
+                let m = &mut scene.meshes[0];
+                let ret = if kind == "divide" {
+                    let ends = arr(step.get("edge").unwrap());
+                    let e = find(m, pt(&ends[0]), pt(&ends[1])).expect("edge to divide");
+                    let n = step.get("n").and_then(Value::as_i64).unwrap();
+                    let mut counter = env.curve;
+                    let cuts = divide_edges(m, &[e], n, &mut counter, h);
+                    env.curve = counter;
+                    cuts
+                } else {
+                    let es: Vec<_> = segs(step.get("edges").unwrap()).into_iter().map(|(a, b)| find(m, a, b).expect("edge to join")).collect();
+                    join_edges(m, &es, None, h).len()
+                };
+                hist.clear();
+                if ret != want_ret {
+                    bad.push(format!("scenario {n} step {i} ({kind}): returned {ret}, Python {want_ret}"));
+                    complete = false;
+                    break;
+                }
             } else {
                 env.curve = step.get("ctr").and_then(Value::as_i64).unwrap();
                 let eye = match step.get("eye") {
