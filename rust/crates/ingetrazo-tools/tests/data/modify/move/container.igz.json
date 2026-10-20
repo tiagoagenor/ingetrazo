@@ -101,7 +101,7 @@
     ],
     "component": true,
     "name": "container",
-    "uid": "148d262479a44d46",
+    "uid": "7bbdcee6d78642ac",
     "children": [
      {
       "proto": 1,
@@ -125,7 +125,7 @@
       ],
       "component": true,
       "name": "kid1",
-      "uid": "bc731409b09b4333"
+      "uid": "f9835780511f4435"
      },
      {
       "proto": 1,
@@ -149,7 +149,7 @@
       ],
       "component": true,
       "name": "kid2",
-      "uid": "e4fa3429a2b04b5f"
+      "uid": "36096ab33a2f412a"
      }
     ]
    }
