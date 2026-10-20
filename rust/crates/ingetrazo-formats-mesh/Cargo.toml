@@ -16,6 +16,7 @@ png = "0.18"
 [dev-dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
+sha2 = "0.10"
 
 # A stand-in for dwg2dxf that the bridge tests run (tests/dwg.rs); never shipped.
 [[bin]]

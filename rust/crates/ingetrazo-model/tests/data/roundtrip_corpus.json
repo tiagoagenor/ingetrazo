@@ -1,0 +1,3269 @@
+{
+ "app_version": "0.5.8",
+ "files": {
+  "examples/arco-yanque.igz": {
+   "document_sha256": "604c498aa0b64ec0efc52e5820ac4fa52109b2f6d19ba28ce6048e77d14ddb7e",
+   "document_size": 379669,
+   "entries": [
+    [
+     "document.json",
+     379669,
+     "604c498aa0b64ec0efc52e5820ac4fa52109b2f6d19ba28ce6048e77d14ddb7e"
+    ],
+    [
+     "geom/0.bin",
+     23224,
+     "469fe10170bcab56625390f2afc076c78f77d860292d6e883574afec9f5ed149"
+    ],
+    [
+     "geom/1.bin",
+     23224,
+     "93325b29bbfb7f87942a84041540d99ed07e28d9360778fa356694a0cc9f092f"
+    ],
+    [
+     "geom/10.bin",
+     24480,
+     "e66aea8938bad42c3eadd46c139f58353a560aea686e39e0296d4463482e89ef"
+    ],
+    [
+     "geom/11.bin",
+     17280,
+     "8bf10e339b1078c9b73428edd4bd160777205ccaa5c2aa294d06815437ac9279"
+    ],
+    [
+     "geom/12.bin",
+     41840,
+     "5e649167ee444a70742285ac215c0ec57b95d8c1b1dc5664acccd3f7cd75f8c0"
+    ],
+    [
+     "geom/13.bin",
+     41840,
+     "5e361ca94b8ba21d0d4900ec6919689912c55c90afcec9c0f13332a2e7c06e80"
+    ],
+    [
+     "geom/14.bin",
+     41840,
+     "effaa16c3337b95811aafa6254e0821f35768dac2fd7f16c7036bbfb27cb3a4f"
+    ],
+    [
+     "geom/15.bin",
+     41840,
+     "8aac1031b66282e32abddec79e432a1d1bc40b1a9ea02a6d63b2f3be7c6b8f70"
+    ],
+    [
+     "geom/2.bin",
+     14160,
+     "e1a314dafb60cfb6d94e3acee4677e272c2cc700421edb5a1648efd0ab78b708"
+    ],
+    [
+     "geom/3.bin",
+     74256,
+     "02adf56df4ac54d1cf502c35f9c2bdbd51d54b720f57865cf064d3ff3c8cab09"
+    ],
+    [
+     "geom/4.bin",
+     14160,
+     "d7507da4d496da99e6ad1b5df5862a83ca064aaffbe87a2ad83c5ae4b54a7bfc"
+    ],
+    [
+     "geom/5.bin",
+     74256,
+     "d6e43f0206a7410f72ad0f3b0c4fae5f394d3b0d84c144c61c48c17d00cf3307"
+    ],
+    [
+     "geom/6.bin",
+     65520,
+     "a7277083b217530f7618ce792de1a9b7a13d869eb232c61233930c21f2f0f23a"
+    ],
+    [
+     "geom/7.bin",
+     104472,
+     "c8d509168fc43141572c77ff10c26dfa2e03595934b24f65be499ab8514148e5"
+    ],
+    [
+     "geom/8.bin",
+     14112,
+     "7b65574413fce1c03c42ec3e57deed0fa1c24ad60accddea2c234111443a6c7d"
+    ],
+    [
+     "geom/9.bin",
+     65520,
+     "65e1b3fec6c44a7cccc8b1c0aebe1f3422ea7c99a7d057b139aa6f6ec86352de"
+    ],
+    [
+     "textures/094b75c1cd4cbc76-sillar.jpg",
+     31170,
+     "14b6b8656b1a17e008e29e438151979b732e833db4c0d0b6aecb481f4ad3e07c"
+    ],
+    [
+     "textures/20ab5ab3c79d5dd5-campesiono.png",
+     524659,
+     "650cd70288d3b9589e4f2263eda39c40d70e57b0a4d336ccfa55a3f317e0d912"
+    ],
+    [
+     "textures/36b67d5c80406c8a-Metal_10_1K_alb.png",
+     1972638,
+     "7804c330296c61775f525beb8cab70bf0a352d8ac22f2fe9ac1cf3ca44cb1a0d"
+    ],
+    [
+     "textures/928cd77719565dde-sumari.png",
+     389645,
+     "f8c694e25a390d31d9711e22bfca7a265b09def6dc35cf9caa6501ad8918241b"
+    ],
+    [
+     "textures/c22505bbcba47c47-toro.png",
+     166846,
+     "d6ca066a60b596f13cb617a2f7ee3267ee1f9a0789c9052b9a0ca6ca7c82df7d"
+    ],
+    [
+     "textures/ea4d38dd30369ad3-concrete_smooth.png",
+     19989,
+     "0a8b529dc85842c9b67f55ce1500403e8d27074ae0bef60c270da4516c09ce2e"
+    ]
+   ],
+   "random_uids": true,
+   "size": 3337695
+  },
+  "examples/banca-pergola-yanque.igz": {
+   "document_sha256": "1acfdded2c47966d5784bab347dbb4a9eb52564db9c6d2239daa3d6983458101",
+   "document_size": 397806,
+   "entries": [
+    [
+     "document.json",
+     397806,
+     "1acfdded2c47966d5784bab347dbb4a9eb52564db9c6d2239daa3d6983458101"
+    ],
+    [
+     "textures/3c7fd1a55c44e5a4-beech.jpg",
+     41699,
+     "c6df15b4d2d346f31982d62307662e7cffed3ef391e6296eeb6386913b45d7f4"
+    ],
+    [
+     "textures/928cd77719565dde-sumari.png",
+     389645,
+     "f8c694e25a390d31d9711e22bfca7a265b09def6dc35cf9caa6501ad8918241b"
+    ],
+    [
+     "textures/ae1ad9f06706c193-metal_dark.png",
+     1331,
+     "d0b86ccb4da60c1473129b0e17a3935137c153697567cd73c74dacebe68c2794"
+    ],
+    [
+     "textures/ea4d38dd30369ad3-concrete_smooth.png",
+     19989,
+     "0a8b529dc85842c9b67f55ce1500403e8d27074ae0bef60c270da4516c09ce2e"
+    ]
+   ],
+   "random_uids": true,
+   "size": 470721
+  },
+  "examples/luminaria-solar-yanque.igz": {
+   "document_sha256": "c79f48cd43c33050baefb867ade5578ec1d8d0e8f8486394b7ca076e8fd030ba",
+   "document_size": 3568385,
+   "entries": [
+    [
+     "document.json",
+     3568385,
+     "c79f48cd43c33050baefb867ade5578ec1d8d0e8f8486394b7ca076e8fd030ba"
+    ],
+    [
+     "textures/928cd77719565dde-sumari.png",
+     389645,
+     "f8c694e25a390d31d9711e22bfca7a265b09def6dc35cf9caa6501ad8918241b"
+    ]
+   ],
+   "random_uids": true,
+   "size": 505536
+  },
+  "examples/pileta-fuente-yanque.igz": {
+   "document_sha256": "5bdf8a5351f44e5f1c6632da635eb1883676a2d7c6ea8cb343420706a68d8154",
+   "document_size": 113539,
+   "entries": [
+    [
+     "document.json",
+     113539,
+     "5bdf8a5351f44e5f1c6632da635eb1883676a2d7c6ea8cb343420706a68d8154"
+    ],
+    [
+     "geom/0.bin",
+     444048,
+     "c3d49d8dad774dd05fa1b2d8b7105e9835c376d57eda234748280be78032ac65"
+    ],
+    [
+     "geom/1.bin",
+     30648,
+     "9f4e8aa2b7a4d2a85f31c5bb199b543e8e6e44ceec837743cb5efac38164ea29"
+    ],
+    [
+     "geom/10.bin",
+     25080,
+     "acf694490ec3c5e31a5bee8262ed531248e28246e21c8e823aac09075a3a7bc3"
+    ],
+    [
+     "geom/11.bin",
+     22312,
+     "8b6f0b462fe276fb64f1a57510d337900e2a15d85648a4478e8a7321c174c8f9"
+    ],
+    [
+     "geom/12.bin",
+     16728,
+     "a764e00e60048dc8bc4ab34c94b03bc05bc5f352124c793c26e44f71f4cc993d"
+    ],
+    [
+     "geom/13.bin",
+     13016,
+     "fd93901ec44302831a751314fb76392c83c88c29ea5fcebfc266dfb2af717272"
+    ],
+    [
+     "geom/14.bin",
+     13016,
+     "c5a59f5cd807c23f130945acfd47a02984096971bca3ab9ebff6b82b9cf90773"
+    ],
+    [
+     "geom/15.bin",
+     16728,
+     "a764e00e60048dc8bc4ab34c94b03bc05bc5f352124c793c26e44f71f4cc993d"
+    ],
+    [
+     "geom/16.bin",
+     22312,
+     "8b6f0b462fe276fb64f1a57510d337900e2a15d85648a4478e8a7321c174c8f9"
+    ],
+    [
+     "geom/17.bin",
+     25080,
+     "acf694490ec3c5e31a5bee8262ed531248e28246e21c8e823aac09075a3a7bc3"
+    ],
+    [
+     "geom/18.bin",
+     75192,
+     "e04517c31d1fe3576566a0a5388c29a0411b401b7ae179e046b3b27e72e3d2c3"
+    ],
+    [
+     "geom/19.bin",
+     25544,
+     "011f9964b0f4517d158e1492d027f6cc5b267b684f4998d1959f5c3753409435"
+    ],
+    [
+     "geom/2.bin",
+     136440,
+     "9c05a592af7fd2bbcbbf705e6a9910cd6b1eb2e02348d4b5ffe190dd625993a0"
+    ],
+    [
+     "geom/20.bin",
+     20904,
+     "500998b8e545827873b4260b9b304871ad06327ddc2ec593505308a94a319e5f"
+    ],
+    [
+     "geom/21.bin",
+     16968,
+     "47ed2f6fee272ae7117115295381221e08fbcf5a578d7d01380c3703a9160b5a"
+    ],
+    [
+     "geom/22.bin",
+     100248,
+     "a2809ca613716b6b39a253f2bab8b57362b29a457c496d8b63e4750f7013c3ba"
+    ],
+    [
+     "geom/23.bin",
+     16728,
+     "0f4b8aceb8895d4a4c8ae49fdf33bd50efefb57febcb949029108540da1041aa"
+    ],
+    [
+     "geom/24.bin",
+     35752,
+     "9a2299f0778b1d6422a4524562bdd0e3027608f9dce6063e074d7757c0ed8d51"
+    ],
+    [
+     "geom/25.bin",
+     13016,
+     "fd93901ec44302831a751314fb76392c83c88c29ea5fcebfc266dfb2af717272"
+    ],
+    [
+     "geom/26.bin",
+     13016,
+     "c5a59f5cd807c23f130945acfd47a02984096971bca3ab9ebff6b82b9cf90773"
+    ],
+    [
+     "geom/27.bin",
+     107672,
+     "19ac9d1d13eaa6e1335547245f53dd5002189543f0142024645ceb940012c6cd"
+    ],
+    [
+     "geom/28.bin",
+     107672,
+     "19ac9d1d13eaa6e1335547245f53dd5002189543f0142024645ceb940012c6cd"
+    ],
+    [
+     "geom/3.bin",
+     16968,
+     "47ed2f6fee272ae7117115295381221e08fbcf5a578d7d01380c3703a9160b5a"
+    ],
+    [
+     "geom/4.bin",
+     35752,
+     "9a2299f0778b1d6422a4524562bdd0e3027608f9dce6063e074d7757c0ed8d51"
+    ],
+    [
+     "geom/5.bin",
+     20904,
+     "500998b8e545827873b4260b9b304871ad06327ddc2ec593505308a94a319e5f"
+    ],
+    [
+     "geom/6.bin",
+     25544,
+     "011f9964b0f4517d158e1492d027f6cc5b267b684f4998d1959f5c3753409435"
+    ],
+    [
+     "geom/7.bin",
+     16728,
+     "0f4b8aceb8895d4a4c8ae49fdf33bd50efefb57febcb949029108540da1041aa"
+    ],
+    [
+     "geom/8.bin",
+     100248,
+     "a2809ca613716b6b39a253f2bab8b57362b29a457c496d8b63e4750f7013c3ba"
+    ],
+    [
+     "geom/9.bin",
+     75192,
+     "e04517c31d1fe3576566a0a5388c29a0411b401b7ae179e046b3b27e72e3d2c3"
+    ],
+    [
+     "textures/b307e18de460e81b-water_calm.png",
+     161217,
+     "b08819a8aa62863432096354b8c7755d99bf8e712d4bee167cf59d5ee5d5108f"
+    ],
+    [
+     "textures/fd36615edd9d43dc-sumari.png",
+     388518,
+     "b8b82821942d2ccb0b860f9ee3feb29de4eb15bfa8949d10844b11a39dc789e6"
+    ]
+   ],
+   "random_uids": true,
+   "size": 987894
+  },
+  "golden/starts/002579ebdaa33efc.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"guides\": [\n      {\n        \"point\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"direction\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      }\n    ]\n  }\n}",
+   "document_sha256": "2de43d52d28ee33c27664cac0a4881e9f1880af0e31e24274c556d6b4bf7e932",
+   "document_size": 515,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2de43d52d28ee33c27664cac0a4881e9f1880af0e31e24274c556d6b4bf7e932",
+   "size": 515
+  },
+  "golden/starts/01116cb2e81bfeda.igz": {
+   "document_sha256": "c029b257b82791a71f6a77c0e6c99c40cbf74b59887fff6402419e8d731f7251",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c029b257b82791a71f6a77c0e6c99c40cbf74b59887fff6402419e8d731f7251",
+   "size": 1740
+  },
+  "golden/starts/018eb524ec6d0736.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "b3b06842e020ea3535fc27f64eb045e88e0d828fc1892e360034ea4c7106ecf6",
+   "document_size": 641,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b3b06842e020ea3535fc27f64eb045e88e0d828fc1892e360034ea4c7106ecf6",
+   "size": 641
+  },
+  "golden/starts/01e3e36bd55bfcec.igz": {
+   "document_sha256": "f297e3e9ebb89012a3c9b1f9a4139462b986d735fd0badb936525ae1e9c536a1",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f297e3e9ebb89012a3c9b1f9a4139462b986d735fd0badb936525ae1e9c536a1",
+   "size": 1740
+  },
+  "golden/starts/0244d89a53bb465f.igz": {
+   "document_sha256": "66952a60f770c6afe70a2ecae768c883124aff180ba3d7217e158e440db50fde",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "66952a60f770c6afe70a2ecae768c883124aff180ba3d7217e158e440db50fde",
+   "size": 9831
+  },
+  "golden/starts/02533c518618689c.igz": {
+   "document_sha256": "997880e35a41c00fd67c525369a49a0c939476bf9bc4ab79c0499f28a74446e2",
+   "document_size": 8691,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "997880e35a41c00fd67c525369a49a0c939476bf9bc4ab79c0499f28a74446e2",
+   "size": 8691
+  },
+  "golden/starts/028dd6d357724ea8.igz": {
+   "document_sha256": "b5ad8c4da74305de386c792b97e8a0f62947e42c534eec191b66e3b0e139986c",
+   "document_size": 3514,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b5ad8c4da74305de386c792b97e8a0f62947e42c534eec191b66e3b0e139986c",
+   "size": 3514
+  },
+  "golden/starts/04106248e6a17d2d.igz": {
+   "document_sha256": "7579fb05a51068577e3437fcf7812b64a0a92d5851ff5596912facab586cb584",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "7579fb05a51068577e3437fcf7812b64a0a92d5851ff5596912facab586cb584",
+   "size": 1740
+  },
+  "golden/starts/051ca06af47a05ef.igz": {
+   "document_sha256": "98b2a016244be7a84a3c21020f5726e834172bd54a1408a6ec5b5aa37f2ca8ee",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "98b2a016244be7a84a3c21020f5726e834172bd54a1408a6ec5b5aa37f2ca8ee",
+   "size": 8118
+  },
+  "golden/starts/055099fcc86723c4.igz": {
+   "document_sha256": "974c61ec39c7aa09d960fa1d693bfbff8292ad1d8d58ae7c02d71bc7ce85d137",
+   "document_size": 7863,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "974c61ec39c7aa09d960fa1d693bfbff8292ad1d8d58ae7c02d71bc7ce85d137",
+   "size": 7863
+  },
+  "golden/starts/081e64841296475a.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"section_planes\": [\n      {\n        \"point\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"normal\": [\n          0.0,\n          0.0,\n          1.0\n        ],\n        \"uid\": 15\n      }\n    ]\n  }\n}",
+   "document_sha256": "0b0aaa695fe3a32c0a1a472fbb625c82a0a163234433f22290c2e86565aef38c",
+   "document_size": 539,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0b0aaa695fe3a32c0a1a472fbb625c82a0a163234433f22290c2e86565aef38c",
+   "size": 539
+  },
+  "golden/starts/08428e4623ed0c55.igz": {
+   "document_sha256": "150299314005fa87fdb88279cdd072dfa189b07237fe5f3bf9367dacf2a38ba2",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "150299314005fa87fdb88279cdd072dfa189b07237fe5f3bf9367dacf2a38ba2"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "74becc24754d8839919ef326660b4d163ea07b75bb4d7c2091d58a984f6ff9f3",
+   "size": 373014
+  },
+  "golden/starts/09924e8170c102d9.igz": {
+   "document_sha256": "b97b6761c0e7b00a8392ca1eca04ac297d5a1af17c09841de7fd52c3bf803b3b",
+   "document_size": 1677,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b97b6761c0e7b00a8392ca1eca04ac297d5a1af17c09841de7fd52c3bf803b3b",
+   "size": 1677
+  },
+  "golden/starts/0a1f1afd9013d8ed.igz": {
+   "document_sha256": "c2e523c4b6389cd1c65160c5531adb3be2f5fbda6d0592df7694e5bd8659d87f",
+   "document_size": 3844,
+   "entries": [
+    [
+     "document.json",
+     3844,
+     "c2e523c4b6389cd1c65160c5531adb3be2f5fbda6d0592df7694e5bd8659d87f"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "9fc7e9627d32938a9ba5fcaf09f18923cebc7e964ffc497b94fcaeb1cdfb832c",
+   "size": 373168
+  },
+  "golden/starts/0b5e1bf1948a3c5c.igz": {
+   "document_sha256": "de0c0716577576deb6ec775feab000ceecca3f9747683f657a84a6bcd7f34c8e",
+   "document_size": 2094,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "de0c0716577576deb6ec775feab000ceecca3f9747683f657a84a6bcd7f34c8e",
+   "size": 2094
+  },
+  "golden/starts/0b74653a8e3c1068.igz": {
+   "document_sha256": "e9a12d17697cf75cac21cbb5790093ca3ef057d60ee69c112eb1773826dcaba1",
+   "document_size": 2487,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e9a12d17697cf75cac21cbb5790093ca3ef057d60ee69c112eb1773826dcaba1",
+   "size": 2487
+  },
+  "golden/starts/0e0fbaa6f39977d7.igz": {
+   "document_sha256": "27506db9dc3354142400f74f6c952c7a23c81071d313a9100c7c2a74b34c88c8",
+   "document_size": 3454,
+   "entries": [
+    [
+     "document.json",
+     3454,
+     "27506db9dc3354142400f74f6c952c7a23c81071d313a9100c7c2a74b34c88c8"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "5f28cb912fff2caf63372cfc8dc2a9b67021f4da759ed539027e52ca01cd8c77",
+   "size": 373092
+  },
+  "golden/starts/0e190696b9e183cf.igz": {
+   "document_sha256": "6e19087d1a5c060e3a9a3a83df1b3aad0e4ea043e01495a018db9d1b1c386003",
+   "document_size": 2881,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6e19087d1a5c060e3a9a3a83df1b3aad0e4ea043e01495a018db9d1b1c386003",
+   "size": 2881
+  },
+  "golden/starts/0f6d6a026f65971f.igz": {
+   "document_sha256": "1484f539d3bf9c3bfd3e03e8e3e20cb403cec6236a7d4f9a3b377ba47b201526",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1484f539d3bf9c3bfd3e03e8e3e20cb403cec6236a7d4f9a3b377ba47b201526",
+   "size": 8118
+  },
+  "golden/starts/12b822fb81fc397f.igz": {
+   "document_sha256": "8ed31648c27107341b5667ac4f111efe72d87c79c79d0663b02e2545fffab4de",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "8ed31648c27107341b5667ac4f111efe72d87c79c79d0663b02e2545fffab4de"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "2e97e7c40cb87793d84ae44a153245c625fd08b9c5c71e8324e430b47bd65ca1",
+   "size": 373015
+  },
+  "golden/starts/1436e11029f10e58.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimensions\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"offset\": [\n          0.0,\n          1.0,\n          0.0\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "07727b268017629d78e4ac09f7aef31ccef0c6ab7155b56c7a7cc8cfee76beeb",
+   "document_size": 582,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "07727b268017629d78e4ac09f7aef31ccef0c6ab7155b56c7a7cc8cfee76beeb",
+   "size": 582
+  },
+  "golden/starts/171daf7b8552ba98.igz": {
+   "document_sha256": "5ae70acd84147d4d0cba0798d308bbe26645167fd26ee904233fa7bba52cfe65",
+   "document_size": 4653,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5ae70acd84147d4d0cba0798d308bbe26645167fd26ee904233fa7bba52cfe65",
+   "size": 4653
+  },
+  "golden/starts/19618be09664925d.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.10000000149011612,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.10000000149011612,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.10000000149011612,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          0.10000000149011612,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.10000000149011612,\n            0.0\n          ],\n          [\n            0.0,\n            0.10000000149011612,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "de81d10ebe029c2855058257fc9f4b78a61b05538c18c12b0c128fd1fa2baff9",
+   "document_size": 1401,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "de81d10ebe029c2855058257fc9f4b78a61b05538c18c12b0c128fd1fa2baff9",
+   "size": 1401
+  },
+  "golden/starts/19938b845c5d3607.igz": {
+   "document_sha256": "900859ef5b3b3c183d822f4bdca3a1f93e9d863644b1d374ff643ffd8d8bc6c1",
+   "document_size": 2283,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "900859ef5b3b3c183d822f4bdca3a1f93e9d863644b1d374ff643ffd8d8bc6c1",
+   "size": 2283
+  },
+  "golden/starts/19b7bfa611a73e50.igz": {
+   "document_sha256": "a3d1ad68e2cc7279d8cff6b52c6f028eac7ba34063570d6b46afa89540d28059",
+   "document_size": 3133,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a3d1ad68e2cc7279d8cff6b52c6f028eac7ba34063570d6b46afa89540d28059",
+   "size": 3133
+  },
+  "golden/starts/19b9c1116042a2a0.igz": {
+   "document_sha256": "3df2caea9706269a0eb6dc3010e172b08790b30cc304de0dc4423ef855c70614",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3df2caea9706269a0eb6dc3010e172b08790b30cc304de0dc4423ef855c70614",
+   "size": 9831
+  },
+  "golden/starts/1a1b16932c2ba44d.igz": {
+   "document_sha256": "4b58e87862dcd10679ed5b53cd8f642442c424d21bcc1639108eaf4c5077ad2e",
+   "document_size": 5445,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b58e87862dcd10679ed5b53cd8f642442c424d21bcc1639108eaf4c5077ad2e",
+   "size": 5445
+  },
+  "golden/starts/1a552a05ef22c063.igz": {
+   "document_sha256": "31a2e0f7f4b34007c8bcf14ffe0df45c8d47f08eb826deb4e5e09dfd805b4fb4",
+   "document_size": 5593,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "31a2e0f7f4b34007c8bcf14ffe0df45c8d47f08eb826deb4e5e09dfd805b4fb4",
+   "size": 5593
+  },
+  "golden/starts/1b6c5083ba617d20.igz": {
+   "document_sha256": "1f6a32626e287d6264dcae7a08202542eaf0195cc134877bbf264d87148c0010",
+   "document_size": 1536,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1f6a32626e287d6264dcae7a08202542eaf0195cc134877bbf264d87148c0010",
+   "size": 1536
+  },
+  "golden/starts/1ed0cd9df3025d1a.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "30ce3572a22893422bc84b39664db8aa36285dbdbc2d04f98e44011dd11d7310",
+   "document_size": 641,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "30ce3572a22893422bc84b39664db8aa36285dbdbc2d04f98e44011dd11d7310",
+   "size": 641
+  },
+  "golden/starts/1fcc198d7e67fc4c.igz": {
+   "document_sha256": "6a906d010bce4169203afcf3d95d334fa62bd8652c6233ee298387c3d30567be",
+   "document_size": 3097,
+   "entries": [
+    [
+     "document.json",
+     3097,
+     "6a906d010bce4169203afcf3d95d334fa62bd8652c6233ee298387c3d30567be"
+    ],
+    [
+     "textures/7b7744b4dea443ec-gray.png",
+     100,
+     "13ef504601265ecbd788bda486ed1c06285fc5c2a242a0a77da85f969e168fcb"
+    ],
+    [
+     "textures/9c29977d8e87109a-tan.png",
+     100,
+     "be849044c1fb55af8d3c598251d62ec6932f38c4c646b7bb656d14456807bc41"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "1dc69c6c260cd5401c107a1ae25d30a194b387f9024758d3b4ed21bf3566b015",
+   "size": 1059
+  },
+  "golden/starts/20bb4f471f7be3f1.igz": {
+   "document_sha256": "26d67ea759a784f91936d488ed55264bff9c853a9fff1b809df616d3071b480b",
+   "document_size": 2666,
+   "entries": [
+    [
+     "document.json",
+     2666,
+     "26d67ea759a784f91936d488ed55264bff9c853a9fff1b809df616d3071b480b"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "bdc019376a809cb2ce33a59943bec22b500fee6a1927175f353c2d82ca3769c5",
+   "size": 373069
+  },
+  "golden/starts/2145d9f3b12829b5.igz": {
+   "document_sha256": "ae035a08cdb3726d5371f72077073de6558e4ca7ec9bf3d8ab35c654dc7f2985",
+   "document_size": 6007,
+   "entries": [
+    [
+     "document.json",
+     6007,
+     "ae035a08cdb3726d5371f72077073de6558e4ca7ec9bf3d8ab35c654dc7f2985"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "88e8d5834141137cf6940dde5ca09544b76e5ecc2b8783b0556842fcf08d7ca7",
+   "size": 373224
+  },
+  "golden/starts/219129b0ff74ee6e.igz": {
+   "document_sha256": "8012015b284b3c42f58efcb01938822e4fcb50ea8ff73b4622cf2bd0f56a7208",
+   "document_size": 5254,
+   "entries": [
+    [
+     "document.json",
+     5254,
+     "8012015b284b3c42f58efcb01938822e4fcb50ea8ff73b4622cf2bd0f56a7208"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "1653c526137408a68227d8fa7260ba2dc50dc68a77f0c887ed32b2b9e0f224c9",
+   "size": 373182
+  },
+  "golden/starts/230451652318fc8f.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"layers\": [\n      {\n        \"name\": \"Layer 0\"\n      },\n      {\n        \"name\": \"Images\"\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "3c30d6a718e3e03d28bca6a0283a26c97d852bc287ec9cba5f382795a1e13a73",
+   "document_size": 432,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3c30d6a718e3e03d28bca6a0283a26c97d852bc287ec9cba5f382795a1e13a73",
+   "size": 432
+  },
+  "golden/starts/2318b24fad2a65af.igz": {
+   "document_sha256": "d78b27f130e5a4782d4fb76e5d60e9868a2b951b03de814bf25580a5e71b272d",
+   "document_size": 11687,
+   "entries": [
+    [
+     "document.json",
+     11687,
+     "d78b27f130e5a4782d4fb76e5d60e9868a2b951b03de814bf25580a5e71b272d"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "922d53dec982e3e3c91b8b12a283da72cc82c2cfe4d5a61d011bff530425f0a6",
+   "size": 373445
+  },
+  "golden/starts/23291f02f836a492.igz": {
+   "document_sha256": "1fe1ba9304c287c8623771d5af9020f8a88539f6aa47b3bbebf2ffaf5cdd2e13",
+   "document_size": 3094,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1fe1ba9304c287c8623771d5af9020f8a88539f6aa47b3bbebf2ffaf5cdd2e13",
+   "size": 3094
+  },
+  "golden/starts/25b53c38a71e7120.igz": {
+   "document_sha256": "5e260109ed312fcd06d7192e8e7e948580f47f285d5805c62ffc7eec482315e1",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5e260109ed312fcd06d7192e8e7e948580f47f285d5805c62ffc7eec482315e1",
+   "size": 1740
+  },
+  "golden/starts/2613235f4fb07bbf.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"guides\": [\n      {\n        \"point\": [\n          0.0,\n          1.0,\n          0.0\n        ],\n        \"direction\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      }\n    ]\n  }\n}",
+   "document_sha256": "65d8fde5f84edbfd72a6f87c08cdd50fca922aed873f106a029659ab738eb57e",
+   "document_size": 515,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "65d8fde5f84edbfd72a6f87c08cdd50fca922aed873f106a029659ab738eb57e",
+   "size": 515
+  },
+  "golden/starts/26d2259fed2bc30a.igz": {
+   "document_sha256": "1f174a355e6a9173b8ad76179b0c7e0ae119ba79772bf993892ea698511404dc",
+   "document_size": 11647,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1f174a355e6a9173b8ad76179b0c7e0ae119ba79772bf993892ea698511404dc",
+   "size": 11647
+  },
+  "golden/starts/26d9e75b35ba1c0f.igz": {
+   "document_sha256": "66dea2a2e25e4e6050c946266b854fed08e591d787913bed197fdfd0b542f51e",
+   "document_size": 2480,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "66dea2a2e25e4e6050c946266b854fed08e591d787913bed197fdfd0b542f51e",
+   "size": 2480
+  },
+  "golden/starts/27da95df2941bc79.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            4.0,\n            0.0\n          ],\n          [\n            0.0,\n            4.0,\n            0.0\n          ]\n        ],\n        \"color\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "22b53905e9ed4652686cbbf515e0a0280970a83861a7e9fa8c55506d6ad25d10",
+   "document_size": 1379,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "22b53905e9ed4652686cbbf515e0a0280970a83861a7e9fa8c55506d6ad25d10",
+   "size": 1379
+  },
+  "golden/starts/2966a1375b7cb4c7.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          2.0,\n          3.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          3.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          3.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          5.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          5.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          5.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          5.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          3.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            2.0,\n            3.0,\n            0.0\n          ],\n          [\n            4.0,\n            3.0,\n            0.0\n          ],\n          [\n            4.0,\n            5.0,\n            0.0\n          ],\n          [\n            2.0,\n            5.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "9a016ff01aa04d1ff95c9901bcc07d525982aa2d8aac2c646a9795640d5aa249",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9a016ff01aa04d1ff95c9901bcc07d525982aa2d8aac2c646a9795640d5aa249",
+   "size": 1305
+  },
+  "golden/starts/2d370b0f0b6ed20a.igz": {
+   "document_sha256": "9251c865b5314fbd0f8355caa0584e9633ec03cd268aa7580c86e0cabcf7e8b1",
+   "document_size": 3097,
+   "entries": [
+    [
+     "document.json",
+     3097,
+     "9251c865b5314fbd0f8355caa0584e9633ec03cd268aa7580c86e0cabcf7e8b1"
+    ],
+    [
+     "textures/7b7744b4dea443ec-gray.png",
+     100,
+     "13ef504601265ecbd788bda486ed1c06285fc5c2a242a0a77da85f969e168fcb"
+    ],
+    [
+     "textures/9c29977d8e87109a-tan.png",
+     100,
+     "be849044c1fb55af8d3c598251d62ec6932f38c4c646b7bb656d14456807bc41"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7acc41c77895d4fbf64c37a6b1780928c2357cd26c91799d24b2cfb2b0a0b3d6",
+   "size": 1059
+  },
+  "golden/starts/2f87d79bc2ec9855.igz": {
+   "document_sha256": "3f82b32f225ffa5eed28bffde827e285aaefd083a60a9f1f9c16991484e12e30",
+   "document_size": 1652,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3f82b32f225ffa5eed28bffde827e285aaefd083a60a9f1f9c16991484e12e30",
+   "size": 1652
+  },
+  "golden/starts/2fcea179ceaaadda.igz": {
+   "document_sha256": "199942884f2a7d6f9b700b35ee824b5159a97cea6dbc2edc87cb6b17bb44eb1e",
+   "document_size": 2277,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "199942884f2a7d6f9b700b35ee824b5159a97cea6dbc2edc87cb6b17bb44eb1e",
+   "size": 2277
+  },
+  "golden/starts/30a014cd02eda567.igz": {
+   "document_sha256": "b9f6e145cf371d1e5589f420c4bef0e8983cf3a153c56eb4a4acbd16a6bd391f",
+   "document_size": 4036,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b9f6e145cf371d1e5589f420c4bef0e8983cf3a153c56eb4a4acbd16a6bd391f",
+   "size": 4036
+  },
+  "golden/starts/310fd70738910001.igz": {
+   "document_sha256": "6b48f23a6e6c18907c41553597021550e21fae991f42c54f9c2f205470ea8e0c",
+   "document_size": 1957,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6b48f23a6e6c18907c41553597021550e21fae991f42c54f9c2f205470ea8e0c",
+   "size": 1957
+  },
+  "golden/starts/311abc5f1d7c307e.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"geo_paths\": [\n      {\n        \"points\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            1.0,\n            0.0,\n            0.0\n          ]\n        ]\n      },\n      {\n        \"points\": [\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            3.0,\n            0.0,\n            0.0\n          ]\n        ]\n      }\n    ]\n  }\n}",
+   "document_sha256": "b58c9750b1e96f4a2d90f90669c5e0ba4d2e41bd0ba93c53a510caaca6ee721a",
+   "document_size": 742,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b58c9750b1e96f4a2d90f90669c5e0ba4d2e41bd0ba93c53a510caaca6ee721a",
+   "size": 742
+  },
+  "golden/starts/31a77b84611e38fa.igz": {
+   "document_sha256": "210d8357cf90b6552b32ffe174ad131f0fb3ebc95c7731a8df304d664e9e36f6",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "210d8357cf90b6552b32ffe174ad131f0fb3ebc95c7731a8df304d664e9e36f6",
+   "size": 3127
+  },
+  "golden/starts/3258a22cba16e85a.igz": {
+   "document_sha256": "7700df13d37078e7ec6a1b6a806e6f0b16f7d2e35e1882d3d6b41ae203985ba7",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "7700df13d37078e7ec6a1b6a806e6f0b16f7d2e35e1882d3d6b41ae203985ba7",
+   "size": 9831
+  },
+  "golden/starts/341d96d58c54917a.igz": {
+   "document_sha256": "75d0f83a603e98cf507f545dfefbf09e484d5befee8d50b9bad4a69ea00ab147",
+   "document_size": 142141,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "75d0f83a603e98cf507f545dfefbf09e484d5befee8d50b9bad4a69ea00ab147",
+   "size": 142141
+  },
+  "golden/starts/34ea10fabff578cb.igz": {
+   "document_sha256": "9d2ea723882b2ed0af73cbbd1d577a041adb1901b2ba4fff2e861714f7e94d4c",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "9d2ea723882b2ed0af73cbbd1d577a041adb1901b2ba4fff2e861714f7e94d4c"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "b3c0c7de5c67928d36e5eb444e75dfa64fab359453379affd94132f1b6c3cf52",
+   "size": 373015
+  },
+  "golden/starts/3577d05ded793038.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"section_planes\": [\n      {\n        \"point\": [\n          0.0,\n          0.0,\n          1.0\n        ],\n        \"normal\": [\n          0.0,\n          0.0,\n          1.0\n        ],\n        \"uid\": 14,\n        \"active\": true\n      }\n    ]\n  }\n}",
+   "document_sha256": "9a5d3ca359bfbf9ecf1fbf277284bf0e8111fcbb25968e53b1727c562d61d200",
+   "document_size": 563,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9a5d3ca359bfbf9ecf1fbf277284bf0e8111fcbb25968e53b1727c562d61d200",
+   "size": 563
+  },
+  "golden/starts/358bd5c7f97f7a1a.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            6.0,\n            0.0\n          ],\n          [\n            0.0,\n            6.0,\n            0.0\n          ]\n        ],\n        \"texture\": {\n          \"path\": \"/tmp/laja.png\",\n          \"sw\": 1.0,\n          \"sh\": 1.0\n        },\n        \"layer\": \"Pisos\",\n        \"mat\": \"Piedra laja\"\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "d7a009a972ec77c94d8d6a1767ecc789089aed9bdb4028c2141a0b74fee0ec35",
+   "document_size": 1475,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "d7a009a972ec77c94d8d6a1767ecc789089aed9bdb4028c2141a0b74fee0ec35",
+   "size": 1475
+  },
+  "golden/starts/35b9e6e7071e547d.igz": {
+   "document_sha256": "7f04a8b3369d6196dfd5b54b74c85b274c044393a492e9a2d4498a8f9db6f1bb",
+   "document_size": 2518,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "7f04a8b3369d6196dfd5b54b74c85b274c044393a492e9a2d4498a8f9db6f1bb",
+   "size": 2518
+  },
+  "golden/starts/3720ce7843953428.igz": {
+   "document_sha256": "29ab0d062d4a47c2fddb292ee174c60515e361e23945cfe2b5ec6ca0a9ef152b",
+   "document_size": 8008,
+   "entries": [
+    [
+     "document.json",
+     8008,
+     "29ab0d062d4a47c2fddb292ee174c60515e361e23945cfe2b5ec6ca0a9ef152b"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "940414fdfaf80e8c5685e9e5bd119e15eeb563ecdd72361962e429e226fbf1b6",
+   "size": 373354
+  },
+  "golden/starts/3908341348d8a48e.igz": {
+   "document_sha256": "30606154e1d0bf7de77e3e8799dc3ce5d04f3fa958b58dfbc9253471d8e1ee78",
+   "document_size": 2121,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "30606154e1d0bf7de77e3e8799dc3ce5d04f3fa958b58dfbc9253471d8e1ee78",
+   "size": 2121
+  },
+  "golden/starts/39cccd36c70bff9a.igz": {
+   "document_sha256": "6b2fb114913d7096f92e3bcfc8bcaf4ffc948a45912e82fd2741ccde1bd87ce1",
+   "document_size": 8377,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6b2fb114913d7096f92e3bcfc8bcaf4ffc948a45912e82fd2741ccde1bd87ce1",
+   "size": 8377
+  },
+  "golden/starts/3a059dcbf9efd018.igz": {
+   "document_sha256": "63fb2a8827dfee02308217325f2776f79e3ff9efa1814dc18a6b689ce52d35d0",
+   "document_size": 3210,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "63fb2a8827dfee02308217325f2776f79e3ff9efa1814dc18a6b689ce52d35d0",
+   "size": 3210
+  },
+  "golden/starts/3bf49a3f86add8e0.igz": {
+   "document_sha256": "6b5ac5184f951b558ca2b8dff2d9d1b03409fdec689d9d7e9192934950a694c8",
+   "document_size": 8930,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6b5ac5184f951b558ca2b8dff2d9d1b03409fdec689d9d7e9192934950a694c8",
+   "size": 8930
+  },
+  "golden/starts/3e6aaa4dbb44277b.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            1.0,\n            0.0,\n            0.0\n          ],\n          [\n            1.0,\n            1.0,\n            0.0\n          ],\n          [\n            0.0,\n            1.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "0f0ad6134e53be85c1209038fd82299436ccfa874947a6dfad8944a031f982d0",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0f0ad6134e53be85c1209038fd82299436ccfa874947a6dfad8944a031f982d0",
+   "size": 1305
+  },
+  "golden/starts/3e9289d8c2283d7a.igz": {
+   "document_sha256": "58d1d3837533c3cac107e8a6599e4c6896b1df9bb21076a6b2535a44dbf4db32",
+   "document_size": 8651,
+   "entries": [
+    [
+     "document.json",
+     8651,
+     "58d1d3837533c3cac107e8a6599e4c6896b1df9bb21076a6b2535a44dbf4db32"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "17f01b02dd0f21a638807a19a8420cb53ff63cb95cbac87466460c33b0335d2a",
+   "size": 373356
+  },
+  "golden/starts/40dbe9fab5507444.igz": {
+   "document_sha256": "db4a823686cbcbec756c9eca71fa4b6ea2d93483de894475f587fd32e3325d63",
+   "document_size": 2697,
+   "entries": [
+    [
+     "document.json",
+     2697,
+     "db4a823686cbcbec756c9eca71fa4b6ea2d93483de894475f587fd32e3325d63"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "b0c2d7596f1f390126128d37513f0b5428957f5894bffcade1964f2c6f090e0a",
+   "size": 373068
+  },
+  "golden/starts/40eac8382a3469da.igz": {
+   "document_sha256": "d0b31fc44e00d889f973222c42f1f786f071bf7c20a16d9a56a721d050f2c1be",
+   "document_size": 2697,
+   "entries": [
+    [
+     "document.json",
+     2697,
+     "d0b31fc44e00d889f973222c42f1f786f071bf7c20a16d9a56a721d050f2c1be"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "a5cbefd474bd6d3de6ae9900adab6838cbc8e1eefb5bdcfd255955a0d87aa458",
+   "size": 373070
+  },
+  "golden/starts/42e030b8d4f11cfa.igz": {
+   "document_sha256": "4ef786f55781324f066ce543d432aa4ff3bf4ba58649e3609f1a8722f7f418da",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ef786f55781324f066ce543d432aa4ff3bf4ba58649e3609f1a8722f7f418da",
+   "size": 3127
+  },
+  "golden/starts/43c19753431e0dee.igz": {
+   "document_sha256": "1cfacece430ec5742de90f17409012c9aa2caa870d8640dad329bf7c3912fc56",
+   "document_size": 5870,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1cfacece430ec5742de90f17409012c9aa2caa870d8640dad329bf7c3912fc56",
+   "size": 5870
+  },
+  "golden/starts/451d0c3a60454df6.igz": {
+   "document_sha256": "81641d00f353599ce018872596e3eff858b30fcde65a0e99e71e2ccbd7b2249a",
+   "document_size": 1565,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "81641d00f353599ce018872596e3eff858b30fcde65a0e99e71e2ccbd7b2249a",
+   "size": 1565
+  },
+  "golden/starts/49c2f4c815273862.igz": {
+   "document_sha256": "26f49255756546e8eaec3bcc72389fc9c82fc909cd03739b4b494127e73b169c",
+   "document_size": 3094,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "26f49255756546e8eaec3bcc72389fc9c82fc909cd03739b4b494127e73b169c",
+   "size": 3094
+  },
+  "golden/starts/4d64b64e7f3d0f6f.igz": {
+   "document_sha256": "9208ba5d497adf04aaa8a6d3ec303002ce5f172a82c0677efb9035adec2f136a",
+   "document_size": 2862,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9208ba5d497adf04aaa8a6d3ec303002ce5f172a82c0677efb9035adec2f136a",
+   "size": 2862
+  },
+  "golden/starts/4ddb0d476f1e61d1.igz": {
+   "document_sha256": "aa4a28e5d661a683dca87f773507999773fc0bda3256b1795d973a278252499b",
+   "document_size": 38055,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "aa4a28e5d661a683dca87f773507999773fc0bda3256b1795d973a278252499b",
+   "size": 38055
+  },
+  "golden/starts/4df234326f0b23b0.igz": {
+   "document_sha256": "894d9afa97ae532b56309358beb4fc3180fc42cb62293a1261105de990f7be1e",
+   "document_size": 5989,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "894d9afa97ae532b56309358beb4fc3180fc42cb62293a1261105de990f7be1e",
+   "size": 5989
+  },
+  "golden/starts/4e904e197429dcfd.igz": {
+   "document_sha256": "39e6710a8fac7a10c27253aba93727c2b0fcae815d79cc904937d349baf76042",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "39e6710a8fac7a10c27253aba93727c2b0fcae815d79cc904937d349baf76042",
+   "size": 9831
+  },
+  "golden/starts/54f0bc097fbb10a1.igz": {
+   "document_sha256": "12b601b44f7462c2bed87d124a5a9b02e5d9c3a9dc9e3a553f40737ec6917b8f",
+   "document_size": 4293,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "12b601b44f7462c2bed87d124a5a9b02e5d9c3a9dc9e3a553f40737ec6917b8f",
+   "size": 4293
+  },
+  "golden/starts/5586d8eae2552a60.igz": {
+   "document_sha256": "473aa499109414003c710df325a2989e1c059d2deb2923a1ed38e2faff7f8754",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "473aa499109414003c710df325a2989e1c059d2deb2923a1ed38e2faff7f8754",
+   "size": 9831
+  },
+  "golden/starts/568d37dcffee1d39.igz": {
+   "document_sha256": "5cb05a0064b60a6e180f4d2adf771a29421d90d2c8753024b33e8429cf1e438c",
+   "document_size": 3363,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5cb05a0064b60a6e180f4d2adf771a29421d90d2c8753024b33e8429cf1e438c",
+   "size": 3363
+  },
+  "golden/starts/56c714bbeb754f65.igz": {
+   "document_sha256": "f369200be0f0d1a9c5e16243894c588d5d24f44b613333223cf48aa7de88d88f",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f369200be0f0d1a9c5e16243894c588d5d24f44b613333223cf48aa7de88d88f",
+   "size": 9831
+  },
+  "golden/starts/56f8cbde644b3b9c.igz": {
+   "document_sha256": "604390d9c5a3b13bcbd7f17892d10f99aa9c21ff2533d1acd5cc6585a803d8dc",
+   "document_size": 1551,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "604390d9c5a3b13bcbd7f17892d10f99aa9c21ff2533d1acd5cc6585a803d8dc",
+   "size": 1551
+  },
+  "golden/starts/581f71119eb5fe96.igz": {
+   "document_sha256": "528b98fc32967694b6ddda6ac01030c8bd463a31bcb1d4886c15814710b575cc",
+   "document_size": 11959,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "528b98fc32967694b6ddda6ac01030c8bd463a31bcb1d4886c15814710b575cc",
+   "size": 11959
+  },
+  "golden/starts/592c04c1ba605892.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            6.0,\n            0.0\n          ],\n          [\n            0.0,\n            6.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "59bd63b6d95614c0377aefe9d971ce7892c7d70b2d98efaf2f73ecd8565ac2ef",
+   "document_size": 1311,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "59bd63b6d95614c0377aefe9d971ce7892c7d70b2d98efaf2f73ecd8565ac2ef",
+   "size": 1311
+  },
+  "golden/starts/5a249c756219f19b.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          20.0,\n          20.0,\n          5.0\n        ],\n        \"b\": [\n          24.0,\n          20.0,\n          5.0\n        ]\n      },\n      {\n        \"a\": [\n          24.0,\n          20.0,\n          5.0\n        ],\n        \"b\": [\n          24.0,\n          24.0,\n          5.0\n        ]\n      },\n      {\n        \"a\": [\n          24.0,\n          24.0,\n          5.0\n        ],\n        \"b\": [\n          20.0,\n          20.0,\n          5.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            20.0,\n            20.0,\n            5.0\n          ],\n          [\n            24.0,\n            20.0,\n            5.0\n          ],\n          [\n            24.0,\n            24.0,\n            5.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "3024fcee9f47f1e2b2c88a9e44621d7728ddb8b99a43f6c2a2d8ad97bcb3ddda",
+   "document_size": 1092,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3024fcee9f47f1e2b2c88a9e44621d7728ddb8b99a43f6c2a2d8ad97bcb3ddda",
+   "size": 1092
+  },
+  "golden/starts/5c5440847ca8d3a2.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "cd339001adbbbde00c0fa7bd28f4150872c3598c29747a7a07aca325e1ade441",
+   "document_size": 953,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "cd339001adbbbde00c0fa7bd28f4150872c3598c29747a7a07aca325e1ade441",
+   "size": 953
+  },
+  "golden/starts/5ddd974fd10db342.igz": {
+   "document_sha256": "bde786af770b6a83f5c185091f49b7b7c075ebe9b3f7542d7d81a56794f8ea4f",
+   "document_size": 5259,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "bde786af770b6a83f5c185091f49b7b7c075ebe9b3f7542d7d81a56794f8ea4f",
+   "size": 5259
+  },
+  "golden/starts/5e53df891c96a0f9.igz": {
+   "document_sha256": "a613b27541f78ddd302c668a890e659bce32f658aa279adce28433583290db66",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a613b27541f78ddd302c668a890e659bce32f658aa279adce28433583290db66",
+   "size": 3127
+  },
+  "golden/starts/5f525dbbd7ebebf2.igz": {
+   "document_sha256": "0e8c823a6857b9fccd018a9dad5aa432be6d1851d78ec5e4fdc031ed1e0ef1c3",
+   "document_size": 2455,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0e8c823a6857b9fccd018a9dad5aa432be6d1851d78ec5e4fdc031ed1e0ef1c3",
+   "size": 2455
+  },
+  "golden/starts/6029f3279160647d.igz": {
+   "document_sha256": "fd9893d38c98040c080f393b3afd5a6c65c025584aa7da8af481800c8adcda9e",
+   "document_size": 6093,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "fd9893d38c98040c080f393b3afd5a6c65c025584aa7da8af481800c8adcda9e",
+   "size": 6093
+  },
+  "golden/starts/604adbc1a96899f2.igz": {
+   "document_sha256": "fc205c9ce9780a7c5b597a70f08d95b1bdb827b472cdfb98a62f1719b6c3db0f",
+   "document_size": 5592,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "fc205c9ce9780a7c5b597a70f08d95b1bdb827b472cdfb98a62f1719b6c3db0f",
+   "size": 5592
+  },
+  "golden/starts/608b78b865f95514.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"geo_paths\": [\n      {\n        \"points\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            10.0,\n            0.0\n          ],\n          [\n            0.0,\n            10.0,\n            0.0\n          ]\n        ],\n        \"closed\": true\n      }\n    ]\n  }\n}",
+   "document_sha256": "48b4e4736390f6468895a341346226b50012ac0df91c27be197055718e99b47e",
+   "document_size": 724,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "48b4e4736390f6468895a341346226b50012ac0df91c27be197055718e99b47e",
+   "size": 724
+  },
+  "golden/starts/60a9fedf9cd02389.igz": {
+   "document_sha256": "60e4c70f00526c925b66d2446c0172d013eba06dca29aca48473b903d89cf681",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "60e4c70f00526c925b66d2446c0172d013eba06dca29aca48473b903d89cf681",
+   "size": 8118
+  },
+  "golden/starts/60b6da2aebd81c70.igz": {
+   "document_sha256": "bc945e5d8eab9dbe77d1850431d922fc07ae736b1708bffcc98f22a6dde4b85b",
+   "document_size": 1837,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "bc945e5d8eab9dbe77d1850431d922fc07ae736b1708bffcc98f22a6dde4b85b",
+   "size": 1837
+  },
+  "golden/starts/6207c88a99a0a84b.igz": {
+   "document_sha256": "2108d0f4e7f9274a1f771c96977c82c124200b258ff850d3c768b4d90a2c7c27",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2108d0f4e7f9274a1f771c96977c82c124200b258ff850d3c768b4d90a2c7c27",
+   "size": 9831
+  },
+  "golden/starts/622f4ec82c6454d7.igz": {
+   "document_sha256": "bf1cbc4c4c2bde24dac22222f90f4cc66b6fcf3a659291a205e1d788fea950b3",
+   "document_size": 4293,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "bf1cbc4c4c2bde24dac22222f90f4cc66b6fcf3a659291a205e1d788fea950b3",
+   "size": 4293
+  },
+  "golden/starts/635a149a35c0dd3f.igz": {
+   "document_sha256": "2ed93b7dae36f2781d95dcc49ac2f50d0231bd8fd83e28eac98513fd6784f314",
+   "document_size": 3815,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2ed93b7dae36f2781d95dcc49ac2f50d0231bd8fd83e28eac98513fd6784f314",
+   "size": 3815
+  },
+  "golden/starts/66c7907f664e40cf.igz": {
+   "document_sha256": "685e6c424eb911f0e30dbe754053ad7133b6ca23f9e2ea820b6c5a2c53c0e705",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "685e6c424eb911f0e30dbe754053ad7133b6ca23f9e2ea820b6c5a2c53c0e705"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "d812b3eda75b190571268bb02fbc017f592679a1c21f51f35b84edd38576af4b",
+   "size": 373015
+  },
+  "golden/starts/6a84e566e6b86c99.igz": {
+   "document_sha256": "2f412dc0eef29d3e2c64152863d9fd1914e3f95b747dd5f5ac66cd697de74238",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2f412dc0eef29d3e2c64152863d9fd1914e3f95b747dd5f5ac66cd697de74238",
+   "size": 8118
+  },
+  "golden/starts/6ade7bd97c61663e.igz": {
+   "document_sha256": "c784d720cb6c05ad7dda9eeb07ea9bf2f3acffa165069bed8fa02164925e6e54",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c784d720cb6c05ad7dda9eeb07ea9bf2f3acffa165069bed8fa02164925e6e54",
+   "size": 9831
+  },
+  "golden/starts/6e3a1ade79e85aaa.igz": {
+   "document_sha256": "4a22a081f47051882c41a04043717d5d055d786d014deaed7184fd50e1d8a2ce",
+   "document_size": 10229,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4a22a081f47051882c41a04043717d5d055d786d014deaed7184fd50e1d8a2ce",
+   "size": 10229
+  },
+  "golden/starts/6ef37b521b74601e.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimensions\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.4000000953674316,\n          0.0,\n          0.0\n        ],\n        \"offset\": [\n          0.0,\n          1.0,\n          0.0\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "fffd023ee6d3ed6e6420f63fc516605c8dc4b36af5e74e20c4d1f1c23058d1a3",
+   "document_size": 597,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "fffd023ee6d3ed6e6420f63fc516605c8dc4b36af5e74e20c4d1f1c23058d1a3",
+   "size": 597
+  },
+  "golden/starts/706112a71eda8a3d.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          3.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          3.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          3.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          3.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            3.0,\n            0.0\n          ],\n          [\n            0.0,\n            3.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "82d3bf04bc7d2eae105bfccf1c90758602c121eafbd26bdf607d96370685b963",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "82d3bf04bc7d2eae105bfccf1c90758602c121eafbd26bdf607d96370685b963",
+   "size": 1305
+  },
+  "golden/starts/715514142c3d8467.igz": {
+   "document_sha256": "3edcde18519d701dd855dc7894ae80b5757a18ed04b90bbd9705e9990aa5ef5d",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "3edcde18519d701dd855dc7894ae80b5757a18ed04b90bbd9705e9990aa5ef5d"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "268054b96a37168b7f3e5c9f0e9dd2e85ecf8a7691d217d8c454ab8e6ef2074c",
+   "size": 373015
+  },
+  "golden/starts/72443d831b89f7f3.igz": {
+   "document_sha256": "8c6b5cf08042a49160698c5f2d2b957617d9bd712f2864e100e7b1f5fa8358ea",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "8c6b5cf08042a49160698c5f2d2b957617d9bd712f2864e100e7b1f5fa8358ea",
+   "size": 8118
+  },
+  "golden/starts/73281b7a401a8c95.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          2.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          2.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          2.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          2.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            2.0\n          ],\n          [\n            0.0,\n            0.0,\n            2.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "95d29c925c3ab08f8de4c798a562c2f9e8538c53a2f222c0d7cf6c532dd8752c",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "95d29c925c3ab08f8de4c798a562c2f9e8538c53a2f222c0d7cf6c532dd8752c",
+   "size": 1305
+  },
+  "golden/starts/739e5ccabd3532c4.igz": {
+   "document_sha256": "9d676d02113b0af8b4346aaf3bb7fc47a7544872c890db395d0baec0fe1fbb51",
+   "document_size": 1576,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9d676d02113b0af8b4346aaf3bb7fc47a7544872c890db395d0baec0fe1fbb51",
+   "size": 1576
+  },
+  "golden/starts/78ba1c55c25773cd.igz": {
+   "document_sha256": "f43b9fdfb38ed6fa1924c0d6b361165aacae5686468681bd11072301490f6ccc",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f43b9fdfb38ed6fa1924c0d6b361165aacae5686468681bd11072301490f6ccc",
+   "size": 1740
+  },
+  "golden/starts/7ac730f2b5c4bf5b.igz": {
+   "document_sha256": "28ea571106d32322fbb7ba94aca7f3fee23f32ff0b28daea82a43144787a60ec",
+   "document_size": 10137,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "28ea571106d32322fbb7ba94aca7f3fee23f32ff0b28daea82a43144787a60ec",
+   "size": 10137
+  },
+  "golden/starts/7bc8c60f99e0423c.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            6.0,\n            0.0\n          ],\n          [\n            0.0,\n            6.0,\n            0.0\n          ]\n        ],\n        \"color\": [\n          0.5,\n          0.5,\n          0.5\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "6da7987d1a28c274ee7c40040e5159ec4f6c87526e17288ec60e2313ad76f8c4",
+   "document_size": 1385,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6da7987d1a28c274ee7c40040e5159ec4f6c87526e17288ec60e2313ad76f8c4",
+   "size": 1385
+  },
+  "golden/starts/7c60bd20f2d36bfb.igz": {
+   "document_sha256": "364f49ffbf5263e61392a03f1ee02a0048d9bff0965c8ce509fe41d2f0566409",
+   "document_size": 3544,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "364f49ffbf5263e61392a03f1ee02a0048d9bff0965c8ce509fe41d2f0566409",
+   "size": 3544
+  },
+  "golden/starts/7ceaba3e7c315b6a.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          -2.0,\n          -2.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          -2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          -2.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          -2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          -2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          -2.0,\n          -2.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            -2.0,\n            -2.0,\n            0.0\n          ],\n          [\n            2.0,\n            -2.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ],\n          [\n            -2.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "2d067032fd2fd94cb20afd145947f7c59bc1d80c0ebb7f0b05eddbcb983e92a4",
+   "document_size": 1317,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2d067032fd2fd94cb20afd145947f7c59bc1d80c0ebb7f0b05eddbcb983e92a4",
+   "size": 1317
+  },
+  "golden/starts/7d0c89b78f1682c4.igz": {
+   "document_sha256": "ae5aaaabd1d1d2b0612e31d0c73defae7bfd95d095bdbd24e87dfd6255ddca15",
+   "document_size": 10245,
+   "entries": [
+    [
+     "document.json",
+     10245,
+     "ae5aaaabd1d1d2b0612e31d0c73defae7bfd95d095bdbd24e87dfd6255ddca15"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "4b1e7c592c72807d2cdee48deeec3eb1215b5483037a775c2fae8b9ef6805847",
+   "size": 373473
+  },
+  "golden/starts/810ffeb5b845b191.igz": {
+   "document_sha256": "eb976a6fbdccb1cee1c4e12e4394be4e3b73a70186ebb6349ac9d5dc3ce52357",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "eb976a6fbdccb1cee1c4e12e4394be4e3b73a70186ebb6349ac9d5dc3ce52357",
+   "size": 9831
+  },
+  "golden/starts/842faac10843b5d1.igz": {
+   "document_sha256": "8df6bdd6bf96ff457e05f3329b20d30202eb1e1a92db19d4569fc6736839471b",
+   "document_size": 2493,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "8df6bdd6bf96ff457e05f3329b20d30202eb1e1a92db19d4569fc6736839471b",
+   "size": 2493
+  },
+  "golden/starts/86557c87a2aacebb.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          10.0,\n          10.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          10.0,\n          10.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          10.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          10.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            10.0,\n            0.0\n          ],\n          [\n            0.0,\n            10.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "6c6ab79768986c67a2f04a7f59da5675ab9010f8a54e02e694dcceb4f4976b09",
+   "document_size": 1317,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6c6ab79768986c67a2f04a7f59da5675ab9010f8a54e02e694dcceb4f4976b09",
+   "size": 1317
+  },
+  "golden/starts/86f91dcdf235af75.igz": {
+   "document_sha256": "a7b34a022de7f1e2b87078b4edbdc15fa44361cceb5dc3c5479c70a00fd16c74",
+   "document_size": 3210,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a7b34a022de7f1e2b87078b4edbdc15fa44361cceb5dc3c5479c70a00fd16c74",
+   "size": 3210
+  },
+  "golden/starts/878671ea78b7d0ad.igz": {
+   "document_sha256": "a37df96d10856047c90dbd909087d33af04aff4235a010bef91fb09ec283fe3e",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a37df96d10856047c90dbd909087d33af04aff4235a010bef91fb09ec283fe3e",
+   "size": 1740
+  },
+  "golden/starts/89339e1244b0ecb6.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.4000000953674316,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.4000000953674316,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.4000000953674316,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.4000000953674316,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.4000000953674316,\n            0.0,\n            0.0\n          ],\n          [\n            2.4000000953674316,\n            1.0,\n            0.0\n          ],\n          [\n            0.0,\n            1.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "803cf7120531f1af6ca3496e1963b7a1ba63d3aec7fce4a8ef759f1e15813ce4",
+   "document_size": 1395,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "803cf7120531f1af6ca3496e1963b7a1ba63d3aec7fce4a8ef759f1e15813ce4",
+   "size": 1395
+  },
+  "golden/starts/8b04e56f57b9686a.igz": {
+   "document_sha256": "6eae76e0f7bd0cc3099a6d7e6587ee58ba7de9e6bf416a8c5248aacbe94e9963",
+   "document_size": 2632,
+   "entries": [
+    [
+     "document.json",
+     2632,
+     "6eae76e0f7bd0cc3099a6d7e6587ee58ba7de9e6bf416a8c5248aacbe94e9963"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "5c8e1f3ae2191e6f3a440f0707ff41678f4f5e25752f1f45e4d686d7e9d26549",
+   "size": 373057
+  },
+  "golden/starts/8b766e650ab54d88.igz": {
+   "document_sha256": "f4b8795c80fc5fb794bf7bb4cf32ce1a895e30a71719aad19e800bd56777b197",
+   "document_size": 4944,
+   "entries": [
+    [
+     "document.json",
+     4944,
+     "f4b8795c80fc5fb794bf7bb4cf32ce1a895e30a71719aad19e800bd56777b197"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "558925665847799176150ecea28bc976c581613dd81539909ab3b0556cc2aa0b",
+   "size": 373215
+  },
+  "golden/starts/8ddd24c46fe54680.igz": {
+   "document_sha256": "2ce09b7764fd6f1a5630ca4831aefe3e8bbd9d72a52eabb9aaa08020ed394516",
+   "document_size": 36031,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2ce09b7764fd6f1a5630ca4831aefe3e8bbd9d72a52eabb9aaa08020ed394516",
+   "size": 36031
+  },
+  "golden/starts/9009df0b08284331.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            4.0,\n            0.0\n          ],\n          [\n            0.0,\n            4.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "ba8fcafd84023ecda63999fcf621328c0b30ca70426ea377e51252ea2d63978f",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ba8fcafd84023ecda63999fcf621328c0b30ca70426ea377e51252ea2d63978f",
+   "size": 1305
+  },
+  "golden/starts/90fcf735d1a5f3b4.igz": {
+   "document_sha256": "0b901949449c47c7fab173b8546e842b7b2eb5af89dbc65056a0461b483b9a07",
+   "document_size": 6448,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0b901949449c47c7fab173b8546e842b7b2eb5af89dbc65056a0461b483b9a07",
+   "size": 6448
+  },
+  "golden/starts/9157e822f75ef368.igz": {
+   "document_sha256": "52cf580e0445f12bfa84983b0892a727d46b3392a0d72792c69893096556e886",
+   "document_size": 4857,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "52cf580e0445f12bfa84983b0892a727d46b3392a0d72792c69893096556e886",
+   "size": 4857
+  },
+  "golden/starts/91f764b7fb303963.igz": {
+   "document_sha256": "d3defbfe098af61d4d6a218aed40cb626759eba51301802ef9b6f7f57201b36c",
+   "document_size": 2487,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "d3defbfe098af61d4d6a218aed40cb626759eba51301802ef9b6f7f57201b36c",
+   "size": 2487
+  },
+  "golden/starts/925e023cc448172c.igz": {
+   "document_sha256": "9ec51289f3469bc721eb4fef75fd996f78af05227b1df307cd3f7bfe23d5b744",
+   "document_size": 2200,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9ec51289f3469bc721eb4fef75fd996f78af05227b1df307cd3f7bfe23d5b744",
+   "size": 2200
+  },
+  "golden/starts/9486c9228182fc34.igz": {
+   "document_sha256": "dd85a9efff26b21d1bad88e266aa0762e0e9af685c9a6e3cbbabb8ff89a2c189",
+   "document_size": 2277,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "dd85a9efff26b21d1bad88e266aa0762e0e9af685c9a6e3cbbabb8ff89a2c189",
+   "size": 2277
+  },
+  "golden/starts/949c68247a5c5108.igz": {
+   "document_sha256": "127d89666f56104678f40b1df8980ff59081d9090efddbea79e48be128731272",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "127d89666f56104678f40b1df8980ff59081d9090efddbea79e48be128731272",
+   "size": 3127
+  },
+  "golden/starts/956dfb8186faed5e.igz": {
+   "document_sha256": "c17bdb19036b3b254172a8160493482dee469f097359053c7dfde01e00c8c362",
+   "document_size": 11963,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c17bdb19036b3b254172a8160493482dee469f097359053c7dfde01e00c8c362",
+   "size": 11963
+  },
+  "golden/starts/95747b433a263e31.igz": {
+   "document_sha256": "5df4def73533ea04584d184530334db1746ff5cadc66e0e3c4bcf8e3e0e82361",
+   "document_size": 6734,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5df4def73533ea04584d184530334db1746ff5cadc66e0e3c4bcf8e3e0e82361",
+   "size": 6734
+  },
+  "golden/starts/964e08259af26275.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ],\n          [\n            0.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "b583e380c3d7c24d9f027a08b11af45ef628f66a08f3542c8bc758061ac3fb26",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b583e380c3d7c24d9f027a08b11af45ef628f66a08f3542c8bc758061ac3fb26",
+   "size": 1305
+  },
+  "golden/starts/96bf02d2f62521ef.igz": {
+   "document_sha256": "c817044855b5cea61deebe8a1ce6c8c21a789084c7499409489463ddbcf8ddfd",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c817044855b5cea61deebe8a1ce6c8c21a789084c7499409489463ddbcf8ddfd",
+   "size": 1740
+  },
+  "golden/starts/979f38c097592d5c.igz": {
+   "document_sha256": "0d8c30cd01d3b0d4149d3e642f11cecac7c384f04dd9f29856f2b71da69c1192",
+   "document_size": 3333,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0d8c30cd01d3b0d4149d3e642f11cecac7c384f04dd9f29856f2b71da69c1192",
+   "size": 3333
+  },
+  "golden/starts/995962567ff62972.igz": {
+   "document_sha256": "02a3b86ea61f7e352124130941023dcdf43755ea1c108c6e393bae961ae64faf",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "02a3b86ea61f7e352124130941023dcdf43755ea1c108c6e393bae961ae64faf",
+   "size": 3127
+  },
+  "golden/starts/9cb2019be0791f71.igz": {
+   "document_sha256": "4fa166c58de2ef490a945c4f3ee3f726a7f79779fa6dd0ff02b5b73de23f90d1",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4fa166c58de2ef490a945c4f3ee3f726a7f79779fa6dd0ff02b5b73de23f90d1",
+   "size": 9831
+  },
+  "golden/starts/9d90afc405effa3b.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "document_size": 325,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "size": 325
+  },
+  "golden/starts/9e5ea76c99e3156d.igz": {
+   "document_sha256": "e1ab72035e7c4f1a272612711a07e1c18f0af000f917d5e19e7fb29c57778ca9",
+   "document_size": 2720,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e1ab72035e7c4f1a272612711a07e1c18f0af000f917d5e19e7fb29c57778ca9",
+   "size": 2720
+  },
+  "golden/starts/9f08df40ec296171.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ],\n          [\n            0.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"layers\": [\n      {\n        \"name\": \"Layer 0\"\n      },\n      {\n        \"name\": \"BUZON\"\n      },\n      {\n        \"name\": \"CANAL\"\n      },\n      {\n        \"name\": \"limite\"\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "2cbe98f0105762b1c0ed88bfa2079826b8f09d43d2483627e6291e25294446ba",
+   "document_size": 1494,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2cbe98f0105762b1c0ed88bfa2079826b8f09d43d2483627e6291e25294446ba",
+   "size": 1494
+  },
+  "golden/starts/9fb0159d4c9c423d.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"geo_paths\": [\n      {\n        \"points\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            10.0,\n            0.0\n          ]\n        ]\n      }\n    ]\n  }\n}",
+   "document_sha256": "77bd7c88bdeddcefdfbd2820edffb22e33ce3dd81df304012904c1fd092d38fe",
+   "document_size": 624,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "77bd7c88bdeddcefdfbd2820edffb22e33ce3dd81df304012904c1fd092d38fe",
+   "size": 624
+  },
+  "golden/starts/9fcf61c6b3593efd.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            2.0,\n            0.0\n          ],\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "a1b2d385a6a29f7b0df760da4f1003258cd0fb2e6849c580645f11413162ea76",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a1b2d385a6a29f7b0df760da4f1003258cd0fb2e6849c580645f11413162ea76",
+   "size": 1305
+  },
+  "golden/starts/9fe563443d76fc37.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            4.0,\n            0.0\n          ],\n          [\n            0.0,\n            4.0,\n            0.0\n          ]\n        ],\n        \"back\": {\n          \"color\": [\n            0.0,\n            0.0,\n            1.0\n          ]\n        }\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "f8a4e1bf3a1d9e59dfa43280d5a4241b55997ae5bd18f86aff6e6a8afbc82134",
+   "document_size": 1417,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f8a4e1bf3a1d9e59dfa43280d5a4241b55997ae5bd18f86aff6e6a8afbc82134",
+   "size": 1417
+  },
+  "golden/starts/a08a87209e87aa72.igz": {
+   "document_sha256": "0998a7da0bb8340d3fd6260cc187aec7f98cb049731a352f74663f0d9f7a09ea",
+   "document_size": 3827,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0998a7da0bb8340d3fd6260cc187aec7f98cb049731a352f74663f0d9f7a09ea",
+   "size": 3827
+  },
+  "golden/starts/a19e81de9b73f4c2.igz": {
+   "document_sha256": "0bde2788f63f0df65bd08e6ccaa9ae186aae3174e618335cc33b2ab555873d14",
+   "document_size": 2121,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0bde2788f63f0df65bd08e6ccaa9ae186aae3174e618335cc33b2ab555873d14",
+   "size": 2121
+  },
+  "golden/starts/a49be8dd89e65581.igz": {
+   "document_sha256": "7d048d6b12931f31e4e141699cc9e1fa0ed26a457cb4d5927e34b8a41cf63eb7",
+   "document_size": 10245,
+   "entries": [
+    [
+     "document.json",
+     10245,
+     "7d048d6b12931f31e4e141699cc9e1fa0ed26a457cb4d5927e34b8a41cf63eb7"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "ff5ffb8d45b11030e1185c48b510289e1fcade94a320b8663b6d7614f0b4a96d",
+   "size": 373474
+  },
+  "golden/starts/a83582bd78e526c1.igz": {
+   "document_sha256": "3667fd06590973a7a02e1762255b1a28945360afd27295698440673fba056e80",
+   "document_size": 2259,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3667fd06590973a7a02e1762255b1a28945360afd27295698440673fba056e80",
+   "size": 2259
+  },
+  "golden/starts/aa60287142656d3c.igz": {
+   "document_sha256": "6b49217a82f2a060bb8d8af02b3d4de3a923d475e131be232a0bf442fc32a649",
+   "document_size": 5593,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6b49217a82f2a060bb8d8af02b3d4de3a923d475e131be232a0bf442fc32a649",
+   "size": 5593
+  },
+  "golden/starts/abfb8df37f6cbc00.igz": {
+   "document_sha256": "44fa88324adfd0616cb10031f3617d65cbaa09963dae5fa8ee8d551cf1cb1077",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "44fa88324adfd0616cb10031f3617d65cbaa09963dae5fa8ee8d551cf1cb1077",
+   "size": 9831
+  },
+  "golden/starts/ac501487ec7a3091.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"units\": {\n      \"length\": \"mm\",\n      \"precision\": 0\n    }\n  }\n}",
+   "document_sha256": "eeb34ce10cfb1638c844f254e58f0de504ca860ff14a3ed6743d2cb7baa3f04a",
+   "document_size": 390,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "eeb34ce10cfb1638c844f254e58f0de504ca860ff14a3ed6743d2cb7baa3f04a",
+   "size": 390
+  },
+  "golden/starts/ace4cd349c6fdcd4.igz": {
+   "document_sha256": "9e337972001a112b90900d34b9bf4033ad3e3f470de0905a93d486a008c72f85",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9e337972001a112b90900d34b9bf4033ad3e3f470de0905a93d486a008c72f85",
+   "size": 1740
+  },
+  "golden/starts/ae5090aac27a51c6.igz": {
+   "document_sha256": "ec1bd486b3d658186913c20e35eb265f3c65ba64d4f535bf7bdfe8574f6defe2",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "ec1bd486b3d658186913c20e35eb265f3c65ba64d4f535bf7bdfe8574f6defe2"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "e9e7f18a29def5ac0121125d5a0ad2df21006461f5a16419c6cb5ead4ef951b7",
+   "size": 373014
+  },
+  "golden/starts/aed55ee1b72fc29c.igz": {
+   "document_sha256": "66ea80c6364114e215b803b13d2f35521fd85e07f2c8b5ab785204fd104ec608",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "66ea80c6364114e215b803b13d2f35521fd85e07f2c8b5ab785204fd104ec608",
+   "size": 1740
+  },
+  "golden/starts/af48890fe024b086.igz": {
+   "document_sha256": "c985d1227808842ea358681c1f58c268a1e71ac62467900a4cf23bbacdd3178f",
+   "document_size": 3097,
+   "entries": [
+    [
+     "document.json",
+     3097,
+     "c985d1227808842ea358681c1f58c268a1e71ac62467900a4cf23bbacdd3178f"
+    ],
+    [
+     "textures/7b7744b4dea443ec-gray.png",
+     100,
+     "13ef504601265ecbd788bda486ed1c06285fc5c2a242a0a77da85f969e168fcb"
+    ],
+    [
+     "textures/9c29977d8e87109a-tan.png",
+     100,
+     "be849044c1fb55af8d3c598251d62ec6932f38c4c646b7bb656d14456807bc41"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7d78a28138b22f78756b4aed6ecadea184fe13c8515129b9e523d6030e42836c",
+   "size": 1060
+  },
+  "golden/starts/af7800eaab0e054b.igz": {
+   "document_sha256": "870b78ea868cf208facd075ab459fdd4d041dcd599b7da37fd339f82fb3fa09a",
+   "document_size": 2474,
+   "entries": [
+    [
+     "document.json",
+     2474,
+     "870b78ea868cf208facd075ab459fdd4d041dcd599b7da37fd339f82fb3fa09a"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "ca9eefd90a3879c3da74b691bb7bf214784964a87a5a85733ee1a9863a760019",
+   "size": 373015
+  },
+  "golden/starts/b18c5de5aaf2f90e.igz": {
+   "document_sha256": "1275a763d088bc2d1e8d315c325381116ed8abffd21896698571eefabce0f0cf",
+   "document_size": 10147,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1275a763d088bc2d1e8d315c325381116ed8abffd21896698571eefabce0f0cf",
+   "size": 10147
+  },
+  "golden/starts/b3da08ccdb49f0f3.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"image_planes\": [\n      {\n        \"texture\": {\n          \"path\": \"s.png\"\n        },\n        \"origin\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"u\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"v\": [\n          0.0,\n          3.0,\n          0.0\n        ],\n        \"aspect\": 0.75\n      }\n    ]\n  }\n}",
+   "document_sha256": "25ec72e5bfe874acfa6407983c73317b57abd88d358823dede6496821ab3880e",
+   "document_size": 666,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "25ec72e5bfe874acfa6407983c73317b57abd88d358823dede6496821ab3880e",
+   "size": 666
+  },
+  "golden/starts/b4aabc427b57047a.igz": {
+   "document_sha256": "ca43223e3e54c921d4641a0eccaede5e5c41825f3b534daac17e2cf18cea4a5e",
+   "document_size": 11959,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ca43223e3e54c921d4641a0eccaede5e5c41825f3b534daac17e2cf18cea4a5e",
+   "size": 11959
+  },
+  "golden/starts/b4b8c00bc6aee77e.igz": {
+   "document_sha256": "973ec05fa02d3f0a9b2d19b7ad6ae75bf756c6c877ee7e53407faa100531aadf",
+   "document_size": 11959,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "973ec05fa02d3f0a9b2d19b7ad6ae75bf756c6c877ee7e53407faa100531aadf",
+   "size": 11959
+  },
+  "golden/starts/b4fe2f8abf5a6f3e.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          5.0,\n          5.0,\n          0.0\n        ],\n        \"b\": [\n          7.0,\n          5.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ],\n          [\n            0.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "1d244122cc90f16de9b8e3cc605bd02c37cfac32ea0e1fab2878469cf9016f8f",
+   "document_size": 1461,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1d244122cc90f16de9b8e3cc605bd02c37cfac32ea0e1fab2878469cf9016f8f",
+   "size": 1461
+  },
+  "golden/starts/b5167032a45e440f.igz": {
+   "document_sha256": "5d8fe28cf75c98066b8cfafb4329e69303330d51c30a4b3b381af1131ea15037",
+   "document_size": 2425,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5d8fe28cf75c98066b8cfafb4329e69303330d51c30a4b3b381af1131ea15037",
+   "size": 2425
+  },
+  "golden/starts/b63f66895dc093f2.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          1.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          3.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          3.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          3.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          3.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            1.0,\n            0.0,\n            0.0\n          ],\n          [\n            3.0,\n            0.0,\n            0.0\n          ],\n          [\n            3.0,\n            2.0,\n            0.0\n          ],\n          [\n            1.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "03153e5c9d8c4a6891b5a685ed561ab3639a59259e4a89c24c0c67b97279bb40",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "03153e5c9d8c4a6891b5a685ed561ab3639a59259e4a89c24c0c67b97279bb40",
+   "size": 1305
+  },
+  "golden/starts/b6e5df7ff5181c4e.igz": {
+   "document_sha256": "edf6d7f14430f782e5393c38168e253801f8391cb64de15995c7d77025b494e5",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "edf6d7f14430f782e5393c38168e253801f8391cb64de15995c7d77025b494e5",
+   "size": 1740
+  },
+  "golden/starts/b7963602c7a7f76d.igz": {
+   "document_sha256": "24c040d49ad7803b613c9e70dddae889aee0ed1d6016ef1c6d3f405a0df79b3c",
+   "document_size": 10245,
+   "entries": [
+    [
+     "document.json",
+     10245,
+     "24c040d49ad7803b613c9e70dddae889aee0ed1d6016ef1c6d3f405a0df79b3c"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7a05a31ebf11d75a7bd9d5f07395596212c51bc4f3d09f674a99f72ee9c9fd76",
+   "size": 373472
+  },
+  "golden/starts/b7c12269dac59966.igz": {
+   "document_sha256": "147ff8900f211fb637a84a78b0b6686baad3a25fdc65bd495673d09e4fdd3582",
+   "document_size": 5887,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "147ff8900f211fb637a84a78b0b6686baad3a25fdc65bd495673d09e4fdd3582",
+   "size": 5887
+  },
+  "golden/starts/b8200bfd9ea4e3a2.igz": {
+   "document_sha256": "0d3ee62d8878fc65c89ff0c5884b55f8aab62b99e5d7bd689a57d02db51c3890",
+   "document_size": 1659,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0d3ee62d8878fc65c89ff0c5884b55f8aab62b99e5d7bd689a57d02db51c3890",
+   "size": 1659
+  },
+  "golden/starts/b9e5b5b41ce40e6f.igz": {
+   "document_sha256": "ed3588e01e400420a68658db348e7019fee2a75f85b851643261b52985f746bb",
+   "document_size": 10245,
+   "entries": [
+    [
+     "document.json",
+     10245,
+     "ed3588e01e400420a68658db348e7019fee2a75f85b851643261b52985f746bb"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "571d83fcb661f6ace61182e4c801c7d31034ea2ba404d3040337bd4d369f261c",
+   "size": 373469
+  },
+  "golden/starts/ba3590a106bdf56d.igz": {
+   "document_sha256": "05f4852f58756bed3fbf4521c2335a78e10dac1a35aadd3bbe4007b4c1a6aa9f",
+   "document_size": 11218,
+   "entries": [
+    [
+     "document.json",
+     11218,
+     "05f4852f58756bed3fbf4521c2335a78e10dac1a35aadd3bbe4007b4c1a6aa9f"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "f133c689427ec5bcc6cdf40ff94c404469af1c5b9ffd498181797088686460e7",
+   "size": 373569
+  },
+  "golden/starts/bbe20d1a43234b14.igz": {
+   "document_sha256": "580da6e41d362ff78daa23d96969acf4fedc4d462af161e6688ca88706c28f1a",
+   "document_size": 4293,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "580da6e41d362ff78daa23d96969acf4fedc4d462af161e6688ca88706c28f1a",
+   "size": 4293
+  },
+  "golden/starts/c2078068d35ffffd.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          4.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          4.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          4.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          4.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            0.0,\n            0.0\n          ],\n          [\n            4.0,\n            4.0,\n            0.0\n          ],\n          [\n            0.0,\n            4.0,\n            0.0\n          ]\n        ],\n        \"back\": true\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "6d8ff87b1570a181a246ea244f584d49e72c468b4909087df4afda9ca0ed3752",
+   "document_size": 1327,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6d8ff87b1570a181a246ea244f584d49e72c468b4909087df4afda9ca0ed3752",
+   "size": 1327
+  },
+  "golden/starts/c2b41b7d5ef4ef48.igz": {
+   "document_sha256": "77280bc7e0f43d074e04602c15dbd97e2ef44b1731255f5236c410b842300389",
+   "document_size": 15984,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "77280bc7e0f43d074e04602c15dbd97e2ef44b1731255f5236c410b842300389",
+   "size": 15984
+  },
+  "golden/starts/c4542631c9aa621c.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"geo_paths\": [\n      {\n        \"points\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            10.0,\n            0.0,\n            0.0\n          ],\n          [\n            20.0,\n            0.0,\n            0.0\n          ]\n        ]\n      }\n    ]\n  }\n}",
+   "document_sha256": "cf19d8135497cc9e3f6d887b067576e1373dd79e6f84a4f95e0ec0ee9d8457d2",
+   "document_size": 623,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "cf19d8135497cc9e3f6d887b067576e1373dd79e6f84a4f95e0ec0ee9d8457d2",
+   "size": 623
+  },
+  "golden/starts/c5dea659dcf6a353.igz": {
+   "document_sha256": "60dfe425f2b6d69a765bff52a4fdabc40c933184aac94cee1a38c6d426e02eb9",
+   "document_size": 1603,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "60dfe425f2b6d69a765bff52a4fdabc40c933184aac94cee1a38c6d426e02eb9",
+   "size": 1603
+  },
+  "golden/starts/c6734c2ab9dfa7a4.igz": {
+   "document_sha256": "30fffb80aa98ca4963b217ba77239de02e18ce25e42baf325044df4c1f3b1a53",
+   "document_size": 283476,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "30fffb80aa98ca4963b217ba77239de02e18ce25e42baf325044df4c1f3b1a53",
+   "size": 283476
+  },
+  "golden/starts/c6b2031b67872459.igz": {
+   "document_sha256": "9baee6f5218b56d12a05357da7cd7803b394bb7708ca28149c5d6de7e79abe04",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9baee6f5218b56d12a05357da7cd7803b394bb7708ca28149c5d6de7e79abe04",
+   "size": 1740
+  },
+  "golden/starts/c82df4ece7c41170.igz": {
+   "document_sha256": "49453b0444924e4d355b6a74a1b1b5c2f6c9ba3338c500b7dcb5faf73d044cfc",
+   "document_size": 5242,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "49453b0444924e4d355b6a74a1b1b5c2f6c9ba3338c500b7dcb5faf73d044cfc",
+   "size": 5242
+  },
+  "golden/starts/ca962b5b8e1dbd57.igz": {
+   "document_sha256": "2c62bba8d7c9c33623f855e7adc25b3e961f9ce6691db25d7ef6f8a67f8256cf",
+   "document_size": 2121,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2c62bba8d7c9c33623f855e7adc25b3e961f9ce6691db25d7ef6f8a67f8256cf",
+   "size": 2121
+  },
+  "golden/starts/ce35fc5d0b54cf3f.igz": {
+   "document_sha256": "2aa5bc702642a6f1f957417f527f7d80bb550c994fdedf84d3e375476b4de1bc",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2aa5bc702642a6f1f957417f527f7d80bb550c994fdedf84d3e375476b4de1bc",
+   "size": 8118
+  },
+  "golden/starts/ced2423babf5d117.igz": {
+   "document_sha256": "72a072e4514dd75c635901f9466f0b8fa1c025fbad788bf8f5a1bfe229c25315",
+   "document_size": 5593,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "72a072e4514dd75c635901f9466f0b8fa1c025fbad788bf8f5a1bfe229c25315",
+   "size": 5593
+  },
+  "golden/starts/d0babd5a4fb7d99a.igz": {
+   "document_sha256": "97b1493c94f3b3b87fc29b6842373ea74a39b1b1af09314e8d44e9a53eaa7918",
+   "document_size": 3093,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "97b1493c94f3b3b87fc29b6842373ea74a39b1b1af09314e8d44e9a53eaa7918",
+   "size": 3093
+  },
+  "golden/starts/d0edb880f4f742e3.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          6.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          6.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          6.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          6.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          6.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          6.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            6.0,\n            0.0,\n            0.0\n          ],\n          [\n            6.0,\n            6.0,\n            0.0\n          ],\n          [\n            0.0,\n            6.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "d1abd423a088baad195d405a1cd0e64e13716f12414baeaf16efcdba2eb85e06",
+   "document_size": 1305,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "d1abd423a088baad195d405a1cd0e64e13716f12414baeaf16efcdba2eb85e06",
+   "size": 1305
+  },
+  "golden/starts/d23f94530e2aaa62.igz": {
+   "document_sha256": "2fda3f6f677e5a907d0a537e063c71ff956c0c24f12d738adf569a20695a409a",
+   "document_size": 4533,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2fda3f6f677e5a907d0a537e063c71ff956c0c24f12d738adf569a20695a409a",
+   "size": 4533
+  },
+  "golden/starts/d2561c39a53b9b23.igz": {
+   "document_sha256": "ef01d04718b8afd04fff2ed4f703d422570d039270850d0e28e1a3d5d1818b8a",
+   "document_size": 16926,
+   "entries": [
+    [
+     "document.json",
+     16926,
+     "ef01d04718b8afd04fff2ed4f703d422570d039270850d0e28e1a3d5d1818b8a"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "644a8265dce6d3c7094cb32f5fa618c89c76ee750d7d9f570041305f7dbc96b9",
+   "size": 373641
+  },
+  "golden/starts/d41eb04f51919383.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          2.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          2.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          2.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          2.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            0.0,\n            0.0\n          ],\n          [\n            2.0,\n            2.0,\n            0.0\n          ],\n          [\n            0.0,\n            2.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"materials\": [\n      {\n        \"name\": \"Brick_Soldier_Bond_1K\",\n        \"color\": [\n          0.7,\n          0.3,\n          0.2\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "a7c0f9905be424a3594660681089a8537db25fcdef9723e7d8de02c897efd19c",
+   "document_size": 1461,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a7c0f9905be424a3594660681089a8537db25fcdef9723e7d8de02c897efd19c",
+   "size": 1461
+  },
+  "golden/starts/d472c01e66c5500e.igz": {
+   "document_sha256": "388bf190d3147f7deacc31a3e23121dae88b6bfc298d150427977ba9742ec77d",
+   "document_size": 101050,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "388bf190d3147f7deacc31a3e23121dae88b6bfc298d150427977ba9742ec77d",
+   "size": 101050
+  },
+  "golden/starts/d5b7283f01918de0.igz": {
+   "document_sha256": "4daf7b5da353c5a39086bbb4005282477e4c130a719ade08ce088f5c9d8c917b",
+   "document_size": 4877,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4daf7b5da353c5a39086bbb4005282477e4c130a719ade08ce088f5c9d8c917b",
+   "size": 4877
+  },
+  "golden/starts/d83d74812ac02b0c.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"text_labels\": [\n      {\n        \"anchor\": [\n          1.0,\n          2.0,\n          0.0\n        ],\n        \"offset\": [\n          0.5,\n          0.0,\n          1.0\n        ],\n        \"text\": \"Muro eje A\"\n      }\n    ]\n  }\n}",
+   "document_sha256": "623ac4eafb64180c2e1c04e56b695f5cb71722f3933197f235594f8cf104992e",
+   "document_size": 548,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "623ac4eafb64180c2e1c04e56b695f5cb71722f3933197f235594f8cf104992e",
+   "size": 548
+  },
+  "golden/starts/dbfe5e99d0f83735.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          3.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "0e8f87bafe8bcf3c72070eb3e1cdbb7a6378368b4190365319ddda4042b731b9",
+   "document_size": 485,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "0e8f87bafe8bcf3c72070eb3e1cdbb7a6378368b4190365319ddda4042b731b9",
+   "size": 485
+  },
+  "golden/starts/de3ac84a52d27fa4.igz": {
+   "document_sha256": "9adecffa3176095b74956c96bb6e8f905de4fef4b51867dad061385ca9afcf40",
+   "document_size": 2277,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9adecffa3176095b74956c96bb6e8f905de4fef4b51867dad061385ca9afcf40",
+   "size": 2277
+  },
+  "golden/starts/e0716873ddd648fb.igz": {
+   "document_sha256": "e2e6a90ad59a80ab0e92dc16a2aa953f570194226d1b20e392dd94e6e2389225",
+   "document_size": 2095,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e2e6a90ad59a80ab0e92dc16a2aa953f570194226d1b20e392dd94e6e2389225",
+   "size": 2095
+  },
+  "golden/starts/e13a32d56db4d017.igz": {
+   "document_sha256": "9bb7efb00428a5ae45cbc6b8f503549c3f9140040c953bd0c01884ef50e6d975",
+   "document_size": 9831,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "9bb7efb00428a5ae45cbc6b8f503549c3f9140040c953bd0c01884ef50e6d975",
+   "size": 9831
+  },
+  "golden/starts/e16306da900b83a0.igz": {
+   "document_sha256": "7dcfb020b698de2fa73a2c52e8d5d13a5887863d3f46a6f6c88cc2b9c5e5474b",
+   "document_size": 5593,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "7dcfb020b698de2fa73a2c52e8d5d13a5887863d3f46a6f6c88cc2b9c5e5474b",
+   "size": 5593
+  },
+  "golden/starts/e1fb85a84243f1d2.igz": {
+   "document_sha256": "2622874802bdc5b3bfb7698edc54d0bc8eb5935f5a613da6d22f058075268e18",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2622874802bdc5b3bfb7698edc54d0bc8eb5935f5a613da6d22f058075268e18",
+   "size": 1740
+  },
+  "golden/starts/e2e1597b0bd9b579.igz": {
+   "document_sha256": "a7ac2472a7b9c35a0219e8a6f1159481f5e8cf2f5dced98bd790a64a38b7f153",
+   "document_size": 1740,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a7ac2472a7b9c35a0219e8a6f1159481f5e8cf2f5dced98bd790a64a38b7f153",
+   "size": 1740
+  },
+  "golden/starts/e30439c65bf91a4a.igz": {
+   "document_sha256": "f1a3b76339b0a4872d3213080e80a03bf5d72ccd30fac6ae1be1876db4154549",
+   "document_size": 10955,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f1a3b76339b0a4872d3213080e80a03bf5d72ccd30fac6ae1be1876db4154549",
+   "size": 10955
+  },
+  "golden/starts/e5f47a269a8c0bda.igz": {
+   "document_sha256": "3b8bc9f52397a4cb21064b562bb52006471c12e2dd6f34887f6b22857d6ac740",
+   "document_size": 10245,
+   "entries": [
+    [
+     "document.json",
+     10245,
+     "3b8bc9f52397a4cb21064b562bb52006471c12e2dd6f34887f6b22857d6ac740"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "0806e5050dd7b0c320835c4b852887868f68d96208e2786671a3352b1940f4d3",
+   "size": 373476
+  },
+  "golden/starts/e7798d035522c468.igz": {
+   "document_sha256": "ec37db761988670e41d0238e6bfda547ea42af8284cb922be5590714590248de",
+   "document_size": 6105,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ec37db761988670e41d0238e6bfda547ea42af8284cb922be5590714590248de",
+   "size": 6105
+  },
+  "golden/starts/e9314550820c10a0.igz": {
+   "document_sha256": "4fc955b8ae880538d78a6f88d3e531868e3d1c3da378d43ba5b107ea87e083f6",
+   "document_size": 2121,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4fc955b8ae880538d78a6f88d3e531868e3d1c3da378d43ba5b107ea87e083f6",
+   "size": 2121
+  },
+  "golden/starts/eb8de7577b5f60ba.igz": {
+   "document_sha256": "bc014fd4b1ddb2677e005face9686e7b74bac9ae28ec0ecd27ae37cfb74ba933",
+   "document_size": 2933,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "bc014fd4b1ddb2677e005face9686e7b74bac9ae28ec0ecd27ae37cfb74ba933",
+   "size": 2933
+  },
+  "golden/starts/edec1d6d8f2dbf88.igz": {
+   "document_sha256": "06a17a0dcfbead48f9dab649de52fd7e78bc0c28e8d13dc8edf5037048941dfa",
+   "document_size": 7719,
+   "entries": [
+    [
+     "document.json",
+     7719,
+     "06a17a0dcfbead48f9dab649de52fd7e78bc0c28e8d13dc8edf5037048941dfa"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7ea558e815bd13bc1eb0dc66784fd9aa10b3e0025c11d9857bdbf484a9255603",
+   "size": 373247
+  },
+  "golden/starts/ef0e5c3afe3bb192.igz": {
+   "document_sha256": "8d042cff8cf16919097d0dbd5d228d6a13f55b2dafc9edd90c2a114f03b880d0",
+   "document_size": 3127,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "8d042cff8cf16919097d0dbd5d228d6a13f55b2dafc9edd90c2a114f03b880d0",
+   "size": 3127
+  },
+  "golden/starts/ef2ace9579e9f28f.igz": {
+   "document_sha256": "54b9946c62856787435ba45ed9e6a866d6cdb6ed9ebc056d4f37bf7a137a2bae",
+   "document_size": 5593,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "54b9946c62856787435ba45ed9e6a866d6cdb6ed9ebc056d4f37bf7a137a2bae",
+   "size": 5593
+  },
+  "golden/starts/f03e33f5a054db01.igz": {
+   "document_sha256": "cc0f47f9ff2f0bcc90230d967336dbe2c9721eeeb0173eb1b927e98a4e7fc945",
+   "document_size": 2095,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "cc0f47f9ff2f0bcc90230d967336dbe2c9721eeeb0173eb1b927e98a4e7fc945",
+   "size": 2095
+  },
+  "golden/starts/f20be7a96871fd62.igz": {
+   "document_sha256": "7e91f83855456e66f68047060b5ea079f9095d58b46623c36fd3558bdc996943",
+   "document_size": 2414,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "7e91f83855456e66f68047060b5ea079f9095d58b46623c36fd3558bdc996943",
+   "size": 2414
+  },
+  "golden/starts/f2b95e3cafd011f5.igz": {
+   "document_sha256": "6f52b54248420d4020959fa8270d2c5fa567ba4bc0e89923126b7c1ce72440c9",
+   "document_size": 2481,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6f52b54248420d4020959fa8270d2c5fa567ba4bc0e89923126b7c1ce72440c9",
+   "size": 2481
+  },
+  "golden/starts/f3d266e5f3262c17.igz": {
+   "document_sha256": "d7fd8b87faf37d7b97d9a2b0561f2a22d3ef906cd4e71dc313cf2ea4bfbb496a",
+   "document_size": 2880,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "d7fd8b87faf37d7b97d9a2b0561f2a22d3ef906cd4e71dc313cf2ea4bfbb496a",
+   "size": 2880
+  },
+  "golden/starts/f5abaeaf23ca7261.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"materials\": [\n      {\n        \"name\": \"Porcelanato\",\n        \"color\": [\n          0.9,\n          0.9,\n          0.9\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "5aae527b323a989c92660da67b35698b34bc88a4d3f022c9a8d5e405c3f57ac2",
+   "document_size": 471,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5aae527b323a989c92660da67b35698b34bc88a4d3f022c9a8d5e405c3f57ac2",
+   "size": 471
+  },
+  "golden/starts/f6bb4a8a7f1910a9.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          0.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "f0a82563b4118ac72cb821927ef2cfecbda2e14db6d7ed67347363428b7fd08e",
+   "document_size": 953,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f0a82563b4118ac72cb821927ef2cfecbda2e14db6d7ed67347363428b7fd08e",
+   "size": 953
+  },
+  "golden/starts/f7edff8cfb76b343.igz": {
+   "document_sha256": "12b4c080f3d55c939b7df430d38bad0ac6d303a56b1bd903806c97ba528e2142",
+   "document_size": 40927,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "12b4c080f3d55c939b7df430d38bad0ac6d303a56b1bd903806c97ba528e2142",
+   "size": 40927
+  },
+  "golden/starts/fbeba1a8d92d7576.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [\n      {\n        \"a\": [\n          0.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          0.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          0.0,\n          0.0\n        ],\n        \"b\": [\n          1.0,\n          1.0,\n          0.0\n        ]\n      },\n      {\n        \"a\": [\n          1.0,\n          1.0,\n          0.0\n        ],\n        \"b\": [\n          0.0,\n          0.0,\n          0.0\n        ]\n      }\n    ],\n    \"faces\": [\n      {\n        \"vertices\": [\n          [\n            0.0,\n            0.0,\n            0.0\n          ],\n          [\n            1.0,\n            0.0,\n            0.0\n          ],\n          [\n            1.0,\n            1.0,\n            0.0\n          ]\n        ]\n      }\n    ],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "a942fb180e5112339fca7c7f09e82c933e1d92f24f94781320b67eb640cefeec",
+   "document_size": 1074,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a942fb180e5112339fca7c7f09e82c933e1d92f24f94781320b67eb640cefeec",
+   "size": 1074
+  },
+  "golden/starts/fbf11cbeeddc8c3f.igz": {
+   "document_sha256": "b35e5ba8563253cd0c4b205a96215af3cde0c1d2e9501b366ec3eb0a621ed632",
+   "document_size": 8118,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "b35e5ba8563253cd0c4b205a96215af3cde0c1d2e9501b366ec3eb0a621ed632",
+   "size": 8118
+  },
+  "golden/starts/fe32cbc93c223bdb.igz": {
+   "document_sha256": "383856cb7da4826cadd951514afee4dbdb259b5481183da41d779de7dacc4a8f",
+   "document_size": 8205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "383856cb7da4826cadd951514afee4dbdb259b5481183da41d779de7dacc4a8f",
+   "size": 8205
+  },
+  "golden/starts/fe445a3f00c6ce87.igz": {
+   "document_sha256": "fc51b0a70f84e31581feba83a7e96596d6781235245daea1f7d6b989de9e483c",
+   "document_size": 4614,
+   "entries": [
+    [
+     "document.json",
+     4614,
+     "fc51b0a70f84e31581feba83a7e96596d6781235245daea1f7d6b989de9e483c"
+    ],
+    [
+     "textures/c9aa332dbb00581d-ingeniero.png",
+     372245,
+     "be7b463c8b2eec4e7635b2f1efbc1705267ff39ada6a0e4935eebe2e13799e13"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "e5f77729a4a92578497bd020cd84a8aac770cd17d383e07005e021c75d4c46ff",
+   "size": 373182
+  },
+  "golden/starts/ffeef316088959d9.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    },\n    \"plugin_data\": {\n      \"myext\": {\n        \"n\": 1\n      }\n    }\n  }\n}",
+   "document_sha256": "8e67bb61fb8c731a39185893c124c32b847b59ba2d2f498f7031ec2d1906bd7b",
+   "document_size": 393,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "8e67bb61fb8c731a39185893c124c32b847b59ba2d2f498f7031ec2d1906bd7b",
+   "size": 393
+  },
+  "resources/components/abedul.igz": {
+   "document_sha256": "fae3e19ce912e4b7c46f370a8d4d90019ec3e126bed37def3f966d518155926c",
+   "document_size": 7215827,
+   "entries": [
+    [
+     "document.json",
+     7215827,
+     "fae3e19ce912e4b7c46f370a8d4d90019ec3e126bed37def3f966d518155926c"
+    ],
+    [
+     "textures/a375cbca1d32f31b-trunk.png",
+     3677,
+     "f30825f8d23d4e211a0a4c2e442fca809a8b759d10fd2888cb9c303f822cbbc7"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "1f03fd6de608d6c517ded59464aca56b1cb200ed66e1539ff17cc7389149eb9b",
+   "size": 405223
+  },
+  "resources/components/arbol.igz": {
+   "document_sha256": "ef4d9f577d8fda6a7d7bbc39c9b831c6ba1a04dc3433592292551f06f87248cd",
+   "document_size": 4040414,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ef4d9f577d8fda6a7d7bbc39c9b831c6ba1a04dc3433592292551f06f87248cd",
+   "size": 4040414
+  },
+  "resources/components/banco.igz": {
+   "document_sha256": "114f186156ad62cc391506c91e92d36440c1304a062c205dc108aba8c8adbd85",
+   "document_size": 2424575,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "114f186156ad62cc391506c91e92d36440c1304a062c205dc108aba8c8adbd85",
+   "size": 2424575
+  },
+  "resources/components/chica.igz": {
+   "document_sha256": "6070bb56b51f6c098ddd2380a40449badb4b3aef092b70bfa7c4c0666e4e91f0",
+   "document_size": 4577546,
+   "entries": [
+    [
+     "document.json",
+     4577546,
+     "6070bb56b51f6c098ddd2380a40449badb4b3aef092b70bfa7c4c0666e4e91f0"
+    ],
+    [
+     "geom/0.bin",
+     692112,
+     "01ee2189697a2184f492622d1c0d916621f8a88eb40007c3c029c7d531013c99"
+    ],
+    [
+     "textures/175f0a5d792e95c0-Girl_Standing_111.jpg",
+     20655,
+     "f54895b99c5b23de90e3cc49d79ff44fecddd60f5d561fd67c0c58b04915e19a"
+    ],
+    [
+     "textures/21481b76b4092e46-Girl_Standing_122.jpg",
+     6348,
+     "6251b8357a2873a2609135d5b5947e4ddca2c5a047f4a11a89a9d2cdf9c28f41"
+    ],
+    [
+     "textures/3a52fc348dba7b8d-Girl_Standing_123.jpg",
+     6779,
+     "8ff45c3a8a961c1cf61120baf80e3c350fb418aeff63b244915b833e2eb2b2a2"
+    ],
+    [
+     "textures/40d475818ec23fea-Girl_Standing_109.jpg",
+     13227,
+     "396c6838066fa09551830131df282d2317f40c27a9ac10cdc0170675bdede219"
+    ],
+    [
+     "textures/430ab58723859767-Girl_Standing_110.jpg",
+     10387,
+     "4dd25f003d0ee6808a36fa3d8eb1c5e11904cd231f3b38487287d9e9fc33cd9b"
+    ],
+    [
+     "textures/5bed250f41b32ef2-Girl_Standing_120.jpg",
+     18187,
+     "c70d337f9b6203cc788eff4970cac680bc6300e06842b96be84a72c81d604110"
+    ],
+    [
+     "textures/7e10475c45d9b2a7-Girl_Standing_108.jpg",
+     53166,
+     "06571fae085286ec5244febed4be6339284c147f4614b350435ea07963f3dddf"
+    ],
+    [
+     "textures/bcdcbf8cfd759e70-Girl_Standing_107.jpg",
+     9963,
+     "9ec22b3c1736fce09d5d57286f953d38a5051579b7249f485e8c2c4a94594d9f"
+    ],
+    [
+     "textures/cbdf7faee690a5a3-Girl_Standing_118.jpg",
+     31389,
+     "16b1df3d2ea7b2ab86b64fae0ec741f73cb001377314210c035db9c6604958e0"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "2e1c62a09ea2c30f966f9e4d5921e74044099f50a6994e5c4e9c5405da1b410c",
+   "size": 2025641
+  },
+  "resources/components/fuente.igz": {
+   "document_sha256": "a0af2ac5d0cc4b6670026e3ef17aae9950d131e6c8a0b8125bc674ba2a4cf487",
+   "document_size": 8500060,
+   "entries": [
+    [
+     "document.json",
+     8500060,
+     "a0af2ac5d0cc4b6670026e3ef17aae9950d131e6c8a0b8125bc674ba2a4cf487"
+    ],
+    [
+     "textures/01b76c2e79c62893-white-marble.jpg",
+     28925,
+     "da7edfd6f59906c10058147818b3cb013b988e184b4bae00affa021278f098c1"
+    ],
+    [
+     "textures/46cf068905d4c7f4-swimming-pool-top-cyan.jpg",
+     52607,
+     "daf240390858da109e78324df8ae197ca3661c75b26d8f82dea4cc451116676d"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "291c125ecb47a35b50d7257c551b11962fcf44f5034b5d3a6436fa0b8fdc7918",
+   "size": 1175444
+  },
+  "resources/components/pickup.igz": {
+   "document_sha256": "e83044969df4480ce1b899072b98bfc1f3164c202e85a0067486897d031e56fb",
+   "document_size": 3563824,
+   "entries": [
+    [
+     "document.json",
+     3563824,
+     "e83044969df4480ce1b899072b98bfc1f3164c202e85a0067486897d031e56fb"
+    ],
+    [
+     "textures/d7d2e96f3223a02a-texturePickup.jpg",
+     65699,
+     "d13c28e8827f7481dee69ac7357d09b09a2ea5ee196cbb3f44acd0eebe5a0f60"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "6a12551e3307a0bc93c2a404b0d90363d514ccf9b48d84912a99195cf5c984ee",
+   "size": 313412
+  },
+  "resources/components/sofa.igz": {
+   "document": "{\"igz_format\":3,\"app_version\":\"0.5.8\",\"scene\":{\"edges\":[],\"faces\":[],\"groups\":[{\"geom\":{\"member\":\"geom/0.bin\",\"arrays\":{\"pos\":[\"<f4\",[5969,3],0],\"edges\":[\"<i4\",[14302,2],71632],\"rings\":[\"<i4\",[27059],186048],\"ring_sizes\":[\"<i4\",[8276],294288],\"ring_counts\":[\"<i4\",[8276],327392],\"face_attr\":[\"<i4\",[8276],360496],\"edge_flags\":[\"|u1\",[14302],393600]},\"face_attrs\":[{\"color\":[0.62,0.57,0.45],\"back\":true},{\"color\":[0.6,0.57,0.55],\"back\":true},{\"color\":[0.42,0.31,0.2],\"back\":true}]},\"name\":\"Group 2\",\"uid\":\"4a5143edb47a471d\"}],\"dimension_style\":{\"decimals\":2,\"units\":\"m\",\"font_size\":9,\"color\":[45,55,75],\"norma\":\"iso\",\"base_step_mm\":8.0,\"ends\":\"tick\"}}}",
+   "document_sha256": "3348465f42f721d9f6809bd3fbffb6345564bd88ada006e437df239c7b933e1d",
+   "document_size": 651,
+   "entries": [
+    [
+     "document.json",
+     651,
+     "3348465f42f721d9f6809bd3fbffb6345564bd88ada006e437df239c7b933e1d"
+    ],
+    [
+     "geom/0.bin",
+     407904,
+     "e9b24e522e0764e07fc88f972d38912a82c4e04c84a21f7cca90fe09f71908c8"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "e3f1a240a5c65973fbfc4c54bb6a9e8b8e9f34bf7e45d14507c180b04ebf1657",
+   "size": 142400
+  },
+  "resources/components/suv.igz": {
+   "document_sha256": "5802c8fa0705940112506ed17b9eddbbdaaae5c049acdf42091b5bf91399a99b",
+   "document_size": 3981660,
+   "entries": [
+    [
+     "document.json",
+     3981660,
+     "5802c8fa0705940112506ed17b9eddbbdaaae5c049acdf42091b5bf91399a99b"
+    ],
+    [
+     "textures/137281d4d9d04767-handle.png",
+     1346,
+     "826d71766d0ec1a8dcdf0238440d7741cc38c305b96296a70e813d4ffadc8d5c"
+    ],
+    [
+     "textures/36cbe88db2828924-texture.jpg",
+     75962,
+     "e7cb8f4093b67d160825ae5e610ed62ab4e9fd109c9f7edab333d2f8d3a49066"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "f1fcd1809cb2c3170d4052c0b1a85068fddad2f9f0ce11845fdbe8c21951b89e",
+   "size": 379336
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/curves.f1.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/curves.f3.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/faces.f1.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/faces.f3.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/groups.f1.igz": {
+   "document_sha256": "1e3826f7ca3f1f821e9219e6989a1197b32b63acb33d924d47dfa4a610a54ae2",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1e3826f7ca3f1f821e9219e6989a1197b32b63acb33d924d47dfa4a610a54ae2",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/groups.f3.igz": {
+   "document_sha256": "5cbd76f3d70e3cf80506f425d569503275aebb186d25751f10fc7c13cb1ea17f",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5cbd76f3d70e3cf80506f425d569503275aebb186d25751f10fc7c13cb1ea17f",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/textured.f2.igz": {
+   "document_sha256": "06e9cafc1ad9c3d4da498955569f442f07265ff891d998c62767cba354f3f93e",
+   "document_size": 3418,
+   "entries": [
+    [
+     "document.json",
+     3418,
+     "06e9cafc1ad9c3d4da498955569f442f07265ff891d998c62767cba354f3f93e"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7229f40a5230113a719a416ab261dedd4a3accfada22f99add94ba88febd8174",
+   "size": 835
+  },
+  "rust/crates/ingetrazo-formats/tests/data/igz/textured.f3.igz": {
+   "document_sha256": "06e9cafc1ad9c3d4da498955569f442f07265ff891d998c62767cba354f3f93e",
+   "document_size": 3418,
+   "entries": [
+    [
+     "document.json",
+     3418,
+     "06e9cafc1ad9c3d4da498955569f442f07265ff891d998c62767cba354f3f93e"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "7229f40a5230113a719a416ab261dedd4a3accfada22f99add94ba88febd8174",
+   "size": 835
+  },
+  "rust/crates/ingetrazo-formats/tests/data/scene-compact.igz": {
+   "document_sha256": "fb1d65d574cd6bc290ab429b61aaf62b87f1247e6392be00e5a1988dcd5d692b",
+   "document_size": 4692,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "fb1d65d574cd6bc290ab429b61aaf62b87f1247e6392be00e5a1988dcd5d692b",
+   "size": 4692
+  },
+  "rust/crates/ingetrazo-formats/tests/data/scene.igz": {
+   "document_sha256": "fb1d65d574cd6bc290ab429b61aaf62b87f1247e6392be00e5a1988dcd5d692b",
+   "document_size": 4692,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "fb1d65d574cd6bc290ab429b61aaf62b87f1247e6392be00e5a1988dcd5d692b",
+   "size": 4692
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/curves.f1.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/curves.f3.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/curves.fast.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/curves.mix.igz": {
+   "document_sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "document_size": 2496,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4b60541cfc33a60698eb0658b48235e8c4d1923be4a4c5a3e0c558bda4599229",
+   "size": 2496
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/empty.f1.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "document_size": 325,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "size": 325
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/empty.fast.igz": {
+   "document": "{\n  \"igz_format\": 1,\n  \"app_version\": \"0.5.8\",\n  \"scene\": {\n    \"edges\": [],\n    \"faces\": [],\n    \"dimension_style\": {\n      \"decimals\": 2,\n      \"units\": \"m\",\n      \"font_size\": 9,\n      \"color\": [\n        45,\n        55,\n        75\n      ],\n      \"norma\": \"iso\",\n      \"base_step_mm\": 8.0,\n      \"ends\": \"arrow\"\n    }\n  }\n}",
+   "document_sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "document_size": 325,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "20b5c56b08dc598de1685f7a30066d840a9a378c6ad5fefb7154e31595662981",
+   "size": 325
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/everything.f1.igz": {
+   "document_sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "document_size": 14018,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "size": 14018
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/everything.f3.igz": {
+   "document_sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "document_size": 14018,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "size": 14018
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/everything.fast.igz": {
+   "document_sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "document_size": 14018,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "size": 14018
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/everything.mix.igz": {
+   "document_sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "document_size": 14018,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e17678ec83c896caa6d1381d012fc7503fb4806f27a7c42c15bf6aa5cae66b3c",
+   "size": 14018
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/example-banca-pergola-yanque.f2.igz": {
+   "document_sha256": "1badb0e8a06f9331c8df93279bf8e715f250729374d4feb8afc6d1addeb3b90d",
+   "document_size": 397959,
+   "entries": [
+    [
+     "document.json",
+     397959,
+     "1badb0e8a06f9331c8df93279bf8e715f250729374d4feb8afc6d1addeb3b90d"
+    ],
+    [
+     "textures/3c7fd1a55c44e5a4-beech.jpg",
+     41699,
+     "c6df15b4d2d346f31982d62307662e7cffed3ef391e6296eeb6386913b45d7f4"
+    ],
+    [
+     "textures/928cd77719565dde-sumari.png",
+     389645,
+     "f8c694e25a390d31d9711e22bfca7a265b09def6dc35cf9caa6501ad8918241b"
+    ],
+    [
+     "textures/ae1ad9f06706c193-metal_dark.png",
+     1331,
+     "d0b86ccb4da60c1473129b0e17a3935137c153697567cd73c74dacebe68c2794"
+    ],
+    [
+     "textures/ea4d38dd30369ad3-concrete_smooth.png",
+     19989,
+     "0a8b529dc85842c9b67f55ce1500403e8d27074ae0bef60c270da4516c09ce2e"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "cf45cb045cec876329211adb1fdf1cb281636046ee2718098411d71f021f197c",
+   "size": 470640
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/example-luminaria-solar-yanque.f2.igz": {
+   "document_sha256": "3729ec03a7f392830af21dfef2399dec76e2ad345b3f6b5ada7712f984142e43",
+   "document_size": 3569345,
+   "entries": [
+    [
+     "document.json",
+     3569345,
+     "3729ec03a7f392830af21dfef2399dec76e2ad345b3f6b5ada7712f984142e43"
+    ],
+    [
+     "textures/928cd77719565dde-sumari.png",
+     389645,
+     "f8c694e25a390d31d9711e22bfca7a265b09def6dc35cf9caa6501ad8918241b"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "29b9b222e8209459188c39ece91063856724cd8d35e7f2a64f6ec1f77bf0b30c",
+   "size": 504870
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/faces.f1.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/faces.f3.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/faces.fast.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/faces.mix.igz": {
+   "document_sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "document_size": 7205,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4ddae74256eda9d3ea488d1fcc7523d9cdee30df7064385d1d7ffefe176bf045",
+   "size": 7205
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/grid.f1.igz": {
+   "document_sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "document_size": 246467,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "size": 246467
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/grid.f3.igz": {
+   "document_sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "document_size": 246467,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "size": 246467
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/grid.fast.igz": {
+   "document_sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "document_size": 246467,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "size": 246467
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/grid.mix.igz": {
+   "document_sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "document_size": 246467,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "4a6129bdc38f4a75cdc19305ed96b2543992f52dc058914b8f5fcafcb945d5c5",
+   "size": 246467
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/groups.f1.igz": {
+   "document_sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/groups.f3.igz": {
+   "document_sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/groups.fast.igz": {
+   "document_sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/groups.mix.igz": {
+   "document_sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "document_size": 11686,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "05beb5a1c56ee4cfdf4279ff17ad641e543a39816344445a199ce60914d051f7",
+   "size": 11686
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/textures.f2.igz": {
+   "document_sha256": "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df",
+   "document_size": 5873,
+   "entries": [
+    [
+     "document.json",
+     5873,
+     "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df"
+    ],
+    [
+     "textures/d712d3206a8e74bd-ñandú 日本.png",
+     111,
+     "408171849370a0dbe8f26c4ba75f8449288a5566be4790ee4f971fa58244bf81"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ],
+    [
+     "textures/fe86ac2d988762a9-wood tinted.png",
+     112,
+     "fde871f516bdfd0fb1b854a9d475d81117238584ce41554e53bb9d9b5650b901"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "729bdeefc4ac41e542416aeadca33cfa7cc61dc86f2cd50f8e46456394d01fae",
+   "size": 1784
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/textures.f3.igz": {
+   "document_sha256": "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df",
+   "document_size": 5873,
+   "entries": [
+    [
+     "document.json",
+     5873,
+     "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df"
+    ],
+    [
+     "textures/d712d3206a8e74bd-ñandú 日本.png",
+     111,
+     "408171849370a0dbe8f26c4ba75f8449288a5566be4790ee4f971fa58244bf81"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ],
+    [
+     "textures/fe86ac2d988762a9-wood tinted.png",
+     112,
+     "fde871f516bdfd0fb1b854a9d475d81117238584ce41554e53bb9d9b5650b901"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "729bdeefc4ac41e542416aeadca33cfa7cc61dc86f2cd50f8e46456394d01fae",
+   "size": 1784
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/textures.fast.igz": {
+   "document_sha256": "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df",
+   "document_size": 5873,
+   "entries": [
+    [
+     "document.json",
+     5873,
+     "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df"
+    ],
+    [
+     "textures/d712d3206a8e74bd-ñandú 日本.png",
+     111,
+     "408171849370a0dbe8f26c4ba75f8449288a5566be4790ee4f971fa58244bf81"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ],
+    [
+     "textures/fe86ac2d988762a9-wood tinted.png",
+     112,
+     "fde871f516bdfd0fb1b854a9d475d81117238584ce41554e53bb9d9b5650b901"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "729bdeefc4ac41e542416aeadca33cfa7cc61dc86f2cd50f8e46456394d01fae",
+   "size": 1784
+  },
+  "rust/crates/ingetrazo-model/tests/data/igz_write/textures.mix.igz": {
+   "document_sha256": "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df",
+   "document_size": 5873,
+   "entries": [
+    [
+     "document.json",
+     5873,
+     "e3819803af7b1d8b596e295232dbb001d9e2ebe24bc1b7cb3a18b1018683d1df"
+    ],
+    [
+     "textures/d712d3206a8e74bd-ñandú 日本.png",
+     111,
+     "408171849370a0dbe8f26c4ba75f8449288a5566be4790ee4f971fa58244bf81"
+    ],
+    [
+     "textures/dfb479038fbf0960-wood.png",
+     110,
+     "636424b93674c214401fd6c4dcfe9d65b1717094cfc2598ac5337199307f2fa9"
+    ],
+    [
+     "textures/fe86ac2d988762a9-wood tinted.png",
+     112,
+     "fde871f516bdfd0fb1b854a9d475d81117238584ce41554e53bb9d9b5650b901"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "729bdeefc4ac41e542416aeadca33cfa7cc61dc86f2cd50f8e46456394d01fae",
+   "size": 1784
+  },
+  "rust/crates/ingetrazo-render/tests/data/back_faces.igz": {
+   "document_sha256": "46d2067a75330fc4afed5f055532098ca8a1a0a2ea522bd2a0ff39bf6691efff",
+   "document_size": 3137,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "46d2067a75330fc4afed5f055532098ca8a1a0a2ea522bd2a0ff39bf6691efff",
+   "size": 3137
+  },
+  "rust/crates/ingetrazo-render/tests/data/back_faces_monochrome.igz": {
+   "document_sha256": "ec889deb848a61d88e2b06891b4263b999e83c70ecd1a023630c6fc15f87115f",
+   "document_size": 3136,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ec889deb848a61d88e2b06891b4263b999e83c70ecd1a023630c6fc15f87115f",
+   "size": 3136
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_architectural.igz": {
+   "document_sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "document_size": 13869,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "size": 13869
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_default_sky.igz": {
+   "document_sha256": "e0bb69ec4df4d6c4a87cb522f24fd01b526705b533f71fd4479e5d02fab65038",
+   "document_size": 13191,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "e0bb69ec4df4d6c4a87cb522f24fd01b526705b533f71fd4479e5d02fab65038",
+   "size": 13191
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_hidden_line.igz": {
+   "document_sha256": "39d33828329d5da52d5df844c5602a07fdfa823b0bde7952de4d92bebb1497d7",
+   "document_size": 13870,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "39d33828329d5da52d5df844c5602a07fdfa823b0bde7952de4d92bebb1497d7",
+   "size": 13870
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_monochrome.igz": {
+   "document_sha256": "6f4a397397747c3f17e50690a7c3be0c8a4229b604325748bb43036a27544c74",
+   "document_size": 13868,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "6f4a397397747c3f17e50690a7c3be0c8a4229b604325748bb43036a27544c74",
+   "size": 13868
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_parallel_top.igz": {
+   "document_sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "document_size": 13869,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "size": 13869
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_shaded.igz": {
+   "document_sha256": "1408579bc889332d6e1afe8837dccc4c1ca78e69f554423068fa2b45267c06a6",
+   "document_size": 13861,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "1408579bc889332d6e1afe8837dccc4c1ca78e69f554423068fa2b45267c06a6",
+   "size": 13861
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_two_point.igz": {
+   "document_sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "document_size": 13869,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "a58ee6cbb0812ff040d6ccd8a67f5953d6304f802a4b539fa6e77361eb57369b",
+   "size": 13869
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_wireframe.igz": {
+   "document_sha256": "3fd5a03cf8f6c4c6425ab0f2f7cea79603feeff8bd74f7583adce78ac2d28f29",
+   "document_size": 13866,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "3fd5a03cf8f6c4c6425ab0f2f7cea79603feeff8bd74f7583adce78ac2d28f29",
+   "size": 13866
+  },
+  "rust/crates/ingetrazo-render/tests/data/blocks_xray.igz": {
+   "document_sha256": "2ed9ab38004234b85669802363e834d75faf64f783306defffd6568a0003b1f3",
+   "document_size": 13858,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "2ed9ab38004234b85669802363e834d75faf64f783306defffd6568a0003b1f3",
+   "size": 13858
+  },
+  "rust/crates/ingetrazo-render/tests/data/components.igz": {
+   "document_sha256": "ff87930449f5915c04656792bf0f08842e082b68b2563c41768497d21e2b629d",
+   "document_size": 22240,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "ff87930449f5915c04656792bf0f08842e082b68b2563c41768497d21e2b629d",
+   "size": 22240
+  },
+  "rust/crates/ingetrazo-render/tests/data/components_xray.igz": {
+   "document_sha256": "c5fde61e973d03b10497fb88583ea930a5117885e1785b9a752e57897d48d16e",
+   "document_size": 22229,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c5fde61e973d03b10497fb88583ea930a5117885e1785b9a752e57897d48d16e",
+   "size": 22229
+  },
+  "rust/crates/ingetrazo-render/tests/data/curved_profiles.igz": {
+   "document_sha256": "c39acb7d278ee6f67efadaee6ea5dcc071f260dbdfb6d10b602d54b2b793b4a1",
+   "document_size": 37557,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "c39acb7d278ee6f67efadaee6ea5dcc071f260dbdfb6d10b602d54b2b793b4a1",
+   "size": 37557
+  },
+  "rust/crates/ingetrazo-render/tests/data/curved_wireframe.igz": {
+   "document_sha256": "f3b48d22debfa5078af0ca750e62ae043d8ba7e596c178ce829f3802ea45f3c8",
+   "document_size": 37554,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "f3b48d22debfa5078af0ca750e62ae043d8ba7e596c178ce829f3802ea45f3c8",
+   "size": 37554
+  },
+  "rust/crates/ingetrazo-render/tests/data/guides_axes.igz": {
+   "document_sha256": "49559c63e1024d70b53244b1064204ea6341ebd86eae2864fb9f2f98c1f5f89a",
+   "document_size": 7153,
+   "entries": [
+    [
+     "document.json",
+     7153,
+     "49559c63e1024d70b53244b1064204ea6341ebd86eae2864fb9f2f98c1f5f89a"
+    ],
+    [
+     "textures/094b75c1cd4cbc76-sillar.jpg",
+     31170,
+     "14b6b8656b1a17e008e29e438151979b732e833db4c0d0b6aecb481f4ad3e07c"
+    ],
+    [
+     "textures/20ab5ab3c79d5dd5-campesiono.png",
+     524659,
+     "650cd70288d3b9589e4f2263eda39c40d70e57b0a4d336ccfa55a3f317e0d912"
+    ],
+    [
+     "textures/36b67d5c80406c8a-Metal_10_1K_alb.png",
+     1972638,
+     "7804c330296c61775f525beb8cab70bf0a352d8ac22f2fe9ac1cf3ca44cb1a0d"
+    ],
+    [
+     "textures/c22505bbcba47c47-toro.png",
+     166846,
+     "d6ca066a60b596f13cb617a2f7ee3267ee1f9a0789c9052b9a0ca6ca7c82df7d"
+    ],
+    [
+     "textures/ea4d38dd30369ad3-concrete_smooth.png",
+     19989,
+     "0a8b529dc85842c9b67f55ce1500403e8d27074ae0bef60c270da4516c09ce2e"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "fa0ecfd601bce23e96de6bfef7dc290168f219bf4779b6ece0d7e96bdc35ba75",
+   "size": 2717032
+  },
+  "rust/crates/ingetrazo-render/tests/data/section.igz": {
+   "document_sha256": "5e3df32cac6fe9a646072c166ebe19ebcc0b77049eebf3a1945b35daebcbfcfe",
+   "document_size": 10112,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "5e3df32cac6fe9a646072c166ebe19ebcc0b77049eebf3a1945b35daebcbfcfe",
+   "size": 10112
+  },
+  "rust/crates/ingetrazo-render/tests/data/textured.igz": {
+   "document_sha256": "3bb9d39777805d431bf09bc9faf89dda25c3454004bd2a691001e5bae3e38e4b",
+   "document_size": 7503,
+   "entries": [
+    [
+     "document.json",
+     7503,
+     "3bb9d39777805d431bf09bc9faf89dda25c3454004bd2a691001e5bae3e38e4b"
+    ],
+    [
+     "textures/522b0d66589aaf60-checker.png",
+     219,
+     "1efbc66338a25b801a8a3141caf1c0031349eae9b132e2afcfc835114bf378cc"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "1b3f3222dd83bcf372610356edf1c7faf021df9537dd1570fe53024f62b3c585",
+   "size": 1216
+  },
+  "rust/crates/ingetrazo-render/tests/data/textured_shaded.igz": {
+   "document_sha256": "8c78aaef6acb81c909895e77025acf8baa74688e72078a748242e3a5a7da48ad",
+   "document_size": 7495,
+   "entries": [
+    [
+     "document.json",
+     7495,
+     "8c78aaef6acb81c909895e77025acf8baa74688e72078a748242e3a5a7da48ad"
+    ],
+    [
+     "textures/522b0d66589aaf60-checker.png",
+     219,
+     "1efbc66338a25b801a8a3141caf1c0031349eae9b132e2afcfc835114bf378cc"
+    ]
+   ],
+   "random_uids": false,
+   "sha256": "1f49b43c12869c46582c7b95bc520625db88bea47f451810761f1f0a51d91819",
+   "size": 1217
+  },
+  "rust/crates/ingetrazo-render/tests/data/translucent.igz": {
+   "document_sha256": "d9032cf266ba4a671b77eb51123d995373eb3b8c8dff8c249d787f6d6ba8afc6",
+   "document_size": 11775,
+   "entries": null,
+   "random_uids": false,
+   "sha256": "d9032cf266ba4a671b77eb51123d995373eb3b8c8dff8c249d787f6d6ba8afc6",
+   "size": 11775
+  }
+ }
+}

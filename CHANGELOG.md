@@ -241,6 +241,39 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Cierre de M2.9, M1.10 y M5.8: todo `.igz` y toda exportación, idénticos a
+  Python.** (1) `rust/crates/ingetrazo-model/tests/roundtrip_corpus.rs` abre y
+  guarda con Rust los 279 `.igz` del repositorio (ejemplos, componentes,
+  escenas de arranque de `golden/`, fixtures de las cajas) y compara con lo
+  que escribe Python en el mismo abrir→guardar
+  (`scripts/golden/make_roundtrip_fixtures.py`): `document.json` byte a byte,
+  y de la caja nombres, orden, tamaños y bytes de cada miembro; 275 idénticos
+  también como archivo entero. Los 4 ejemplos antiguos no traen `uid` en los
+  grupos y Python les pone uno al azar en cada apertura
+  (`core.group.new_uid`): son la única indeterminación de Python, y el test
+  los fija borrando los uid de ambos lados. Para que coincidieran hubo que
+  arreglar el lector de Rust: un grupo sin nombre recibe «Group N» del
+  contador (desde 1, como un proceso nuevo) y uno sin `uid` recibe uno nuevo;
+  las láminas (`compositions`) ya no se copian tal cual sino que se
+  reconstruyen como `Composicion.from_dict` → `to_dict` (los campos que faltan
+  se rellenan con sus valores por defecto en el orden del dataclass, los
+  desconocidos se tiran, la etiqueta de escala antigua se convierte en
+  texto), con la tabla de campos generada por
+  `scripts/golden/make_composition_schema.py`; y `display_style`, `shadows`,
+  `georef` y `tile_layer` pasan por su `from_dict`/`to_dict` (un bloque
+  igual al valor por defecto no se escribe). (2) Geometría: todas las pruebas
+  de `ingetrazo-math` y `ingetrazo-geom` (Qt, hypot, triangulación, offset,
+  fillet, chaflán de vértice, sweep, HLR, corte de sección, simplificación,
+  perfiles de bisel) están verdes, igual que las 385 pruebas nativas de
+  Python contra el shim. (3) `tests/export_corpus.rs` de
+  `ingetrazo-formats-mesh` exporta esos mismos 279 documentos con OBJ+MTL
+  (y las texturas que copia), STL en mm/cm/m/in/ft, COLLADA (con las dos
+  marcas de hora enmascaradas), GLB entero y «solo la selección», y el
+  escritor DXF alimentado con el contorno en planta de cada cara, y compara
+  tamaño y sha256 de cada archivo con lo que escribieron los exportadores
+  reales (`scripts/golden/make_export_corpus.py`): 2759 exportaciones, todas
+  idénticas. Para ello `gltf::save_glb_bytes_only` ganó el filtro `only=`
+  (`Only`: caras sueltas y grupos de primer nivel).
 - **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
   `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
   (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un
