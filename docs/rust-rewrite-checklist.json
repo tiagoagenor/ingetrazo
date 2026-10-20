@@ -329,7 +329,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Sólidos com o Manifold (manifold-sys)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -491,7 +491,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "glTF/GLB (importar e exportar)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -500,7 +500,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "COLLADA (importar e exportar)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -509,7 +509,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "DXF (importar e exportar)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
@@ -644,7 +644,7 @@
    "marco": "M6",
    "marco_nome": "Interface completa (beta)",
    "item": "Traduções (10 idiomas)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
