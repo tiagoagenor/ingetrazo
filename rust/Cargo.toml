@@ -16,6 +16,7 @@ members = [
     "crates/ingetrazo-golden",
     "crates/ingetrazo-cli",
     "crates/ingetrazo_py",
+    "crates/ingetrazo-render",
     "crates/ingetrazo-spike-ui",
 ]
 
