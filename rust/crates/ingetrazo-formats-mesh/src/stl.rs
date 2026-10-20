@@ -4,17 +4,18 @@
 //!
 //! Export is the binary writer (`save_stl`, the per-triangle loop: the array
 //! version needs Python's native engine, which is off in the reference). Import
-//! is `parse_stl` + `add_stl_mesh` up to the edit engine: a small import
-//! goes on through `run_stitch` and `orient_outward` in Python, which live in
-//! the operations crate (M3), so [`StlMesh::stitch_pending`] says when that
-//! step is still to run. Everything before it, and the large-import path
-//! (which skips it), is exact.
+//! is [`parse_stl`] + [`add_stl_mesh`]; the edit engine's part (`run_stitch`,
+//! `orient_outward`) comes in through [`ImportEngine`], and the flat-triangle
+//! merge of the simplify modes is [`crate::fusing::simplify_mesh`].
+
+use std::collections::HashSet;
 
 use ingetrazo_geom::sweep::py_hypot3;
 use ingetrazo_math::{Hypot, V3};
-use ingetrazo_model::mesh::Mesh;
+use ingetrazo_model::mesh::{key, FaceId, Key, Mesh};
 use ingetrazo_model::scene::{Group, MeshId, Scene};
 
+use crate::fusing::simplify_mesh;
 use crate::pyutil;
 use crate::tri::export_triangles;
 use crate::world::world_faces;
@@ -105,13 +106,15 @@ impl Simplify {
     }
 }
 
-/// A parsed STL, ready for [`add_stl_mesh`].
-pub struct StlMesh {
-    pub mesh: Mesh,
-    /// Python now runs `run_stitch(coplanar_merge=True)` and
-    /// `orient_outward` on it (an import of up to [`MAX_FUSE_LOOPS`]
-    /// triangles); the mesh here is the one just before that.
-    pub stitch_pending: bool,
+/// The edit engine's part in the import (`core.history.run_stitch` and
+/// `core.orient.orient_outward`), which lives in the operations crate: see
+/// `ingetrazo_ops::import_engine`.
+pub trait ImportEngine {
+    /// `run_stitch(mesh, seed, new_faces, coplanar_merge=True)`; `new_faces`
+    /// is updated as Python updates it: merged faces leave, the merge stays.
+    fn run_stitch(&mut self, mesh: &mut Mesh, seed: &HashSet<Key>, new_faces: &mut HashSet<FaceId>);
+    /// `orient_outward(mesh, only=only)`.
+    fn orient_outward(&mut self, mesh: &mut Mesh, only: Option<&[FaceId]>);
 }
 
 fn cross_of(a: [f64; 3], b: [f64; 3], c: [f64; 3]) -> [f64; 3] {
@@ -281,8 +284,11 @@ fn ascii_triangles(data: &[u8], scale: f64) -> Result<Vec<[[f64; 3]; 3]>, String
     Ok(out)
 }
 
-/// `_parse_stl_inner` on the file's bytes.
-pub fn parse_stl(data: &[u8], scale: f64, simplify: Simplify) -> Result<StlMesh, String> {
+
+/// `_parse_stl_inner` on the file's bytes: the mesh Python returns, after
+/// the simplification (`simplify`), `run_stitch` and `orient_outward` that
+/// `engine` stands for (without one they are skipped).
+pub fn parse_stl(data: &[u8], scale: f64, simplify: Simplify, h: Hypot, engine: Option<&mut dyn ImportEngine>) -> Result<Mesh, String> {
     if !scale.is_finite() || scale <= 0.0 {
         return Err("STL unit scale must be a positive finite number".to_string());
     }
@@ -295,6 +301,7 @@ pub fn parse_stl(data: &[u8], scale: f64, simplify: Simplify) -> Result<StlMesh,
         binary = size >= expected && (size == expected || !data[..5].eq_ignore_ascii_case(b"solid"));
     }
     let mut target = Mesh::new();
+    target.hypot = h;
     let add = |target: &mut Mesh, t: &[[f64; 3]; 3]| {
         let ring: Vec<V3> = t.iter().map(|p| V3(p[0] as f32, p[1] as f32, p[2] as f32)).collect();
         target.add_face(&ring, &[]);
@@ -309,7 +316,7 @@ pub fn parse_stl(data: &[u8], scale: f64, simplify: Simplify) -> Result<StlMesh,
             add(&mut target, t);
         }
         if simplify == Simplify::None && kept.len() > MAX_FUSE_LOOPS {
-            return Ok(StlMesh { mesh: target, stitch_pending: false });
+            return Ok(target);
         }
     } else {
         for t in ascii_triangles(data, scale)?.iter().filter(|t| non_degenerate(t)) {
@@ -320,12 +327,23 @@ pub fn parse_stl(data: &[u8], scale: f64, simplify: Simplify) -> Result<StlMesh,
         return Err("STL file contains no usable triangles".to_string());
     }
     if simplify != Simplify::None {
-        return Err("STL simplification (principal, all) needs the fuse pass, which is not ported yet".to_string());
+        simplify_mesh(&mut target, 0.0, simplify == Simplify::Principal, h)?;
     }
     if target.faces.len() > MAX_FUSE_LOOPS {
-        return Ok(StlMesh { mesh: target, stitch_pending: false });
+        return Ok(target);
     }
-    Ok(StlMesh { mesh: target, stitch_pending: true })
+    let Some(engine) = engine else { return Ok(target) };
+    let seed: HashSet<Key> = target.faces.iter().flat_map(|&f| target.face(f).outer.iter().map(|&v| key(target.position(v)))).collect();
+    let mut new_faces: HashSet<FaceId> = target.faces.iter().copied().collect();
+    if simplify != Simplify::None {
+        engine.orient_outward(&mut target, None);
+    } else {
+        engine.run_stitch(&mut target, &seed, &mut new_faces);
+        // `only=new_faces`, as the stitch left the set.
+        let only: Vec<FaceId> = target.faces.iter().copied().filter(|f| new_faces.contains(f)).collect();
+        engine.orient_outward(&mut target, Some(&only));
+    }
+    Ok(target)
 }
 
 /// `add_stl_mesh(scene, path, target)`: a large mesh becomes a reference
@@ -353,11 +371,10 @@ pub fn add_stl_mesh(scene: &mut Scene, stem: &str, target: Mesh) {
     }
 }
 
-/// `load_stl(scene, path, scale=…)` on the file's bytes; `stem` is the file
-/// name without its suffix. Returns whether the stitch step is still to run.
-pub fn load_stl(scene: &mut Scene, stem: &str, data: &[u8], scale: f64, simplify: Simplify) -> Result<bool, String> {
-    let parsed = parse_stl(data, scale, simplify)?;
-    let pending = parsed.stitch_pending;
-    add_stl_mesh(scene, stem, parsed.mesh);
-    Ok(pending)
+/// `load_stl(scene, path, scale=…, simplify_mode=…)` on the file's bytes;
+/// `stem` is the file name without its suffix.
+pub fn load_stl(scene: &mut Scene, stem: &str, data: &[u8], scale: f64, simplify: Simplify, h: Hypot, engine: Option<&mut dyn ImportEngine>) -> Result<(), String> {
+    let mesh = parse_stl(data, scale, simplify, h, engine)?;
+    add_stl_mesh(scene, stem, mesh);
+    Ok(())
 }

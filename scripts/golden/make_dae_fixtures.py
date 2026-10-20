@@ -15,7 +15,8 @@ interleaved inputs, nested nodes with translate/rotate/scale; polygons;
 bare geometry; Y_UP and X_UP; geographic locations) and a pile of odd or
 broken ones. Next to each goes the L2 signature of the scene Python has
 after the import, with ``run_stitch`` and ``orient_outward`` (the edit
-engine, M3) replaced by no-ops. ``import/cases.json`` lists them with the
+engine, M3) run for real, with Python's set order pinned as ``_pin_order.py``
+says. ``import/cases.json`` lists them with the
 georeference Python adopted and, for bad input, the message it raised.
 
 Run it with ``PYTHONHASHSEED=0``: a material whose image is missing gets a
@@ -691,6 +692,165 @@ def write_documents(imp: Path) -> dict:
         "</p></triangles>")) + vscene(node("n", inst_geom("L")))),
         fused=True)
 
+    # -- big models: groups, shared components, billboards ------------------------
+    def grid_geom(gid, n, material=None, z=0.0, step=1.0):
+        pos = []
+        for i in range(n):
+            for j in range(n):
+                pos += [i * step, j * step, z]
+        idx = []
+        for i in range(n - 1):
+            for j in range(n - 1):
+                a, b, c, d = (i * n + j, (i + 1) * n + j,
+                              (i + 1) * n + j + 1, i * n + j + 1)
+                idx += [a, b, c, a, c, d]
+        m = f' material="{material}"' if material else ""
+        return mesh(gid, pos, f'<triangles{m} count="{len(idx) // 3}">'
+                    f'<input semantic="VERTEX" source="#{gid}-v" offset="0"/>'
+                    "<p>" + " ".join(map(str, idx)) + "</p></triangles>")
+
+    def cutout_png(path, alpha_at=None):
+        img = QImage(8, 8, QImage.Format_ARGB32)
+        img.fill(0xFF336699)
+        for (x, y) in (alpha_at or []):
+            img.setPixel(x, y, 0x00336699)
+        img.save(str(path))
+
+    cutout_png(imp / "cutout.png", [(x, y) for x in range(0, 8) for y in (0, 1)])
+    cutout_png(imp / "solid-alpha.png")                  # alpha plane, all 255
+    img = QImage(64, 64, QImage.Format_ARGB32)
+    img.fill(0xFF336699)
+    img.setPixel(33, 33, 0x00336699)                     # one see-through pixel
+    img.save(str(imp / "tiny-hole.png"))
+    colors_fx = lib("effects", effect_color("fa", [0.8, 0.1, 0.1, 1]),
+                    effect_color("fb", [0.1, 0.2, 0.9, 1]))
+    colors_mat = lib("materials", material("ma", "fa"), material("mb", "fb"))
+    tree = doc(
+        colors_fx + colors_mat
+        + lib("geometries", grid_geom("G1", 31, "s"), grid_geom("G2", 31, "s"),
+              grid_geom("G3", 20, "s"))
+        + vscene(node("site", inst_geom("G3", {"s": "ma"})
+                      + node("wing1", inst_geom("G1", {"s": "ma"}),
+                             xf="<translate>0 40 0</translate>")
+                      + node("wing2", inst_geom("G2", {"s": "mb"}),
+                             xf="<translate>40 0 0</translate>"))))
+    put("tree.dae", tree, fused=True)
+    put("tree-yup.dae", doc(
+        colors_fx + colors_mat
+        + lib("geometries", grid_geom("G1", 31, "s"), grid_geom("G2", 31, "s"),
+              grid_geom("G3", 20, "s"))
+        + vscene(node("site", inst_geom("G3", {"s": "ma"})
+                      + node("wing1", inst_geom("G1", {"s": "ma"}),
+                             xf="<translate>0 40 0</translate>")
+                      + node("wing2", inst_geom("G2", {"s": "mb"}),
+                             xf="<translate>40 0 0</translate>"))),
+        up="Y_UP", unit='<unit name="x" meter="0.0254"/>'), fused=True)
+    chair = (lib("geometries", grid_geom("CH", 8, "s"),
+                 grid_geom("FLOOR", 12, "s"))
+             + lib("nodes", node("chair", inst_geom("CH", {"s": "ma"}),
+                                 name="Silla"))
+             + vscene(node("floor", inst_geom("FLOOR", {"s": "mb"}))
+                      + "".join(node(
+                          f"c{k}", '<instance_node url="#chair"/>',
+                          xf=f"<translate>{3 * k} 20 0</translate>"
+                             f"<rotate>0 0 1 {17 * k}</rotate>"
+                             + ("<scale>1 2 0.5</scale>" if k == 3 else ""))
+                          for k in range(6))))
+    put("instances.dae", doc(colors_fx + colors_mat + chair), fused=True)
+    put("instances-yup.dae", doc(colors_fx + colors_mat + chair, up="Y_UP",
+                                 unit='<unit name="x" meter="0.0254"/>'),
+        fused=True)
+    put("instances-matrix.dae", doc(colors_fx + colors_mat + chair.replace(
+        "<translate>3 20 0</translate>", "<matrix>0.5 -0.5 0 7  0.5 0.5 0 "
+        "8  0 0 2 0  0 0 0 1</matrix>")), fused=True)
+    # a reused component that holds a sprite falls back to a copy per use
+    sprite_geom = mesh(
+        "SP", cut, '<polylist material="SYM" count="1">'
+        '<input semantic="VERTEX" source="#SP-v" offset="0"/>'
+        '<input semantic="TEXCOORD" source="#SP-uv" offset="1"/>'
+        "<vcount>5</vcount><p>0 0 1 1 2 2 3 3 4 4</p></polylist>",
+        uvs=[0, 0, 1, 0, 1, 0.7, 0.5, 1, 0, 0.7])
+    sprite_fx = (images(("img", "wood.png"))
+                 + lib("effects", effect_tex("fx", "img"),
+                       effect_color("fa", [0.8, 0.1, 0.1, 1]))
+                 + lib("materials", material("mat", "fx"),
+                       material("ma", "fa")))
+    put("instances-sprite.dae", doc(
+        sprite_fx + lib("geometries", grid_geom("CH", 8, "s"), sprite_geom)
+        + lib("nodes", node("comp", inst_geom("CH", {"s": "ma"}) + node(
+            "leaf", inst_geom("SP", {"SYM": "mat"}), name="Hoja"),
+            name="Arbol"))
+        + vscene(*[node(f"c{k}", '<instance_node url="#comp"/>',
+                        xf=f"<translate>{4 * k} 0 0</translate>")
+                   for k in range(6)])), fused=True, qimage=True)
+    put("faceme-big.dae", doc(
+        sprite_fx + lib("geometries", grid_geom("BIG", 18, "s"), sprite_geom)
+        + vscene(node("floor", inst_geom("BIG", {"s": "ma"}))
+                 + node("tree", inst_geom("SP", {"SYM": "mat"}),
+                        xf="<translate>5 0 0</translate>"))),
+        fused=True)
+    put("faceme-small-two.dae", doc(
+        sprite_fx + lib("geometries", sprite_geom, cube_mesh("CUBE"))
+        + vscene(node("tree", inst_geom("SP", {"SYM": "mat"}))
+                 + node("box", inst_geom("CUBE"),
+                        xf="<translate>5 0 0</translate>"))), fused=True)
+    for nm, png in (("cutout", "cutout.png"), ("solid-alpha", "solid-alpha.png"),
+                    ("tiny-hole", "tiny-hole.png"), ("opaque", "wood.png")):
+        put(f"rect-{nm}.dae", doc(
+            images(("img", png)) + lib("effects", effect_tex("fx", "img"))
+            + lib("materials", material("mat", "fx"))
+            + lib("geometries", textured_quad_geom("Q", "SYM"))
+            + vscene(node("n", inst_geom("Q", {"SYM": "mat"})))),
+            fused=(nm == "cutout"), qimage=True)
+    put("rect-cutout-big.dae", doc(
+        images(("img", "cutout.png")) + lib("effects", effect_tex("fx", "img"))
+        + lib("materials", material("mat", "fx"), material("ma", "fx"))
+        + lib("geometries", textured_quad_geom("Q", "SYM"),
+              grid_geom("BIG", 18, "s"))
+        + vscene(node("n", inst_geom("Q", {"SYM": "mat"}))
+                 + node("m", inst_geom("BIG", {"s": "ma"})))),
+        fused=True, qimage=True)
+    bare = (lib("geometries", grid_geom("BARE", 18),
+                grid_geom("BARE2", 5, z=2.0)))
+    put("bare-big.dae", doc(bare), fused=True)
+    # the colour of an image, when the polygon has no texture coordinates
+    sizes = {"7x5": (7, 5), "64x48": (64, 48), "1x1": (1, 1), "120x90": (120, 90),
+             "3x300": (3, 300), "33x2": (33, 2), "64x64": (64, 64)}
+    import random as _random
+    rng = _random.Random(11)
+    for nm, (w, hgt) in sizes.items():
+        im = QImage(w, hgt, QImage.Format_RGB32)
+        for y in range(hgt):
+            for x in range(w):
+                im.setPixel(x, y, 0xFF000000 | rng.randrange(1 << 24))
+        im.save(str(imp / f"avg-{nm}.png"))
+    for nm, fmt in (("alpha", QImage.Format_ARGB32), ("gray", QImage.Format_Grayscale8),
+                    ("indexed", QImage.Format_Indexed8)):
+        w, hgt = 21, 13
+        im = QImage(w, hgt, fmt)
+        if fmt == QImage.Format_Indexed8:
+            im.setColorTable([0xFF000000 | rng.randrange(1 << 24) for _ in range(16)])
+        for y in range(hgt):
+            for x in range(w):
+                if fmt == QImage.Format_ARGB32:
+                    im.setPixel(x, y, rng.randrange(1 << 32))
+                elif fmt == QImage.Format_Grayscale8:
+                    im.setPixel(x, y, 0xFF000000 | (rng.randrange(256) * 0x010101))
+                else:
+                    im.setPixel(x, y, rng.randrange(16))
+        im.save(str(imp / f"avg-{nm}.png"))
+    for nm in list(sizes) + ["alpha", "gray", "indexed"]:
+        put(f"avg-{nm}.dae", doc(
+            images(("img", f"avg-{nm}.png"))
+            + lib("effects", effect_tex("fx", "img"))
+            + lib("materials", material("mat", "fx"))
+            + lib("geometries", mesh(
+                "Q", [0, 0, 0, 2, 0, 0, 2, 0, 1, 0, 0, 1],
+                '<triangles material="SYM" count="2"><input semantic='
+                '"VERTEX" source="#Q-v" offset="0"/><p>0 1 2 0 2 3</p>'
+                "</triangles>"))
+            + vscene(node("n", inst_geom("Q", {"SYM": "mat"})))), qimage=True)
+
     # -- prefixes, no namespace, encodings --------------------------------------
     body = (lib("geometries", mesh(
         "T", [0, 0, 0, 1, 0, 0, 0, 1, 0],
@@ -801,23 +961,9 @@ def write_documents(imp: Path) -> dict:
     return cases
 
 
-def no_engine():
-    import core.history
-    import core.orient
-    saved = (core.history.run_stitch, core.orient.orient_outward)
-    core.history.run_stitch = lambda *a, **k: None
-    core.orient.orient_outward = lambda *a, **k: []
-    return saved
-
-
-def restore_engine(saved):
-    import core.history
-    import core.orient
-    core.history.run_stitch, core.orient.orient_outward = saved
-
-
 def write_imports() -> None:
     imp = DOUT / "import"
+    shutil.rmtree(imp, ignore_errors=True)
     imp.mkdir(parents=True)
     base.png(imp / "wood.png", 0x8B5A2B, 6)
     base.png(imp / "materials" / "wood.png", 0x8B5A2B, 7)
@@ -835,7 +981,7 @@ def write_imports() -> None:
         cases.append({"file": name, **opts})
 
     assert sys.flags.hash_randomization == 0, "run with PYTHONHASHSEED=0"
-    saved = no_engine()
+    base._pin_order.install()
     import formats.fuse
     real_fuse = formats.fuse.fuse_coplanar_loops
     fused = []
@@ -847,6 +993,9 @@ def write_imports() -> None:
     try:
         for case in cases:
             del fused[:]
+            base._pin_order.fresh_group_names()
+            base._pin_order.ORD.clear()
+            base._pin_order.KEEP.clear()
             path = imp / case["file"]
             scene = Scene()
             try:
@@ -869,7 +1018,6 @@ def write_imports() -> None:
             write_json(imp / sig_name, scene_signature(scene))
     finally:
         formats.fuse.fuse_coplanar_loops = real_fuse
-        restore_engine(saved)
     # Entity declarations are expanded by expat; the Rust reader refuses them.
     for case in cases:
         if case.get("entity"):
@@ -890,7 +1038,8 @@ def write_imports() -> None:
 def main() -> None:
     app = QGuiApplication.instance() or QGuiApplication(sys.argv)  # noqa: F841
     DOUT.parent.mkdir(parents=True, exist_ok=True)
-    export_all()
+    if "--imports-only" not in sys.argv:         # the exports are committed
+        export_all()
     write_imports()
 
 

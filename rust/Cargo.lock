@@ -1685,6 +1685,7 @@ dependencies = [
  "ingetrazo-golden",
  "ingetrazo-math",
  "ingetrazo-model",
+ "ingetrazo-ops",
  "png",
 ]
 

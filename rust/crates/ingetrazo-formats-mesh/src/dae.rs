@@ -12,10 +12,9 @@
 //! Import is [`load_dae`]: the XML read by [`crate::xml`], the node tree
 //! walked with baked transforms, materials and textures resolved the way
 //! `_Dae` does, and the polygons added to the loose mesh. What Python then
-//! does with `run_stitch` and `orient_outward` (the operations crate, M3) is
-//! the `stitch` hook; what it does with `fuse_coplanar_loops` (models of more
-//! than [`MAX_FUSE_LOOPS`] polygons, which become groups, and face-me
-//! sprites) is an `Err` starting with `not ported`.
+//! the `stitch` hook; a model of more than [`MAX_FUSE_LOOPS`] polygons becomes
+//! groups (`fuse_coplanar_loops`, [`crate::fusing`]) and face-me sprites
+//! billboard groups, as in Python.
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};

@@ -8,23 +8,25 @@
 //! writers take `crlf` to say which the reference machine used.
 //!
 //! Import is [`parse_obj`] (everything `_load_obj_inner` reads) and
-//! [`add_obj_faces`] (the single-piece path up to the edit engine). The rest
-//! of the import (`run_stitch`, `orient_outward`, the coplanar fusing of big
-//! or multi-part models) lives in the operations crate (M3); where Python
-//! runs it, the caller gets a hook ([`Stitch`]) or an `Err` saying so.
+//! [`add_obj_faces`] (the three ways a model lands in the scene: parts, a
+//! big reference group, or loose faces). The edit engine's part
+//! (`run_stitch`, `orient_outward`) comes in through the [`Stitch`] hook,
+//! which `ingetrazo_ops::import_engine` provides; the coplanar fusing is
+//! [`crate::fusing`].
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use ingetrazo_formats::pyjson::Value;
 use ingetrazo_geom::sweep::py_hypot3;
-use ingetrazo_math::{Hypot, V3};
+use ingetrazo_math::{Hypot, M4, V3};
 use ingetrazo_model::mesh::{key, FaceId, Key, Mesh};
 use ingetrazo_model::pyalnum::is_alnum;
 use ingetrazo_model::pyval;
-use ingetrazo_model::scene::Scene;
+use ingetrazo_model::scene::{Group, Scene};
 use ingetrazo_model::texture::path_name;
 
+use crate::fusing::{add_fused, fuse_coplanar_loops, new_group, soften_smooth_edges, RawLoop};
 use crate::pyutil;
 use crate::tri::{export_triangles, face_normal};
 use crate::uv::{affine_uv, fit_uv_affine, planar_uv};
@@ -617,25 +619,79 @@ pub type Stitch<'a> = &'a mut dyn FnMut(&mut Mesh, &HashSet<Key>, &HashSet<FaceI
 /// of adding them to the loose mesh.
 pub const MAX_FUSE_LOOPS: usize = 400;
 
-/// `_load_obj_inner` for the path that needs no fuse pass (one part, at most
-/// [`MAX_FUSE_LOOPS`] polygons): the faces go into the loose mesh, `stitch`
-/// stands where Python runs `run_stitch` and `orient_outward`, then the
-/// smoothing groups soften their edges and are forgotten.
-///
-/// `Err` for a model of several parts or more than [`MAX_FUSE_LOOPS`]
-/// polygons: Python fuses those with `fuse_coplanar_loops`, not ported yet.
-pub fn add_obj_faces(scene: &mut Scene, model: &ObjModel, h: Hypot, stitch: Option<Stitch>) -> Result<(), String> {
-    let mut pieces: Vec<&(String, String)> = Vec::new();
+/// The names an import gives what it creates: the file's stem (a container
+/// group), the "Part {n}" label already translated, and the process-wide
+/// counter of `Group N` names.
+pub struct ObjNames<'a> {
+    pub stem: &'a str,
+    pub part: &'a str,
+    pub group_counter: &'a mut i64,
+}
+
+fn raw_loops(items: &[&PendingFace]) -> Vec<RawLoop> {
+    items.iter().map(|p| (p.corners.clone(), face_attrs(p).into_iter().collect())).collect()
+}
+
+/// `_pieces_group(stem, pieces, face_attrs, tick)`: the container an OBJ made
+/// of parts imports as: an instance at identity with an empty mesh of its
+/// own, one child per piece.
+fn pieces_group(scene: &mut Scene, pieces: &[((String, String), Vec<&PendingFace>)], h: Hypot, names: &mut ObjNames) -> Group {
+    let mut kids: Vec<Group> = Vec::new();
+    for (k, (piece_key, items)) in pieces.iter().enumerate() {
+        let mut mesh = Mesh::new();
+        mesh.hypot = h;
+        let fused = fuse_coplanar_loops(&raw_loops(items), 0.99999, false, h);
+        add_fused(&mut mesh, &fused);
+        if mesh.faces.is_empty() {
+            continue;
+        }
+        soften_by_smoothing_group(&mut mesh, h);
+        soften_smooth_edges(&mut mesh, h);
+        drop_smoothing_groups(&mut mesh);
+        let name = piece_name(piece_key, k + 1, names.part);
+        let mut kid = new_group(scene, mesh, &name, names.group_counter);
+        kid.xform = Some(M4::identity());
+        // A part is its own geometry, shared with nothing: a group inside
+        // the component, not a component of its own.
+        kid.component = false;
+        kids.push(kid);
+    }
+    let mut container = new_group(scene, Mesh::new(), names.stem, names.group_counter);
+    container.adopt(kids);
+    container
+}
+
+/// `_load_obj_inner` after the file is read. A model of several parts becomes
+/// one container whose children are the parts (each fused on its own); one of
+/// more than [`MAX_FUSE_LOOPS`] polygons becomes one reference group; the
+/// rest go into the loose mesh, where `stitch` stands for `run_stitch` and
+/// `orient_outward`, and then the smoothing groups soften their edges and are
+/// forgotten.
+pub fn add_obj_faces(scene: &mut Scene, model: &ObjModel, h: Hypot, stitch: Option<Stitch>, mut names: ObjNames) -> Result<(), String> {
+    let mut pieces: Vec<((String, String), Vec<&PendingFace>)> = Vec::new();
     for p in &model.pending {
-        if !pieces.contains(&&p.piece) {
-            pieces.push(&p.piece);
+        match pieces.iter_mut().find(|(k, _)| *k == p.piece) {
+            Some((_, items)) => items.push(p),
+            None => pieces.push((p.piece.clone(), vec![p])),
         }
     }
     if pieces.len() > 1 {
-        return Err("an OBJ of several parts is fused part by part (fuse_coplanar_loops), which is not ported yet".to_string());
+        let container = pieces_group(scene, &pieces, h, &mut names);
+        scene.groups.push(container);
+        return Ok(());
     }
     if model.pending.len() > MAX_FUSE_LOOPS {
-        return Err("an OBJ of more than 400 polygons is fused (fuse_coplanar_loops), which is not ported yet".to_string());
+        let all: Vec<&PendingFace> = model.pending.iter().collect();
+        let mut target = Mesh::new();
+        target.hypot = h;
+        let fused = fuse_coplanar_loops(&raw_loops(&all), 0.99999, false, h);
+        add_fused(&mut target, &fused);
+        soften_by_smoothing_group(&mut target, h);
+        soften_smooth_edges(&mut target, h);
+        drop_smoothing_groups(&mut target);
+        let group = new_group(scene, target, "", names.group_counter);
+        scene.groups.push(group);
+        return Ok(());
     }
     let mesh = &mut scene.meshes[0];
     let mut seed: HashSet<Key> = HashSet::new();

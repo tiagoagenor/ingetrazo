@@ -14,8 +14,9 @@ colours, textures, hidden things). Each one is
 Import fixtures are the exported files plus hand-written odd ones (quads,
 n-gons, negative indices, missing normals, solid/endsolid variants, bad
 input). Next to each goes the L2 signature Python's scene has after the
-import, computed with ``run_stitch`` and ``orient_outward`` (the edit engine,
-ported in M3) replaced by no-ops: the Rust import is exact up to that point.
+import, computed with the REAL ``run_stitch`` and ``orient_outward`` (Python's
+unrepeatable set order is pinned as ``_pin_order.py`` says); the Rust import
+runs the same engine and must give the same signature.
 ``import/cases.json`` lists them with the options and, for bad input, the
 message Python raised.
 
@@ -43,6 +44,7 @@ sys.path.insert(0, str(ROOT))
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.pop("INGETRAZO_RUST", None)
 
+import _pin_order  # noqa: E402
 from PySide6.QtGui import QGuiApplication, QImage, QMatrix4x4, QVector3D as V  # noqa: E402
 
 from core.group import Group  # noqa: E402
@@ -381,22 +383,6 @@ def write_numbers() -> None:
 
 # ---- imports ---------------------------------------------------------------------
 
-def no_engine():
-    """Replace the edit engine's two steps with no-ops (restored by caller)."""
-    import core.history
-    import core.orient
-    saved = (core.history.run_stitch, core.orient.orient_outward)
-    core.history.run_stitch = lambda *a, **k: None
-    core.orient.orient_outward = lambda *a, **k: []
-    return saved
-
-
-def restore_engine(saved):
-    import core.history
-    import core.orient
-    core.history.run_stitch, core.orient.orient_outward = saved
-
-
 def write_json(path: Path, data) -> None:
     path.write_text(json.dumps(data, sort_keys=True, separators=(",", ":")),
                     encoding="utf-8", newline="\n")
@@ -463,6 +449,111 @@ def ascii_stl(tris, name="part", eol="\n", upper=False, indent="  ",
         lines.append(f"{indent}{kw('endfacet')}")
     lines.append(f"{kw('endsolid')} {name}")
     return eol.join(lines) + eol
+
+
+def grid_triangles(origin, du, dv, n, m, flip=False):
+    """An n x m grid of cells on the plane origin + i*du + j*dv, two
+    triangles each."""
+    def p(i, j):
+        return tuple(origin[k] + i * du[k] + j * dv[k] for k in range(3))
+    tris = []
+    for i in range(n):
+        for j in range(m):
+            a, b, c, d = p(i, j), p(i + 1, j), p(i + 1, j + 1), p(i, j + 1)
+            t = [(a, b, c), (a, c, d)]
+            if (i + j) % 3 == 0:                   # the other diagonal
+                t = [(a, b, d), (b, c, d)]
+            if flip:
+                t = [(x, z, y) for x, y, z in t]
+            tris.extend(t)
+    return tris
+
+
+def cube_grid_triangles(n=4, size=2.0, origin=(0.0, 0.0, 0.0), flipped=()):
+    """A cube whose faces are n x n grids; ``flipped`` lists face indices
+    wound inwards."""
+    ox, oy, oz = origin
+    s = size / n
+    faces = [
+        ((ox, oy, oz), (s, 0, 0), (0, s, 0)),            # bottom (z=0), normal down when flipped
+        ((ox, oy, oz + size), (0, s, 0), (s, 0, 0)),
+        ((ox, oy, oz), (0, 0, s), (s, 0, 0)),
+        ((ox, oy + size, oz), (s, 0, 0), (0, 0, s)),
+        ((ox, oy, oz), (0, s, 0), (0, 0, s)),
+        ((ox + size, oy, oz), (0, 0, s), (0, s, 0)),
+    ]
+    tris = []
+    for k, (o, du, dv) in enumerate(faces):
+        # bottom, y-min and x-min are wound so their normal points inwards
+        # in the table above; reverse those to face outwards.
+        inward = k in (0, 2, 4)
+        tris.extend(grid_triangles(o, du, dv, n, n, flip=inward ^ (k in flipped)))
+    return tris
+
+
+def plate_with_hole_triangles(n=6, hole=(2, 4), z=0.0):
+    """A square plate of n x n cells with the cells inside ``hole`` left out."""
+    tris = []
+    for i in range(n):
+        for j in range(n):
+            if hole[0] <= i < hole[1] and hole[0] <= j < hole[1]:
+                continue
+            a, b, c, d = ((i, j, z), (i + 1, j, z), (i + 1, j + 1, z), (i, j + 1, z))
+            tris.extend([(a, b, c), (a, c, d)])
+    return tris
+
+
+def rotated(tris, axis, deg, shift=(0.0, 0.0, 0.0)):
+    import math
+    ax, ay, az = axis
+    ln = math.sqrt(ax * ax + ay * ay + az * az)
+    ax, ay, az = ax / ln, ay / ln, az / ln
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+
+    def rot(p):
+        x, y, z = p
+        d = ax * x + ay * y + az * z
+        return (x * c + (ay * z - az * y) * s + ax * d * (1 - c) + shift[0],
+                y * c + (az * x - ax * z) * s + ay * d * (1 - c) + shift[1],
+                z * c + (ax * y - ay * x) * s + az * d * (1 - c) + shift[2])
+    return [tuple(rot(p) for p in t) for t in tris]
+
+
+def doubled(tris):
+    """Every triangle twice, the second reversed (a two-sided export)."""
+    return list(tris) + [(a, c, b) for a, b, c in tris]
+
+
+def obj_from_triangles(groups, header="", uv_of=None, smooth=None, mtl=None,
+                       usemtl=None):
+    """OBJ text for ``groups``: a list of (statement lines, triangles) pairs.
+    Corners are shared by position; ``uv_of(p)`` adds a vt per corner."""
+    verts: dict = {}
+    uvs: dict = {}
+    out = []
+    body = []
+    for lines, tris in groups:
+        body.extend(lines)
+        for t in tris:
+            idx = []
+            for p in t:
+                i = verts.setdefault(p, len(verts) + 1)
+                if uv_of is not None:
+                    uv = uv_of(p)
+                    j = uvs.setdefault(uv, len(uvs) + 1)
+                    idx.append(f"{i}/{j}")
+                else:
+                    idx.append(str(i))
+            body.append("f " + " ".join(idx))
+    if mtl:
+        out.append(f"mtllib {mtl}")
+    out.append(header.rstrip())
+    for p in verts:
+        out.append("v " + " ".join(repr(float(x)) for x in p))
+    for uv in uvs:
+        out.append("vt " + " ".join(repr(float(x)) for x in uv))
+    out.extend(body)
+    return "\n".join(x for x in out if x != "") + "\n"
 
 
 def write_imports() -> None:
@@ -564,6 +655,43 @@ def write_imports() -> None:
     add("stl", "cube.bin.stl", scale=float("nan"), name="nan-scale")
     add("stl", "cube.bin.stl", scale=1.0, simplify="principal",
         name="simplify")
+    add("stl", "cube.bin.stl", scale=1.0, simplify="all", name="simplify-all")
+    add("stl", "cube.ascii.stl", scale=0.0254, simplify="all",
+        name="simplify-all")
+    # Flat and curved soups that give the fuse pass something to do.
+    plane = grid_triangles((0.0, 0.0, 0.0), (0.5, 0, 0), (0, 0.5, 0), 20, 20)
+    (imp / "plane.bin.stl").write_bytes(binary_stl(plane))
+    tilt = rotated(grid_triangles((0.0, 0.0, 0.0), (0.25, 0, 0), (0, 0.25, 0),
+                                  12, 12), (1.0, 0.7, 0.2), 33.0,
+                   (1.0, 2.0, 3.0))
+    (imp / "tilt.bin.stl").write_bytes(binary_stl(tilt))
+    cubegrid = cube_grid_triangles(4, 2.0, (1.0, 2.0, 3.0))
+    (imp / "cubegrid.bin.stl").write_bytes(binary_stl(cubegrid))
+    (imp / "cubegrid.ascii.stl").write_text(ascii_stl(cubegrid, name="cg"),
+                                            newline="\n")
+    mixed = cube_grid_triangles(3, 1.0, (0.0, 0.0, 0.0), flipped=(1, 4))
+    (imp / "cubemixed.bin.stl").write_bytes(binary_stl(mixed))
+    two = (cube_grid_triangles(2, 1.0, (0.0, 0.0, 0.0))
+           + cube_grid_triangles(2, 1.0, (5.0, 0.0, 0.0), flipped=(0, 1, 2, 3, 4, 5)))
+    (imp / "twocubes.bin.stl").write_bytes(binary_stl(two))
+    (imp / "cubetwosided.bin.stl").write_bytes(
+        binary_stl(doubled(cube_grid_triangles(3, 1.0))))
+    plate = plate_with_hole_triangles(6, (2, 4))
+    (imp / "plate.ascii.stl").write_text(ascii_stl(plate, name="plate"),
+                                         newline="\n")
+    (imp / "plate.bin.stl").write_bytes(binary_stl(plate))
+    ball = sphere_triangles(12, 8, 1.5)
+    (imp / "ball.bin.stl").write_bytes(binary_stl(ball))
+    bigplane = grid_triangles((0.0, 0.0, 0.0), (1, 0, 0), (0, 1, 0), 16, 16)
+    (imp / "bigplane.ascii.stl").write_text(ascii_stl(bigplane, name="bp"),
+                                            newline="\n")
+    for name in ("plane.bin.stl", "tilt.bin.stl", "cubegrid.bin.stl",
+                 "cubegrid.ascii.stl", "cubemixed.bin.stl", "twocubes.bin.stl",
+                 "cubetwosided.bin.stl", "plate.ascii.stl", "plate.bin.stl",
+                 "ball.bin.stl", "bigplane.ascii.stl"):
+        for mode in ("none", "principal", "all"):
+            add("stl", name, scale=0.001, simplify=mode, name=f"s-{mode}")
+    add("stl", "cubegrid.bin.stl", scale=1.0, name="plain")
 
     # -- OBJ -----------------------------------------------------------------
     def put(name, text, **kw):
@@ -644,6 +772,71 @@ def write_imports() -> None:
                      ("badmtl.obj", {}), ("badkd.obj", {}),
                      ("slash.obj", {})):
         add("obj", name, **kw)
+    # Big and multi-part models: the fused paths.
+    cg = cube_grid_triangles(4, 2.0, (1.0, 2.0, 3.0))
+    big_plane = grid_triangles((0.0, 0.0, 0.0), (1, 0, 0), (0, 1, 0), 30, 30)
+    left = [t for t in big_plane if t[0][0] < 15]
+    right = [t for t in big_plane if t[0][0] >= 15]
+    put("quad.mtl", "newmtl red\nKd 0.8 0.1 0.1\nnewmtl cream\n"
+        "Kd 0.96 0.95 0.925\nnewmtl blue\nKd 0.1 0.2 0.9\n")
+    put("gridbig.obj", obj_from_triangles(
+        [(["usemtl red", "s 1"], left), (["usemtl cream", "s 1"], right)],
+        mtl="quad.mtl"))
+    put("gridsmooth.obj", obj_from_triangles(
+        [(["usemtl red", "s 1"], left), (["usemtl red", "s 2"], right)],
+        mtl="quad.mtl"))
+    put("ballbig.obj", obj_from_triangles(
+        [(["usemtl blue", "s 1"], sphere_triangles(24, 16, 1.5))],
+        mtl="quad.mtl"))
+    put("cubegridbig.obj", obj_from_triangles(
+        [(["usemtl red"], cube_grid_triangles(9, 2.0))], mtl="quad.mtl"))
+    put("texgridbig.obj", obj_from_triangles(
+        [(["usemtl wood"], big_plane)], mtl="texture.mtl",
+        uv_of=lambda p: (p[0] / 30.0, p[1] / 30.0)))
+    put("texcubebig.obj", obj_from_triangles(
+        [(["usemtl wood"], cube_grid_triangles(9, 2.0))], mtl="texture.mtl",
+        uv_of=lambda p: (p[0] / 2.0 + p[2] / 4.0, p[1] / 2.0)))
+    quads = []
+    for i in range(25):
+        for j in range(25):
+            quads.append((i, j))
+    qverts = "".join(f"v {i} {j} 0\nv {i + 1} {j} 0\nv {i + 1} {j + 1} 0\n"
+                     f"v {i} {j + 1} 0\n" for i, j in quads)
+    put("quadsbig.obj", qverts + "".join(
+        f"f {4 * k + 1} {4 * k + 2} {4 * k + 3} {4 * k + 4}\n"
+        for k in range(len(quads))))
+    put("parts2.obj", obj_from_triangles([
+        (["o Seat_Cube.001", "usemtl red", "s 1"], cg),
+        (["o Leg", "usemtl blue"], rotated(cg, (0, 0, 1), 0.0, (10.0, 0, 0))),
+        (["o Sliver", "usemtl blue"],
+         [((20.0, 0.0, 0.0), (21.0, 0.0, 0.0), (22.0, 0.0, 0.0))]),
+        (["o Top", "g Tapa"], grid_triangles((30.0, 0, 0), (1, 0, 0),
+                                              (0, 1, 0), 3, 3)),
+        (["g 2"], grid_triangles((40.0, 0, 0), (1, 0, 0), (0, 1, 0), 2, 2)),
+        (["g"], grid_triangles((50.0, 0, 0), (1, 0, 0), (0, 1, 0), 2, 2)),
+    ], mtl="quad.mtl"))
+    put("partstex.obj", obj_from_triangles([
+        (["o Wall", "usemtl wood"], big_plane[:60]),
+        (["o Floor", "usemtl red"], big_plane[60:120]),
+    ], mtl="texture.mtl", uv_of=lambda p: (p[0] / 30.0, p[1] / 30.0)))
+    put("bigparts.obj", obj_from_triangles([
+        (["o A"], big_plane[:900]), (["o B"], rotated(
+            big_plane[900:], (0, 1, 0), 90.0, (0, 0, 40.0)))]))
+    put("sliveronly.obj", obj_from_triangles([
+        (["o A"], [((0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (2.0, 0.0, 0.0))]),
+        (["o B"], [((0.0, 5.0, 0.0), (1.0, 5.0, 0.0), (2.0, 5.0, 0.0))]),
+    ]))
+    put("edge400.obj", obj_from_triangles([([], big_plane[:400])]))
+    put("edge401.obj", obj_from_triangles([([], big_plane[:401])]))
+    put("twosidedbig.obj", obj_from_triangles(
+        [(["usemtl red"], doubled(big_plane[:300]))], mtl="quad.mtl"))
+    for name in ("gridbig.obj", "gridsmooth.obj", "ballbig.obj",
+                 "cubegridbig.obj", "texgridbig.obj", "texcubebig.obj",
+                 "quadsbig.obj", "parts2.obj", "partstex.obj", "bigparts.obj",
+                 "sliveronly.obj", "edge400.obj", "edge401.obj",
+                 "twosidedbig.obj"):
+        add("obj", name)
+    add("obj", "cubegridbig.obj", scale=0.1)
     # Exported scenes read back: only those that are one small part.
     for name in ("faces", "textured", "classic", "empty"):
         for ext in (".obj", ".mtl"):
@@ -658,7 +851,7 @@ def write_imports() -> None:
     (imp / "sub").mkdir()
 
     # -- run them with the real importers ---------------------------------------
-    saved = no_engine()
+    _pin_order.install()
     import formats.fuse
     real_fuse = formats.fuse.fuse_coplanar_loops
     fused = []
@@ -670,6 +863,9 @@ def write_imports() -> None:
     try:
         for case in cases:
             del fused[:]
+            _pin_order.fresh_group_names()
+            _pin_order.ORD.clear()
+            _pin_order.KEEP.clear()
             path = imp / case["file"]
             scene = Scene()
             if case["kind"] == "obj":
@@ -696,7 +892,6 @@ def write_imports() -> None:
             write_json(imp / sig_name, scene_signature(scene))
     finally:
         formats.fuse.fuse_coplanar_loops = real_fuse
-        restore_engine(saved)
     # Same input, same options twice would clash on the signature file name.
     names = [c.get("sig") for c in cases if "sig" in c]
     assert len(names) == len(set(names)), "signature names clash"
@@ -707,8 +902,9 @@ def write_imports() -> None:
 def main() -> None:
     app = QGuiApplication.instance() or QGuiApplication(sys.argv)  # noqa: F841
     OUT.mkdir(parents=True, exist_ok=True)
-    export_all()
-    write_numbers()
+    if "--imports-only" not in sys.argv:        # the exports are committed
+        export_all()
+        write_numbers()
     write_imports()
 
 

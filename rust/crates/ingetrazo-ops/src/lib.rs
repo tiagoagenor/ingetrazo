@@ -15,6 +15,7 @@ pub mod edit_cmds;
 pub mod edits;
 pub mod group;
 pub mod group_cmds;
+pub mod import_engine;
 pub mod grouping;
 pub mod intersect;
 pub mod orient;

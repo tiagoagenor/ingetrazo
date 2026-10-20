@@ -20,6 +20,7 @@ use ingetrazo_golden::model_sig::scene_signature;
 use ingetrazo_golden::sig::{canon_dumps, Files};
 use ingetrazo_math::Hypot;
 use ingetrazo_model::scene::Scene;
+use ingetrazo_ops::import_engine::stitch_and_orient;
 
 const H: Hypot = Hypot::Msvc;
 const MASK: &str = "@@NOW@@";
@@ -184,11 +185,13 @@ fn float_of(v: Option<&Value>) -> f64 {
 fn imports_give_the_signature_python_had() {
     let dir = data().join("dae/import");
     let (mut compared, mut errors, mut xml_errors) = (0, 0, 0);
-    let mut skipped = Vec::new();
+    let mut failures: Vec<String> = Vec::new();
     for case in read_array(&dir.join("cases.json")) {
         let file = str_of(case.get("file")).unwrap().to_string();
         let mut scene = Scene::new();
-        let result = load_dae(&mut scene, &dir.join(&file), H, None);
+        let mut group_counter = 1i64;
+        let mut hook = stitch_and_orient(H);
+        let result = load_dae(&mut scene, &dir.join(&file), H, Some(&mut hook), &mut group_counter);
         if let Some(want) = str_of(case.get("error")) {
             let got = result.expect_err(&format!("{file}: Python raised {want}"));
             if flag(&case, "xml_error") {
@@ -202,31 +205,32 @@ fn imports_give_the_signature_python_had() {
         }
         let want_text = std::fs::read_to_string(dir.join(str_of(case.get("sig")).unwrap())).unwrap();
         let want = canon_dumps(&loads(&want_text).unwrap());
-        match result {
-            Err(e) if e.starts_with("not ported") => {
-                assert!(flag(&case, "fused") || flag(&case, "qimage"), "{file}: {e}");
-                skipped.push(file);
-            }
-            Err(e) => panic!("{file}: {e}"),
-            Ok(()) => {
-                assert!(!flag(&case, "fused") && !flag(&case, "qimage"), "{file}: Python fused it or needed Qt images");
-                assert_eq!(sig_of(&scene), want, "{file}: signature");
-                match case.get("georef") {
-                    Some(g) => {
-                        let d = scene.extra.georef_datum.as_ref().unwrap_or_else(|| panic!("{file}: georef"));
-                        for k in ["lat", "lon", "alt"] {
-                            assert_eq!(float_of(d.get(k)).to_bits(), float_of(g.get(k)).to_bits(), "{file}: georef {k}");
-                        }
-                    }
-                    None => assert!(scene.extra.georef_datum.is_none(), "{file}: georef"),
-                }
-                compared += 1;
-            }
+        if let Err(e) = result {
+            failures.push(format!("{file}: {e}"));
+            continue;
         }
+        if sig_of(&scene) != want {
+            if let Ok(dump) = std::env::var("INGETRAZO_DUMP_SIGS") {
+                let name = str_of(case.get("sig")).unwrap().replace('/', "_");
+                std::fs::write(format!("{dump}/{name}.got"), sig_of(&scene)).unwrap();
+                std::fs::write(format!("{dump}/{name}.want"), &want).unwrap();
+            }
+            failures.push(format!("{file}: signature differs"));
+            continue;
+        }
+        match case.get("georef") {
+            Some(g) => {
+                let d = scene.extra.georef_datum.as_ref().unwrap_or_else(|| panic!("{file}: georef"));
+                for k in ["lat", "lon", "alt"] {
+                    assert_eq!(float_of(d.get(k)).to_bits(), float_of(g.get(k)).to_bits(), "{file}: georef {k}");
+                }
+            }
+            None => assert!(scene.extra.georef_datum.is_none(), "{file}: georef"),
+        }
+        compared += 1;
     }
-    skipped.sort();
-    assert_eq!(skipped, ["../export/bulk.dae", "../export/weld.dae", "big.dae", "limit401.dae", "panel.dae", "sprite-child.dae", "sprite.dae", "texture-badindex.dae", "texture-degenerate.dae", "texture-nouv.dae"]);
-    assert_eq!((compared, errors, xml_errors), (48, 12, 3));
+    assert!(failures.is_empty(), "{} of {} cases differ:\n{}", failures.len(), compared + failures.len(), failures.join("\n"));
+    assert_eq!((compared, errors, xml_errors), (82, 12, 3));
 }
 
 #[test]
@@ -239,15 +243,15 @@ fn the_stitch_hook_gets_the_new_faces_and_their_corners() {
         calls += 1;
         seen = (seed.len(), faces.len());
     };
-    load_dae(&mut scene, &path, H, Some(&mut hook)).unwrap();
+    load_dae(&mut scene, &path, H, Some(&mut hook), &mut 1).unwrap();
     assert_eq!(calls, 1);
     // 9 distinct corners; the quad, the triangle and the pentagon.
     assert_eq!(seen, (9, 3));
     // A model Python fuses never reaches the hook.
     let mut called = false;
     let mut hook = |_: &mut ingetrazo_model::mesh::Mesh, _: &std::collections::HashSet<ingetrazo_model::mesh::Key>, _: &std::collections::HashSet<ingetrazo_model::mesh::FaceId>| called = true;
-    assert!(load_dae(&mut Scene::new(), &data().join("dae/import/big.dae"), H, Some(&mut hook)).is_err());
-    assert!(!called);
+    load_dae(&mut Scene::new(), &data().join("dae/import/big.dae"), H, Some(&mut hook), &mut 1).unwrap();
+    assert!(!called, "a reference group never reaches the hook");
 }
 
 #[test]
