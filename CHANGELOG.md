@@ -266,6 +266,45 @@ follow [SemVer](https://semver.org).
   solo con la característica `manifold` (reenviada desde `ingetrazo-golden` e
   `ingetrazo-cli`; sin ella el guion sigue como «no soportado»). Suelo fijado:
   628 guiones. Falta `edit_text3_d`: Qt aporta los contornos de las letras.
+- **La aplicación Rust dibuja, edita, deshace y guarda** (`ingetrazo-app`,
+  M4.5 a M4.8): barra de herramientas y atajos como en la aplicación de
+  Python (Espacio selecciona, L línea, R rectángulo, C círculo, A arco,
+  J arco por 3 puntos, Mayús+O arco por centro, P empujar/tirar, M mover,
+  Q girar, S escalar, F equidistancia, E borrador, B pintar, T cinta,
+  Mayús+H transportador; polígono, sector, rectángulo girado, mano alzada y
+  voltear desde la barra y el menú Herramientas). Una `Session` (sin
+  ventana) tiene el documento, la cámara y la herramienta activa y recibe
+  eventos `Input` (puntero, teclas, texto); `input::Translator` convierte a
+  ellos los eventos de egui, y las herramientas de `ingetrazo-tools` los
+  reciben por el mismo `Host` que la prueba de paridad de dibujo: el
+  puntero, la inferencia, los bloqueos de eje, la caja de medidas y el
+  deshacer del visor de Python. Las herramientas de modificar, medir y
+  Empujar/Tirar, que se portaron contra su propio visor, entran por
+  adaptadores `DrawTool` (`adapters.rs`); Seleccionar (clic, doble clic y
+  caja de ventana o cruce, con Mayús/Ctrl para alternar/sumar/quitar) se
+  escribe sobre los selectores de `ingetrazo-snap`. La caja de medidas va
+  en la barra de estado con la pista de cada paso (`status_hints.py`) y los
+  mensajes que las herramientas avisan; la vista previa pinta la banda
+  elástica con el color de la inferencia, el marcador y el texto de cada
+  tipo de enganche, las guías discontinuas de la Cinta y el Transportador y
+  la etiqueta flotante. `Host` gana `selection`, el gancho `on_buffer` (los
+  arreglos `3x`, `/3`, `5x10m`, las pendientes `3:12` y los tamaños `2m` de
+  Escalar), `box_select`, `accepts_array` y la cascada de Esc de Python
+  (caja de medidas, bloqueos, ventana de arreglo, herramienta, selección).
+  Ctrl+Z, Ctrl+Y y Ctrl+Mayús+Z con la semántica de a mitad de herramienta
+  (la línea retrocede un vértice, Empujar/Tirar abandona el arrastre) y
+  Edición ▸ Deshacer/Rehacer según haya algo que deshacer. Archivo ▸
+  Nuevo, Abrir, Guardar (Ctrl+S) y Guardar como; el título lleva ` *`
+  mientras el historial no esté donde lo dejó el guardado (Python: el
+  contador de versión), con pregunta de guardar/descartar/cancelar al
+  nuevo, abrir y salir. Guardar escribe lo mismo que Python (`save_scene`,
+  con la cámara en el documento, copia `.bak` y archivo temporal):
+  `tests/session_flow.rs` abre los 200 y pico documentos de `golden/starts`
+  y vuelve a guardarlos byte a byte, y recorre una caja dibujada, empujada
+  y movida con eventos de egui, deshecha, rehecha, guardada y reabierta.
+  No están: recientes, Suprimir, entrar en un grupo, el selector por
+  buffer de GPU en el empuje (usa el índice de la CPU en reposo y rayos
+  mientras arrastra) y los cursores propios de cada herramienta.
 - **Selección por buffer de identificadores, en Rust** (`ingetrazo-render`,
   `pick`, M4.2): `IdPicker` dibuja la escena una segunda vez, no en colores
   sino en enteros (`Rg32Uint`: cada píxel dice qué colocación y qué cara,

@@ -8,12 +8,14 @@
 //! preview (a drag that has moved the geometry) included - the way the
 //! Python viewport re-reads its pick index when the scene version moves.
 
+use std::cell::RefCell;
+
 use ingetrazo_math::{Hypot, M4, V3};
 use ingetrazo_model::mesh::{EdgeId, FaceId};
 use ingetrazo_model::scene::{MeshId, Scene};
 use ingetrazo_ops::command::Cx;
 use ingetrazo_ops::group::Path;
-use ingetrazo_snap::picking::{EntRef, FaceMode, Picker, State, TextMetrics, View};
+use ingetrazo_snap::picking::{EntRef, FaceMode, PickIndex, Picker, State, TextMetrics, View};
 use ingetrazo_snap::world::World;
 use ingetrazo_snap::Axis;
 
@@ -49,18 +51,51 @@ pub struct PickViewport {
     pub gfx: Vec<Gfx>,
     /// `ctrl_tapped()`: set by the host before it calls `on_key_release`.
     pub ctrl_alone: bool,
+    /// Keep the pick index between calls (the window's viewport: building it
+    /// is the cost of a pick), valid while [`PickViewport::hint`] and the
+    /// meshes' serials stand. Off for the parity replays, which change the
+    /// scene behind the viewport's back.
+    pub use_cache: bool,
+    /// What the host bumps when the model changes (`scene.version`).
+    pub hint: u64,
+    cache: RefCell<Option<(u64, u64, PickIndex)>>,
 }
 
 impl PickViewport {
     pub fn new(view: View, hypot: Hypot) -> PickViewport {
-        PickViewport { view, hypot, threshold: 8.0, metrics: Box::new(NoText), flashes: Vec::new(), gfx: Vec::new(), ctrl_alone: false }
+        PickViewport {
+            view,
+            hypot,
+            threshold: 8.0,
+            metrics: Box::new(NoText),
+            flashes: Vec::new(),
+            gfx: Vec::new(),
+            ctrl_alone: false,
+            use_cache: false,
+            hint: 0,
+            cache: RefCell::new(None),
+        }
     }
 
-    fn picker<'a>(&self, scene: &'a Scene, cx: &Cx) -> Picker<'a> {
+    /// Run `f` on a picker over `scene` (its index kept when
+    /// [`PickViewport::use_cache`]).
+    pub fn with_picker<R>(&self, scene: &Scene, cx: &Cx, f: impl FnOnce(&Picker) -> R) -> R {
         let st = State::new(scene, cx.mesh, MeshId(0), None, false, FaceMode::of_scene(scene), self.hypot);
-        let mut p = Picker::new(st, self.view.clone());
-        p.threshold = self.threshold;
-        p
+        let stamp = scene.meshes.iter().fold(scene.meshes.len() as u64, |a, m| a.wrapping_mul(1_000_003).wrapping_add(m.serial)) ^ (u64::from(cx.mesh.0) << 56);
+        let idx = if self.use_cache {
+            match self.cache.borrow_mut().take() {
+                Some((hint, s, idx)) if hint == self.hint && s == stamp => idx,
+                _ => PickIndex::build(&st),
+            }
+        } else {
+            PickIndex::build(&st)
+        };
+        let p = Picker { st, idx, view: self.view.clone(), threshold: self.threshold };
+        let r = f(&p);
+        if self.use_cache {
+            *self.cache.borrow_mut() = Some((self.hint, stamp, p.idx));
+        }
+        r
     }
 }
 
@@ -82,27 +117,28 @@ impl Viewport for PickViewport {
     }
 
     fn pick_face(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<FaceId> {
-        let i = self.picker(scene, cx).pick_face(x, y)?;
+        let i = self.with_picker(scene, cx, |p| p.pick_face(x, y))?;
         Some(cx.mesh(scene).faces[i])
     }
 
     fn pick_face_any(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<FaceHit> {
-        let p = self.picker(scene, cx);
-        let hit = p.pick_face_any(x, y)?;
-        let face = match hit.face {
-            EntRef::Loose(i) => FaceRef::Loose(cx.mesh(scene).faces[i]),
-            EntRef::Placed { place, face } => FaceRef::Placed { placement: p.idx.places[place].path.clone(), index: face },
-        };
-        Some(FaceHit { face, owner: hit.owner, placement: hit.placement })
+        self.with_picker(scene, cx, |p| {
+            let hit = p.pick_face_any(x, y)?;
+            let face = match hit.face {
+                EntRef::Loose(i) => FaceRef::Loose(cx.mesh(scene).faces[i]),
+                EntRef::Placed { place, face } => FaceRef::Placed { placement: p.idx.places[place].path.clone(), index: face },
+            };
+            Some(FaceHit { face, owner: hit.owner, placement: hit.placement })
+        })
     }
 
     fn pick_edge(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<EdgeId> {
-        let i = self.picker(scene, cx).pick_edge(x, y)?;
+        let i = self.with_picker(scene, cx, |p| p.pick_edge(x, y))?;
         Some(cx.mesh(scene).edges[i])
     }
 
     fn pick_visible_edge(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<EdgeId> {
-        let i = self.picker(scene, cx).pick_visible_edge(x, y)?;
+        let i = self.with_picker(scene, cx, |p| p.pick_visible_edge(x, y))?;
         Some(cx.mesh(scene).edges[i])
     }
 
@@ -117,35 +153,35 @@ impl Viewport for PickViewport {
     }
 
     fn pick_group(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<Path> {
-        self.picker(scene, cx).pick_group(x, y)
+        self.with_picker(scene, cx, |p| p.pick_group(x, y))
     }
 
     fn pick_guide(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<usize> {
-        self.picker(scene, cx).pick_guide(x, y)
+        self.with_picker(scene, cx, |p| p.pick_guide(x, y))
     }
 
     fn pick_dimension(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<usize> {
-        self.picker(scene, cx).pick_dimension(x, y)
+        self.with_picker(scene, cx, |p| p.pick_dimension(x, y))
     }
 
     fn pick_text_label(&self, scene: &Scene, cx: &Cx, x: f64, y: f64, rect_only: bool) -> Option<usize> {
-        self.picker(scene, cx).pick_text_label(x, y, rect_only, self.metrics.as_ref())
+        self.with_picker(scene, cx, |p| p.pick_text_label(x, y, rect_only, self.metrics.as_ref()))
     }
 
     fn pick_geopath(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<usize> {
-        self.picker(scene, cx).pick_geopath(x, y)
+        self.with_picker(scene, cx, |p| p.pick_geopath(x, y))
     }
 
     fn pick_section_plane(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<usize> {
-        self.picker(scene, cx).pick_section_plane(x, y)
+        self.with_picker(scene, cx, |p| p.pick_section_plane(x, y))
     }
 
     fn pick_image_plane(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<usize> {
-        self.picker(scene, cx).pick_image_plane(x, y)
+        self.with_picker(scene, cx, |p| p.pick_image_plane(x, y))
     }
 
     fn pick_axis(&self, scene: &Scene, cx: &Cx, x: f64, y: f64) -> Option<Axis> {
-        self.picker(scene, cx).pick_axis(x, y).and_then(Axis::from_name)
+        self.with_picker(scene, cx, |p| p.pick_axis(x, y)).and_then(Axis::from_name)
     }
 
     fn flash_status(&mut self, text: &str, msec: u32) {

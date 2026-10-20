@@ -56,6 +56,18 @@ impl GpuView {
         self.renderer.invalidate();
     }
 
+    /// The model was edited: the renderer rebakes what a mesh's serial says
+    /// changed (no textures or cache are dropped).
+    pub fn update_scene(&mut self, scene: Arc<Scene>) {
+        self.scene = scene;
+    }
+
+    /// What to highlight: the selection and the one under the cursor.
+    pub fn set_cues(&mut self, selection: ingetrazo_render::Selection, hover: ingetrazo_render::Hover) {
+        self.opts.selection = selection;
+        self.opts.hover = hover;
+    }
+
     /// Draw the scene as `camera` sees it, into the view's own target of
     /// `px` pixels (re-created when the size changes).
     pub fn prepare(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder, camera: &Camera, px: (u32, u32)) {

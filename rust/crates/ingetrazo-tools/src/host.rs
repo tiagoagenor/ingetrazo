@@ -16,9 +16,10 @@
 //!
 //! Not carried: the hover coalescing timer (`mouseMoveEvent`'s gate - every
 //! hover is processed), the dwell timer (a pause becomes an encouraged point
-//! through [`Host::dwell`]), camera navigation, box select, the section cut,
-//! the status bar and the cursor icons. Drawing happens in the world axes
-//! (no group frame is synced).
+//! through [`Host::dwell`]), camera navigation (the application's), the
+//! section cut, the status bar and the cursor icons. A box the Select tool
+//! was dragged is handed over by [`Host::box_select`]. Drawing happens in the
+//! world axes (no group frame is synced).
 
 use ingetrazo_math::{Hypot, V3};
 use ingetrazo_model::mesh::Mesh;
@@ -32,6 +33,7 @@ use ingetrazo_snap::workplane::{PlaneCx, ToolState};
 use ingetrazo_snap::{LinearMode, RefMode, SnapKind, SnapResult, View, World};
 
 use crate::base::*;
+use crate::modify_base::Selection;
 use crate::vcb::{parse_value_buffer, VcbValue};
 
 /// `Viewport._ENCOURAGING_KINDS`.
@@ -86,6 +88,8 @@ pub struct Core {
     pub hover_loose_edge: Option<ingetrazo_model::EdgeId>,
     /// `scene.version`: bumped by every change of the model.
     pub version: u64,
+    /// `scene.selection`: what Select picked, and what the modify tools act on.
+    pub selection: Selection,
     /// What the acquired circle centre (`inference.center_ref`) was read
     /// from, and the model version it was read at (`_center_ref[2..5]`).
     center_src: Option<CenterSrc>,
@@ -124,6 +128,29 @@ impl Core {
 
     pub fn invalidate(&mut self) {
         self.world = None;
+    }
+
+    /// The model changed behind the core's back (a tool executed through its
+    /// own environment): the snap world is rebuilt on the next ask.
+    pub fn touch(&mut self) {
+        self.world = None;
+    }
+
+    /// What no longer exists leaves the selection (`Env::reconcile_selection`).
+    pub fn reconcile_selection(&mut self) {
+        let scene = &self.scene;
+        let mesh = self.cx.mesh(scene);
+        self.selection.items.retain(|s| match s {
+            crate::modify_base::Sel::Face(f) => mesh.faces.contains(f),
+            crate::modify_base::Sel::Edge(e) => mesh.edges.contains(e),
+            crate::modify_base::Sel::Group(p) => ingetrazo_ops::group::group_at(&scene.groups, p).is_some(),
+            crate::modify_base::Sel::Dimension(i) => *i < scene.dimensions.len(),
+            crate::modify_base::Sel::Label(i) => *i < scene.text_labels.len(),
+            crate::modify_base::Sel::Guide(i) => *i < scene.guides.len(),
+            crate::modify_base::Sel::Section(i) => *i < scene.section_planes.len(),
+            crate::modify_base::Sel::Image(i) => *i < scene.image_planes.len(),
+            crate::modify_base::Sel::GeoPath(i) => *i < scene.geo_paths.len(),
+        });
     }
 
     pub fn world_to_pixel(&self, p: V3) -> Option<(f64, f64)> {
@@ -319,6 +346,7 @@ impl Host {
                 dwell_point: None,
                 hover_loose_edge: None,
                 version: 1,
+                selection: Selection::default(),
                 center_src: None,
                 center_version: 0,
                 world: None,
@@ -576,6 +604,22 @@ impl Host {
         self.release_axis_lock_after_operation(drew);
     }
 
+    /// `mouseReleaseEvent` of a box that was dragged: the Select tool's
+    /// rubber band (`rect` is `(x0, y0, x1, y1)`, `crossing` a right-to-left drag).
+    pub fn box_select(&mut self, rect: [f64; 4], crossing: bool, mods: u32) {
+        self.with_tool(|t, c| t.on_box_select(c, rect, crossing, mods));
+    }
+
+    /// The active tool, for the UI to read and to key by.
+    pub fn tool_mut(&mut self) -> &mut dyn DrawTool {
+        self.tool.as_deref_mut().expect("an active tool")
+    }
+
+    /// Whether a tool is active.
+    pub fn has_tool(&self) -> bool {
+        self.tool.is_some()
+    }
+
     /// `mouseReleaseEvent`, left button.
     pub fn release(&mut self) {
         self.with_tool(|t, c| t.on_release(c));
@@ -661,9 +705,20 @@ impl Host {
         if self.release_constraints() {
             return;
         }
+        // Right after a copy the array window is what is open: Esc closes it.
+        if self.tool().accepts_array() && self.tool().array_pending(&self.core) {
+            self.with_tool(|t, _| t.close_array_window());
+            return;
+        }
         if self.tool_busy() {
             self.with_tool(|t, c| t.on_cancel(c));
             self.release_linear_mode();
+            return;
+        }
+        // Then the selection.
+        if !self.core.selection.is_empty() {
+            self.core.selection.clear();
+            self.core.version += 1;
             return;
         }
         // Nothing selected, no group open: the tool's own cancel.
@@ -722,7 +777,7 @@ impl Host {
     // ---- the keys -------------------------------------------------------------------------
 
     /// `QWidget.event` for a key press, then `keyPressEvent`.
-    pub fn key_press(&mut self, key: i32, mods: u32, text: &str) {
+    pub fn key_press(&mut self, key: i32, mods: u32, text: &str) -> bool {
         let is_modifier = matches!(key, KEY_CONTROL | KEY_SHIFT | KEY_ALT | KEY_META | KEY_ALTGR);
         if !is_modifier {
             self.core.ctrl_alone = false;
@@ -752,21 +807,21 @@ impl Host {
             self.alt_tap = false;
         }
         if self.handle_value_key(key, mods, text) {
-            return;
+            return true;
         }
         if self.with_tool(|t, c| t.on_key(c, key, mods)) {
-            return;
+            return true;
         }
         if key == KEY_ESCAPE {
             self.escape();
-            return;
+            return true;
         }
         if key == KEY_ALT {
             if self.tool_busy() {
                 self.alt_tap = true;
                 self.cycle_linear_inference_mode();
             }
-            return;
+            return true;
         }
         match key {
             KEY_RIGHT | KEY_LEFT | KEY_UP => {
@@ -774,13 +829,23 @@ impl Host {
                 let inf = &mut self.core.inference;
                 inf.axis_lock = if inf.axis_lock == Some(a) { None } else { Some(a) };
                 self.refresh_snap();
+                true
             }
             KEY_DOWN => {
                 self.cycle_reference_mode();
                 self.refresh_snap();
+                true
             }
-            _ => {}
+            _ => false,
         }
+    }
+
+    /// Whether a printable character goes to the value box (a digit, a
+    /// separator or a unit letter after a digit...): what `keyPressEvent`
+    /// does first with a character, before any shortcut is looked at.
+    pub fn type_text(&mut self, mods: u32, text: &str) -> bool {
+        self.core.ctrl_alone = false;
+        self.handle_value_key(0, mods, text)
     }
 
     /// `keyReleaseEvent`.
@@ -820,6 +885,15 @@ impl Host {
         if key == KEY_RETURN || key == KEY_ENTER {
             if self.core.value_buffer.is_empty() {
                 return false;
+            }
+            // A tool with a grammar of its own reads the buffer itself.
+            let buffer = self.core.value_buffer.clone();
+            let before = self.core.undo_len();
+            if self.with_tool(|t, c| t.on_buffer(c, &buffer)) {
+                let drew = self.core.undo_len() > before;
+                self.core.set_value_buffer("");
+                self.release_axis_lock_after_operation(drew);
+                return true;
             }
             let comma_lists = self.tool().vcb_comma_lists();
             let value = parse_value_buffer(&self.core.value_buffer, comma_lists);
@@ -864,6 +938,26 @@ impl Host {
             return false;
         }
         let text = crate::vcb::plain_marks(text);
+        // Arrays after a copy: `3x`, `*3`, `/3` (only a tool that takes them).
+        if self.tool().accepts_array() {
+            if text == "*" {
+                let b = format!("{}{}", self.core.value_buffer, text);
+                self.core.set_value_buffer(&b);
+                return true;
+            }
+            if text.eq_ignore_ascii_case("x") {
+                let pending = self.core.value_buffer.is_empty() && self.with_tool(|t, c| t.array_pending(c));
+                if !self.core.token_tail().is_empty() || pending {
+                    let b = format!("{}{}", self.core.value_buffer, text);
+                    self.core.set_value_buffer(&b);
+                    return true;
+                }
+            }
+            if text == "/" && self.core.value_buffer.is_empty() {
+                self.core.set_value_buffer(&text);
+                return true;
+            }
+        }
         let letters = ['m', 'c', 'r', 'i', 'n', 'f', 't', 's'];
         let single = text.chars().count() == 1;
         let ch = text.chars().next();
@@ -929,6 +1023,11 @@ impl Host {
 
     /// `MainWindow._on_redo`.
     pub fn redo(&mut self) -> bool {
+        if self.with_tool(|t, c| t.on_redo(c)) {
+            self.core.clear_references();
+            self.core.invalidate();
+            return true;
+        }
         if self.core.history_redo() {
             self.core.clear_references();
             return true;
