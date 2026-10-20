@@ -1,6 +1,6 @@
 [package]
 name = "ingetrazo-formats-mesh"
-description = "IngeTrazo's mesh interchange formats: OBJ and STL import and export"
+description = "IngeTrazo's mesh interchange formats: OBJ, STL and DXF import and export"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

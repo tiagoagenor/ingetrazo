@@ -266,6 +266,25 @@ follow [SemVer](https://semver.org).
   M3, así que el paso intermedio queda como gancho y se compara con la firma
   L2 que Python tiene justo antes. Los fixtures salen de
   `scripts/golden/make_mesh_formats_fixtures.py`.
+- **DXF desde Rust** (`ingetrazo-formats-mesh::dxf`, M5.5): exporta con los
+  mismos bytes que `formats/dxf_out.py` (el escritor de texto R12 con LINE
+  por capa, el `.9g` de Python y sus `\r\n` en Windows, sin biblioteca de por
+  medio) e importa como `formats/dxf_in.py`. En vez del crate `dxf`, un lector
+  ASCII propio (cabecera, bloques, entidades; el enlazado POLYLINE/VERTEX e
+  INSERT/ATTRIB de ezdxf, secciones sin cerrar, elevación R12) y el trozo de
+  ezdxf que el importador usa, operación por operación en f64: OCS,
+  `Matrix44`, curvas de Bézier de arcos, círculos y elipses, aplanado
+  adaptativo, polilíneas con bulges, `Insert.virtual_entities` con la
+  transformación de cada tipo de entidad (incluida la elipse por Rytz y el
+  escalado no uniforme) y SPLINE cúbicas con puntos de control. Las capas
+  grandes de 3DFACE pasan por `ingetrazo_geom::fuse`; `run_stitch` queda como
+  gancho, como en OBJ y STL. Aún sin portar: las SPLINE que ezdxf aproxima
+  (racionales, otro grado, nudos periódicos, solo puntos de ajuste), DXF
+  binario, `\U+XXXX` en nombres y los códigos de página distintos de cp1252.
+  `scripts/golden/make_dxf_fixtures.py` corre el Python real sobre 270 casos
+  (escenas por la HLR de la app, DXF hechos con ezdxf, bloques anidados por
+  tipo de entidad y de transformación, documentos aleatorios, DXF escritos a
+  mano) y la prueba Rust compara bytes y firmas L2.
 - **Espacio de trabajo Rust** (`rust/Cargo.toml`, M0 de
   `docs/rust-rewrite-plan.md`): los núcleos salen del módulo PyO3 a dos
   crates sin Python, `ingetrazo-math` (aritmética float32 de QVector3D y los
