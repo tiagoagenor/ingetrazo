@@ -5,6 +5,7 @@ members = [
     "crates/ingetrazo-math",
     "crates/manifold-sys",
     "crates/ingetrazo-ops",
+    "crates/ingetrazo-snap",
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
     "crates/ingetrazo-model",

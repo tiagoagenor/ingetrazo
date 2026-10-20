@@ -241,6 +241,47 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Motor de snap e inferencias, en Rust** (`ingetrazo-snap`, M3.11):
+  `core/snap.py::compute_snap` entero (cierre, extremo, centro, origen de
+  componente, punto medio de arco, intersección, punto medio, origen, en la
+  arista, alineado, «desde el punto», extensión, «a través del punto»,
+  perpendicular a la cara, paralelo y perpendicular, los bloqueos de eje,
+  de Mayús y de la flecha abajo, el imán de ejes en espacio y en pantalla,
+  la etiqueta de la pista), más lo que el visor le entrega: la cámara
+  orbital (`lookAt`, `perspective`, `ortho` y el producto `proy × vista`
+  como Qt), `_world_to_pixel`, `_pixel_to_ray`, `_project_to_lock_line`, la
+  escena de snap (aristas sueltas, guías recortadas a la vista, aristas de
+  grupos y componentes cerca del cursor, orígenes de componentes, puntos
+  medios de arco, centro del círculo), la oclusión por rayos, la cara bajo
+  el cursor (desempate de coplanares por área), el plano de trabajo
+  (capturado, por el punto de partida, por la cara, el plano de la cámara y
+  el primer punto en vistas estándar) y `InferenceEngine.acquire` /
+  `encourage_point`. Los ejes de dibujo locales de un grupo abierto (#44)
+  entran como parámetro. El estado de la herramienta llega en `ToolState`
+  (`uses_snap`, `start_point`, `work_plane`, `plane_lock`, imán…) para que
+  `ingetrazo-tools` lo rellene. El `fixture`
+  (`scripts/golden/make_snap_fixtures.py`) ejecuta el `Viewport` real sin
+  pantalla —13 escenas (cajas, paredes, guías, esquinas casi coincidentes,
+  círculo y arco, grupos, componentes girados y anidados, un grupo y un
+  componente abiertos para editar), 9 cámaras (perspectiva y paralela) y 7
+  herramientas— y guarda 12 870 respuestas con sus datos intermedios, 3 910
+  secuencias de hover de `acquire` y todas las preguntas de oclusión que
+  hizo Python. El motor coincide bit a bit en todas: cámara, rayos, escena
+  de snap, punto del cursor, plano, cara, `compute_snap` desde los
+  argumentos de Python, el motor completo, `acquire` y la etiqueta en
+  inglés y español. Dos cosas no son bit a bit por construcción y se dicen
+  en `circle.rs` y `pick.rs`: el ajuste del círculo (NumPy usa LAPACK; aquí
+  Jacobi y ecuaciones normales, y el paso por `float32` lo oculta salvo en
+  un borde de redondeo) y las sumas de tres términos de los rayos (medidas
+  contra NumPy 2.5.4: `einsum` suma `(p0+p2)+p1` y `q @ d` usa `fma`).
+  Python itera un `set` en `_camera_planar_work_plane` (el empate lo
+  resuelve el margen de 0,05) y `np.argsort` no es estable más allá de 48
+  aristas de grupo: el fixture no llega a ninguno. Quedan fuera del motor:
+  el corte de sección activo, las capas, las figuras «mírame», los bordes
+  de las imágenes de referencia, los puntos topográficos, las esquinas de
+  la caja de selección, la rejilla de `_gedge_dist` (modelos de más de
+  20 000 aristas de grupo), la carga perezosa de componentes grandes y los
+  proveedores de snap de extensiones.
 - **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
   M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
   Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila
