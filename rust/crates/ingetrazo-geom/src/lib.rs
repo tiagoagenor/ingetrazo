@@ -24,6 +24,7 @@ pub mod offset;
 pub mod parity;
 pub mod plan;
 pub mod section;
+pub mod section_cut;
 pub mod simplify;
 pub mod sweep;
 pub mod tiff;

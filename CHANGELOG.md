@@ -241,6 +241,24 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Corte de sección y anotaciones tipadas, en Rust** (`ingetrazo-geom::section_cut`,
+  `ingetrazo-model`, `ingetrazo-ops`, M3.9): `cut_chords`, `fill_triangles` y
+  `hatch_segments` de `core/section.py`, con las sumas de NumPy/OpenBLAS en su
+  orden (`gemv` de 2 y 3 columnas, `ddot` con paso, el cero que arranca cada
+  acumulador) y los ángulos del rayado como los devuelve NumPy; un fixture de
+  335 casos (`scripts/golden/make_section_fixtures.py`) los compara bit a bit.
+  La `Scene` guarda ahora cotas, textos, guías, planos de sección, imágenes,
+  trayectos y puntos georreferenciados, y escenas guardadas como modelos
+  tipados en una lista que da a cada elemento una identidad (`IdList`), como
+  los objetos de Python; el escritor `.igz` sigue byte a byte. Las cotas se
+  anclan a vértices de la malla (`resolve_vertex_anchor`, `bind`,
+  `refresh_anchors`) y `History` las vuelve a anclar tras cada orden, deshacer
+  y rehacer. Las órdenes de anotación de `core/history.py` (cotas, textos,
+  guías, planos de sección, imágenes, trayectos y puntos, `DeleteScenes`) y
+  `StraightenModelCommand` pasan al repetidor dorado, que además compara el
+  `document.json` completo tras cada paso en los guiones escritos a mano
+  (`scripts/golden/make_annotation_scripts.py`, `golden/ops/hand-annotations-*`):
+  de 63 a 141 guiones repetidos hasta el final.
 - **Sólidos con Manifold, en Rust** (`manifold-sys` + `ingetrazo-ops::solids`,
   M3.8): `core/solids.py` completo (Capa exterior, Unión, Restar, Recortar,
   Intersectar y Dividir) sobre grupos y componentes. `manifold-sys` compila

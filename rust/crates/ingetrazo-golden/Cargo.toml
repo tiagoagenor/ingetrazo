@@ -11,6 +11,7 @@ ingetrazo-formats.workspace = true
 ingetrazo-model = { path = "../ingetrazo-model" }
 ingetrazo-ops = { path = "../ingetrazo-ops" }
 ingetrazo-math.workspace = true
+ingetrazo-georef.workspace = true
 sha2 = "0.10"
 
 [lints]

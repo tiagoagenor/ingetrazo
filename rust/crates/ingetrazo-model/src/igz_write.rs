@@ -26,7 +26,15 @@ use ingetrazo_formats::igz_zip;
 use ingetrazo_formats::pyjson::{self, Options, Value};
 use ingetrazo_math::{M4, V3};
 
+use ingetrazo_georef::geopath::GeoPath;
+use ingetrazo_georef::points::GeoPoint;
+
+use crate::guide::Guide;
+use crate::image_plane::ImagePlane;
 use crate::layers::Layer;
+use crate::saved_views::SavedView;
+use crate::section::SectionPlane;
+use crate::textlabel::TextLabel;
 use crate::materials::Material;
 use crate::mesh::{Mesh, VertexId};
 use crate::pyval::truthy;
@@ -604,9 +612,6 @@ impl Packer<'_> {
 
 // ---- the document --------------------------------------------------------------
 
-fn finite_guide(g: &Value) -> bool {
-    igz::non_finite_where(g, "guide") == "guide"
-}
 
 fn units_is_default(u: &Value) -> bool {
     let default = obj(vec![("length", s("m")), ("precision", Value::int(2))]);
@@ -650,13 +655,13 @@ pub fn build_document(scene: &Scene, opts: &SaveOptions) -> Result<Built, IgzErr
     }
     let x = &scene.extra;
     if !x.saved_views.is_empty() {
-        payload.push(("saved_views".into(), Value::Array(x.saved_views.clone())));
+        payload.push(("saved_views".into(), Value::Array(x.saved_views.iter().map(SavedView::to_dict).collect())));
     }
     if !x.compositions.is_empty() {
         payload.push(("compositions".into(), Value::Array(x.compositions.clone())));
     }
     if !scene.dimensions.is_empty() {
-        payload.push(("dimensions".into(), Value::Array(scene.dimensions.clone())));
+        payload.push(("dimensions".into(), Value::Array(scene.dimensions_igz())));
     }
     if !scene.materials.is_empty() {
         let mats = scene.materials.iter().map(|(_, m)| Material::from_dict(m).and_then(|m| m.to_dict()).unwrap_or_else(|_| m.clone())).collect();
@@ -687,7 +692,7 @@ pub fn build_document(scene: &Scene, opts: &SaveOptions) -> Result<Built, IgzErr
         payload.push(("back_face_color".into(), b.clone()));
     }
     if !scene.section_planes.is_empty() {
-        payload.push(("section_planes".into(), Value::Array(scene.section_planes.clone())));
+        payload.push(("section_planes".into(), Value::Array(scene.section_planes.iter().map(SectionPlane::to_dict).collect())));
         let mut vis: Vec<(String, Value)> = Vec::new();
         if x.planes_hidden {
             vis.push(("planes_hidden".into(), Value::Bool(true)));
@@ -722,19 +727,19 @@ pub fn build_document(scene: &Scene, opts: &SaveOptions) -> Result<Built, IgzErr
         payload.push(("tile_layer".into(), t.clone()));
     }
     if !scene.geo_paths.is_empty() {
-        payload.push(("geo_paths".into(), Value::Array(scene.geo_paths.clone())));
+        payload.push(("geo_paths".into(), Value::Array(scene.geo_paths.iter().map(GeoPath::to_dict).collect())));
     }
     if !x.geo_points.is_empty() {
-        payload.push(("geo_points".into(), Value::Array(x.geo_points.clone())));
+        payload.push(("geo_points".into(), Value::Array(x.geo_points.iter().map(GeoPoint::to_dict).collect())));
     }
     if !scene.text_labels.is_empty() {
-        payload.push(("text_labels".into(), Value::Array(scene.text_labels.clone())));
+        payload.push(("text_labels".into(), Value::Array(scene.text_labels.iter().map(TextLabel::to_dict).collect())));
     }
     if !scene.guides.is_empty() {
-        payload.push(("guides".into(), Value::Array(scene.guides.iter().filter(|g| finite_guide(g)).cloned().collect())));
+        payload.push(("guides".into(), Value::Array(scene.guides.iter().filter(|g| g.is_finite()).map(Guide::to_dict).collect())));
     }
     if !scene.image_planes.is_empty() {
-        payload.push(("image_planes".into(), Value::Array(scene.image_planes.clone())));
+        payload.push(("image_planes".into(), Value::Array(scene.image_planes.iter().map(ImagePlane::to_dict).collect())));
     }
 
     let mut payload = Value::Object(payload);
@@ -791,7 +796,8 @@ mod tests {
     #[test]
     fn a_nan_coordinate_is_refused_not_written() {
         let mut s = Scene::new();
-        s.dimensions = vec![obj(vec![("a", Value::Array(vec![float(f64::NAN)]))])];
+        let nan = V3(f32::NAN, 0.0, 0.0);
+        s.dimensions = vec![crate::dimension::Dimension::new(nan, V3(1.0, 0.0, 0.0), V3(0.0, 1.0, 0.0), None, None, None)].into();
         let none = |_: &str| None;
         let err = save_scene(&s, &SaveOptions::new("x", &none)).unwrap_err();
         assert!(matches!(err, IgzError::NonFinite { .. }), "{err:?}");

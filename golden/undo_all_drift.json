@@ -1,4 +1,5 @@
 {
+ "hand-annotations-straighten": "2da8e7eae2bfd80d8a294374aecee10cd6306888ecb916898ab210b460cd8eb5",
  "test_chunk_stale_materials__test_a_plain_move_still_takes_the_fast_path-f513de7d": "a50ae2057b6a0ee6b341355de4f5afd7000e5558f31d363123410204b4f3fdc0",
  "test_group_axes__test_change_axes_on_a_component_keeps_every_copy_in_place-eb16330b": "a7df9e0a8a8ce4fbe1872ada19192d3197e781a1ce485b4de288383604887265",
  "test_group_axes__test_flip_mirrors_the_axes_and_flips_back-b73e17ee": "b6f555712de1d510f0d316b814b8e5d06e913cfd46d77c39f6a0512402f792b7",

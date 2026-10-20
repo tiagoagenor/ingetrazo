@@ -13,7 +13,7 @@ use ingetrazo_ops::group::{group_at, num, Path};
 pub type Res<T> = Result<T, String>;
 
 /// The payload of a one-key `$tag` object.
-fn tagged<'a>(v: &'a Value, tag: &str) -> Option<&'a Value> {
+pub fn tagged<'a>(v: &'a Value, tag: &str) -> Option<&'a Value> {
     match v {
         Value::Object(items) if items.len() == 1 && items[0].0 == tag => Some(&items[0].1),
         _ => None,

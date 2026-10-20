@@ -135,6 +135,7 @@ impl History {
             self.undo_stack.drain(..extra);
         }
         self.redo_stack.clear();
+        scene.rebind_dimensions(cx.mesh);
     }
 
     /// Run `f` with `cx.mesh` on the mesh the command was executed against.
@@ -149,6 +150,7 @@ impl History {
         let Some(mut d) = self.undo_stack.pop() else { return false };
         History::in_command_mesh(cx, d.mesh, |cx| d.cmd.undo(scene, cx));
         self.redo_stack.push(d);
+        scene.rebind_dimensions(cx.mesh);
         true
     }
 
@@ -160,6 +162,7 @@ impl History {
             let _ = d.cmd.apply(scene, cx);
         });
         self.undo_stack.push(d);
+        scene.rebind_dimensions(cx.mesh);
         true
     }
 

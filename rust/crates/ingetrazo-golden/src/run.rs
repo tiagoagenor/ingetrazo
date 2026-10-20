@@ -11,17 +11,18 @@
 
 use ingetrazo_formats::igz::{self, Zip};
 use ingetrazo_formats::pyjson::Value;
+use ingetrazo_model::igz_write::{save_scene, SaveOptions};
 use ingetrazo_model::scene::Scene;
 use ingetrazo_ops::command::{Command, Cx, History};
 
 use crate::decode::Res;
 use crate::sig::{signature_hash, Files};
-use crate::{model_sig, ops_transform, Outcome, Script};
+use crate::{model_sig, ops_annotation, ops_transform, Outcome, Script};
 
 /// The Command `op` builds from `args` against `scene`: `None` when no
 /// module of the engine knows the op yet.
 pub fn build_command(op: &str, args: &Value, scene: &Scene) -> Option<Res<Box<dyn Command>>> {
-    ops_transform::build(op, args, scene)
+    ops_transform::build(op, args, scene).or_else(|| ops_annotation::build(op, args, scene))
 }
 
 fn text<'a>(step: &'a Value, key: &str) -> &'a str {
@@ -101,6 +102,14 @@ pub fn run_steps(script: &Script, steps: &[Value]) -> Outcome {
         if got != want {
             return diverges(format!("signature differs after {op}"));
         }
+        // A hand-written script also records the whole document Python wrote
+        // after the step: what the L2 signature leaves out (the annotations'
+        // numbers) is compared here.
+        if let Some(Value::Str(want_doc)) = step.get("doc") {
+            if let Some(why) = document_differs(&mut scene, script, want_doc) {
+                return diverges(format!("document differs after {op}: {why}"));
+            }
+        }
     }
     // The runner also undoes everything: the start must come back exactly.
     while history.undo(&mut scene, &mut cx) {}
@@ -109,4 +118,31 @@ pub fn run_steps(script: &Script, steps: &[Value]) -> Outcome {
         return Outcome::Diverges { at: steps.len(), op: "undo_all".into(), why: "undoing every step does not restore the start".into() };
     }
     Outcome::Ok
+}
+
+/// `None` when the document Rust writes for `scene` is the one Python wrote;
+/// otherwise where they part.
+fn document_differs(scene: &mut Scene, script: &Script, want: &str) -> Option<String> {
+    let version = match script.doc.get("source").and_then(|s| s.get("app_version")) {
+        Some(Value::Str(v)) => v.clone(),
+        _ => String::new(),
+    };
+    scene.read_dimensions(ingetrazo_model::scene::MeshId(0)); // saving reads every dimension
+    let none = |_: &str| None;
+    let opts = SaveOptions::new(&version, &none);
+    let saved = match save_scene(scene, &opts) {
+        Ok(s) => s,
+        Err(e) => return Some(format!("the model does not save: {e:?}")),
+    };
+    let got = match igz::document_text(&saved.bytes) {
+        Ok(t) => t,
+        Err(e) => return Some(format!("{e:?}")),
+    };
+    if got == want {
+        return None;
+    }
+    let (g, w): (Vec<&str>, Vec<&str>) = (got.lines().collect(), want.lines().collect());
+    let at = g.iter().zip(&w).position(|(a, b)| a != b).unwrap_or(g.len().min(w.len()));
+    let around = |l: &[&str]| l[at.saturating_sub(4)..(at + 3).min(l.len())].join(" ").split_whitespace().collect::<Vec<_>>().join(" ");
+    Some(format!("line {at}\n  rust:   {}\n  python: {}", around(&g), around(&w)))
 }

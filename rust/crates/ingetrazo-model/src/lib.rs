@@ -16,9 +16,11 @@ pub mod pyval;
 pub mod texture;
 pub mod topology;
 
+pub mod anchors;
 pub mod annotations;
 pub mod dimension;
 pub mod guide;
+pub mod idlist;
 pub mod igz_write;
 pub mod image_plane;
 pub mod pyconv;
