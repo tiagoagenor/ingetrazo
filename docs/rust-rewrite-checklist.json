@@ -167,7 +167,7 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Gabaritos de geometria verdes",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.4,
    "concluido_em": ""
   },
@@ -248,7 +248,7 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Todos os .igz de exemplo e teste com ida-e-volta idêntica",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -374,7 +374,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Máquinas de estado das ferramentas, sem interface",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -401,7 +401,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Seleção por buffer de ids",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -410,7 +410,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "App egui mínima: janela e viewport",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -419,7 +419,7 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Órbita, deslocamento e zoom",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.8333,
    "concluido_em": ""
   },
@@ -536,7 +536,7 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "Exportações idênticas byte a byte",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0,
    "concluido_em": ""
   },
