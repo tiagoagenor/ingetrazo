@@ -241,6 +241,15 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Corpus dorado: `simplify_mesh`, `planned_when_run` y `solid_operation`**
+  (`ingetrazo-ops`, `ingetrazo-golden`): el motor de Rust ya ejecuta
+  `SimplifyMeshCommand` (reutiliza el `simplify_mesh` de importación; la malla
+  simplificada se adopta con `Mesh::adopt`, que conserva los objetos antiguos
+  para que el deshacer los restaure), `_PlannedWhenRun` (movido de
+  `ingetrazo-tools` a `ingetrazo-ops`) y `SolidOperationCommand`, este último
+  solo con la característica `manifold` (reenviada desde `ingetrazo-golden` e
+  `ingetrazo-cli`; sin ella el guion sigue como «no soportado»). Suelo fijado:
+  628 guiones. Falta `edit_text3_d`: Qt aporta los contornos de las letras.
 - **Selección por buffer de identificadores, en Rust** (`ingetrazo-render`,
   `pick`, M4.2): `IdPicker` dibuja la escena una segunda vez, no en colores
   sino en enteros (`Rg32Uint`: cada píxel dice qué colocación y qué cara,

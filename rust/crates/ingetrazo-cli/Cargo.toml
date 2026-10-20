@@ -13,5 +13,8 @@ path = "src/main.rs"
 [dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
 
+[features]
+manifold = ["ingetrazo-golden/manifold"]
+
 [lints]
 workspace = true

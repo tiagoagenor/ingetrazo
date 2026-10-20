@@ -987,6 +987,38 @@ impl Mesh {
         }
     }
 
+    /// `self.restore_state(other.capture_state())`: this mesh takes the
+    /// contents of `other` (a mesh built apart) and keeps every object it had
+    /// in its arenas, so a state captured before still restores. `other`'s
+    /// objects are appended to the arenas under shifted ids.
+    pub fn adopt(&mut self, other: Mesh) {
+        self.touch();
+        let (dv, de, df) = (self.vs.len() as u32, self.es.len() as u32, self.fs.len() as u32);
+        let v = |x: VertexId| VertexId(x.0 + dv);
+        let e = |x: EdgeId| EdgeId(x.0 + de);
+        let f = |x: FaceId| FaceId(x.0 + df);
+        for mut x in other.vs {
+            x.edges = x.edges.into_iter().map(e).collect();
+            self.vs.push(x);
+        }
+        for mut x in other.es {
+            x.v0 = v(x.v0);
+            x.v1 = v(x.v1);
+            x.faces = x.faces.into_iter().map(f).collect();
+            self.es.push(x);
+        }
+        for mut x in other.fs {
+            x.outer = x.outer.into_iter().map(v).collect();
+            x.holes = x.holes.into_iter().map(|h| h.into_iter().map(v).collect()).collect();
+            self.fs.push(x);
+        }
+        self.vertices = other.vertices.into_iter().map(v).collect();
+        self.edges = other.edges.into_iter().map(e).collect();
+        self.faces = other.faces.into_iter().map(f).collect();
+        self.registry = other.registry.into_iter().map(|(k, x)| (k, v(x))).collect();
+        self.displaced.clear();
+    }
+
     /// `clear`.
     pub fn clear(&mut self) {
         self.touch();

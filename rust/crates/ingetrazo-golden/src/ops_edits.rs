@@ -281,6 +281,21 @@ pub fn decode(op: &Value, scene: &Scene, reg: &Reg) -> D<Box<dyn Command>> {
             let curve = args.get("curve").and_then(Value::as_i64);
             Box::new(AddEdgeCommand::new(a, b, soft, curve))
         }
+        "planned_when_run" => {
+            let mut segments = Vec::new();
+            for s in arr(args.get("segments").ok_or_else(|| DecodeError::Bad("segments".into()))?)? {
+                let pair = arr(s.get("$t").unwrap_or(s))?;
+                if pair.len() != 2 {
+                    return bad("a segment has two ends");
+                }
+                segments.push((point(&pair[0])?, point(&pair[1])?));
+            }
+            Box::new(ingetrazo_ops::edits::PlannedWhenRun::new(segments))
+        }
+        "simplify_mesh" => {
+            let angle = arg(args, "max_angle_degrees").and_then(num).unwrap_or(0.0);
+            Box::new(ingetrazo_ops::edits::SimplifyMeshCommand::new(angle))
+        }
         "add_face" => {
             let vertices = points(args.get("vertices").ok_or_else(|| DecodeError::Bad("vertices".into()))?)?;
             let auto = !matches!(args.get("auto"), Some(Value::Bool(false)));

@@ -27,7 +27,7 @@ use ingetrazo_model::topology::{self, key, CycleGraph, PFace, Seg};
 use ingetrazo_math::{Hypot, V3};
 
 use crate::arrangement::coplanar_plane;
-use crate::command::{Command, Cx};
+use crate::command::{Command, Cx, Fail};
 use crate::draw::{AddEdgeCommand, AddFaceCommand, AutoTagDrawnFacesCommand, DeleteEdgesCommand, DeleteFaceCommand, SnapshotCompound};
 use crate::rebuild::{RebuildPlanarFacesCommand, RebuildPlaneFacesCommand};
 
@@ -58,7 +58,7 @@ impl SimFace {
     }
 }
 
-type Segment = (V3, V3);
+pub type Segment = (V3, V3);
 
 fn keyset(l: &[V3]) -> Vec<topology::Key> {
     let mut v: Vec<topology::Key> = l.iter().map(|&p| key(p)).collect();
@@ -786,5 +786,76 @@ pub fn join_preview(m: &mut Mesh, edges: &[EdgeId], h: Hypot) -> Vec<(ingetrazo_
     join_edges(m, edges, Some(&mut verdicts), h);
     m.restore_state(&snap);
     verdicts
+}
+
+/// `_PlannedWhenRun` (`tools/move.py`): drawn edges planned when the command
+/// RUNS, not when it is built: by then the copied faces before it in the same
+/// compound are in the model, so the Line tool's planner splits the faces the
+/// edges land on without laying another face over the copied ones (#379).
+/// Redo replays the same plan.
+pub struct PlannedWhenRun {
+    segments: Vec<Segment>,
+    cmd: Option<Box<dyn Command>>,
+}
+
+impl PlannedWhenRun {
+    pub fn new(segments: Vec<Segment>) -> Self {
+        PlannedWhenRun { segments, cmd: None }
+    }
+}
+
+impl Command for PlannedWhenRun {
+    fn name(&self) -> &'static str {
+        "planned_when_run"
+    }
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        if self.cmd.is_none() {
+            self.cmd = Some(build_add_edges(scene, cx, &self.segments, true, Vec::new(), None, false));
+        }
+        self.cmd.as_mut().expect("planned").apply(scene, cx)
+    }
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        if let Some(c) = self.cmd.as_mut() {
+            c.undo(scene, cx);
+        }
+    }
+}
+
+/// `SimplifyMeshCommand` (`core/history.py`): merge the near-coplanar faces
+/// of the active mesh, with snapshot undo.
+pub struct SimplifyMeshCommand {
+    max_angle_degrees: f64,
+    before: Option<ingetrazo_model::mesh::State>,
+    after: Option<ingetrazo_model::mesh::State>,
+    /// `faces_removed` of the first run.
+    pub faces_removed: usize,
+}
+
+impl SimplifyMeshCommand {
+    pub fn new(max_angle_degrees: f64) -> Self {
+        SimplifyMeshCommand { max_angle_degrees, before: None, after: None, faces_removed: 0 }
+    }
+}
+
+impl Command for SimplifyMeshCommand {
+    fn name(&self) -> &'static str {
+        "simplify_mesh"
+    }
+    fn apply(&mut self, scene: &mut Scene, cx: &mut Cx) -> Result<(), Fail> {
+        if self.after.is_none() {
+            let h = cx.hypot;
+            self.before = Some(cx.mesh(scene).capture_state());
+            self.faces_removed = ingetrazo_formats_mesh::fusing::simplify_mesh(cx.mesh_mut(scene), self.max_angle_degrees, false, h).map_err(Fail::Failed)?;
+            self.after = Some(cx.mesh(scene).capture_state());
+        } else if let Some(s) = &self.after {
+            cx.mesh_mut(scene).restore_state(s);
+        }
+        Ok(())
+    }
+    fn undo(&mut self, scene: &mut Scene, cx: &mut Cx) {
+        if let Some(s) = &self.before {
+            cx.mesh_mut(scene).restore_state(s);
+        }
+    }
 }
 

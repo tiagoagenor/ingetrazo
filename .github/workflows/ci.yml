@@ -136,3 +136,5 @@ jobs:
         run: |
           cargo clippy -p manifold-sys -p ingetrazo-ops --features ingetrazo-ops/manifold --all-targets --locked -- -D warnings
           cargo test -p manifold-sys -p ingetrazo-ops --features ingetrazo-ops/manifold --locked
+          # With the kernel the golden corpus also replays solid_operation.
+          cargo test -p ingetrazo-golden --features manifold --locked
