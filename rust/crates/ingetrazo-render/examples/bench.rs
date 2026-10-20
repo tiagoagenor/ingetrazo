@@ -64,6 +64,87 @@ fn stress_scene(soft_sides: bool) -> Scene {
     sc
 }
 
+fn percentile(times: &mut [f64], p: f64) -> f64 {
+    times.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    times[((times.len() as f64 * p) as usize).min(times.len() - 1)]
+}
+
+/// GPU picking (M4.2): the ID pass, and the latency of a pick on top of it.
+///
+/// * `ID pass`: `prepare` after the camera moved (bake the first time, then
+///   the pass only), the cost paid once per camera change;
+/// * `reused`: `prepare` when nothing changed (a hash, no GPU work);
+/// * `pick`: `pick_layers` at a random pixel (one read-back of 4 layers);
+/// * `pick_pixel`/`pick_group`: the convenience answers;
+/// * `rect`: a 200x150 px rubber band in crossing mode.
+fn bench_pick(dev: &Offscreen, scene: &Scene, cam: &Camera, size: (u32, u32), n: usize) {
+    use ingetrazo_render::pick::{IdPicker, RectMode};
+    let opts = RenderOptions::default();
+    let mut picker = IdPicker::new(&dev.device, &dev.queue);
+    // `--pick-no-vertices`, `--pick-faces-only`: what the layers cost.
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|a| a == "--pick-no-vertices") {
+        picker.options.layers.vertices = false;
+    }
+    if args.iter().any(|a| a == "--pick-faces-only") {
+        picker.options.layers = ingetrazo_render::pick::Layers::FACES;
+    }
+    let t = Instant::now();
+    picker.prepare(scene, cam, size, &opts);
+    let first = t.elapsed().as_secs_f64() * 1e3;
+    let s = picker.stats();
+    println!(
+        "pick: first ID pass (bake of {} meshes + render) {first:.1} ms, {} placements",
+        s.baked_meshes, s.placements
+    );
+    let mut pass = Vec::new();
+    let mut c = *cam;
+    for i in 0..n {
+        c.yaw = -0.8 + i as f64 * 0.013;
+        let t = Instant::now();
+        picker.prepare(scene, &c, size, &opts);
+        // A pick forces the GPU to finish the pass: that is the cost felt.
+        let _ = picker.pick_face(10.0, 10.0);
+        pass.push(t.elapsed().as_secs_f64() * 1e3);
+    }
+    let mean = pass.iter().sum::<f64>() / pass.len() as f64;
+    println!("pick: ID pass + first read, camera moved: mean {mean:.2} ms, p95 {:.2} ms", percentile(&mut pass, 0.95));
+    let t = Instant::now();
+    for _ in 0..1000 {
+        picker.prepare(scene, &c, size, &opts);
+    }
+    println!("pick: prepare with nothing changed: {:.1} us", t.elapsed().as_secs_f64() * 1e3);
+
+    // A deterministic scatter of pixels.
+    let at = |i: usize| ((i * 7919 % size.0 as usize) as f64 + 0.5, (i * 104729 % size.1 as usize) as f64 + 0.5);
+    let run = |name: &str, f: &mut dyn FnMut(f64, f64)| {
+        let mut times = Vec::with_capacity(n);
+        for i in 0..n {
+            let (x, y) = at(i);
+            let t = Instant::now();
+            f(x, y);
+            times.push(t.elapsed().as_secs_f64() * 1e3);
+        }
+        let mean = times.iter().sum::<f64>() / times.len() as f64;
+        println!("pick: {name}: mean {mean:.3} ms, p95 {:.3} ms, max {:.3} ms", percentile(&mut times, 0.95), times.last().unwrap());
+    };
+    run("pick_layers (face+edge+vertex+group)", &mut |x, y| {
+        let _ = picker.pick_layers(x, y);
+    });
+    run("pick_pixel", &mut |x, y| {
+        let _ = picker.pick_pixel(x, y);
+    });
+    run("pick_face", &mut |x, y| {
+        let _ = picker.pick_face(x, y);
+    });
+    run("pick_group", &mut |x, y| {
+        let _ = picker.pick_group(x, y);
+    });
+    run("pick_rect 200x150 crossing", &mut |x, y| {
+        let _ = picker.pick_rect((x, y, x + 200.0, y + 150.0), RectMode::Crossing);
+    });
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let flag = |name: &str| args.iter().any(|a| a == name);
@@ -142,6 +223,10 @@ fn main() {
         st.draw_calls,
         st.triangles
     );
+
+    if flag("--pick") {
+        bench_pick(&dev, &scene, &cam, (w, h), frames.min(500));
+    }
 
     if let Some(path) = value("--png") {
         let mut enc = dev.device.create_command_encoder(&Default::default());
