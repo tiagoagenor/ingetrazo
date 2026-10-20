@@ -167,9 +167,9 @@
    "marco": "M1",
    "marco_nome": "Matemática e geometria",
    "item": "Gabaritos de geometria verdes",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.4,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.1",
@@ -248,9 +248,9 @@
    "marco": "M2",
    "marco_nome": "Modelo e arquivo .igz",
    "item": "Todos os .igz de exemplo e teste com ida-e-volta idêntica",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M2.10",
@@ -374,9 +374,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Máquinas de estado das ferramentas, sem interface",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.14",
@@ -401,27 +401,27 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Seleção por buffer de ids",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.3",
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "App egui mínima: janela e viewport",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.4",
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Órbita, deslocamento e zoom",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.5",
@@ -536,9 +536,9 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "Exportações idênticas byte a byte",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M6.1",
