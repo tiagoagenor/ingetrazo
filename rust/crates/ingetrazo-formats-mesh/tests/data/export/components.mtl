@@ -1,0 +1,13 @@
+newmtl mat0
+Kd 0.9600 0.9500 0.9250
+
+newmtl mat1
+Kd 0.2000 0.6000 0.2000
+
+newmtl mat2
+Kd 1.0000 1.0000 1.0000
+map_Kd wood.png
+
+newmtl Azul
+Kd 0.3000 0.3000 0.8000
+

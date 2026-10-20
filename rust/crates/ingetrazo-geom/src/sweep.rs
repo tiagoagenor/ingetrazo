@@ -63,6 +63,20 @@ pub fn py_hypot2(a: f64, b: f64) -> f64 {
     vector_norm(&vec, max)
 }
 
+/// CPython 3.12 `math.hypot(a, b, c)`.
+pub fn py_hypot3(a: f64, b: f64, c: f64) -> f64 {
+    let vec = [a.abs(), b.abs(), c.abs()];
+    let found_nan = a.is_nan() || b.is_nan() || c.is_nan();
+    let max = py_max3(vec[0], vec[1], vec[2]);
+    if max.is_infinite() {
+        return max;
+    }
+    if found_nan {
+        return f64::NAN;
+    }
+    vector_norm(&vec, max)
+}
+
 fn dl_mul(x: f64, y: f64) -> (f64, f64) {
     let z = x * y;
     (z, x.mul_add(y, -z))

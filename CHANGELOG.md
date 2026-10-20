@@ -254,6 +254,18 @@ follow [SemVer](https://semver.org).
   `scripts/golden/make_hlr_fixtures.py` corre el Python real sobre 348
   casos y la prueba Rust compara bit a bit. `collect_geometry` y
   `collect_circles` leen la escena y siguen en el modelo.
+- **OBJ y STL desde Rust** (`rust/crates/ingetrazo-formats-mesh`, M5.1 y
+  M5.2): exporta con los mismos bytes que `formats/obj.py` y `formats/stl.py`
+  (OBJ + MTL con los floats a `%.6f`/`%.4f` y `\r\n` como los escribe Python en
+  Windows, STL binario en cualquier unidad), recorriendo la escena Rust como
+  ella: caras sueltas visibles, grupos, componentes con matriz rotada o
+  escalada (copia transformada con su soldadura), hijos anidados y UV de
+  texturas planares o ajustadas. Importa leyendo el archivo igual que Python
+  (STL binario y ASCII, OBJ con MTL, índices negativos, n-gonos, `s`/`o`/`g`);
+  `run_stitch`, `orient_outward` y la fusión coplanar siguen en Python hasta
+  M3, así que el paso intermedio queda como gancho y se compara con la firma
+  L2 que Python tiene justo antes. Los fixtures salen de
+  `scripts/golden/make_mesh_formats_fixtures.py`.
 - **Espacio de trabajo Rust** (`rust/Cargo.toml`, M0 de
   `docs/rust-rewrite-plan.md`): los núcleos salen del módulo PyO3 a dos
   crates sin Python, `ingetrazo-math` (aritmética float32 de QVector3D y los

@@ -1,0 +1,19 @@
+[package]
+name = "ingetrazo-formats-mesh"
+description = "IngeTrazo's mesh interchange formats: OBJ and STL import and export"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ingetrazo-math.workspace = true
+ingetrazo-geom.workspace = true
+ingetrazo-formats.workspace = true
+ingetrazo-model = { path = "../ingetrazo-model" }
+
+[dev-dependencies]
+ingetrazo-golden = { path = "../ingetrazo-golden" }
+
+[lints]
+workspace = true

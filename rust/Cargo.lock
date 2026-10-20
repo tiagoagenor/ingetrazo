@@ -1620,6 +1620,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ingetrazo-formats-mesh"
+version = "0.1.0"
+dependencies = [
+ "ingetrazo-formats",
+ "ingetrazo-geom",
+ "ingetrazo-golden",
+ "ingetrazo-math",
+ "ingetrazo-model",
+]
+
+[[package]]
 name = "ingetrazo-geom"
 version = "0.1.0"
 dependencies = [
