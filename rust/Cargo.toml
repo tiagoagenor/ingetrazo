@@ -11,6 +11,7 @@ members = [
     "crates/ingetrazo-formats",
     "crates/ingetrazo-model",
     "crates/ingetrazo-formats-mesh",
+    "crates/ingetrazo-skp",
     "crates/ingetrazo-georef",
     "crates/ingetrazo-i18n",
     "crates/ingetrazo-golden",

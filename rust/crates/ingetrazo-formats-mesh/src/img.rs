@@ -63,6 +63,96 @@ fn probe_png(data: &[u8]) -> Probe {
     Probe::Alpha(Alpha { width: w, height: h, plane })
 }
 
+/// The source pixel of destination pixel `d` of `n` when `QImage.scaled`
+/// shrinks `src` pixels to `n` with `FastTransformation`: the pixel under
+/// the centre of the destination one (see [`nearest`], which is `n = 32`).
+pub fn nearest_n(d: usize, n: usize, src: usize) -> usize {
+    ((2 * d + 1) * src).div_ceil(2 * n).saturating_sub(1)
+}
+
+/// What `QImage.fromData(data).convertToFormat(Format_ARGB32)` gives.
+pub enum Decoded {
+    /// Width, height and straight (not premultiplied) RGBA pixels.
+    Image(usize, usize, Vec<[u8; 4]>),
+    /// A PNG or JPEG that cannot be read: `QImage.isNull()`.
+    Null,
+    /// Another format (Qt reads GIF, BMP, WebP...): not decoded here.
+    Unknown,
+}
+
+/// Decode a PNG or a JPEG. A JPEG is decoded with `zune-jpeg`, whose IDCT and
+/// colour conversion may differ from libjpeg's by a level or two: fine for
+/// the averages it is asked for.
+pub fn decode_rgba8(data: &[u8]) -> Decoded {
+    if data.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return match rgba8(data) {
+            Some((w, h, px)) => Decoded::Image(w, h, px),
+            None => Decoded::Null,
+        };
+    }
+    if data.starts_with(&[0xFF, 0xD8, 0xFF]) {
+        let mut decoder = zune_jpeg::JpegDecoder::new(zune_jpeg::zune_core::bytestream::ZCursor::new(data));
+        let Ok(pixels) = decoder.decode() else { return Decoded::Null };
+        let Some(info) = decoder.info() else { return Decoded::Null };
+        let (w, h) = (info.width as usize, info.height as usize);
+        if w == 0 || h == 0 || pixels.len() % (w * h) != 0 {
+            return Decoded::Null;
+        }
+        let channels = pixels.len() / (w * h);
+        let px = (0..w * h)
+            .map(|i| match channels {
+                1 => [pixels[i], pixels[i], pixels[i], 255],
+                2 => [pixels[2 * i], pixels[2 * i], pixels[2 * i], pixels[2 * i + 1]],
+                3 => [pixels[3 * i], pixels[3 * i + 1], pixels[3 * i + 2], 255],
+                _ => [pixels[channels * i], pixels[channels * i + 1], pixels[channels * i + 2], 255],
+            })
+            .collect();
+        return Decoded::Image(w, h, px);
+    }
+    Decoded::Unknown
+}
+
+/// A PNG as `QImage.convertToFormat(Format_ARGB32)` reads it: size and
+/// straight (not premultiplied) RGBA pixels. `None` when the data is not a
+/// readable PNG.
+pub fn rgba8(data: &[u8]) -> Option<(usize, usize, Vec<[u8; 4]>)> {
+    if !data.starts_with(b"\x89PNG\r\n\x1a\n") {
+        return None;
+    }
+    let mut decoder = png::Decoder::new(Cursor::new(data));
+    decoder.set_transformations(png::Transformations::EXPAND);
+    let mut reader = decoder.read_info().ok()?;
+    let mut buf = vec![0u8; reader.output_buffer_size()?];
+    let frame = reader.next_frame(&mut buf).ok()?;
+    let (w, h) = (frame.width as usize, frame.height as usize);
+    let channels = match frame.color_type {
+        png::ColorType::Rgba => 4,
+        png::ColorType::Rgb => 3,
+        png::ColorType::GrayscaleAlpha => 2,
+        png::ColorType::Grayscale => 1,
+        png::ColorType::Indexed => return None,
+    };
+    let bytes = if frame.bit_depth == png::BitDepth::Sixteen { 2 } else { 1 };
+    let sample = |px: usize, c: usize| -> u8 {
+        let at = (px * channels + c) * bytes;
+        if bytes == 2 {
+            div_257(u32::from(buf[at]) << 8 | u32::from(buf[at + 1]))
+        } else {
+            buf[at]
+        }
+    };
+    let mut out = Vec::with_capacity(w * h);
+    for px in 0..w * h {
+        out.push(match channels {
+            4 => [sample(px, 0), sample(px, 1), sample(px, 2), sample(px, 3)],
+            3 => [sample(px, 0), sample(px, 1), sample(px, 2), 255],
+            2 => [sample(px, 0), sample(px, 0), sample(px, 0), sample(px, 1)],
+            _ => [sample(px, 0), sample(px, 0), sample(px, 0), 255],
+        });
+    }
+    Some((w, h, out))
+}
+
 /// `not img.isNull() and img.hasAlphaChannel()`.
 pub fn has_alpha_channel(data: &[u8]) -> bool {
     match probe_png(data) {

@@ -1685,7 +1685,9 @@ dependencies = [
  "ingetrazo-golden",
  "ingetrazo-math",
  "ingetrazo-model",
+ "ingetrazo-skp",
  "png",
+ "zune-jpeg",
 ]
 
 [[package]]
@@ -1767,6 +1769,15 @@ dependencies = [
  "ingetrazo-model",
  "ingetrazo-ops",
  "rhai",
+]
+
+[[package]]
+name = "ingetrazo-skp"
+version = "0.1.0"
+dependencies = [
+ "crc32fast",
+ "flate2",
+ "ingetrazo-formats",
 ]
 
 [[package]]

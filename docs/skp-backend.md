@@ -8,6 +8,16 @@
 > only. Where the sections below say "the oracle", they mean the reference
 > output the reader was validated against at the time.
 
+> **Rust port (M5.7).** `rust/crates/ingetrazo-skp` ports OpenSKP's reader
+> (both containers, MIT, see its `NOTICE-openskp.md`) and
+> `ingetrazo-formats-mesh::skp_in` ports the adapter below
+> (`formats/skp.py` + `formats/skp_openskp.py`). The parity tests read
+> synthetic `.skp` files written by `scripts/golden/skp_synth*.py` (no
+> SketchUp-written bytes) and compare the parse and the L2 signature with this
+> code's; `scripts/golden/make_skp_fixtures.py --real LIST` does the same by
+> hash for models that are not in the repository. Not ported: a colourized
+> texture in a format other than PNG or JPEG.
+
 IngeTrazo aims to open **any** `.skp` (old → recent). This document describes
 the single seam that decouples the app from *how* a `.skp` is read.
 

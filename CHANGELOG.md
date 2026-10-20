@@ -241,6 +241,38 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Lector de .skp y su importación, en Rust** (`ingetrazo-skp` e
+  `ingetrazo-formats-mesh::skp_in`, M5.7): port del lector de openskp (MIT,
+  con su aviso en `NOTICE-openskp.md`) y de `formats/skp.py` y
+  `formats/skp_openskp.py`. El crate lee los dos contenedores hacia un
+  `Model` tipado: el zip de 2021 en adelante (definiciones, vértices,
+  aristas con sus marcas suave/lisa/oculta, curva y etiqueta, caras con
+  bucles, agujeros, mapeo de textura por cara y material de reverso,
+  instancias con matriz, pintura, etiqueta y diccionarios de atributos,
+  materiales y texturas del XML, estilos, escenas y cotas ancladas a la
+  geometría) y el archivo clásico de 2013 a 2020 (flujo MFC: versiones 3 a
+  20, con textos, cotas, planos de corte, líneas y puntos de construcción e
+  imágenes). La importación arma la escena como Python: un grupo por
+  instancia de primer nivel, un solo prototipo (un `MeshId`) por componente
+  compartido, aristas suaves tomadas del archivo (sin `run_stitch` ni
+  `orient_outward`: Python no los ejecuta aquí), registro de materiales,
+  texturas en la caché, etiquetas, escenas como vistas guardadas, cotas,
+  textos y el color de reverso del estilo; las texturas «colorizadas» se
+  recolorean con la aritmética de NumPy. Las imágenes y los
+  componentes «siempre de cara a la cámara» pasan a grupos cartel con
+  `fuse_coplanar_loops` (el motor `fuse`) como en Python. No se porta
+  (`NotPorted`): una textura colorizada en un formato distinto de PNG o
+  JPEG. Pruebas: archivos
+  .skp sintéticos escritos desde cero por `scripts/golden/skp_synth*.py`
+  (ningún byte de una plantilla de SketchUp) y leídos por el openskp real: el
+  volcado del análisis coincide bit a bit y la firma L2 de la escena es la de
+  Python en 31 archivos y 3 secuencias de importaciones; además, 73 modelos
+  reales de las versiones 3 a 26 se comparan por hash (no están en el
+  repositorio). Medido en Windows, release, contra Python: 12,8 MB de 2021+,
+  63,6 s a 4,8 s; 104 MB, 109 s a 12,0 s; archivo clásico de 28 MB, 17,7 s a
+  3,1 s. Al compararlos apareció un error de `projection_basis`
+  (`ingetrazo-formats-mesh::uv`): `** 0.5` de Python es el `pow` de C, que no
+  siempre da lo mismo que `sqrt` en el último bit.
 - **Motor Rhai y API del modelo, en Rust** (`ingetrazo-script`, M8.1): el
   sustituto de la consola de Python y del código que escribe el asistente.
   Un `ScriptEngine` con Rhai (sin `import`, sin `eval`, sin archivos ni red)
