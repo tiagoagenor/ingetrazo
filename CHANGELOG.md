@@ -344,6 +344,17 @@ follow [SemVer](https://semver.org).
   cola de desplazados, guardando solo lo que el paso tocó (Python copia la
   malla entera en cada orden). Deshacer y rehacer las 160 secuencias de
   primitivas recorre exactamente los estados que registró Python.
+- **Costura de la malla en Rust** (`ingetrazo-model`, M3.3): las primitivas
+  de `core.mesh` (curvas con su contador explícito, soldadura de vértices
+  coincidentes, caras repetidas, uniones en T, colapso de vértices
+  colineales, fusión coplanar de pares y regiones, `revert_stitch`,
+  `turn_face_over`) y el pase `run_stitch` con `StitchSolidCommand`,
+  `CoplanarMergeCommand` y `PruneOrphanEdgesCommand` (`stitch.rs`), todo por
+  los accesores con diario. Las 200 secuencias del generador
+  (`scripts/golden/make_stitch_fixtures.py`, 6 328 pasos) dan el mismo
+  estado completo que Python tras cada paso, y deshacer/rehacer recorre esos
+  estados. Donde Python itera conjuntos por dirección de memoria, el
+  generador fija el orden de creación y Rust usa el mismo.
 - **Lectura del `.igz` en los tres formatos** (M2.7,
   `rust/crates/ingetrazo-formats/src/igz_geom.rs`): Rust lee también los
   bloques binarios de geometría del formato 3 (`float32`, `int32`, `int64`,

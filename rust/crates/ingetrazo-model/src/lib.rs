@@ -11,6 +11,7 @@ pub mod materials;
 pub mod mesh;
 pub mod scene;
 pub mod pyalnum;
+pub mod stitch;
 pub mod pyval;
 pub mod texture;
 pub mod topology;
