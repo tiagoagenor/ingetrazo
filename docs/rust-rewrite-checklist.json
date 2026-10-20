@@ -770,9 +770,9 @@
    "marco": "M9",
    "marco_nome": "Empacotamento",
    "item": "Auditoria: nenhum Python nos pacotes",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.75,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M10.1",
