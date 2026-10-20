@@ -16,5 +16,12 @@ png = "0.18"
 [dev-dependencies]
 ingetrazo-golden = { path = "../ingetrazo-golden" }
 
+# A stand-in for dwg2dxf that the bridge tests run (tests/dwg.rs); never shipped.
+[[bin]]
+name = "fake-dwg2dxf"
+path = "tests/support/fake_dwg2dxf.rs"
+test = false
+doc = false
+
 [lints]
 workspace = true

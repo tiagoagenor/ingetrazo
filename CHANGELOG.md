@@ -241,6 +241,21 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Ponte DWG, en Rust** (`ingetrazo-formats-mesh`, `dwg`, M5.6): el puerto de
+  `formats/dwg_bridge.py`. `DwgBridge` busca `dwg2dxf` en el paquete
+  (`vendor/libredwg/bin`), en el de IngeCAD hermano y en el `PATH`, ignora un
+  binario de otro sistema operativo (por sus primeros bytes) y lo lanza con
+  `std::process::Command`, sin shell: `dwg2dxf -y -o converted.dxf archivo.dwg`
+  en un directorio temporal `ingetrazo-dwg-*`, con 300 s de límite (el
+  proceso se mata al agotarse). El veredicto es que exista la salida y no
+  esté vacía, no el código de salida; los mensajes de error («LibreDWG
+  (dwg2dxf) is not available», «conversion produced no output: …»,
+  «converter timed out: …») son los de Python. Siguen las dos reparaciones del
+  DXF (handles a 0 y handles repetidos, LibreDWG#1356) y la importación con
+  el nombre del DWG. Las pruebas comparan mensajes, constantes y reparaciones
+  con Python byte a byte (`scripts/golden/make_dwg_fixtures.py`) y usan un
+  `dwg2dxf` de mentira compilado; la prueba con el LibreDWG real queda tras
+  `INGETRAZO_DWG_E2E`.
 - **Motor Rhai y API del modelo, en Rust** (`ingetrazo-script`, M8.1): el
   sustituto de la consola de Python y del código que escribe el asistente.
   Un `ScriptEngine` con Rhai (sin `import`, sin `eval`, sin archivos ni red)
