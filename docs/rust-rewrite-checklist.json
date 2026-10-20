@@ -266,7 +266,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Planejador de edições (linhas, faces automáticas)",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
@@ -284,9 +284,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Costura: junções em T, colapso, fusão coplanar",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.4",
@@ -302,7 +302,7 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Mover, girar e escalar",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 1.0714,
    "concluido_em": ""
   },
