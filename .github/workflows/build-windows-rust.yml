@@ -1,0 +1,89 @@
+name: Build Windows (Rust)
+
+# The installer of the Rust IngeTrazo (M9.1) and the no-Python audit (M9.4).
+# Side by side with build-windows.yml (the Python app, shipped until M10):
+# this job only uploads an artifact, it does not touch the Release.
+#   - push of a vX.Y.Z tag
+#   - manual run from the Actions tab
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      # Inno Setup 6 ships on the runner image; install it if it ever stops.
+      - name: Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup --no-progress -y
+          }
+
+      # Optional signing: only when the repo defines the secrets. Forks and
+      # unconfigured repos build unsigned; nothing here is required.
+      - name: Signing certificate (optional)
+        id: sign
+        shell: pwsh
+        env:
+          PFX_BASE64: ${{ secrets.WINDOWS_SIGN_PFX_BASE64 }}
+        run: |
+          if ($env:PFX_BASE64) {
+            $pfx = Join-Path $env:RUNNER_TEMP 'sign.pfx'
+            [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:PFX_BASE64))
+            "INGETRAZO_SIGN_PFX=$pfx" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+            "on=true" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+          } else {
+            Write-Host 'No WINDOWS_SIGN_PFX_BASE64: the installer goes out unsigned'
+          }
+
+      - name: Version (tag or workspace)
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') { $v = $env:GITHUB_REF.Substring('refs/tags/v'.Length) } else { $v = '' }
+          "version=$v" | Out-File -Append -Encoding utf8 $env:GITHUB_OUTPUT
+
+      - name: Build, stage, audit and package
+        shell: pwsh
+        env:
+          INGETRAZO_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
+        run: |
+          $opts = @{}
+          if ('${{ steps.ver.outputs.version }}') { $opts.Version = '${{ steps.ver.outputs.version }}' }
+          if ('${{ steps.sign.outputs.on }}' -eq 'true') { $opts.Sign = $true }
+          ./packaging/windows/build.ps1 @opts
+
+      # M9.4: the installer itself, installed into a temp folder, must hold
+      # no Python either (the build already audited the staged folder).
+      - name: Audit the installed package (no Python)
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem dist/rust/ingetrazo-setup-v*-rust.exe | Select-Object -First 1
+          ./packaging/audit_no_python.ps1 -Installer $setup.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload the installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingetrazo-rust-windows-installer
+          path: dist/rust/ingetrazo-setup-v*-rust.exe
+          if-no-files-found: error
+          retention-days: 14
