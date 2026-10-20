@@ -39,7 +39,7 @@ use ingetrazo_math::{Hypot, M4, V3};
 use ingetrazo_model::materials::{effective_attrs, has_own_material};
 use ingetrazo_model::mesh::{FaceId, Mesh};
 use ingetrazo_model::pyval;
-use ingetrazo_model::scene::{MeshId, Scene};
+use ingetrazo_model::scene::MeshId;
 use ingetrazo_ops::command::Command;
 use ingetrazo_ops::draw::CompoundCommand;
 use ingetrazo_ops::edit_cmds::{SetFaceBack, SetFaceColor, SetFaceMaterialTag, SetFaceOpacity, SetFaceTexture};
