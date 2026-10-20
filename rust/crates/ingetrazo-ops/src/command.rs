@@ -190,4 +190,60 @@ impl History {
         self.undo_stack.clear();
         self.redo_stack.clear();
     }
+
+    /// Open a batch: whatever is executed from now on can be folded into ONE
+    /// undo step ([`History::commit_batch`]) or taken back whole
+    /// ([`History::rollback_batch`]). The redo stack is set aside (it would
+    /// be cleared by the first change anyway) and `max_steps` is lifted so
+    /// the batch is never trimmed from the front. Batches do not nest.
+    pub fn begin_batch(&mut self) -> Batch {
+        let batch = Batch { len: self.undo_stack.len(), redo: std::mem::take(&mut self.redo_stack), max_steps: self.max_steps };
+        self.max_steps = 0;
+        batch
+    }
+
+    fn end_batch(&mut self, batch: &Batch) {
+        self.max_steps = batch.max_steps;
+    }
+
+    /// Close a batch successfully. The commands it executed become one undo
+    /// step: the command itself when there was exactly one, a
+    /// [`CompoundCommand`](crate::draw::CompoundCommand) of them otherwise;
+    /// none at all leaves the history, redo stack included, as it was.
+    /// Returns how many commands the batch ran.
+    pub fn commit_batch(&mut self, mut batch: Batch) -> usize {
+        let ran = self.undo_stack.len() - batch.len;
+        if ran == 0 {
+            self.redo_stack = std::mem::take(&mut batch.redo);
+        } else if ran > 1 {
+            let mesh = self.undo_stack[batch.len].mesh;
+            let commands: Vec<Box<dyn Command>> = self.undo_stack.drain(batch.len..).map(|d| d.cmd).collect();
+            self.undo_stack.push(Done { cmd: Box::new(crate::draw::CompoundCommand { commands }), mesh });
+        }
+        self.end_batch(&batch);
+        if self.max_steps > 0 && self.undo_stack.len() > self.max_steps {
+            let extra = self.undo_stack.len() - self.max_steps;
+            self.undo_stack.drain(..extra);
+        }
+        ran
+    }
+
+    /// Close a batch by undoing everything it did (newest first). The undone
+    /// commands are dropped, not queued for redo; the redo stack is put back.
+    pub fn rollback_batch(&mut self, mut batch: Batch, scene: &mut Scene, cx: &mut Cx) {
+        while self.undo_stack.len() > batch.len {
+            let Some(mut d) = self.undo_stack.pop() else { break };
+            History::in_command_mesh(cx, d.mesh, |cx| d.cmd.undo(scene, cx));
+        }
+        self.redo_stack = std::mem::take(&mut batch.redo);
+        self.end_batch(&batch);
+        scene.rebind_dimensions(cx.mesh);
+    }
+}
+
+/// An open batch of commands (see [`History::begin_batch`]).
+pub struct Batch {
+    len: usize,
+    redo: Vec<Done>,
+    max_steps: usize,
 }

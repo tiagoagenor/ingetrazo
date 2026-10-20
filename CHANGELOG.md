@@ -241,6 +241,19 @@ follow [SemVer](https://semver.org).
   abrir el gestor, unos 0,8 s de los 0,9 s que tardaba.
 
 ### Para desarrolladores
+- **Motor Rhai y API del modelo, en Rust** (`ingetrazo-script`, M8.1): el
+  sustituto de la consola de Python y del código que escribe el asistente.
+  Un `ScriptEngine` con Rhai (sin `import`, sin `eval`, sin archivos ni red)
+  que lee la escena —caras, aristas, vértices, grupos y componentes, capas,
+  materiales, cotas, textos, guías y planos de corte— y solo la cambia
+  mediante `Command`s de `ingetrazo-ops` ejecutados por el `History`: dibujar
+  (el planificador de aristas), caras, borrar, mover, girar, escalar,
+  agrupar, componentes, pintar, capas, ocultar y anotar. Cada ejecución es
+  UN paso de deshacer (`History::begin_batch`/`commit_batch`), una ejecución
+  que solo lee conserva el rehacer y una que falla se revierte entera. Límites
+  de operaciones, llamadas anidadas, tamaños, comandos y tiempo. El guion de
+  vitrina del pabellón está portado a `examples/pavilion.rhai`. Pruebas: la
+  firma L2 tras un guion es la de los mismos comandos ejecutados a mano.
 - **Grupos, componentes, explosión y purga, en Rust** (`ingetrazo-ops`, M3.10):
   los comandos de grupo de `core/history.py` —Agrupar, Agrupar grupos,
   Componente de grupos, Agrupar en contexto, Reubicar, Fusionar, Explotar,
