@@ -466,6 +466,25 @@ follow [SemVer](https://semver.org).
   `formats` y `georef` (una prueba lo vigila), con `points_to_array` /
   `array_to_points` para pasar puntos al motor. El CI compila ahora el
   motor en cada PR y corre las pruebas de paridad, que antes se saltaban.
+- **Topología en Rust** (`rust/crates/ingetrazo-model/src/topology.rs`,
+  M3.2): `core/topology.py` entero, línea por línea. Ciclos del grafo de
+  aristas (`find_smallest_cycle_through`, `find_cycles_through`,
+  `CycleGraph`), intersección y corte de segmentos, contención y huecos
+  (`loop_inside_face`, `maximal_holes`), división de caras por cuerda o
+  cadena, `carve_loop_by_chords`, `offset_loop`, los barridos de uniones en
+  T, `fold_nonplanar_faces`, `orient_coplanar_faces`,
+  `heal_overlapping_faces` y los contadores de defectos. Los números siguen
+  a Python: `QVector3D` en float32, los `float` en doble y en su orden,
+  `sum()` compensado, `x ** 2` y `x ** 0.5` por el `pow` de la biblioteca C
+  y el `einsum` de tres columnas de numpy como `(a0b0 + a2b2) + a1b1`
+  (medido). Compara 300 escenas (rectángulos cruzados, huecos anidados,
+  uniones en T, grafos de aristas, caras alabeadas y rotadas, cajas) con
+  6400 llamadas a las funciones reales de Python
+  (`scripts/golden/make_topology_fixtures.py`): resultados al bit y, tras
+  cada función que cambia la malla, la malla entera; deshacer y rehacer
+  cada una por el diario devuelve esos estados. Lo que Python recorre en
+  orden de dirección (los `set` de aristas de un vértice, las piezas de
+  `fold_nonplanar_faces`) el generador lo fuerza al orden de creación.
 
 ## [0.5.8] — 2026-10-12
 

@@ -13,6 +13,7 @@ pub mod scene;
 pub mod pyalnum;
 pub mod pyval;
 pub mod texture;
+pub mod topology;
 
 pub mod annotations;
 pub mod dimension;
