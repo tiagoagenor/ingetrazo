@@ -359,8 +359,10 @@ follow [SemVer](https://semver.org).
   rozamiento menor que la soldadura, una red de 24 barras, dispersiones al
   azar, dentro de un grupo abierto): los 1 485 segmentos salen idénticos bit a
   bit y en el mismo orden. También guarda el estado completo de la malla
-  antes, después de aplicar con `History` y tras deshacer, para comparar
-  cuando llegue el planificador. La selección de Python es un `set`: el
+  antes, después de aplicar con `History` y tras deshacer; `apply_intersect`
+  arma `build_add_edges` con los cruces que quedan y lo ejecuta con
+  `History`, y los 54 casos con cruces dejan la malla idéntica (ordenada) a
+  la de Python tanto tras aplicar como tras deshacer. La selección de Python es un `set`: el
   script fija su orden (caras por índice, luego grupos).
 - **Mover, girar y escalar en Rust (M3.5).** Nuevo crate `ingetrazo-ops`
   con `Command`/`History` y los comandos de transformación de
