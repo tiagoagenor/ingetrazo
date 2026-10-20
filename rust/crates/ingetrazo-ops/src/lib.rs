@@ -4,6 +4,7 @@
 //! undo, the edits planner, the drawing commands. Push/pull, transforms and
 //! solids join here.
 
+pub mod arrangement;
 pub mod command;
 pub mod draw;
 pub mod edits;
