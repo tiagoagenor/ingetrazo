@@ -67,7 +67,7 @@ fn basis(n: V3, h: Hypot) -> (V3, V3) {
 
 /// `_face_components`: face index -> edge-connected component (union-find
 /// through shared edges); the label is the root's index.
-fn face_components(m: &Mesh) -> HashMap<FaceId, usize> {
+pub fn face_components(m: &Mesh) -> HashMap<FaceId, usize> {
     let idx: HashMap<FaceId, usize> = m.faces.iter().enumerate().map(|(i, &f)| (f, i)).collect();
     let mut parent: Vec<usize> = (0..m.faces.len()).collect();
     fn find(parent: &mut [usize], mut x: usize) -> usize {
@@ -145,6 +145,13 @@ struct Component {
 /// the (masked) triangles, by crossing parity along jittered rays around
 /// `direction`; `None` on a tie.
 fn ray_parity_outside(origin: V3, direction: V3, comp: &Component, mask: &[bool], skip: i64, rng: &mut PyRandom, h: Hypot) -> Option<bool> {
+    ray_parity_outside_tris(origin, direction, &comp.tris, Some(mask), Some(skip), rng, h)
+}
+
+/// `ray_parity_outside` over a prebuilt triangle set (`packed=`), with the
+/// optional `mask` over its rows and the `skip`ped face index. The per-plane
+/// rebuild of a push/pull (`cap_rebuild`) asks it from sample points.
+pub fn ray_parity_outside_tris(origin: V3, direction: V3, tris: &Tris, mask: Option<&[bool]>, skip: Option<i64>, rng: &mut PyRandom, h: Hypot) -> Option<bool> {
     let n = direction.normalized(h);
     let (u, v) = basis(n, h);
     let mut rays: Vec<V3> = Vec::with_capacity(RAYS);
@@ -159,7 +166,7 @@ fn ray_parity_outside(origin: V3, direction: V3, comp: &Component, mask: &[bool]
     }
     let dirs: Vec<[f64; 3]> = rays.iter().map(|d| [d.0 as f64, d.1 as f64, d.2 as f64]).collect();
     let o = [origin.0 as f64, origin.1 as f64, origin.2 as f64];
-    let counts = comp.tris.crossings(o, &dirs, Some(mask), Some(skip));
+    let counts = tris.crossings(o, &dirs, mask, skip);
     let (mut outside, mut inside) = (0, 0);
     for c in counts {
         if c % 2 == 0 {

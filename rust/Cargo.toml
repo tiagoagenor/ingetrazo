@@ -7,6 +7,7 @@ members = [
     "crates/ingetrazo-ops",
     "crates/ingetrazo-script",
     "crates/ingetrazo-snap",
+    "crates/ingetrazo-tools",
     "crates/ingetrazo-geom",
     "crates/ingetrazo-formats",
     "crates/ingetrazo-model",
@@ -18,7 +19,6 @@ members = [
     "crates/ingetrazo_py",
     "crates/ingetrazo-render",
     "crates/ingetrazo-spike-ui",
-    "crates/ingetrazo-snap",
 ]
 
 [workspace.package]

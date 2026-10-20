@@ -6,6 +6,7 @@
 
 pub mod annotate;
 pub mod arrangement;
+pub mod cap_rebuild;
 pub mod command;
 pub mod describe;
 pub mod draw;
@@ -17,6 +18,7 @@ pub mod group_cmds;
 pub mod grouping;
 pub mod intersect;
 pub mod orient;
+pub mod pushpull;
 pub mod pyrandom;
 pub mod pyset;
 pub mod rebuild;

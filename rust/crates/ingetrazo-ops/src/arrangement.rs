@@ -32,7 +32,7 @@ use crate::pyset::{hash_pair, PySet};
 const TOL: f64 = 1e-4;
 
 type P = [f64; 2];
-type XY = (f64, f64);
+pub type XY = (f64, f64);
 
 /// `x ** 2` of the C runtime.
 fn pow2(x: f64) -> f64 {
@@ -45,7 +45,7 @@ fn qkey(x: f64, y: f64) -> (i64, i64) {
 }
 
 /// `_area_floor`.
-fn area_floor(xy: &[XY]) -> f64 {
+pub fn area_floor(xy: &[XY]) -> f64 {
     let n = xy.len();
     let per = py_sum((0..n).map(|i| py_hypot2(xy[(i + 1) % n].0 - xy[i].0, xy[(i + 1) % n].1 - xy[i].1)), true);
     py_min2(TOL, TOL * per / 2.0)
@@ -63,7 +63,7 @@ pub fn plane_basis(normal: V3, h: Hypot) -> (V3, V3) {
     (u, v)
 }
 
-fn signed_area(l: &[XY]) -> f64 {
+pub fn signed_area(l: &[XY]) -> f64 {
     let mut s = 0.0;
     let n = l.len();
     for i in 0..n {
@@ -206,7 +206,7 @@ fn trace_faces(coords: &[XY], adj: &[PySet], alive: &[bool]) -> Vec<Vec<usize>> 
 }
 
 /// `_interior_point`: a point safely inside the polygon.
-fn interior_point(lp: &[XY]) -> XY {
+pub fn interior_point(lp: &[XY]) -> XY {
     let n = lp.len() as f64;
     let cx = py_sum(lp.iter().map(|p| p.0), true) / n;
     let cy = py_sum(lp.iter().map(|p| p.1), true) / n;

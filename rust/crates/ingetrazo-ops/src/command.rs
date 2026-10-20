@@ -94,6 +94,9 @@ impl Cx {
 }
 
 struct Done {
+    /// Identity of the executed command, for tools that ask whether theirs
+    /// is still on top (`undo_stack[-1] is cmd`).
+    serial: u64,
     cmd: Box<dyn Command>,
     /// `_history_mesh`: the mesh that was active when it ran.
     mesh: MeshId,
@@ -109,6 +112,9 @@ pub struct History {
     pub last_rejected: Option<String>,
     /// How many steps back are kept (0 = unlimited).
     pub max_steps: usize,
+    /// Serial of the last command `execute` put on the undo stack.
+    pub last_serial: Option<u64>,
+    next_serial: u64,
 }
 
 impl Default for History {
@@ -119,7 +125,12 @@ impl Default for History {
 
 impl History {
     pub fn new() -> History {
-        History { undo_stack: Vec::new(), redo_stack: Vec::new(), last_error: None, last_rejected: None, max_steps: 200 }
+        History { undo_stack: Vec::new(), redo_stack: Vec::new(), last_error: None, last_rejected: None, max_steps: 200, last_serial: None, next_serial: 1 }
+    }
+
+    /// Serial of the command on top of the undo stack.
+    pub fn top_serial(&self) -> Option<u64> {
+        self.undo_stack.last().map(|d| d.serial)
     }
 
     pub fn undo_len(&self) -> usize {
@@ -149,7 +160,10 @@ impl History {
             }
         }
         self.last_error = None;
-        self.undo_stack.push(Done { cmd, mesh: active });
+        let serial = self.next_serial;
+        self.next_serial += 1;
+        self.last_serial = Some(serial);
+        self.undo_stack.push(Done { serial, cmd, mesh: active });
         if self.max_steps > 0 && self.undo_stack.len() > self.max_steps {
             let extra = self.undo_stack.len() - self.max_steps;
             self.undo_stack.drain(..extra);
@@ -223,7 +237,11 @@ impl History {
         } else if ran > 1 {
             let mesh = self.undo_stack[batch.len].mesh;
             let commands: Vec<Box<dyn Command>> = self.undo_stack.drain(batch.len..).map(|d| d.cmd).collect();
-            self.undo_stack.push(Done { cmd: Box::new(crate::draw::CompoundCommand { commands }), mesh });
+            // The compound is a new step: a new identity.
+            let serial = self.next_serial;
+            self.next_serial += 1;
+            self.last_serial = Some(serial);
+            self.undo_stack.push(Done { serial, cmd: Box::new(crate::draw::CompoundCommand { commands }), mesh });
         }
         self.end_batch(&batch);
         if self.max_steps > 0 && self.undo_stack.len() > self.max_steps {
