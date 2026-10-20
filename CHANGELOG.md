@@ -286,6 +286,22 @@ follow [SemVer](https://semver.org).
   escenas (bytes idénticos) y 86 entradas de importación (firma L2 o mensaje
   de error), más 1 463 sistemas 3 × 3 contra `np.linalg.solve`; `affine_point`
   de `world.rs` también usa ahora el FMA de NumPy.
+- **Intersecar caras en Rust: qué cruces se agregan (`ingetrazo-ops::intersect`,
+  M3.7).** `segments_for` de `core/intersect.py` (los tres modos Con modelo /
+  Con selección / Con contexto; caras sueltas y grupos con sus colocaciones
+  anidadas en el orden de `iter_placements`; el doble recorte de cajas de
+  `_pairs`; cruces concatenados en ese orden y deduplicados al final) y el
+  filtro de longitud de `_on_intersect_faces` (un cruce menor que la
+  soldadura es un punto). Agregar las aristas es `build_add_edges`, del
+  planificador de ediciones (M3.1). `scripts/golden/make_intersect_fixtures.py`
+  corre el Python real (motor apagado) sobre 17 escenas y 65 casos (cajas,
+  planos inclinados, componentes girados y anidados, huecos, coplanares,
+  rozamiento menor que la soldadura, una red de 24 barras, dispersiones al
+  azar, dentro de un grupo abierto): los 1 485 segmentos salen idénticos bit a
+  bit y en el mismo orden. También guarda el estado completo de la malla
+  antes, después de aplicar con `History` y tras deshacer, para comparar
+  cuando llegue el planificador. La selección de Python es un `set`: el
+  script fija su orden (caras por índice, luego grupos).
 - **Mover, girar y escalar en Rust (M3.5).** Nuevo crate `ingetrazo-ops`
   con `Command`/`History` y los comandos de transformación de
   `core/history.py` (mover, girar, escalar y reflejar vértices y grupos,
