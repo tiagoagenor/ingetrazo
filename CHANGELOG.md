@@ -317,6 +317,23 @@ follow [SemVer](https://semver.org).
   huecos y atributos, textura embebida, componentes que comparten
   prototipo, hijos anidados) en formato 1, 2 y 3, con la firma que Python
   calcula al reabrirlas; `cargo test` las compara.
+- **Escritura del `.igz` idéntica byte a byte desde Rust** (M2.8,
+  `rust/crates/ingetrazo-model/src/igz_write.rs` e `igz_zip.rs` en
+  `ingetrazo-formats`): `save_scene` recorre la escena como `igz.save_scene`
+  (malla suelta, tabla de prototipos por identidad de malla, grupos y
+  `kept_components`, y cada bloque opcional con su condición de escritura y
+  en su orden), elige formato 1, 2 o 3, empaqueta las texturas por contenido
+  (`path` → `embed`, `base` → `base_embed`, `textures/<sha1-16>-<nombre>`),
+  escribe los bloques binarios del formato 3 y el ZIP con las mismas
+  cabeceras, miembros en el mismo orden y sellos de 1980-01-01. El deflate
+  es el de zlib (`flate2` con `libz-sys`, nivel 6 o 1, memLevel 8) y coincide
+  con el de CPython. `Scene` guarda ahora, como JSON, los bloques que aún no
+  edita (`Scene::extra`). Comprobado con los 213 `.igz` de `golden/starts`
+  (reabrir y volver a guardar da los mismos bytes, contenedor entero) y con
+  `scripts/golden/make_igz_write_fixtures.py`: siete escenas de la
+  aplicación real en los tres formatos y en los dos modos de documento
+  grande. Pendiente: `topology._maximal_holes` (caras con varios huecos
+  anidados en un bloque de formato 3).
 - **Offset y perfiles de chaflán en Rust** (`ingetrazo-geom`, M1.4):
   `offset` porta `core/offset.py` línea por línea (aristas deslizadas,
   esquinas en inglete o bisel, descarte de regiones por distancia con signo,

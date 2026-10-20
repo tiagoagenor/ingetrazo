@@ -1,0 +1,862 @@
+{
+  "igz_format": 1,
+  "app_version": "0.5.8",
+  "scene": {
+    "edges": [
+      {
+        "a": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "b": [
+          4.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "a": [
+          4.0,
+          0.0,
+          0.0
+        ],
+        "b": [
+          4.0,
+          0.0,
+          2.5
+        ]
+      },
+      {
+        "a": [
+          4.0,
+          0.0,
+          2.5
+        ],
+        "b": [
+          0.0,
+          0.0,
+          2.5
+        ]
+      },
+      {
+        "a": [
+          0.0,
+          0.0,
+          2.5
+        ],
+        "b": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "a": [
+          4.0,
+          0.0,
+          0.0
+        ],
+        "b": [
+          4.0,
+          3.0,
+          0.0
+        ]
+      },
+      {
+        "a": [
+          4.0,
+          3.0,
+          0.0
+        ],
+        "b": [
+          0.0,
+          3.0,
+          0.0
+        ]
+      },
+      {
+        "a": [
+          0.0,
+          3.0,
+          0.0
+        ],
+        "b": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "a": [
+          9.0,
+          9.0,
+          0.0
+        ],
+        "b": [
+          9.0,
+          9.0,
+          2.0
+        ],
+        "layer": "Muros"
+      }
+    ],
+    "faces": [
+      {
+        "vertices": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            4.0,
+            0.0,
+            0.0
+          ],
+          [
+            4.0,
+            0.0,
+            2.5
+          ],
+          [
+            0.0,
+            0.0,
+            2.5
+          ]
+        ],
+        "layer": "Muros",
+        "ifc": {
+          "class": "IfcWall",
+          "name": "M1"
+        },
+        "mat": "Ladrillo"
+      },
+      {
+        "vertices": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            4.0,
+            0.0,
+            0.0
+          ],
+          [
+            4.0,
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0,
+            0.0
+          ]
+        ],
+        "opacity": 1.0
+      }
+    ],
+    "groups": [
+      {
+        "proto": 0,
+        "xform": [
+          0.8660253882408142,
+          0.5,
+          0.0,
+          0.0,
+          -0.5,
+          0.8660253882408142,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          3.0,
+          4.0,
+          0.0,
+          1.0
+        ],
+        "component": true,
+        "name": "Silla",
+        "axes": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "layer": "Muros",
+        "ifc": {
+          "class": "IfcFurniture",
+          "name": "S1"
+        },
+        "billboard": "mesh",
+        "material": {
+          "color": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "text3d": {
+          "text": "Hola",
+          "height": 0.5
+        },
+        "ext": {
+          "plug": {
+            "k": [
+              1,
+              2
+            ]
+          }
+        },
+        "uid": "0000000000000001",
+        "hidden": true,
+        "locked": true,
+        "exploded": {
+          "axis": "z",
+          "amount": 2.0
+        },
+        "explode_offset": [
+          0.0,
+          0.0,
+          1.5
+        ]
+      },
+      {
+        "proto": 0,
+        "xform": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          6.0,
+          4.0,
+          0.0,
+          1.0
+        ],
+        "component": false,
+        "name": "Silla 2",
+        "uid": "0000000000000002"
+      },
+      {
+        "edges": [
+          {
+            "a": [
+              0.0,
+              30.0,
+              0.0
+            ],
+            "b": [
+              2.0,
+              30.0,
+              0.0
+            ]
+          },
+          {
+            "a": [
+              2.0,
+              30.0,
+              0.0
+            ],
+            "b": [
+              2.0,
+              31.0,
+              0.0
+            ]
+          },
+          {
+            "a": [
+              2.0,
+              31.0,
+              0.0
+            ],
+            "b": [
+              0.0,
+              30.0,
+              0.0
+            ]
+          }
+        ],
+        "faces": [
+          {
+            "vertices": [
+              [
+                0.0,
+                30.0,
+                0.0
+              ],
+              [
+                2.0,
+                30.0,
+                0.0
+              ],
+              [
+                2.0,
+                31.0,
+                0.0
+              ]
+            ]
+          }
+        ],
+        "name": "Mesa \u00f1",
+        "axes": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          30.0,
+          0.0,
+          1.0
+        ],
+        "uid": "0000000000000003"
+      }
+    ],
+    "kept_components": [
+      {
+        "proto": 0,
+        "xform": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "component": true,
+        "name": "Guardado",
+        "uid": "0000000000000004"
+      }
+    ],
+    "protos": [
+      {
+        "edges": [
+          {
+            "a": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "b": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "a": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "b": [
+              1.0,
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "a": [
+              1.0,
+              1.0,
+              0.0
+            ],
+            "b": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "a": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "b": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "faces": [
+          {
+            "vertices": [
+              [
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                1.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "layers": [
+      {
+        "name": "Layer 0"
+      },
+      {
+        "name": "Muros"
+      },
+      {
+        "name": "Cotas",
+        "visible": false
+      },
+      {
+        "name": "Fijos",
+        "locked": true
+      }
+    ],
+    "saved_views": [
+      {
+        "name": "Planta",
+        "target": [
+          1.5,
+          2.5,
+          0.0
+        ],
+        "distance": 30.0,
+        "yaw": 0.0,
+        "pitch": 1.5707963267948966,
+        "parallel": true
+      },
+      {
+        "name": "Perspectiva",
+        "target": [
+          0,
+          0,
+          1
+        ],
+        "distance": 20.0,
+        "yaw": -0.7853981633974483,
+        "pitch": 0.5235987755982988,
+        "fov": 60.0,
+        "two_point": true,
+        "hidden_layers": [
+          "Cotas"
+        ]
+      }
+    ],
+    "compositions": [
+      {
+        "name": "L\u00e1mina A",
+        "paper": "A3",
+        "landscape": true,
+        "margin_mm": 10.0,
+        "frames": []
+      },
+      {
+        "name": "L\u00e1mina B",
+        "paper": "A4",
+        "landscape": false,
+        "margin_mm": 10.0,
+        "frames": [],
+        "border": {
+          "on": true,
+          "mm": 0.5,
+          "color": "#1e242c",
+          "radius_mm": 0.0,
+          "style": "single"
+        },
+        "guides": {
+          "v": [
+            10.0,
+            20.5
+          ],
+          "h": []
+        }
+      }
+    ],
+    "dimensions": [
+      {
+        "a": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "b": [
+          4.0,
+          0.0,
+          0.0
+        ],
+        "offset": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "axis": "x",
+        "layer": "Cotas",
+        "text": "4.00 <>"
+      },
+      {
+        "a": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "b": [
+          0.0,
+          3.0,
+          0.0
+        ],
+        "offset": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "name": "Ladrillo",
+        "color": [
+          0.6,
+          0.25,
+          0.2
+        ],
+        "opacity": 1.0
+      },
+      {
+        "name": "Vidrio",
+        "color": [
+          0.7,
+          0.85,
+          0.95
+        ],
+        "opacity": 0.35,
+        "finish": "glass"
+      }
+    ],
+    "dimension_style": {
+      "decimals": 3,
+      "units": "m",
+      "font_size": 9,
+      "color": [
+        45,
+        55,
+        75
+      ],
+      "norma": "din",
+      "base_step_mm": 8.0,
+      "ends": "tick"
+    },
+    "camera": {
+      "target": [
+        1.5,
+        1.5,
+        1.0
+      ],
+      "distance": 12.5,
+      "yaw": 0.6,
+      "pitch": 0.4
+    },
+    "units": {
+      "length": "ft",
+      "precision": 3
+    },
+    "plugin_data": {
+      "myext": {
+        "n": 1,
+        "xs": [
+          1,
+          2.5,
+          "\u00f1"
+        ]
+      },
+      "other": "\u2713"
+    },
+    "custom_scales": [
+      0.5,
+      25.0,
+      100.0
+    ],
+    "back_face_color": [
+      0.8,
+      0.75,
+      0.7
+    ],
+    "section_planes": [
+      {
+        "point": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "uid": 1,
+        "name": "A-A",
+        "symbol": "A",
+        "active": true
+      },
+      {
+        "point": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "uid": 2,
+        "name": "B-B",
+        "symbol": "B",
+        "hidden": true
+      }
+    ],
+    "section_view": {
+      "planes_hidden": true,
+      "cuts_hidden": true
+    },
+    "hidden_view": {
+      "objects": true,
+      "geometry": true
+    },
+    "display_style": {
+      "name": "Default",
+      "face_mode": "monochrome",
+      "edges": true,
+      "profiles": true,
+      "back_edges": false,
+      "edge_color": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "front_color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "back_color": [
+        0.2,
+        0.3,
+        0.4
+      ],
+      "background": [
+        0.9,
+        0.91,
+        0.92
+      ],
+      "sky": true,
+      "sky_color": [
+        0.925,
+        0.935,
+        0.945
+      ],
+      "ground_color": [
+        0.815,
+        0.82,
+        0.815
+      ],
+      "section_fill": true,
+      "section_fill_color": [
+        0.35,
+        0.37,
+        0.41
+      ]
+    },
+    "shadows": {
+      "enabled": true,
+      "month": 12,
+      "day": 21,
+      "hour": 15,
+      "minute": 30,
+      "darkness": 0.4,
+      "utc_offset": -5
+    },
+    "georef": {
+      "datum": {
+        "lat": -13.5,
+        "lon": -71.97,
+        "alt": 3400.0,
+        "north": 12.5
+      }
+    },
+    "tile_layer": {
+      "source": "esri_imagery",
+      "zoom": 17,
+      "radius_m": 500.0,
+      "visible": true,
+      "opacity": 0.6,
+      "patches": [
+        [
+          0.0,
+          0.0,
+          500.0,
+          500.0
+        ]
+      ],
+      "url_template": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      "name": "Esri World Imagery (satellite)",
+      "attribution": "Esri, Maxar, Earthstar Geographics, and the GIS community"
+    },
+    "geo_paths": [
+      {
+        "points": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            10.0,
+            5.0,
+            0.5
+          ],
+          [
+            20.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "closed": true,
+        "name": "Camino",
+        "surface": "flat"
+      }
+    ],
+    "geo_points": [
+      {
+        "position": [
+          1.0,
+          2.0,
+          3.0
+        ],
+        "name": "Hito",
+        "desc": "Esquina \u00f1"
+      },
+      {
+        "position": [
+          4.0,
+          5.0,
+          6.0
+        ]
+      }
+    ],
+    "text_labels": [
+      {
+        "anchor": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "offset": [
+          0.5,
+          0.5,
+          1.0
+        ],
+        "text": "Muro \u00f1and\u00fa"
+      },
+      {
+        "anchor": [
+          2.0,
+          2.0,
+          0.0
+        ],
+        "offset": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "text": "Capa",
+        "layer": "Muros"
+      }
+    ],
+    "guides": [
+      {
+        "point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "point": [
+          2.0,
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "point": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "direction": [
+          0.0,
+          0.7071067690849304,
+          0.7071067690849304
+        ]
+      }
+    ]
+  }
+}

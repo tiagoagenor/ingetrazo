@@ -7,7 +7,7 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
-flate2 = "1.1"
+flate2 = { version = "1.1", default-features = false, features = ["zlib"] }
 
 [lints]
 workspace = true
