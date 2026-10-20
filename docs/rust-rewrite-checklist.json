@@ -428,36 +428,36 @@
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Ferramentas: linha, retângulo, círculo",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.6",
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Ferramentas: empurrar/puxar e mover",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.7",
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Desfazer e refazer na interface",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.8",
    "marco": "M4",
    "marco_nome": "Visualização e alfa",
    "item": "Abrir e salvar .igz",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 0.8333,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M4.9",
@@ -527,9 +527,9 @@
    "marco": "M5",
    "marco_nome": "Formatos",
    "item": "Leitor de SKP portado do openskp",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M5.8",
@@ -752,7 +752,7 @@
    "marco": "M9",
    "marco_nome": "Empacotamento",
    "item": "App macOS assinado e notarizado",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
@@ -761,7 +761,7 @@
    "marco": "M9",
    "marco_nome": "Empacotamento",
    "item": "AppImage, Snap e Flatpak",
-   "status": "pendente",
+   "status": "em andamento",
    "peso": 0.75,
    "concluido_em": ""
   },
