@@ -266,9 +266,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Planejador de edições (linhas, faces automáticas)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.2",
@@ -347,9 +347,9 @@
    "marco": "M3",
    "marco_nome": "Operações, snap e ferramentas",
    "item": "Explodir e limpar (purge)",
-   "status": "em andamento",
+   "status": "concluído",
    "peso": 1.0714,
-   "concluido_em": ""
+   "concluido_em": "2026-10-20"
   },
   {
    "id": "M3.11",
